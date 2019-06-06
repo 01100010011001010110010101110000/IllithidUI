@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  PostsView.swift
 //  IllithidUI
 //
 //  Created by Tyler Gregory on 6/5/19.
@@ -8,18 +8,16 @@
 
 import SwiftUI
 
-struct ContentView : View {
+struct PostsView : View {
     var body: some View {
-        Text("Hello World")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        Image("NSAdvanced").frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
-
 #if DEBUG
-struct ContentView_Previews : PreviewProvider {
+struct PostsView_Previews : PreviewProvider {
     static var previews: some View {
-        ContentView()
+        PostsView()
     }
 }
 #endif
