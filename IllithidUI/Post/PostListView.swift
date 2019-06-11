@@ -23,27 +23,7 @@ struct PostListView: View {
   var body: some View {
     List {
       ForEach(self.postsData.posts) { post in
-        GroupBox {
-          VStack {
-            Text(post.title)
-              .font(.title)
-
-            if post.thumbnail != nil {
-              RemoteImage(post.thumbnail!, imageDownloader: self.reddit.imageDownloader)
-            } else {
-              //TODO Replace with proper placeholder image
-              Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
-            }
-
-            HStack {
-              Text(post.author)
-              Spacer()
-              Text("\(post.num_comments)")
-              Spacer()
-              Text(post.subreddit_name_prefixed)
-            }
-          }
-        }
+        PostRowView(post: post, reddit: self.reddit)
       }
     }
     .frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
@@ -60,6 +40,15 @@ struct PostListView: View {
       }
     }
   }
+}
+
+extension HorizontalAlignment {
+  private enum MidStatsAndPreview: AlignmentID {
+    static func defaultValue(in d: ViewDimensions) -> Length {
+      return d[HorizontalAlignment.center]
+    }
+  }
+  static let midStatsAndPreview = HorizontalAlignment(MidStatsAndPreview.self)
 }
 
 // #if DEBUG

@@ -21,25 +21,8 @@ struct SubredditsView: View {
     NavigationView {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
-          HStack {
-            if subreddit.headerImageURL != nil {
-              RemoteImage(subreddit.headerImageURL!, imageDownloader: self.reddit.imageDownloader)
-            } else {
-              // TODO: Replace with proper placeholder image
-              Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
-            }
-
-            VStack(alignment: .leading) {
-              Text(verbatim: subreddit.displayName)
-                .font(.title)
-
-              Text(verbatim: subreddit.publicDescription)
-                .frame(maxWidth: 200, alignment: .leading)
-            }
-            Spacer()
-            NavigationButton(destination: PostListView(postsData: PostData(), subreddit: subreddit, reddit: self.reddit)) {
-              EmptyView()
-            }
+          NavigationButton(destination: PostListView(postsData: PostData(), subreddit: subreddit, reddit: self.reddit)) {
+            SubredditRowView(subreddit: subreddit, reddit: self.reddit)
           }
         }
       }
