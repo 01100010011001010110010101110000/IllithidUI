@@ -12,6 +12,7 @@ import SwiftUI
 import Alamofire
 import AlamofireImage
 import Illithid
+import OAuthSwift
 import Willow
 
 @NSApplicationMain
@@ -27,8 +28,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   )
   let imageDownloader = ImageDownloader(maximumActiveDownloads: 20)
 
+  var preferencesWindowController: PreferencesWindowController<PreferencesView>!
+
   func applicationDidFinishLaunching(_ aNotification: Notification) {
-    reddit = RedditClientBroker(sharedLogger: logger, sharedImageDownloader: imageDownloader)
+    reddit = RedditClientBroker(sharedLogger: logger,
+                                sharedImageDownloader: imageDownloader,
+                                configuration: IllithidConfiguration())
+
+    reddit.accounts.loadSavedAccounts()
+
+    // MARK: Preferences Window Controller
+
+    preferencesWindowController = PreferencesWindowController(rootView: PreferencesView(accountManager: reddit.accounts))
+    preferencesWindowController.window!.center()
+
+    let menu = NSApp.mainMenu!
+    let preferencesItem = menu.item(withTitle: "Illithid")!.submenu!.item(withTitle: "Preferences…")!
+    preferencesItem.action = #selector(NSWindow.makeKeyAndOrderFront(_:))
+    preferencesItem.target = preferencesWindowController.window!
+
     window = NSWindow(
       contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
       styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
@@ -37,11 +55,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.center()
     window.setFrameAutosaveName("Main Window")
 
+    let rootView = SubredditsView(reddit: reddit)
+      .environmentObject(SubredditData())
+
     window.contentView = NSHostingView(
-      rootView: SubredditsView(reddit: reddit)
-        .environmentObject(SubredditData())
+      rootView: rootView
     )
     window.makeKeyAndOrderFront(nil)
+  }
+
+  func application(_ application: NSApplication, open urls: [URL]) {
+    urls.forEach { url in
+      if url.scheme == "illithid", url.host == "oauth2", url.path == "/callback" {
+        OAuth2Swift.handle(url: url)
+      }
+    }
   }
 
   func applicationWillTerminate(_ aNotification: Notification) {}

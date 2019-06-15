@@ -43,12 +43,12 @@ struct SubredditsView: View {
   }
 }
 
-#if DEBUG
-struct SubredditsView_Previews: PreviewProvider {
-  static var previews: some View {
-    SubredditsView(reddit: .init())
-      .previewDevice("MacBookPro15,1")
-      .environmentObject(SubredditData())
-  }
-}
-#endif
+//#if DEBUG
+//struct SubredditsView_Previews: PreviewProvider {
+//  static var previews: some View {
+//    SubredditsView(reddit: .init())
+//      .previewDevice("MacBookPro15,1")
+//      .environmentObject(SubredditData())
+//  }
+//}
+//#endif

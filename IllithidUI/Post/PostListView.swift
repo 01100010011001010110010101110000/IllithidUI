@@ -48,6 +48,7 @@ extension HorizontalAlignment {
       return d[HorizontalAlignment.center]
     }
   }
+
   static let midStatsAndPreview = HorizontalAlignment(MidStatsAndPreview.self)
 }
 
