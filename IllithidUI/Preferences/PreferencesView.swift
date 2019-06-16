@@ -33,7 +33,11 @@ struct PreferencesView: View {
       HStack {
         Button(action: {
           self.accountManager.addAccount {}
-        }) { Text("Add Account") }
+        }) { Text("Add account") }
+        Spacer()
+        Button(action: {
+          self.accountManager.removeAll()
+        }) { Text("Remove all accounts") }
       }.padding()
     }
   }
