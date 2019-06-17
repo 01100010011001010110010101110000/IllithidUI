@@ -20,8 +20,8 @@ struct PostRowView: View {
         Text(post.title)
           .font(.title)
 
-        if post.thumbnail != nil {
-          RemoteImage(post.thumbnail!, imageDownloader: self.reddit.imageDownloader)
+        if !post.previews().isEmpty {
+          RemoteImage(post.previews().middle().url, imageDownloader: self.reddit.imageDownloader)
             .alignmentGuide(.midStatsAndPreview) { d in d[HorizontalAlignment.center] }
         } else {
           // TODO: Replace with proper placeholder image
@@ -44,7 +44,7 @@ struct PostRowView: View {
           Spacer()
           Text(post.subreddit_name_prefixed)
             .padding([.trailing, .vertical])
-        }
+        }.font(.caption)
       }
     }
   }

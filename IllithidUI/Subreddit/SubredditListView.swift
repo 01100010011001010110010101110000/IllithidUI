@@ -14,17 +14,22 @@ import Willow
 struct SubredditsView: View {
   @State private var listingParams: ListingParams = .init()
   @EnvironmentObject var subredditData: SubredditData
+  @State private var subreddit: Subreddit? = nil
 
   let reddit: RedditClientBroker
 
   var body: some View {
-    NavigationView {
+    HSplitView {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
-          NavigationButton(destination: PostListView(postsData: PostData(), subreddit: subreddit, reddit: self.reddit)) {
-            SubredditRowView(subreddit: subreddit, reddit: self.reddit)
+          SubredditRowView(subreddit: subreddit, reddit: self.reddit).tapAction {
+            self.subreddit = subreddit
           }
         }
+      }
+
+      if subreddit != nil {
+        PostListView(postsData: .init(), subreddit: subreddit!, reddit: reddit)
       }
     }
     .frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
@@ -43,12 +48,12 @@ struct SubredditsView: View {
   }
 }
 
-//#if DEBUG
-//struct SubredditsView_Previews: PreviewProvider {
+// #if DEBUG
+// struct SubredditsView_Previews: PreviewProvider {
 //  static var previews: some View {
 //    SubredditsView(reddit: .init())
 //      .previewDevice("MacBookPro15,1")
 //      .environmentObject(SubredditData())
 //  }
-//}
-//#endif
+// }
+// #endif
