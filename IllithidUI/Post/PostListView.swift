@@ -26,7 +26,6 @@ struct PostListView: View {
         PostRowView(post: post, reddit: self.reddit)
       }
     }
-    .frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
     .onAppear {
       self.loadPosts()
     }

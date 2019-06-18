@@ -28,7 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   )
   let imageDownloader = ImageDownloader(maximumActiveDownloads: 20)
 
-  var preferencesWindowController: PreferencesWindowController<PreferencesView>!
+  var preferencesWindowController: WindowController<PreferencesView>!
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
     reddit = RedditClientBroker(sharedLogger: logger,
@@ -39,7 +39,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Preferences Window Controller
 
-    preferencesWindowController = PreferencesWindowController(rootView: PreferencesView(accountManager: reddit.accounts))
+    preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: reddit.accounts), styleMask: [.titled, .closable, .resizable, .fullSizeContentView], title: "Illithid Preferences")
     preferencesWindowController.window!.center()
 
     let menu = NSApp.mainMenu!
