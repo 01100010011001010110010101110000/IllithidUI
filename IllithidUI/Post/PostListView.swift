@@ -19,11 +19,15 @@ struct PostListView: View {
 
   let subreddit: Subreddit
   let reddit: RedditClientBroker
+  let commentsManager: CommentsWindowManager = .init()
 
   var body: some View {
     List {
       ForEach(self.postsData.posts) { post in
         PostRowView(post: post, reddit: self.reddit)
+          .tapAction(count: 2) {
+            self.showComments(for: post)
+        }
       }
     }
     .onAppear {
@@ -38,6 +42,10 @@ struct PostListView: View {
         self.postsData.posts.append(post.object)
       }
     }
+  }
+
+  func showComments(for post: Post) {
+    commentsManager.showWindow(for: post)
   }
 }
 
