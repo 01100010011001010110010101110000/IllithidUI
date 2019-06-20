@@ -8,16 +8,20 @@
 
 import SwiftUI
 
-struct CommentsView : View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello World!"/*@END_MENU_TOKEN@*/).frame(width: 600, height: 400)
-    }
+import Illithid
+
+struct CommentsView: View {
+  let post: Post
+
+  var body: some View {
+    Text(post.title).frame(width: 600, height: 400)
+  }
 }
 
-#if DEBUG
-struct CommentsView_Previews : PreviewProvider {
-    static var previews: some View {
-        CommentsView()
-    }
-}
-#endif
+// #if DEBUG
+// struct CommentsView_Previews : PreviewProvider {
+//    static var previews: some View {
+//        CommentsView()
+//    }
+// }
+// #endif
