@@ -19,7 +19,14 @@ struct PostListView: View {
 
   let subreddit: Subreddit
   let reddit: RedditClientBroker
-  let commentsManager: CommentsWindowManager = .init()
+  let commentsManager: CommentsWindowManager
+
+  init(postsData: PostData, subreddit: Subreddit, reddit: RedditClientBroker) {
+    self.subreddit = subreddit
+    self.reddit = reddit
+    self.postsData = postsData
+    commentsManager = CommentsWindowManager(reddit: reddit)
+  }
 
   var body: some View {
     List {

@@ -11,10 +11,40 @@ import SwiftUI
 import Illithid
 
 struct CommentsView: View {
+  @ObjectBinding var commentData: CommentData
+  @State var listingParameters = ListingParams()
+
   let post: Post
+  let reddit: RedditClientBroker
 
   var body: some View {
-    Text(post.title).frame(width: 600, height: 400)
+    List {
+      VStack {
+        Text(post.id)
+        Text(post.title)
+      }
+      ForEach(self.commentData.comments) { comment in
+        Text(comment.body)
+      }
+    }.frame(width: 600, height: 400)
+      .onAppear {
+        self.loadComments()
+      }
+  }
+
+  func loadComments() {
+    reddit.getComments(for: post, parameters: listingParameters)
+      .subscribe(on: RunLoop.main)
+      .sink { listing in
+        listing.data.children.lazy.filter { $0.kind == .comment }.forEach { content in
+          switch content {
+          case .comment(let comment):
+            self.commentData.comments.append(comment)
+          default:
+            break
+          }
+        }
+      }
   }
 }
 

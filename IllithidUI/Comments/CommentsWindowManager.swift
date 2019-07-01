@@ -12,6 +12,12 @@ import SwiftUI
 import Illithid
 
 final class CommentsWindowManager {
+  let reddit: RedditClientBroker
+
+  init(reddit: RedditClientBroker) {
+    self.reddit = reddit
+  }
+
   static let styleMask: NSWindow.StyleMask = [
     .resizable,
     .titled,
@@ -35,7 +41,7 @@ final class CommentsWindowManager {
   }
 
   fileprivate func makeWindowController(for post: Post) -> WindowController<CommentsView> {
-    let controller = WindowController(rootView: CommentsView(), styleMask: Self.styleMask, title: post.title)
+    let controller = WindowController(rootView: CommentsView(commentData: .init(), post: post, reddit: reddit), styleMask: Self.styleMask, title: post.title)
     controllers[post] = controller
     return controller
   }
