@@ -36,14 +36,7 @@ struct CommentsView: View {
     reddit.getComments(for: post, parameters: listingParameters)
       .subscribe(on: RunLoop.main)
       .sink { listing in
-        listing.data.children.lazy.filter { $0.kind == .comment }.forEach { content in
-          switch content {
-          case .comment(let comment):
-            self.commentData.comments.append(comment)
-          default:
-            break
-          }
-        }
+        self.commentData.comments.append(contentsOf: listing.comments)
       }
   }
 }

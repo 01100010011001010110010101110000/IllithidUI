@@ -40,10 +40,8 @@ struct SubredditsView: View {
 
   func loadSubreddits() {
     reddit.subreddits(params: listingParams) { listing in
-      if let anchor = listing.metadata.after { self.listingParams.after = anchor }
-      listing.metadata.children.forEach { subreddit in
-        self.subredditData.subreddits.append(subreddit.object)
-      }
+      if let anchor = listing.after { self.listingParams.after = anchor }
+      self.subredditData.subreddits.append(contentsOf: listing.subreddits)
     }
   }
 }

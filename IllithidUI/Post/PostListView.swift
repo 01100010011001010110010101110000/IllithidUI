@@ -44,10 +44,8 @@ struct PostListView: View {
 
   func loadPosts() {
     self.reddit.fetchPosts(for: self.subreddit, sortBy: .hot, params: self.postListingParams) { listing in
-      if let anchor = listing.metadata.after { self.postListingParams.after = anchor }
-      listing.metadata.children.forEach { post in
-        self.postsData.posts.append(post.object)
-      }
+      if let anchor = listing.after { self.postListingParams.after = anchor }
+      self.postsData.posts.append(contentsOf: listing.posts)
     }
   }
 
