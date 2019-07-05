@@ -15,7 +15,7 @@ import Willow
 
 struct PostListView: View {
   @ObjectBinding var postsData: PostData
-  @State var postListingParams: ListingParams = .init()
+  @State var postListingParams: ListingParameters = .init()
 
   let subreddit: Subreddit
   let reddit: RedditClientBroker

@@ -12,7 +12,7 @@ import Illithid
 import Willow
 
 struct SubredditsView: View {
-  @State private var listingParams: ListingParams = .init()
+  @State private var listingParams: ListingParameters = .init()
   @EnvironmentObject var subredditData: SubredditData
   @State private var subreddit: Subreddit? = nil
 

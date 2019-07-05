@@ -12,7 +12,7 @@ import Illithid
 
 struct CommentsView: View {
   @ObjectBinding var commentData: CommentData
-  @State var listingParameters = ListingParams()
+  @State var listingParameters = ListingParameters(limit: 100)
 
   let post: Post
   let reddit: RedditClientBroker
@@ -23,17 +23,20 @@ struct CommentsView: View {
         Text(post.id)
         Text(post.title)
       }
-      ForEach(self.commentData.comments) { comment in
-        Text(comment.body)
+      ForEach(self.commentData.allComments) { comment in
+        VStack(alignment: .leading) {
+          Text(comment.body)
+          Divider()
+        }.offset(x: 20 * Length(integerLiteral: comment.depth))
       }
-    }.frame(width: 600, height: 400)
+    }.frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity, alignment: .leading)
       .onAppear {
         self.loadComments()
       }
   }
 
   func loadComments() {
-    reddit.getComments(for: post, parameters: listingParameters)
+    _ = reddit.comments(for: post, parameters: listingParameters)
       .subscribe(on: RunLoop.main)
       .sink { listing in
         self.commentData.comments.append(contentsOf: listing.comments)
@@ -42,9 +45,14 @@ struct CommentsView: View {
 }
 
 // #if DEBUG
-// struct CommentsView_Previews : PreviewProvider {
-//    static var previews: some View {
-//        CommentsView()
-//    }
+// struct CommentsView_Previews: PreviewProvider {
+//  static var previews: some View {
+//    let testCommentsPath = Bundle.main.path(forResource: "comments", ofType: "json")!
+//    let data = try! Data(contentsOf: URL(fileURLWithPath: testCommentsPath))
+//    let decoder = JSONDecoder()
+//    let listing = try! decoder.decode(Listing.self, from: data)
+//
+//    return CommentsView(commentData: .init(from: listing), reddit: .init(configuration: IllithidConfiguration()))
+//  }
 // }
 // #endif
