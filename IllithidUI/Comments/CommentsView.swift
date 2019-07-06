@@ -27,7 +27,7 @@ struct CommentsView: View {
         VStack(alignment: .leading) {
           Text(comment.body)
           Divider()
-        }.offset(x: 20 * Length(integerLiteral: comment.depth))
+        }.offset(x: 20 * Length(integerLiteral: comment.depth ?? 0))
       }
     }.frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity, alignment: .leading)
       .onAppear {
