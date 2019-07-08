@@ -35,8 +35,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                 sharedImageDownloader: imageDownloader,
                                 configuration: IllithidConfiguration())
 
-    reddit.accounts.loadSavedAccounts()
-
     // MARK: Preferences Window Controller
 
     preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: reddit.accounts), styleMask: [.titled, .closable, .resizable, .fullSizeContentView], title: "Illithid Preferences")
@@ -46,6 +44,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let preferencesItem = menu.item(withTitle: "Illithid")!.submenu!.item(withTitle: "Preferences…")!
     preferencesItem.action = #selector(NSWindow.makeKeyAndOrderFront(_:))
     preferencesItem.target = preferencesWindowController.window!
+
+    // MARK: Application Root Window
 
     window = NSWindow(
       contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
@@ -58,10 +58,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let rootView = SubredditsView(reddit: reddit)
       .environmentObject(SubredditData())
 
-    window.contentView = NSHostingView(
-      rootView: rootView
-    )
-    window.makeKeyAndOrderFront(nil)
+    // Ensure we load the application only after loading any saved accounts
+    reddit.accounts.loadSavedAccounts() {
+      self.window.contentView = NSHostingView(
+        rootView: rootView
+      )
+      self.window.makeKeyAndOrderFront(nil)
+    }
   }
 
   func application(_ application: NSApplication, open urls: [URL]) {

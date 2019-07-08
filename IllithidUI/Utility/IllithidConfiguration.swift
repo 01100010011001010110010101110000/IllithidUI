@@ -20,8 +20,8 @@ struct IllithidConfiguration: ClientConfiguration {
       "consumerKey": consumerKey,
       "consumerSecret": consumerSecret,
       "duration": duration.rawValue,
-      "authorizeUrl": "\(RedditClientBroker.redditBaseUrl)/authorize.compact",
-      "accessTokenUrl": "\(RedditClientBroker.redditBaseUrl)/access_token",
+      "authorizeUrl": RedditClientBroker.authorizeEndpoint.absoluteString,
+      "accessTokenUrl": RedditClientBroker.tokenEndpoint.absoluteString,
       "responseType": responseType.rawValue,
       "scope": scope
     ]
