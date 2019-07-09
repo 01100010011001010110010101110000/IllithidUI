@@ -6,6 +6,7 @@
 //  Copyright © 2019 Tyler Gregory. All rights reserved.
 //
 
+import Combine
 import SwiftUI
 
 import Illithid
@@ -18,7 +19,11 @@ struct SearchView: View {
 
   var body: some View {
     VStack {
+      //Debounce appears to be bugged, will leave this aside for now
       TextField($query, placeholder: Text("Search Reddit")).textFieldStyle(.roundedBorder)
+        .onReceive(query.publisher().collect().map { String($0) }.debounce(for: 0.3, scheduler: RunLoop.main)) { changedQuery in
+          print(changedQuery)
+      }
     }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
   }
 }
