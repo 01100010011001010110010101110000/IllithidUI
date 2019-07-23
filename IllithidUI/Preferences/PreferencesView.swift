@@ -25,10 +25,10 @@ struct PreferencesView: View {
                 .foregroundColor(.green)
             }
             Text(account.name)
-          }.animation(.fluidSpring())
-            .tapAction { self.accountManager.setCurrentAccount(account: account) }
-        }.padding()
-          .onDelete(perform: { self.accountManager.removeAccount(indexSet: $0) })
+          }.tapAction { self.accountManager.setCurrentAccount(account: account) }
+          .animation(.spring())
+        }.onDelete(perform: { self.accountManager.removeAccount(indexSet: $0) })
+        .padding()
       }
       HStack {
         Button(action: {
@@ -39,7 +39,7 @@ struct PreferencesView: View {
           self.accountManager.removeAll()
         }) { Text("Remove all accounts") }
       }.padding()
-    }
+    }.frame(minWidth: 300, minHeight: 500)
   }
 }
 

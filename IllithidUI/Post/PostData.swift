@@ -12,11 +12,11 @@ import SwiftUI
 import Illithid
 
 final class PostData: BindableObject {
-  let didChange = PassthroughSubject<PostData, Never>()
+  let willChange = PassthroughSubject<Void, Never>()
 
   var posts: [Post] = [] {
-    didSet {
-      didChange.send(self)
+    willSet {
+      willChange.send()
     }
   }
 }

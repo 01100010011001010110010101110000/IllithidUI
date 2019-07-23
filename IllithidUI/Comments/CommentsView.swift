@@ -6,6 +6,7 @@
 //  Copyright © 2019 Tyler Gregory. All rights reserved.
 //
 
+import Combine
 import SwiftUI
 
 import Illithid
@@ -37,10 +38,12 @@ struct CommentsView: View {
 
   func loadComments() {
     _ = reddit.comments(for: post, parameters: listingParameters)
-      .subscribe(on: RunLoop.main)
-      .sink { listing in
+      .receive(on: RunLoop.main)
+      .sink(receiveCompletion: { error in
+        return 
+      }) { listing in
         self.commentData.comments.append(contentsOf: listing.comments)
-      }
+    }
   }
 }
 

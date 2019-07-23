@@ -13,11 +13,11 @@ import SwiftUI
 import Illithid
 
 final class SubredditData: BindableObject {
-  let didChange = PassthroughSubject<SubredditData, Never>()
+  let willChange = PassthroughSubject<Void, Never>()
 
   var subreddits: [Subreddit] = [] {
-    didSet {
-      didChange.send(self)
+    willSet {
+      willChange.send()
     }
   }
 }

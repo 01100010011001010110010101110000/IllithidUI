@@ -12,11 +12,11 @@ import SwiftUI
 import Illithid
 
 class CommentData: BindableObject {
-  let didChange = PassthroughSubject<CommentData, Never>()
+  let willChange = PassthroughSubject<Void, Never>()
 
   var comments: [Comment] = [] {
-    didSet {
-      didChange.send(self)
+    willSet {
+      willChange.send()
     }
   }
 
