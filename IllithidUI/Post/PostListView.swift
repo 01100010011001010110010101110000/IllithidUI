@@ -15,7 +15,7 @@ import Willow
 
 struct PostListView: View {
   @ObjectBinding var postsData: PostData
-  @State var postListingParams: ListingParameters = .init()
+  @State private var postListingParams: ListingParameters = .init()
 
   let subreddit: Subreddit
   let reddit: RedditClientBroker
@@ -25,15 +25,25 @@ struct PostListView: View {
     self.subreddit = subreddit
     self.reddit = reddit
     self.postsData = postsData
-    commentsManager = CommentsWindowManager(reddit: reddit)
+    self.commentsManager = CommentsWindowManager(reddit: reddit)
   }
 
   var body: some View {
     List {
       ForEach(self.postsData.posts) { post in
-        PostRowView(post: post, reddit: self.reddit)
-          .tapAction(count: 2) {
-            self.showComments(for: post)
+        if post == self.postsData.posts.last {
+          PostRowView(post: post, reddit: self.reddit)
+            .tapAction(count: 2) {
+              self.showComments(for: post)
+            }.onAppear {
+              self.loadPosts()
+          }
+        }
+        else {
+          PostRowView(post: post, reddit: self.reddit)
+            .tapAction(count: 2) {
+              self.showComments(for: post)
+            }
         }
       }
     }
@@ -50,7 +60,7 @@ struct PostListView: View {
   }
 
   func showComments(for post: Post) {
-    commentsManager.showWindow(for: post)
+    self.commentsManager.showWindow(for: post)
   }
 }
 

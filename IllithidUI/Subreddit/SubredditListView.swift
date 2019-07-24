@@ -19,23 +19,30 @@ struct SubredditsView: View {
   let reddit: RedditClientBroker
 
   var body: some View {
-    HSplitView {
+    NavigationView {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
-          SubredditRowView(subreddit: subreddit, reddit: self.reddit).tapAction {
-            self.subreddit = subreddit
+          if subreddit == self.subredditData.subreddits.last {
+            NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit, reddit: self.reddit)) {
+              SubredditRowView(subreddit: subreddit, reddit: self.reddit).tapAction {
+                self.subreddit = subreddit
+              }
+            }.onAppear {
+              self.loadSubreddits()
+            }
+          } else {
+            NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit, reddit: self.reddit)) {
+              SubredditRowView(subreddit: subreddit, reddit: self.reddit).tapAction {
+                self.subreddit = subreddit
+              }
+            }
           }
         }
       }
-
-      if subreddit != nil {
-        PostListView(postsData: .init(), subreddit: subreddit!, reddit: reddit)
+    }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
+      .onAppear {
+        self.loadSubreddits()
       }
-    }
-    .frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
-    .onAppear {
-      self.loadSubreddits()
-    }
   }
 
   func loadSubreddits() {

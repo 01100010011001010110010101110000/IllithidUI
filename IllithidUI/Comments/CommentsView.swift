@@ -27,6 +27,7 @@ struct CommentsView: View {
       ForEach(self.commentData.allComments) { comment in
         VStack(alignment: .leading) {
           Text(comment.body)
+            .lineLimit(nil)
           Divider()
         }.offset(x: 20 * Length(integerLiteral: comment.depth ?? 0))
       }
@@ -39,11 +40,11 @@ struct CommentsView: View {
   func loadComments() {
     _ = reddit.comments(for: post, parameters: listingParameters)
       .receive(on: RunLoop.main)
-      .sink(receiveCompletion: { error in
-        return 
+      .sink(receiveCompletion: { _ in
+
       }) { listing in
         self.commentData.comments.append(contentsOf: listing.comments)
-    }
+      }
   }
 }
 
