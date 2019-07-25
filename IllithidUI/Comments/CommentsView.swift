@@ -25,13 +25,17 @@ struct CommentsView: View {
         Text(post.title)
       }
       ForEach(self.commentData.allComments) { comment in
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
+          Text(comment.author)
+            .font(.subheadline)
+            .fontWeight(.heavy)
           Text(comment.body)
+            .font(.body)
             .lineLimit(nil)
           Divider()
         }.offset(x: 20 * Length(integerLiteral: comment.depth ?? 0))
       }
-    }.frame(minWidth: 600, maxWidth: .infinity, minHeight: 400, maxHeight: .infinity, alignment: .leading)
+    }.frame(minWidth: 600, maxWidth: 1000, minHeight: 400, maxHeight: .infinity, alignment: .leading)
       .onAppear {
         self.loadComments()
       }
