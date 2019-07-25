@@ -22,22 +22,25 @@ struct SubredditsView: View {
     NavigationView {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
-          if subreddit == self.subredditData.subreddits.last {
-            NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit, reddit: self.reddit)) {
+          ZStack(alignment: .leading) {
+            if subreddit == self.subredditData.subreddits.last {
+              SubredditRowView(subreddit: subreddit, reddit: self.reddit).tapAction {
+                self.subreddit = subreddit
+              }.onAppear { self.loadSubreddits() }
+            } else {
               SubredditRowView(subreddit: subreddit, reddit: self.reddit).tapAction {
                 self.subreddit = subreddit
               }
-            }.onAppear {
-              self.loadSubreddits()
             }
-          } else {
-            NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit, reddit: self.reddit)) {
-              SubredditRowView(subreddit: subreddit, reddit: self.reddit).tapAction {
-                self.subreddit = subreddit
-              }
+            if subreddit == self.subreddit {
+              Rectangle()
+                .foregroundColor(Color.secondary.opacity(0.1))
             }
           }
         }
+      }
+      if self.subreddit != nil {
+        PostListView(postsData: .init(), subreddit: self.subreddit!, reddit: self.reddit)
       }
     }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
       .onAppear {

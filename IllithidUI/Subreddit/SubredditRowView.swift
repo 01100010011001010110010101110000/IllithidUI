@@ -18,22 +18,17 @@ struct SubredditRowView: View {
     HStack {
       if subreddit.headerImageURL != nil {
         RemoteImage(subreddit.headerImageURL!, imageDownloader: self.reddit.imageDownloader)
-          .padding()
+          .scaledToFit()
+          .frame(width: 96, height: 96)
       } else {
         // TODO: Replace with proper placeholder image
         Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
-          .padding()
+          .scaledToFit()
+          .frame(width: 96, height: 96)
       }
-
-      VStack {
-        Text(verbatim: subreddit.displayName)
-          .font(.title).padding()
-
-        //                Text(verbatim: subreddit.publicDescription)
-        //                  .lineLimit(nil)
-      }
-
-      Spacer()
+      Text(verbatim: subreddit.displayName)
+        .font(.headline)
+        .padding(.leading)
     }
   }
 }

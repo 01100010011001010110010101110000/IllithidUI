@@ -25,6 +25,7 @@ struct RemoteImage: View {
 
   var body: some View {
     Image(nsImage: image)
+      .resizable()
       .bind(imageDownloader.imagePublisher(for: self.url), to: $image)
   }
 }
