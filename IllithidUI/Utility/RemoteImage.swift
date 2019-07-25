@@ -17,16 +17,23 @@ struct RemoteImage: View {
 
   let url: URL
   let imageDownloader: ImageDownloader
+  let resizable: Bool
 
-  init(_ url: URL, imageDownloader: ImageDownloader) {
+  init(_ url: URL, imageDownloader: ImageDownloader, resizable: Bool = false) {
     self.url = url
     self.imageDownloader = imageDownloader
+    self.resizable = resizable
   }
 
   var body: some View {
-    Image(nsImage: image)
-      .resizable()
-      .bind(imageDownloader.imagePublisher(for: self.url), to: $image)
+    if resizable {
+      return Image(nsImage: image)
+        .resizable()
+        .bind(imageDownloader.imagePublisher(for: self.url), to: $image)
+    } else {
+      return Image(nsImage: image)
+        .bind(imageDownloader.imagePublisher(for: self.url), to: $image)
+    }
   }
 }
 
