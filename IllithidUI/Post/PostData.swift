@@ -11,12 +11,6 @@ import SwiftUI
 
 import Illithid
 
-final class PostData: BindableObject {
-  let willChange = PassthroughSubject<Void, Never>()
-
-  var posts: [Post] = [] {
-    willSet {
-      willChange.send()
-    }
-  }
+final class PostData: ObservableObject {
+  @Published var posts: [Post] = []
 }

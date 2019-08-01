@@ -55,8 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.center()
     window.setFrameAutosaveName("Main Window")
 
-    let rootView = SubredditsView(reddit: reddit)
-      .environmentObject(SubredditData())
+    let rootView = SubredditsView(subredditData: SubredditData(), reddit: reddit)
 
     // Ensure we load the application only after loading any saved accounts
     reddit.accounts.loadSavedAccounts() {

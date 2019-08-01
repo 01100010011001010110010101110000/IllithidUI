@@ -14,7 +14,7 @@ import Illithid
 import Willow
 
 struct PostListView: View {
-  @ObjectBinding var postsData: PostData
+  @ObservedObject var postsData: PostData
   @State private var postListingParams: ListingParameters = .init()
 
   let subreddit: Subreddit
@@ -33,7 +33,7 @@ struct PostListView: View {
       ForEach(self.postsData.posts) { post in
         if post == self.postsData.posts.last {
           PostRowView(post: post, reddit: self.reddit)
-            .tapAction(count: 2) {
+            .onTapGesture(count: 2) {
               self.showComments(for: post)
             }.onAppear {
               self.loadPosts()
@@ -41,7 +41,7 @@ struct PostListView: View {
         }
         else {
           PostRowView(post: post, reddit: self.reddit)
-            .tapAction(count: 2) {
+            .onTapGesture(count: 2) {
               self.showComments(for: post)
             }
         }
@@ -66,7 +66,7 @@ struct PostListView: View {
 
 extension HorizontalAlignment {
   private enum MidStatsAndPreview: AlignmentID {
-    static func defaultValue(in d: ViewDimensions) -> Length {
+    static func defaultValue(in d: ViewDimensions) -> CGFloat {
       return d[HorizontalAlignment.center]
     }
   }

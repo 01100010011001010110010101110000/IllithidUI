@@ -11,14 +11,8 @@ import SwiftUI
 
 import Illithid
 
-class CommentData: BindableObject {
-  let willChange = PassthroughSubject<Void, Never>()
-
-  var comments: [Comment] = [] {
-    willSet {
-      willChange.send()
-    }
-  }
+class CommentData: ObservableObject {
+  @Published var comments: [Comment] = []
 
   convenience init(from listing: Listing) {
     self.init()

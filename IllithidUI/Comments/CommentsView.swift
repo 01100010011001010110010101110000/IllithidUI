@@ -12,7 +12,7 @@ import SwiftUI
 import Illithid
 
 struct CommentsView: View {
-  @ObjectBinding var commentData: CommentData
+  @ObservedObject var commentData: CommentData
   @State var listingParameters = ListingParameters(limit: 100)
 
   let post: Post
@@ -33,7 +33,7 @@ struct CommentsView: View {
             .font(.body)
             .lineLimit(nil)
           Divider()
-        }.offset(x: 20 * Length(integerLiteral: comment.depth ?? 0))
+        }.offset(x: 20 * CGFloat(integerLiteral: comment.depth ?? 0))
       }
     }.frame(minWidth: 600, maxWidth: 1000, minHeight: 400, maxHeight: .infinity, alignment: .leading)
       .onAppear {

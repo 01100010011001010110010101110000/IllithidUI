@@ -8,16 +8,9 @@
 
 import Combine
 import Foundation
-import SwiftUI
 
 import Illithid
 
-final class SubredditData: BindableObject {
-  let willChange = PassthroughSubject<Void, Never>()
-
-  var subreddits: [Subreddit] = [] {
-    willSet {
-      willChange.send()
-    }
-  }
+final class SubredditData: ObservableObject {
+  @Published var subreddits: [Subreddit] = []
 }

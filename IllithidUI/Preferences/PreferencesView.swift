@@ -11,7 +11,7 @@ import SwiftUI
 import Illithid
 
 struct PreferencesView: View {
-  @ObjectBinding var accountManager: AccountManager
+  @ObservedObject var accountManager: AccountManager
 
   var body: some View {
     ZStack(alignment: .bottomLeading) {
@@ -25,7 +25,7 @@ struct PreferencesView: View {
                 .foregroundColor(.green)
             }
             Text(account.name)
-          }.tapAction { self.accountManager.setCurrentAccount(account: account) }
+          }.onTapGesture { self.accountManager.setCurrentAccount(account: account) }
           .animation(.spring())
         }.onDelete(perform: { self.accountManager.removeAccount(indexSet: $0) })
         .padding()

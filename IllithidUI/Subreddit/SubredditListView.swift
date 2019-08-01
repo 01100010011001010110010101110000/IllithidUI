@@ -13,22 +13,23 @@ import Willow
 
 struct SubredditsView: View {
   @State private var listingParams: ListingParameters = .init()
-  @EnvironmentObject var subredditData: SubredditData
+  @ObservedObject var subredditData: SubredditData
   @State private var subreddit: Subreddit? = nil
 
   let reddit: RedditClientBroker
 
   var body: some View {
-    NavigationView {
+    // NavigationView seems to be bugged
+    HSplitView {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
           ZStack(alignment: .leading) {
             if subreddit == self.subredditData.subreddits.last {
-              SubredditRowView(subreddit: subreddit, reddit: self.reddit).tapAction {
+              SubredditRowView(subreddit: subreddit, reddit: self.reddit).onTapGesture {
                 self.subreddit = subreddit
               }.onAppear { self.loadSubreddits() }
             } else {
-              SubredditRowView(subreddit: subreddit, reddit: self.reddit).tapAction {
+              SubredditRowView(subreddit: subreddit, reddit: self.reddit).onTapGesture {
                 self.subreddit = subreddit
               }
             }
