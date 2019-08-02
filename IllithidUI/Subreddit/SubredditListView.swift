@@ -27,12 +27,14 @@ struct SubredditsView: View {
             if subreddit == self.subredditData.subreddits.last {
               SubredditRowView(subreddit: subreddit, reddit: self.reddit).onTapGesture {
                 self.subreddit = subreddit
-              }.onAppear { self.loadSubreddits() }
+              }.padding(.leading)
+              .onAppear { self.loadSubreddits() }
             } else {
               SubredditRowView(subreddit: subreddit, reddit: self.reddit).onTapGesture {
                 self.subreddit = subreddit
-              }
+              }.padding(.leading)
             }
+            Spacer() // Correct alignment issue post beta 5
             if subreddit == self.subreddit {
               Rectangle()
                 .foregroundColor(Color.secondary.opacity(0.1))
