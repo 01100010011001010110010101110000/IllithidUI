@@ -12,12 +12,6 @@ import SwiftUI
 
 import Illithid
 
-final class SearchData: BindableObject {
-  let didChange = PassthroughSubject<SearchData, Never>()
-
-  var queryResults: Listing? {
-    didSet {
-      didChange.send(self)
-    }
-  }
+final class SearchData: ObservableObject {
+  @Published var queryResults: Listing? = nil
 }

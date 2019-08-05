@@ -13,16 +13,16 @@ import Illithid
 
 struct SearchView: View {
   @State var query: String = ""
-  @ObjectBinding var queryResults: SearchData = .init()
+  @ObservedObject var queryResults: SearchData = .init()
 
   let reddit: RedditClientBroker
 
   var body: some View {
     VStack {
       //Debounce appears to be bugged, will leave this aside for now
-      TextField($query, placeholder: Text("Search Reddit")).textFieldStyle(.roundedBorder)
-        .onReceive(query.publisher().collect().map { String($0) }.debounce(for: 0.3, scheduler: RunLoop.main)) { changedQuery in
-          print(changedQuery)
+      TextField("Search Reddit", text: $query).textFieldStyle(RoundedBorderTextFieldStyle())
+        .onReceive(query.publisher.collect().map { String($0) }.debounce(for: 0.3, scheduler: RunLoop.main)) { query in
+          print(query)
       }
     }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
   }
