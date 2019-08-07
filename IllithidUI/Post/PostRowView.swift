@@ -63,10 +63,17 @@ struct PostRowView: View {
   }
 }
 
-// #if DEBUG
-// struct PostRowView_Previews : PreviewProvider {
-//    static var previews: some View {
-//        PostRowView()
-//    }
-// }
-// #endif
+#if DEBUG
+struct PostRowView_Previews: PreviewProvider {
+  static let reddit: RedditClientBroker = .init(configuration: IllithidConfiguration())
+
+  static var previews: some View {
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .secondsSince1970
+    let singlePostURL = Bundle.main.url(forResource: "single_post", withExtension: "json")!
+    let data = try! Data(contentsOf: singlePostURL)
+    let post = try! decoder.decode(Post.self, from: data)
+    return PostRowView(post: post, reddit: Self.reddit)
+  }
+}
+#endif

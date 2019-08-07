@@ -1,0 +1,295 @@
+{
+  "data" : {
+    "all_awardings" : [
+      {
+        "award_type" : "global",
+        "coin_price" : 1800,
+        "coin_reward" : 0,
+        "count" : 1,
+        "days_of_drip_extension" : 31,
+        "days_of_premium" : 31,
+        "description" : "Gives the author a month of Reddit Premium, which includes %{coin_symbol}700 Coins for that month, and shows a Platinum Award on the post.",
+        "icon_height" : 512,
+        "icon_url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/platinum_512.png",
+        "icon_width" : 512,
+        "id" : "gid_3",
+        "is_enabled" : true,
+        "name" : "Platinum",
+        "resized_icons" : [
+          {
+            "height" : 16,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/platinum_16.png",
+            "width" : 16
+          },
+          {
+            "height" : 32,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/platinum_32.png",
+            "width" : 32
+          },
+          {
+            "height" : 48,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/platinum_48.png",
+            "width" : 48
+          },
+          {
+            "height" : 64,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/platinum_64.png",
+            "width" : 64
+          },
+          {
+            "height" : 128,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/platinum_128.png",
+            "width" : 128
+          }
+        ],
+        "subreddit_coin_reward" : 0,
+        "subreddit_id" : null
+      },
+      {
+        "award_type" : "global",
+        "coin_price" : 500,
+        "coin_reward" : 100,
+        "count" : 1,
+        "days_of_drip_extension" : 0,
+        "days_of_premium" : 7,
+        "description" : "Gives the author a week of Reddit Premium, %{coin_symbol}100 Coins to do with as they please, and shows a Gold Award on the post.",
+        "icon_height" : 512,
+        "icon_url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/gold_512.png",
+        "icon_width" : 512,
+        "id" : "gid_2",
+        "is_enabled" : true,
+        "name" : "Gold",
+        "resized_icons" : [
+          {
+            "height" : 16,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/gold_16.png",
+            "width" : 16
+          },
+          {
+            "height" : 32,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/gold_32.png",
+            "width" : 32
+          },
+          {
+            "height" : 48,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/gold_48.png",
+            "width" : 48
+          },
+          {
+            "height" : 64,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/gold_64.png",
+            "width" : 64
+          },
+          {
+            "height" : 128,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/gold_128.png",
+            "width" : 128
+          }
+        ],
+        "subreddit_coin_reward" : 0,
+        "subreddit_id" : null
+      },
+      {
+        "award_type" : "global",
+        "coin_price" : 100,
+        "coin_reward" : 0,
+        "count" : 3,
+        "days_of_drip_extension" : 0,
+        "days_of_premium" : 0,
+        "description" : "Shows the Silver Award on the post... and that's it.",
+        "icon_height" : 512,
+        "icon_url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/silver_512.png",
+        "icon_width" : 512,
+        "id" : "gid_1",
+        "is_enabled" : true,
+        "name" : "Silver",
+        "resized_icons" : [
+          {
+            "height" : 16,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/silver_16.png",
+            "width" : 16
+          },
+          {
+            "height" : 32,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/silver_32.png",
+            "width" : 32
+          },
+          {
+            "height" : 48,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/silver_48.png",
+            "width" : 48
+          },
+          {
+            "height" : 64,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/silver_64.png",
+            "width" : 64
+          },
+          {
+            "height" : 128,
+            "url" : "https:\/\/www.redditstatic.com\/gold\/awards\/icon\/silver_128.png",
+            "width" : 128
+          }
+        ],
+        "subreddit_coin_reward" : 0,
+        "subreddit_id" : null
+      }
+    ],
+    "allow_live_comments" : true,
+    "approved_at_utc" : null,
+    "approved_by" : null,
+    "archived" : true,
+    "author" : "serventofgaben",
+    "author_flair_background_color" : null,
+    "author_flair_css_class" : null,
+    "author_flair_richtext" : [
+
+    ],
+    "author_flair_template_id" : null,
+    "author_flair_text" : null,
+    "author_flair_text_color" : null,
+    "author_flair_type" : "text",
+    "author_fullname" : "t2_nifnj",
+    "author_patreon_flair" : false,
+    "banned_at_utc" : null,
+    "banned_by" : null,
+    "can_gild" : true,
+    "can_mod_post" : false,
+    "category" : null,
+    "clicked" : false,
+    "content_categories" : null,
+    "contest_mode" : false,
+    "created" : 1491080274,
+    "created_utc" : 1491051474,
+    "discussion_type" : null,
+    "distinguished" : null,
+    "domain" : "i.imgur.com",
+    "downs" : 0,
+    "edited" : false,
+    "gilded" : 1,
+    "gildings" : {
+      "gid_1" : 3,
+      "gid_2" : 1,
+      "gid_3" : 1
+    },
+    "hidden" : false,
+    "hide_score" : false,
+    "id" : "62sjuh",
+    "is_crosspostable" : true,
+    "is_meta" : false,
+    "is_original_content" : false,
+    "is_reddit_media_domain" : false,
+    "is_robot_indexable" : true,
+    "is_self" : false,
+    "is_video" : false,
+    "likes" : null,
+    "link_flair_background_color" : "",
+    "link_flair_css_class" : null,
+    "link_flair_richtext" : [
+
+    ],
+    "link_flair_text" : null,
+    "link_flair_text_color" : "dark",
+    "link_flair_type" : "text",
+    "locked" : false,
+    "media" : null,
+    "media_embed" : {
+
+    },
+    "media_only" : false,
+    "mod_note" : null,
+    "mod_reason_by" : null,
+    "mod_reason_title" : null,
+    "mod_reports" : [
+
+    ],
+    "name" : "t3_62sjuh",
+    "no_follow" : false,
+    "num_comments" : 4581,
+    "num_crossposts" : 16,
+    "num_reports" : null,
+    "over_18" : false,
+    "parent_whitelist_status" : "all_ads",
+    "permalink" : "\/r\/movies\/comments\/62sjuh\/the_senate_upvote_this_so_that_people_see_it_when\/",
+    "pinned" : false,
+    "post_hint" : "image",
+    "preview" : {
+      "enabled" : true,
+      "images" : [
+        {
+          "id" : "_vZmcoBu8kW0tJkOHLKrnqk1fe5MK8HsdzC-kION3zI",
+          "resolutions" : [
+            {
+              "height" : 108,
+              "url" : "https:\/\/external-preview.redd.it\/36HzC1YwUXmc_2iAE9SqqUfBrA8X41xvrSFgCKgHYgY.jpg?width=108&amp;crop=smart&amp;auto=webp&amp;s=18489f5e87a1df4f19113392f1557d175404f49d",
+              "width" : 108
+            },
+            {
+              "height" : 216,
+              "url" : "https:\/\/external-preview.redd.it\/36HzC1YwUXmc_2iAE9SqqUfBrA8X41xvrSFgCKgHYgY.jpg?width=216&amp;crop=smart&amp;auto=webp&amp;s=a3655664cb3866f472de43a9e42d8cc72df8c0c1",
+              "width" : 216
+            },
+            {
+              "height" : 320,
+              "url" : "https:\/\/external-preview.redd.it\/36HzC1YwUXmc_2iAE9SqqUfBrA8X41xvrSFgCKgHYgY.jpg?width=320&amp;crop=smart&amp;auto=webp&amp;s=147ad4342808b7b3413c1f40bc6218e085a20618",
+              "width" : 320
+            },
+            {
+              "height" : 640,
+              "url" : "https:\/\/external-preview.redd.it\/36HzC1YwUXmc_2iAE9SqqUfBrA8X41xvrSFgCKgHYgY.jpg?width=640&amp;crop=smart&amp;auto=webp&amp;s=34b5584d4d5fdc3b55952e343fe6f36bfa92d766",
+              "width" : 640
+            },
+            {
+              "height" : 960,
+              "url" : "https:\/\/external-preview.redd.it\/36HzC1YwUXmc_2iAE9SqqUfBrA8X41xvrSFgCKgHYgY.jpg?width=960&amp;crop=smart&amp;auto=webp&amp;s=c51d71ad8fd6696acb2d34f958497e823ec78b72",
+              "width" : 960
+            }
+          ],
+          "source" : {
+            "height" : 1049,
+            "url" : "https:\/\/external-preview.redd.it\/36HzC1YwUXmc_2iAE9SqqUfBrA8X41xvrSFgCKgHYgY.jpg?auto=webp&amp;s=10d0095b7f690d7ada9fecec81be325c2e359ee1",
+            "width" : 1049
+          },
+          "variants" : {
+
+          }
+        }
+      ]
+    },
+    "pwls" : 6,
+    "quarantine" : false,
+    "removal_reason" : null,
+    "report_reasons" : null,
+    "saved" : false,
+    "score" : 349293,
+    "secure_media" : null,
+    "secure_media_embed" : {
+
+    },
+    "selftext" : "",
+    "selftext_html" : null,
+    "send_replies" : false,
+    "spoiler" : false,
+    "stickied" : false,
+    "subreddit" : "movies",
+    "subreddit_id" : "t5_2qh3s",
+    "subreddit_name_prefixed" : "r\/movies",
+    "subreddit_subscribers" : 21216952,
+    "subreddit_type" : "public",
+    "suggested_sort" : null,
+    "thumbnail" : "https:\/\/b.thumbs.redditmedia.com\/QySlt0pylf5fr_KQNcrHdeEilFZT5sPJiRLCA6hlR9w.jpg",
+    "thumbnail_height" : 140,
+    "thumbnail_width" : 140,
+    "title" : "The Senate. Upvote this so that people see it when they Google \"The Senate\".",
+    "total_awards_received" : 5,
+    "ups" : 349293,
+    "url" : "http:\/\/i.imgur.com\/ChYwfMq.jpg",
+    "user_reports" : [
+
+    ],
+    "view_count" : null,
+    "visited" : false,
+    "whitelist_status" : "all_ads",
+    "wls" : 6
+  },
+  "kind" : "t3"
+}

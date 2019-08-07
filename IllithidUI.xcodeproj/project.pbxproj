@@ -17,6 +17,7 @@
 		6D2EA5A122A7FEE40059B6EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D2EA59F22A7FEE40059B6EA /* Main.storyboard */; };
 		6D2EA5AD22A7FEE40059B6EA /* IllithidUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2EA5AC22A7FEE40059B6EA /* IllithidUITests.swift */; };
 		6D2EA5B822A7FEE40059B6EA /* IllithidUIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2EA5B722A7FEE40059B6EA /* IllithidUIUITests.swift */; };
+		6D3ADFB922FB81AC002DA19A /* single_post.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D3ADFB822FB81AC002DA19A /* single_post.json */; };
 		6D53D9E922A94E7F0018F19D /* SubredditsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D53D9E822A94E7F0018F19D /* SubredditsData.swift */; };
 		6D53D9EA22A94E7F0018F19D /* SubredditsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D53D9E822A94E7F0018F19D /* SubredditsData.swift */; };
 		6D544EE922FF40C100196C25 /* ConditionalModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D544EE822FF40C100196C25 /* ConditionalModifier.swift */; };
@@ -74,6 +75,7 @@
 		6D2EA5B322A7FEE40059B6EA /* IllithidUIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IllithidUIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D2EA5B722A7FEE40059B6EA /* IllithidUIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllithidUIUITests.swift; sourceTree = "<group>"; };
 		6D2EA5B922A7FEE40059B6EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6D3ADFB822FB81AC002DA19A /* single_post.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = single_post.json; sourceTree = "<group>"; };
 		6D53D9E822A94E7F0018F19D /* SubredditsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditsData.swift; sourceTree = "<group>"; };
 		6D544EE822FF40C100196C25 /* ConditionalModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalModifier.swift; sourceTree = "<group>"; };
 		6D558A0B22FF79080092AA88 /* CommentRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRowView.swift; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 			children = (
 				6D2EA59D22A7FEE40059B6EA /* Preview Assets.xcassets */,
 				6DC67CF422CFE043001B85C7 /* comments.json */,
+				6D3ADFB822FB81AC002DA19A /* single_post.json */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -371,6 +374,7 @@
 				6DFB42F622CA884500272845 /* README.md in Resources */,
 				6D2EA59B22A7FEE40059B6EA /* Assets.xcassets in Resources */,
 				6DFB42F822CA885000272845 /* LICENSE in Resources */,
+				6D3ADFB922FB81AC002DA19A /* single_post.json in Resources */,
 				6DC67CF522CFE043001B85C7 /* comments.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
