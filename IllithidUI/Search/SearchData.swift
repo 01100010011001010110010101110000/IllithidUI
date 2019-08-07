@@ -13,5 +13,34 @@ import SwiftUI
 import Illithid
 
 final class SearchData: ObservableObject {
-  @Published var queryResults: Listing? = nil
+  @Published var query: String = ""
+  @Published var accounts: [RedditAccount] = []
+  @Published var subreddits: [Subreddit] = []
+  @Published var posts: [Post] = []
+
+  private var results: Listing = .init()
+
+  let reddit: RedditClientBroker
+  private var cancelToken: AnyCancellable? = nil
+
+  init(reddit: RedditClientBroker) {
+    self.reddit = reddit
+
+    cancelToken = $query
+      .filter { $0.count > 3 }
+      .debounce(for: 0.3, scheduler: RunLoop.current)
+      .removeDuplicates()
+      .sink { searchFor in
+        reddit.search(for: searchFor) { result in
+          switch(result) {
+          case .success(let listing):
+            self.accounts.append(contentsOf: listing.accounts)
+            self.subreddits.append(contentsOf: listing.subreddits)
+            self.posts.append(contentsOf: listing.posts)
+          case .failure(let error):
+            break
+          }
+        }
+    }
+  }
 }

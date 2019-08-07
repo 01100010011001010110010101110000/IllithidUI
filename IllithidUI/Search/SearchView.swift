@@ -12,18 +12,19 @@ import SwiftUI
 import Illithid
 
 struct SearchView: View {
-  @State var query: String = ""
-  @ObservedObject var queryResults: SearchData = .init()
+  @ObservedObject var searchData: SearchData
 
   let reddit: RedditClientBroker
 
+  init(reddit: RedditClientBroker) {
+    self.reddit = reddit
+    searchData = .init(reddit: reddit)
+  }
+
   var body: some View {
     VStack {
-      //Debounce appears to be bugged, will leave this aside for now
-      TextField("Search Reddit", text: $query).textFieldStyle(RoundedBorderTextFieldStyle())
-        .onReceive(query.publisher.collect().map { String($0) }.debounce(for: 0.3, scheduler: RunLoop.main)) { query in
-          print(query)
-      }
+      TextField("Search Reddit", text: $searchData.query).textFieldStyle(RoundedBorderTextFieldStyle())
+      .padding()
     }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
   }
 }
