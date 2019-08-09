@@ -24,7 +24,7 @@ struct SearchView: View {
   var body: some View {
     VStack {
       TextField("Search Reddit", text: $searchData.query).textFieldStyle(RoundedBorderTextFieldStyle())
-      .padding()
+        .padding()
     }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
   }
 }
