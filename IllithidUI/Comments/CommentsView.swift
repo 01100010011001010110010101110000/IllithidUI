@@ -25,15 +25,7 @@ struct CommentsView: View {
         Text(post.title)
       }
       ForEach(self.commentData.allComments) { comment in
-        VStack(alignment: .leading, spacing: 0) {
-          Text(comment.author)
-            .font(.subheadline)
-            .fontWeight(.heavy)
-          Text(comment.body)
-            .font(.body)
-            .lineLimit(nil)
-          Divider()
-        }.padding(.leading, 20 * CGFloat(integerLiteral: comment.depth ?? 0))
+        CommentRowView(comment: comment)
       }
     }.frame(minWidth: 600, maxWidth: 1000, minHeight: 400, maxHeight: .infinity, alignment: .leading)
       .onAppear {
