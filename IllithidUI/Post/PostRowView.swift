@@ -17,7 +17,7 @@ struct PostRowView: View {
 
   init(post: Post, reddit: RedditClientBroker) {
     self.post = post
-    self.reddit = reddit
+    self.reddit = reddit
     self.previews = post.previews
   }
 
