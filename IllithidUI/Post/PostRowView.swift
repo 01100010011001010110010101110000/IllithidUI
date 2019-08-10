@@ -11,8 +11,15 @@ import SwiftUI
 import Illithid
 
 struct PostRowView: View {
-  let post: Post
+  var post: Post
   let reddit: RedditClientBroker
+  let previews: [ImagePreview.Image]
+
+  init(post: Post, reddit: RedditClientBroker) {
+    self.post = post
+    self.reddit = reddit
+    self.previews = post.previews
+  }
 
   var body: some View {
     GroupBox {
@@ -20,8 +27,9 @@ struct PostRowView: View {
         Text(post.title)
           .font(.title)
 
-        if !post.previews().isEmpty {
-          RemoteImage(post.previews().middle().url, imageDownloader: self.reddit.imageDownloader)
+        if !previews.isEmpty {
+          RemoteImage(previews.middle.url, imageDownloader: self.reddit.imageDownloader)
+            .frame(width: CGFloat(integerLiteral: previews.middle.width), height: CGFloat(integerLiteral: previews.middle.height))
             .alignmentGuide(.midStatsAndPreview) { d in d[HorizontalAlignment.center] }
         } else {
           // TODO: Replace with proper placeholder image
