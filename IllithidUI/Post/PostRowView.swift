@@ -24,13 +24,19 @@ struct PostRowView: View {
   var body: some View {
     GroupBox {
       VStack(alignment: .midStatsAndPreview) {
-        Text(post.title)
-          .font(.title)
+        GeometryReader { geometry in
+          Text(self.post.title)
+            .font(.title)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: geometry.size.width)
+        }
 
         if !previews.isEmpty {
           RemoteImage(previews.middle.url, imageDownloader: self.reddit.imageDownloader)
-            .frame(width: CGFloat(integerLiteral: previews.middle.width), height: CGFloat(integerLiteral: previews.middle.height))
+            .frame(width: CGFloat(integerLiteral: previews.middle.width),
+                   height: CGFloat(integerLiteral: previews.middle.height))
             .alignmentGuide(.midStatsAndPreview) { d in d[HorizontalAlignment.center] }
+            .cornerRadius(10)
         } else {
           // TODO: Replace with proper placeholder image
           Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
@@ -39,7 +45,6 @@ struct PostRowView: View {
 
         HStack {
           Text(post.author)
-            .padding([.vertical, .leading])
           Spacer()
           HStack {
             Text("\(post.ups.postAbbreviation())")
@@ -51,8 +56,9 @@ struct PostRowView: View {
           }.alignmentGuide(.midStatsAndPreview) { d in d[HorizontalAlignment.center] }
           Spacer()
           Text(post.subreddit_name_prefixed)
-            .padding([.trailing, .vertical])
-        }.font(.caption)
+        }
+        .padding(10)
+        .font(.caption)
       }
     }
   }
