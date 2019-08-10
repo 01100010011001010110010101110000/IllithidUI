@@ -27,7 +27,7 @@ struct PreferencesView: View {
             Text(account.name)
           }.onTapGesture { self.accountManager.setCurrentAccount(account: account) }
           .animation(.spring())
-        }.onDelete(perform: { self.accountManager.removeAccount(indexSet: $0) })
+        }.onDelete(perform: { self.accountManager.removeAccounts(indexSet: $0) })
         .padding()
       }
       HStack {

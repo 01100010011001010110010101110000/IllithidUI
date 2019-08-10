@@ -24,16 +24,14 @@ struct SubredditsView: View {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
           ZStack(alignment: .leading) {
-            if subreddit == self.subredditData.subreddits.last {
-              SubredditRowView(subreddit: subreddit, reddit: self.reddit).onTapGesture {
+            SubredditRowView(subreddit: subreddit, reddit: self.reddit)
+              .padding(.leading)
+              .conditionalModifier(subreddit == self.subredditData.subreddits.last, OnAppearModifier {
+                self.loadSubreddits()
+              })
+              .onTapGesture {
                 self.subreddit = subreddit
-              }.padding(.leading)
-              .onAppear { self.loadSubreddits() }
-            } else {
-              SubredditRowView(subreddit: subreddit, reddit: self.reddit).onTapGesture {
-                self.subreddit = subreddit
-              }.padding(.leading)
-            }
+              }
             Spacer() // Correct alignment issue post beta 5
             if subreddit == self.subreddit {
               Rectangle()

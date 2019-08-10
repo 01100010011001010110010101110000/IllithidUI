@@ -31,20 +31,13 @@ struct PostListView: View {
   var body: some View {
     List {
       ForEach(self.postsData.posts) { post in
-        if post == self.postsData.posts.last {
-          PostRowView(post: post, reddit: self.reddit)
-            .onTapGesture(count: 2) {
-              self.showComments(for: post)
-            }.onAppear {
-              self.loadPosts()
+        PostRowView(post: post, reddit: self.reddit)
+          .conditionalModifier(post == self.postsData.posts.last, OnAppearModifier {
+            self.loadPosts()
+          })
+          .onTapGesture(count: 2) {
+            self.showComments(for: post)
           }
-        }
-        else {
-          PostRowView(post: post, reddit: self.reddit)
-            .onTapGesture(count: 2) {
-              self.showComments(for: post)
-            }
-        }
       }
     }
     .onAppear {

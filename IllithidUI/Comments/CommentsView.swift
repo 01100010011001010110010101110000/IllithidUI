@@ -33,7 +33,7 @@ struct CommentsView: View {
             .font(.body)
             .lineLimit(nil)
           Divider()
-        }.offset(x: 20 * CGFloat(integerLiteral: comment.depth ?? 0))
+        }.padding(.leading, 20 * CGFloat(integerLiteral: comment.depth ?? 0))
       }
     }.frame(minWidth: 600, maxWidth: 1000, minHeight: 400, maxHeight: .infinity, alignment: .leading)
       .onAppear {
