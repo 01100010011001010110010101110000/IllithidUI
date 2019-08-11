@@ -11,13 +11,12 @@ import SwiftUI
 import Illithid
 
 struct PostRowView: View {
+  @EnvironmentObject var reddit: RedditClientBroker
   var post: Post
-  let reddit: RedditClientBroker
   let previews: [ImagePreview.Image]
 
-  init(post: Post, reddit: RedditClientBroker) {
+  init(post: Post) {
     self.post = post
-    self.reddit = reddit
     self.previews = post.previews
   }
 

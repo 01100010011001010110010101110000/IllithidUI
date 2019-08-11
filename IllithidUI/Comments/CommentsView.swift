@@ -11,12 +11,22 @@ import SwiftUI
 
 import Illithid
 
-struct CommentsView: View {
+struct CommentsView: IdentifiableView {
   @ObservedObject var commentData: CommentData
-  @State var listingParameters = ListingParameters(limit: 100)
+  @State private var listingParameters = ListingParameters(limit: 100)
+  @ObservedObject var reddit: RedditClientBroker
+
+  /// The post to which the comments belong
+  let id: Fullname
 
   let post: Post
-  let reddit: RedditClientBroker
+
+  init(commentData: CommentData, post: Post, reddit: RedditClientBroker) {
+    self.commentData = commentData
+    self.post = post
+    self.id = post.id
+    self.reddit = reddit
+  }
 
   var body: some View {
     List {

@@ -15,8 +15,7 @@ struct SubredditsView: View {
   @State private var listingParams: ListingParameters = .init()
   @ObservedObject var subredditData: SubredditData
   @State private var subreddit: Subreddit? = nil
-
-  let reddit: RedditClientBroker
+  @EnvironmentObject var reddit: RedditClientBroker
 
   var body: some View {
     // NavigationView seems to be bugged
@@ -24,7 +23,7 @@ struct SubredditsView: View {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
           ZStack(alignment: .leading) {
-            SubredditRowView(subreddit: subreddit, reddit: self.reddit)
+            SubredditRowView(subreddit: subreddit)
               .padding(.leading)
               .conditionalModifier(subreddit == self.subredditData.subreddits.last, OnAppearModifier {
                 self.loadSubreddits()
@@ -41,7 +40,7 @@ struct SubredditsView: View {
         }
       }
       if self.subreddit != nil {
-        PostListView(postsData: .init(), subreddit: self.subreddit!, reddit: self.reddit)
+        PostListView(postsData: .init(), subreddit: self.subreddit!)
       }
     }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
       .onAppear {

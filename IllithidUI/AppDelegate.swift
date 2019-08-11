@@ -37,7 +37,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Preferences Window Controller
 
-    preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: reddit.accounts), styleMask: [.titled, .closable, .resizable, .fullSizeContentView], title: "Illithid Preferences")
+    preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: reddit.accounts),
+                                                   styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
+                                                   title: "Illithid Preferences")
     preferencesWindowController.window!.center()
 
     let menu = NSApp.mainMenu!
@@ -55,10 +57,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.center()
     window.setFrameAutosaveName("Main Window")
 
-    let rootView = SubredditsView(subredditData: SubredditData(), reddit: reddit)
+    let rootView = RootView().environmentObject(reddit)
 
     // Ensure we load the application only after loading any saved accounts
-    reddit.accounts.loadSavedAccounts() {
+    reddit.accounts.loadSavedAccounts {
       self.window.contentView = NSHostingView(
         rootView: rootView
       )
