@@ -10,9 +10,25 @@ import SwiftUI
 
 import Illithid
 
+enum TabSelection {
+  case subreddits
+  case search
+}
+
 struct RootView: View {
+  @State private var selection: TabSelection = .subreddits
+  @EnvironmentObject var reddit: RedditClientBroker
+
   var body: some View {
-    SubredditsView(subredditData: SubredditData())
+    // TODO: Don't display the tab bar
+    TabView(selection: $selection) {
+      SubredditsView(subredditData: .init())
+        .tabItem { Text("Subreddits") }
+        .tag(TabSelection.subreddits)
+      SearchView(searchData: .init(reddit: reddit))
+        .tabItem { Text("Search") }
+        .tag(TabSelection.search)
+    }
   }
 }
 

@@ -6,7 +6,6 @@
 //  Copyright © 2019 Tyler Gregory. All rights reserved.
 //
 
-import Combine
 import SwiftUI
 
 import Illithid
@@ -14,18 +13,28 @@ import Illithid
 struct SearchView: View {
   @ObservedObject var searchData: SearchData
 
-  let reddit: RedditClientBroker
-
-  init(reddit: RedditClientBroker) {
-    self.reddit = reddit
-    searchData = .init(reddit: reddit)
-  }
-
   var body: some View {
     VStack {
       TextField("Search Reddit", text: $searchData.query).textFieldStyle(RoundedBorderTextFieldStyle())
         .padding()
-    }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
+      List {
+        Section(header: Text("Subreddits").font(.headline)) {
+          ForEach(searchData.subreddits) { subreddit in
+            Text(subreddit.displayName)
+          }
+        }
+        Section(header: Text("Users").font(.headline)) {
+          ForEach(searchData.accounts) { account in
+            Text(account.name)
+          }
+        }
+        Section(header: Text("Posts").font(.headline)) {
+          ForEach(searchData.posts) { post in
+            Text(post.title)
+          }
+        }
+      }
+    }
   }
 }
 

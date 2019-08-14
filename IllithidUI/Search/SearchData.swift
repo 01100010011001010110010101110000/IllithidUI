@@ -33,12 +33,15 @@ final class SearchData: ObservableObject {
       .sink { searchFor in
         reddit.search(for: searchFor) { result in
           switch(result) {
-          case .success(let listing):
-            self.accounts.append(contentsOf: listing.accounts)
-            self.subreddits.append(contentsOf: listing.subreddits)
-            self.posts.append(contentsOf: listing.posts)
+          case .success(let listings):
+            // TODO: Optimize this
+            for listing in listings {
+              self.accounts.append(contentsOf: listing.accounts)
+              self.subreddits.append(contentsOf: listing.subreddits)
+              self.posts.append(contentsOf: listing.posts)
+            }
           case .failure(let error):
-            break
+            print("Failed to search: \(error)")
           }
         }
     }

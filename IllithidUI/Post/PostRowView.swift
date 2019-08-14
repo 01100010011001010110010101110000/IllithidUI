@@ -73,7 +73,7 @@ struct PostRowView_Previews: PreviewProvider {
     let singlePostURL = Bundle.main.url(forResource: "single_post", withExtension: "json")!
     let data = try! Data(contentsOf: singlePostURL)
     let post = try! decoder.decode(Post.self, from: data)
-    return PostRowView(post: post, reddit: Self.reddit)
+    return PostRowView(post: post).environmentObject(self.reddit)
   }
 }
 #endif
