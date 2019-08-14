@@ -16,8 +16,8 @@ struct SubredditRowView: View {
 
   var body: some View {
     HStack {
-      if subreddit.headerImageURL != nil {
-        RemoteImage(subreddit.headerImageURL!, imageDownloader: self.reddit.imageDownloader, resizable: true)
+      if subreddit.headerImg != nil {
+        RemoteImage(subreddit.headerImg!, imageDownloader: self.reddit.imageDownloader, resizable: true)
           .scaledToFit()
           .frame(width: 96, height: 96)
       } else {

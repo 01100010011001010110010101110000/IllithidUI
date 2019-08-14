@@ -50,11 +50,11 @@ struct PostRowView: View {
               .foregroundColor(.orange)
             Text("\(post.downs.postAbbreviation())")
               .foregroundColor(.purple)
-            Text("\(post.num_comments.postAbbreviation())")
+            Text("\(post.numComments.postAbbreviation())")
               .foregroundColor(.blue)
           }.alignmentGuide(.midStatsAndPreview) { d in d[HorizontalAlignment.center] }
           Spacer()
-          Text(post.subreddit_name_prefixed)
+          Text(post.subredditNamePrefixed)
         }
         .padding(10)
         .font(.caption)
