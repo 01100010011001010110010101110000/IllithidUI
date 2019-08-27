@@ -13,20 +13,6 @@ import Illithid
 import OAuthSwift
 
 struct IllithidConfiguration: ClientConfiguration {
-  // MARK: OAuth2 parameters
-
-  lazy var oauthParameters: OAuthSwift.ConfigParameters = {
-    return [
-      "consumerKey": consumerKey,
-      "consumerSecret": consumerSecret,
-      "duration": duration.rawValue,
-      "authorizeUrl": RedditClientBroker.authorizeEndpoint.absoluteString,
-      "accessTokenUrl": RedditClientBroker.tokenEndpoint.absoluteString,
-      "responseType": responseType.rawValue,
-      "scope": scope
-    ]
-    }()
-
   /// Application OAuth2 callback URL
   let redirectURI = URL(string: "illithid://oauth2/callback")!
   /// The version of Illithid
@@ -43,6 +29,4 @@ struct IllithidConfiguration: ClientConfiguration {
   let responseType: OAuthResponseType = .code
 
   let duration: Duration = .permanent
-
-  internal let defaults = UserDefaults.standard
 }
