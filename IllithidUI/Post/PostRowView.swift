@@ -65,7 +65,7 @@ struct PostRowView: View {
 
 #if DEBUG
 struct PostRowView_Previews: PreviewProvider {
-  static let reddit: RedditClientBroker = .init(configuration: IllithidConfiguration())
+  static let reddit: RedditClientBroker = .shared
 
   static var previews: some View {
     let decoder = JSONDecoder()

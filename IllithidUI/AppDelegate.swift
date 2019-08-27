@@ -31,9 +31,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   var preferencesWindowController: WindowController<PreferencesView>!
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
-    reddit = RedditClientBroker(sharedLogger: logger,
-                                sharedImageDownloader: imageDownloader,
-                                configuration: IllithidConfiguration())
+    reddit = RedditClientBroker.shared
+    reddit.configure(configuration: IllithidConfiguration())
 
     // MARK: Preferences Window Controller
 
