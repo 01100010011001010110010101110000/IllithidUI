@@ -18,21 +18,21 @@ import Willow
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
   var window: NSWindow!
-  var reddit: RedditClientBroker!
-  let logger = Logger(
-    logLevels: [.all],
-    writers: [ConsoleWriter()],
-    executionMethod: .asynchronous(
-      queue: DispatchQueue(label: "log.queue", qos: .utility)
-    )
-  )
+  let reddit: RedditClientBroker = .shared
+
+  #if DEBUG
+  let logger: Logger = .debugLogger()
+  #else
+  let logger: Logger = .releaseLogger(subsystem: "com.illithid.illithid")
+  #endif
+
   let imageDownloader = ImageDownloader(maximumActiveDownloads: 20)
 
   var preferencesWindowController: WindowController<PreferencesView>!
 
   func applicationDidFinishLaunching(_ aNotification: Notification) {
-    reddit = RedditClientBroker.shared
     reddit.configure(configuration: IllithidConfiguration())
+    reddit.logger = self.logger
 
     // MARK: Preferences Window Controller
 
