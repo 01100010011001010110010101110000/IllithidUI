@@ -14,14 +14,13 @@ import Illithid
 
 struct RemoteImage: View {
   @State private var image: NSImage = NSImage(imageLiteralResourceName: "NSAdvanced")
+  @EnvironmentObject var imageDownloader: ImageDownloader
 
   let url: URL
-  let imageDownloader: ImageDownloader
   let resizable: Bool
 
-  init(_ url: URL, imageDownloader: ImageDownloader, resizable: Bool = false) {
+  init(_ url: URL, resizable: Bool = false) {
     self.url = url
-    self.imageDownloader = imageDownloader
     self.resizable = resizable
   }
 
@@ -40,8 +39,8 @@ struct RemoteImage: View {
 #if DEBUG
 struct RemoteImage_Previews: PreviewProvider {
   static var previews: some View {
-    RemoteImage(URL(string: "https://upload.wikimedia.org/wikipedia/en/1/13/Illithid_Sorcerer.png")!,
-                imageDownloader: .init())
+    RemoteImage(URL(string: "https://upload.wikimedia.org/wikipedia/en/1/13/Illithid_Sorcerer.png")!)
+      .environmentObject(ImageDownloader())
   }
 }
 #endif
@@ -52,3 +51,5 @@ extension View {
     return onReceive(publisher) { state.value = $0 }
   }
 }
+
+extension ImageDownloader: ObservableObject {}

@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+import AlamofireImage
 import Illithid
 
 struct PostRowView: View {
@@ -31,7 +32,7 @@ struct PostRowView: View {
         }
 
         if !previews.isEmpty {
-          RemoteImage(previews.middle.url, imageDownloader: self.reddit.imageDownloader)
+          RemoteImage(previews.middle.url)
             .frame(width: CGFloat(integerLiteral: previews.middle.width),
                    height: CGFloat(integerLiteral: previews.middle.height))
             .alignmentGuide(.midStatsAndPreview) { d in d[HorizontalAlignment.center] }
