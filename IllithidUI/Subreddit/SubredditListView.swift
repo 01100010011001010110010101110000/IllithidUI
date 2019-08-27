@@ -15,7 +15,7 @@ struct SubredditsView: View {
   @State private var listingParams: ListingParameters = .init()
   @ObservedObject var subredditData: SubredditData
   @State private var subreddit: Subreddit? = nil
-  @EnvironmentObject var reddit: RedditClientBroker
+  let reddit: RedditClientBroker = .shared
 
   var body: some View {
     // NavigationView seems to be bugged

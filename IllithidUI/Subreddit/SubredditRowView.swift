@@ -12,7 +12,7 @@ import Illithid
 
 struct SubredditRowView: View {
   let subreddit: Subreddit
-  @EnvironmentObject var reddit: RedditClientBroker
+  let reddit: RedditClientBroker = .shared
 
   var body: some View {
     HStack {

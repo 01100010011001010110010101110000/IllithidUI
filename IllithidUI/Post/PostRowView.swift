@@ -12,7 +12,7 @@ import AlamofireImage
 import Illithid
 
 struct PostRowView: View {
-  @EnvironmentObject var reddit: RedditClientBroker
+  let reddit: RedditClientBroker = .shared
   var post: Post
   let previews: [ImagePreview.Image]
 

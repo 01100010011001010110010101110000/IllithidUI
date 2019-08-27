@@ -56,7 +56,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.center()
     window.setFrameAutosaveName("Main Window")
 
-    let rootView = RootView().environmentObject(reddit).environmentObject(ImageDownloader(maximumActiveDownloads: 20))
+    let rootView = RootView().environmentObject(imageDownloader)
 
     // Ensure we load the application only after loading any saved accounts
     reddit.accounts.loadSavedAccounts {
