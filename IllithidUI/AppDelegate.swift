@@ -75,9 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
   }
 
-  func applicationWillResignActive(_ notification: Notification) {
-    UserDefaults.standard.synchronize()
-  }
+  func applicationWillResignActive(_ notification: Notification) {}
 
   func applicationWillTerminate(_ aNotification: Notification) {}
 
