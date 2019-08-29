@@ -36,7 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Preferences Window Controller
 
-    preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: reddit.accounts),
+    preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: reddit.accountManager),
                                                    styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
                                                    title: "Illithid Preferences")
     preferencesWindowController.window!.center()
@@ -59,7 +59,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let rootView = RootView().environmentObject(imageDownloader)
 
     // Ensure we load the application only after loading any saved accounts
-    reddit.accounts.loadSavedAccounts {
+    reddit.accountManager.loadSavedAccounts {
       self.window.contentView = NSHostingView(
         rootView: rootView
       )
@@ -76,7 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   func applicationWillTerminate(_ aNotification: Notification) {
-    reddit.accounts.persistAccounts()
+    reddit.accountManager.persistAccounts()
   }
 
   // MARK: - Core Data stack
