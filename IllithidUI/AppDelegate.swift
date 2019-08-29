@@ -75,9 +75,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
   }
 
-  func applicationWillTerminate(_ aNotification: Notification) {
-    reddit.accountManager.persistAccounts()
+  func applicationWillResignActive(_ notification: Notification) {
+    UserDefaults.standard.synchronize()
   }
+
+  func applicationWillTerminate(_ aNotification: Notification) {}
 
   // MARK: - Core Data stack
 
