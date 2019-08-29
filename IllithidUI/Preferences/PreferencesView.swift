@@ -32,7 +32,7 @@ struct PreferencesView: View {
       }
       HStack {
         Button(action: {
-          self.accountManager.addAccount(anchor: NSApp.keyWindow!) {}
+          self.accountManager.loginUser(anchor: NSApp.keyWindow!) {}
         }) { Text("Add account") }
         Spacer()
         Button(action: {
