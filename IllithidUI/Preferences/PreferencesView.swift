@@ -25,7 +25,7 @@ struct PreferencesView: View {
                 .foregroundColor(.green)
             }
             Text(account.name)
-          }.onTapGesture { self.accountManager.setCurrentAccount(account: account) }
+          }.onTapGesture { self.accountManager.currentAccount = account }
           .animation(.spring())
         }.onDelete(perform: { self.accountManager.removeAccounts(indexSet: $0) })
         .padding()

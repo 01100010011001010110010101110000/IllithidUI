@@ -58,13 +58,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     let rootView = RootView().environmentObject(imageDownloader)
 
-    // Ensure we load the application only after loading any saved accounts
-    reddit.accountManager.loadSavedAccounts {
-      self.window.contentView = NSHostingView(
-        rootView: rootView
-      )
-      self.window.makeKeyAndOrderFront(nil)
-    }
+    self.window.contentView = NSHostingView(
+      rootView: rootView
+    )
+    self.window.makeKeyAndOrderFront(nil)
+
   }
 
   func application(_ application: NSApplication, open urls: [URL]) {
