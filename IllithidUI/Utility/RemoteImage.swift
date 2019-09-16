@@ -48,7 +48,7 @@ struct RemoteImage_Previews: PreviewProvider {
 extension View {
   func bind<P: Publisher, Value>(_ publisher: P, to state: Binding<Value>)
     -> some View where P.Failure == Never, P.Output == Value {
-    return onReceive(publisher) { state.value = $0 }
+      return onReceive(publisher) { state.wrappedValue = $0 }
   }
 }
 
