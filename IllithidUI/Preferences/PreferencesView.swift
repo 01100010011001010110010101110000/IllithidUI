@@ -24,11 +24,17 @@ struct PreferencesView: View {
                 .frame(width: 24, height: 24)
                 .foregroundColor(.green)
             }
-            Text(account.name)
+            if self.accountManager.isAuthenticated(account) {
+              Text(account.name)
+            } else {
+              Text(account.name)
+                .foregroundColor(.red)
+            }
+
           }.onTapGesture { self.accountManager.setAccount(account) }
-          .animation(.spring())
+            .animation(.spring())
         }.onDelete(perform: { self.accountManager.removeAccounts(indexSet: $0) })
-        .padding()
+          .padding()
       }
       HStack {
         Button(action: {
