@@ -16,7 +16,7 @@ import Willow
 struct PostListView: View {
   @ObservedObject var postsData: PostData
   @State private var postListingParams: ListingParameters = .init()
-  let reddit: RedditClientBroker = .shared
+  let reddit: Illithid = .shared
 
   let subreddit: Subreddit
   let commentsManager: WindowManager = WindowManager<CommentsView>()

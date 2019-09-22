@@ -17,7 +17,7 @@ enum TabSelection {
 
 struct RootView: View {
   @State private var selection: TabSelection = .subreddits
-  let reddit: RedditClientBroker = .shared
+  let reddit: Illithid = .shared
 
   var body: some View {
     // TODO: Don't display the tab bar

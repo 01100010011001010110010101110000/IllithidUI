@@ -12,7 +12,7 @@ import AlamofireImage
 import Illithid
 
 struct PostRowView: View {
-  let reddit: RedditClientBroker = .shared
+  let reddit: Illithid = .shared
   var post: Post
   let previews: [ImagePreview.Image]
 
@@ -66,7 +66,7 @@ struct PostRowView: View {
 
 #if DEBUG
 struct PostRowView_Previews: PreviewProvider {
-  static let reddit: RedditClientBroker = .shared
+  static let reddit: Illithid = .shared
 
   static var previews: some View {
     let decoder = JSONDecoder()

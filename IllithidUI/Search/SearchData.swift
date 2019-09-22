@@ -20,10 +20,10 @@ final class SearchData: ObservableObject {
 
   private var results: Listing = .init()
 
-  let reddit: RedditClientBroker
+  let reddit: Illithid
   private var cancelToken: AnyCancellable? = nil
 
-  init(reddit: RedditClientBroker) {
+  init(reddit: Illithid) {
     self.reddit = reddit
 
     cancelToken = $query

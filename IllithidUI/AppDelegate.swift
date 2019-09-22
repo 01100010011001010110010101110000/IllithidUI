@@ -18,7 +18,7 @@ import Willow
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
   var window: NSWindow!
-  let reddit: RedditClientBroker = .shared
+  let reddit: Illithid = .shared
 
   #if DEBUG
   let logger: Logger = .debugLogger()

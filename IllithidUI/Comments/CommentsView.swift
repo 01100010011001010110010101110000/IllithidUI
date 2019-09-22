@@ -14,14 +14,14 @@ import Illithid
 struct CommentsView: IdentifiableView {
   @ObservedObject var commentData: CommentData
   @State private var listingParameters = ListingParameters(limit: 100)
-  @ObservedObject var reddit: RedditClientBroker
+  @ObservedObject var reddit: Illithid
 
   /// The post to which the comments belong
   let id: Fullname
 
   let post: Post
 
-  init(commentData: CommentData, post: Post, reddit: RedditClientBroker) {
+  init(commentData: CommentData, post: Post, reddit: Illithid) {
     self.commentData = commentData
     self.post = post
     self.id = post.id
