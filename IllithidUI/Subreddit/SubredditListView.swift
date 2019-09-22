@@ -19,7 +19,7 @@ struct SubredditsView: View {
 
   var body: some View {
     // NavigationView seems to be bugged
-    HSplitView {
+    NavigationView {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
           ZStack(alignment: .leading) {
@@ -38,7 +38,7 @@ struct SubredditsView: View {
             }
           }
         }
-      }
+      }.listStyle(SidebarListStyle())
       if self.subreddit != nil {
         PostListView(postsData: .init(), subreddit: self.subreddit!)
       }
