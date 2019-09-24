@@ -8,7 +8,6 @@
 
 import SwiftUI
 
-import AlamofireImage
 import Illithid
 
 struct PostRowView: View {
@@ -23,24 +22,23 @@ struct PostRowView: View {
 
   var body: some View {
     GroupBox {
-      VStack(alignment: .midStatsAndPreview) {
+      VStack {
         GeometryReader { geometry in
           Text(self.post.title)
             .font(.title)
             .multilineTextAlignment(.center)
-            .frame(maxWidth: geometry.size.width)
         }
 
         if !previews.isEmpty {
           RemoteImage(previews.middle.url)
             .frame(width: CGFloat(integerLiteral: previews.middle.width),
                    height: CGFloat(integerLiteral: previews.middle.height))
-            .alignmentGuide(.midStatsAndPreview) { d in d[HorizontalAlignment.center] }
+
             .cornerRadius(10)
         } else {
           // TODO: Replace with proper placeholder image
           Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
-            .alignmentGuide(.midStatsAndPreview) { d in d[HorizontalAlignment.center] }
+
         }
 
         HStack {
@@ -53,7 +51,7 @@ struct PostRowView: View {
               .foregroundColor(.purple)
             Text("\(post.numComments.postAbbreviation())")
               .foregroundColor(.blue)
-          }.alignmentGuide(.midStatsAndPreview) { d in d[HorizontalAlignment.center] }
+          }
           Spacer()
           Text(post.subredditNamePrefixed)
         }
