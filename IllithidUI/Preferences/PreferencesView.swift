@@ -26,6 +26,7 @@ struct PreferencesView: View {
             }
             if self.accountManager.isAuthenticated(account) {
               Text(account.name)
+                .onTapGesture { self.accountManager.setAccount(account) }
             } else {
               Text(account.name)
                 .foregroundColor(.red)
@@ -34,10 +35,11 @@ struct PreferencesView: View {
                 Text("Renew Credentials")
               }
             }
-          }.onTapGesture { self.accountManager.setAccount(account) }
-            .animation(.spring())
-        }.onDelete(perform: { self.accountManager.removeAccounts(indexSet: $0) })
-          .padding()
+          }
+          .animation(.spring())
+        }
+        .onDelete(perform: { self.accountManager.removeAccounts(indexSet: $0) })
+        .padding()
       }
       HStack {
         Button(action: {
