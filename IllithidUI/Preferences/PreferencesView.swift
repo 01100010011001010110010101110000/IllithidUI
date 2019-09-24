@@ -29,8 +29,11 @@ struct PreferencesView: View {
             } else {
               Text(account.name)
                 .foregroundColor(.red)
+              Spacer()
+              Button(action: { self.accountManager.reauthenticate(account: account, anchor: NSApp.keyWindow!) }) {
+                Text("Renew Credentials")
+              }
             }
-
           }.onTapGesture { self.accountManager.setAccount(account) }
             .animation(.spring())
         }.onDelete(perform: { self.accountManager.removeAccounts(indexSet: $0) })
