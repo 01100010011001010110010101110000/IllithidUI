@@ -28,7 +28,9 @@ struct SubredditRowView: View {
       }
       Text(subreddit.displayName)
         .font(.headline)
-        .padding(.leading)
+        .padding(.horizontal)
+        .lineLimit(1)
+      .allowsTightening(false)
     }
   }
 }
