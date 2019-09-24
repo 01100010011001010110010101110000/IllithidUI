@@ -22,26 +22,15 @@ struct SubredditsView: View {
     NavigationView {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
-          ZStack(alignment: .leading) {
+          NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit)) {
             SubredditRowView(subreddit: subreddit)
               .padding(.leading)
               .conditionalModifier(subreddit == self.subredditData.subreddits.last, OnAppearModifier {
                 self.loadSubreddits()
               })
-              .onTapGesture {
-                self.subreddit = subreddit
-              }
-            Spacer() // Correct alignment issue post beta 5
-            if subreddit == self.subreddit {
-              Rectangle()
-                .foregroundColor(Color.secondary.opacity(0.1))
-            }
           }
         }
       }.listStyle(SidebarListStyle())
-      if self.subreddit != nil {
-        PostListView(postsData: .init(), subreddit: self.subreddit!)
-      }
     }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
       .onAppear {
         self.loadSubreddits()

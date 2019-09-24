@@ -26,7 +26,7 @@ struct SubredditRowView: View {
           .scaledToFit()
           .frame(width: 96, height: 96)
       }
-      Text(verbatim: subreddit.displayName)
+      Text(subreddit.displayName)
         .font(.headline)
         .padding(.leading)
     }
