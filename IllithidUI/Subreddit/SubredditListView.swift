@@ -14,7 +14,6 @@ import Willow
 struct SubredditsView: View {
   @State private var listingParams: ListingParameters = .init()
   @ObservedObject var subredditData: SubredditData
-  @State private var subreddit: Subreddit? = nil
   let reddit: Illithid = .shared
 
   var body: some View {
@@ -31,10 +30,9 @@ struct SubredditsView: View {
           }
         }
       }.listStyle(SidebarListStyle())
-    }.frame(minWidth: 100, maxWidth: .infinity, minHeight: 50, maxHeight: .infinity)
-      .onAppear {
-        self.loadSubreddits()
-      }
+    }.onAppear {
+      self.loadSubreddits()
+    }
   }
 
   func loadSubreddits() {
