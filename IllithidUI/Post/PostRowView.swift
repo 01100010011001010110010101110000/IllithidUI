@@ -23,11 +23,9 @@ struct PostRowView: View {
   var body: some View {
     GroupBox {
       VStack {
-        GeometryReader { geometry in
-          Text(self.post.title)
-            .font(.title)
-            .multilineTextAlignment(.center)
-        }
+        Text(self.post.title)
+          .font(.title)
+          .multilineTextAlignment(.center)
 
         if !previews.isEmpty {
           RemoteImage(previews.middle.url)
@@ -38,7 +36,6 @@ struct PostRowView: View {
         } else {
           // TODO: Replace with proper placeholder image
           Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
-
         }
 
         HStack {

@@ -30,7 +30,7 @@ struct SubredditRowView: View {
         .font(.headline)
         .padding(.horizontal)
         .lineLimit(1)
-      .allowsTightening(false)
+        .allowsTightening(false)
     }
   }
 }
