@@ -34,6 +34,7 @@ struct CommentRowView: View {
 
         Text(comment.body)
           .font(.body)
+          .fixedSize(horizontal: false, vertical: true)
 
         Divider().opacity(0.0)
       }
