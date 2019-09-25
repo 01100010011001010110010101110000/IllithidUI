@@ -1,5 +1,4 @@
 {
-  "data" : {
     "all_awardings" : [
       {
         "award_type" : "global",
@@ -290,6 +289,4 @@
     "visited" : false,
     "whitelist_status" : "all_ads",
     "wls" : 6
-  },
-  "kind" : "t3"
 }

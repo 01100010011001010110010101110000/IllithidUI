@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+import AlamofireImage
 import Illithid
 
 struct PostRowView: View {
@@ -26,12 +27,12 @@ struct PostRowView: View {
         Text(self.post.title)
           .font(.title)
           .multilineTextAlignment(.center)
+          .fixedSize(horizontal: false, vertical: true)
 
         if !previews.isEmpty {
           RemoteImage(previews.middle.url)
             .frame(width: CGFloat(integerLiteral: previews.middle.width),
                    height: CGFloat(integerLiteral: previews.middle.height))
-
             .cornerRadius(10)
         } else {
           // TODO: Replace with proper placeholder image
@@ -61,15 +62,16 @@ struct PostRowView: View {
 
 #if DEBUG
 struct PostRowView_Previews: PreviewProvider {
-  static let reddit: Illithid = .shared
-
   static var previews: some View {
     let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
     decoder.dateDecodingStrategy = .secondsSince1970
+
     let singlePostURL = Bundle.main.url(forResource: "single_post", withExtension: "json")!
     let data = try! Data(contentsOf: singlePostURL)
     let post = try! decoder.decode(Post.self, from: data)
-    return PostRowView(post: post).environmentObject(self.reddit)
+    
+    return PostRowView(post: post).environmentObject(ImageDownloader())
   }
 }
 #endif
