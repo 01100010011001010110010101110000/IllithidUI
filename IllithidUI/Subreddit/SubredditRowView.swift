@@ -28,10 +28,11 @@ struct SubredditRowView: View {
       }
       Text(subreddit.displayName)
         .font(.headline)
-        .padding(.horizontal)
+        .padding(.leading)
         .lineLimit(1)
-        .allowsTightening(false)
+        .fixedSize()
     }
+    .tooltip(subreddit.publicDescription)
   }
 }
 
