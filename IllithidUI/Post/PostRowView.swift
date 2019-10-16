@@ -22,39 +22,41 @@ struct PostRowView: View {
   }
 
   var body: some View {
-    GroupBox {
-      VStack {
-        Text(self.post.title)
-          .font(.title)
-          .multilineTextAlignment(.center)
-          .fixedSize(horizontal: false, vertical: true)
+    ScrollView {
+      GroupBox {
+        VStack {
+          Text(self.post.title)
+            .font(.title)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
 
-        if !previews.isEmpty {
-          RemoteImage(previews.middle.url)
-            .frame(width: CGFloat(integerLiteral: previews.middle.width),
-                   height: CGFloat(integerLiteral: previews.middle.height))
-            .cornerRadius(10)
-        } else {
-          // TODO: Replace with proper placeholder image
-          Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
-        }
-
-        HStack {
-          Text(post.author)
-          Spacer()
-          HStack {
-            Text("\(post.ups.postAbbreviation())")
-              .foregroundColor(.orange)
-            Text("\(post.downs.postAbbreviation())")
-              .foregroundColor(.purple)
-            Text("\(post.numComments.postAbbreviation())")
-              .foregroundColor(.blue)
+          if !previews.isEmpty {
+            RemoteImage(previews.middle.url)
+              .frame(width: CGFloat(integerLiteral: previews.middle.width),
+                     height: CGFloat(integerLiteral: previews.middle.height))
+              .cornerRadius(10)
+          } else {
+            // TODO: Replace with proper placeholder image
+            Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
           }
-          Spacer()
-          Text(post.subredditNamePrefixed)
+
+          HStack {
+            Text(post.author)
+            Spacer()
+            HStack {
+              Text("\(post.ups.postAbbreviation())")
+                .foregroundColor(.orange)
+              Text("\(post.downs.postAbbreviation())")
+                .foregroundColor(.purple)
+              Text("\(post.numComments.postAbbreviation())")
+                .foregroundColor(.blue)
+            }
+            Spacer()
+            Text(post.subredditNamePrefixed)
+          }
+          .padding(10)
+          .font(.caption)
         }
-        .padding(10)
-        .font(.caption)
       }
     }
   }
@@ -70,7 +72,7 @@ struct PostRowView_Previews: PreviewProvider {
     let singlePostURL = Bundle.main.url(forResource: "single_post", withExtension: "json")!
     let data = try! Data(contentsOf: singlePostURL)
     let post = try! decoder.decode(Post.self, from: data)
-    
+
     return PostRowView(post: post).environmentObject(ImageDownloader())
   }
 }
