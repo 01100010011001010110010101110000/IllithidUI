@@ -36,7 +36,7 @@ struct CommentRowView: View {
           .font(.body)
           .fixedSize(horizontal: false, vertical: true)
 
-        Divider().opacity(0.0)
+        Divider().opacity(1.0)
       }
     }.padding(.leading, 20 * CGFloat(integerLiteral: depth))
   }

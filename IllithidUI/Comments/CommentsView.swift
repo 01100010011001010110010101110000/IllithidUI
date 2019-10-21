@@ -34,6 +34,7 @@ struct CommentsView: IdentifiableView {
         Text(post.id)
         Text(post.title)
       }
+      Divider().opacity(1.0)
       ForEach(self.commentData.allComments) { comment in
         CommentRowView(comment: comment)
       }
