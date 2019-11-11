@@ -44,7 +44,7 @@ public extension View {
 /// Thin wrapper around the `onAppear` view extension to make it usable as a `ViewModifier`
 /// - Parameter closure: The closure to execute when the view appears
 struct OnAppearModifier: ViewModifier {
-  let closure: (() -> Void)
+  let closure: () -> Void
 
   func body(content: Content) -> some View {
     content.onAppear { self.closure() }

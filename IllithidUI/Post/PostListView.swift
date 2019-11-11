@@ -44,22 +44,22 @@ struct PostListView: View {
   }
 
   func loadPosts() {
-    self.reddit.fetchPosts(for: self.subreddit, sortBy: .hot, params: self.postListingParams) { listing in
+    reddit.fetchPosts(for: subreddit, sortBy: .hot, params: postListingParams) { listing in
       if let anchor = listing.after { self.postListingParams.after = anchor }
       self.postsData.posts.append(contentsOf: listing.posts)
     }
   }
 
   func showComments(for post: Post) {
-    self.commentsManager.showWindow(for: CommentsView(commentData: .init(), post: post, reddit: reddit),
-                                    title: post.title)
+    commentsManager.showWindow(for: CommentsView(commentData: .init(), post: post, reddit: reddit),
+                               title: post.title)
   }
 }
 
 extension HorizontalAlignment {
   private enum MidStatsAndPreview: AlignmentID {
     static func defaultValue(in d: ViewDimensions) -> CGFloat {
-      return d[HorizontalAlignment.center]
+      d[HorizontalAlignment.center]
     }
   }
 

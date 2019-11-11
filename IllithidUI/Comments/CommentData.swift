@@ -16,7 +16,7 @@ class CommentData: ObservableObject {
 
   convenience init(from listing: Listing) {
     self.init()
-    self.comments = listing.comments
+    comments = listing.comments
   }
 
   /// Performs a pre-order depth first search on the comment tree

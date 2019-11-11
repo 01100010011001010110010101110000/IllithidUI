@@ -21,7 +21,7 @@ final class SearchData: ObservableObject {
   private var results: Listing = .init()
 
   let reddit: Illithid
-  private var cancelToken: AnyCancellable? = nil
+  private var cancelToken: AnyCancellable?
 
   init(reddit: Illithid) {
     self.reddit = reddit
@@ -32,18 +32,18 @@ final class SearchData: ObservableObject {
       .removeDuplicates()
       .sink { searchFor in
         reddit.search(for: searchFor) { result in
-          switch(result) {
-          case .success(let listings):
+          switch result {
+          case let .success(listings):
             // TODO: Optimize this
             for listing in listings {
               self.accounts.append(contentsOf: listing.accounts)
               self.subreddits.append(contentsOf: listing.subreddits)
               self.posts.append(contentsOf: listing.posts)
             }
-          case .failure(let error):
+          case let .failure(error):
             print("Failed to search: \(error)")
           }
         }
-    }
+      }
   }
 }

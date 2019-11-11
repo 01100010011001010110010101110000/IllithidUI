@@ -16,7 +16,7 @@ struct CommentRowView: View {
 
   init(comment: Comment) {
     self.comment = comment
-    self.depth = comment.depth ?? 0
+    depth = comment.depth ?? 0
   }
 
   var body: some View {

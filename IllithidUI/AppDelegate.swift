@@ -21,18 +21,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   let reddit: Illithid = .shared
 
   #if DEBUG
-  let logger: Logger = .debugLogger()
+    let logger: Logger = .debugLogger()
   #else
-  let logger: Logger = .releaseLogger(subsystem: "com.illithid.illithid")
+    let logger: Logger = .releaseLogger(subsystem: "com.illithid.illithid")
   #endif
 
   let imageDownloader = ImageDownloader(maximumActiveDownloads: 20)
 
   var preferencesWindowController: WindowController<PreferencesView>!
 
-  func applicationDidFinishLaunching(_ aNotification: Notification) {
+  func applicationDidFinishLaunching(_: Notification) {
     reddit.configure(configuration: IllithidConfiguration())
-    reddit.logger = self.logger
+    reddit.logger = logger
 
     // MARK: Preferences Window Controller
 
@@ -58,14 +58,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     let rootView = RootView().environmentObject(imageDownloader)
 
-    self.window.contentView = NSHostingView(
+    window.contentView = NSHostingView(
       rootView: rootView
     )
-    self.window.makeKeyAndOrderFront(nil)
-
+    window.makeKeyAndOrderFront(nil)
   }
 
-  func application(_ application: NSApplication, open urls: [URL]) {
+  func application(_: NSApplication, open urls: [URL]) {
     urls.forEach { url in
       if url.scheme == "illithid", url.host == "oauth2", url.path == "/callback" {
         OAuth2Swift.handle(url: url)
@@ -73,9 +72,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
   }
 
-  func applicationWillResignActive(_ notification: Notification) {}
+  func applicationWillResignActive(_: Notification) {}
 
-  func applicationWillTerminate(_ aNotification: Notification) {}
+  func applicationWillTerminate(_: Notification) {}
 
   // MARK: - Core Data stack
 
@@ -108,7 +107,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   // MARK: - Core Data Saving and Undo support
 
-  @IBAction func saveAction(_ sender: AnyObject?) {
+  @IBAction func saveAction(_: AnyObject?) {
     // Performs the save action for the application, which is to send the save: message to the application's managed object context. Any encountered errors are presented to the user.
     let context = persistentContainer.viewContext
 
@@ -126,9 +125,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
   }
 
-  func windowWillReturnUndoManager(window: NSWindow) -> UndoManager? {
+  func windowWillReturnUndoManager(window _: NSWindow) -> UndoManager? {
     // Returns the NSUndoManager for the application. In this case, the manager returned is that of the managed object context for the application.
-    return persistentContainer.viewContext.undoManager
+    persistentContainer.viewContext.undoManager
   }
 
   func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {

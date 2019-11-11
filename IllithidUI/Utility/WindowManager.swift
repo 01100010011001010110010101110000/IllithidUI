@@ -15,7 +15,7 @@ final class WindowManager<V: IdentifiableView> {
   let styleMask: NSWindow.StyleMask = [
     .resizable,
     .titled,
-    .closable
+    .closable,
   ]
   fileprivate var controllers: [V.ID: WindowController<V>] = [:]
 
@@ -31,11 +31,11 @@ final class WindowManager<V: IdentifiableView> {
   }
 
   fileprivate func windowController(for view: V) -> WindowController<V>? {
-    return controllers[view.id]
+    controllers[view.id]
   }
 
   fileprivate func makeWindowController(for view: V, title: String = "") -> WindowController<V> {
-    let controller = WindowController(rootView: view, styleMask: self.styleMask, title: title)
+    let controller = WindowController(rootView: view, styleMask: styleMask, title: title)
     controllers[view.id] = controller
     return controller
   }

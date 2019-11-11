@@ -24,7 +24,7 @@ struct CommentsView: IdentifiableView {
   init(commentData: CommentData, post: Post, reddit: Illithid) {
     self.commentData = commentData
     self.post = post
-    self.id = post.id
+    id = post.id
     self.reddit = reddit
   }
 
