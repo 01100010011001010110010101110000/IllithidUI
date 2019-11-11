@@ -51,7 +51,8 @@ struct PostListView: View {
   }
 
   func showComments(for post: Post) {
-    self.commentsManager.showWindow(for: CommentsView(commentData: .init(), post: post, reddit: reddit))
+    self.commentsManager.showWindow(for: CommentsView(commentData: .init(), post: post, reddit: reddit),
+                                    title: post.title)
   }
 }
 

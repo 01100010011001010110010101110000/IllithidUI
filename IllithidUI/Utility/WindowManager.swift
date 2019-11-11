@@ -19,12 +19,12 @@ final class WindowManager<V: IdentifiableView> {
   ]
   fileprivate var controllers: [V.ID: WindowController<V>] = [:]
 
-  func showWindow(for view: V) {
+  func showWindow(for view: V, title: String = "") {
     if let controller = windowController(for: view) {
       controller.window?.center()
       controller.window?.makeKeyAndOrderFront(nil)
     } else {
-      let controller = makeWindowController(for: view)
+      let controller = makeWindowController(for: view, title: title)
       controller.window?.center()
       controller.window?.makeKeyAndOrderFront(nil)
     }
@@ -34,8 +34,8 @@ final class WindowManager<V: IdentifiableView> {
     return controllers[view.id]
   }
 
-  fileprivate func makeWindowController(for view: V) -> WindowController<V> {
-    let controller = WindowController(rootView: view, styleMask: self.styleMask, title: "post.title")
+  fileprivate func makeWindowController(for view: V, title: String = "") -> WindowController<V> {
+    let controller = WindowController(rootView: view, styleMask: self.styleMask, title: title)
     controllers[view.id] = controller
     return controller
   }
