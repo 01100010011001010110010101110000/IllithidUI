@@ -31,8 +31,8 @@ struct CommentsView: IdentifiableView {
   var body: some View {
     List {
       VStack {
-        Text(post.id)
-        Text(post.title)
+        Text(post.title).font(.largeTitle)
+        post.content()
       }
       Divider().opacity(1.0)
       ForEach(self.commentData.allComments) { comment in
