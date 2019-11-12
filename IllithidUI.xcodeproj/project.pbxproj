@@ -127,13 +127,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6D0A4EFB237A5D8100626E44 /* SwiftUI */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = SwiftUI;
-			sourceTree = "<group>";
-		};
 		6D28395122D3EB8B00DD08F9 /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -234,14 +227,13 @@
 		6DDF418422AFFA110081A09D /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				6D0A4EFB237A5D8100626E44 /* SwiftUI */,
 				6DDE004122BA8006008E6AF0 /* WindowManager.swift */,
-				6DDF418522AFFA240081A09D /* RemoteImage.swift */,
-				6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */,
 				6DF5DDCF22B95C1900C41786 /* WindowController.swift */,
+				6DDF418522AFFA240081A09D /* RemoteImage.swift */,
 				6D544EE822FF40C100196C25 /* ConditionalModifier.swift */,
 				6D5B274E2350D33500C6F52A /* Tooltips.swift */,
 				6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */,
+				6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";

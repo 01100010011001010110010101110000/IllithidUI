@@ -18,7 +18,7 @@ import Willow
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
   var window: NSWindow!
-  let reddit: Illithid = .shared
+  let illithid: Illithid = .shared
 
   #if DEBUG
     let logger: Logger = .debugLogger()
@@ -31,12 +31,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   var preferencesWindowController: WindowController<PreferencesView>!
 
   func applicationDidFinishLaunching(_: Notification) {
-    reddit.configure(configuration: IllithidConfiguration())
-    reddit.logger = logger
+    illithid.configure(configuration: IllithidConfiguration())
+    illithid.logger = logger
 
     // MARK: Preferences Window Controller
 
-    preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: reddit.accountManager),
+    preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: illithid.accountManager),
                                                    styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
                                                    title: "Illithid Preferences")
     preferencesWindowController.window!.center()
