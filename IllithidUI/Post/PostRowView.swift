@@ -30,34 +30,62 @@ struct PostRowView: View {
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
 
-          if !previews.isEmpty {
-            RemoteImage(previews.middle.url)
-              .frame(width: CGFloat(integerLiteral: previews.middle.width),
-                     height: CGFloat(integerLiteral: previews.middle.height))
-              .cornerRadius(10)
-          } else {
-            // TODO: Replace with proper placeholder image
-            Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
-          }
+          post.content()
 
-          HStack {
-            Text(post.author)
-            Spacer()
-            HStack {
-              Text("\(post.ups.postAbbreviation())")
-                .foregroundColor(.orange)
-              Text("\(post.downs.postAbbreviation())")
-                .foregroundColor(.purple)
-              Text("\(post.numComments.postAbbreviation())")
-                .foregroundColor(.blue)
-            }
-            Spacer()
-            Text(post.subredditNamePrefixed)
-          }
-          .padding(10)
-          .font(.caption)
+          PostMetadataBar(post: post)
         }
       }
+    }
+  }
+}
+
+struct PostMetadataBar: View {
+  let post: Post
+
+  var body: some View {
+    HStack {
+      Text(post.author)
+      Spacer()
+      HStack {
+        Text("\(post.ups.postAbbreviation())")
+          .foregroundColor(.orange)
+        Text("\(post.downs.postAbbreviation())")
+          .foregroundColor(.purple)
+        Text("\(post.numComments.postAbbreviation())")
+          .foregroundColor(.blue)
+      }
+      Spacer()
+      Text(post.subredditNamePrefixed)
+    }
+    .padding(10)
+    .font(.caption)
+  }
+}
+
+public extension Post {
+  func content() -> some View {
+    switch postHint {
+    case .`self`:
+      return GroupBox {
+        Text(selftext)
+      }.eraseToAnyView()
+    case .link:
+      return EmptyView().eraseToAnyView()
+    case .image:
+      return RemoteImage(previews.middle.url)
+        .frame(width: CGFloat(integerLiteral: previews.middle.width),
+               height: CGFloat(integerLiteral: previews.middle.height))
+        .cornerRadius(10)
+        .eraseToAnyView()
+    case .hostedVideo:
+      return EmptyView().eraseToAnyView()
+    case .richVideo:
+      return EmptyView().eraseToAnyView()
+    default:
+      // If there is no hint, assume self post. Later we will attempt to guess the post type by other available attributes
+      return GroupBox {
+        Text(selftext)
+      }.eraseToAnyView()
     }
   }
 }
