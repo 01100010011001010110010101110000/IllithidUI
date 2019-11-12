@@ -9,11 +9,18 @@
 import Combine
 import SwiftUI
 
+import AlamofireImage
 import Illithid
 
 struct CommentsView: IdentifiableView {
   @ObservedObject var commentData: CommentData
   @State private var listingParameters = ListingParameters(limit: 100)
+
+  /// The shared `ImageDownloader` to use to fetch images linked in the comments
+  /// - Note: This is probably a poor way of doing this, but will suffice until I figure out a better way of bridging `EnvironmentObject` across windows.
+  ///        The `ImageDownloader` instantiated in the `AppDelegate` will live for the lifetime of the app.
+  let imageDownloader: ImageDownloader = (NSApp.delegate! as! AppDelegate).imageDownloader
+
   let illithid: Illithid = .shared
 
   /// The post to which the comments belong
@@ -29,7 +36,7 @@ struct CommentsView: IdentifiableView {
 
   var body: some View {
     List {
-      VStack {
+      VStack(alignment: .center) {
         Text(post.title).font(.largeTitle)
         post.content()
       }
@@ -41,6 +48,7 @@ struct CommentsView: IdentifiableView {
       .onAppear {
         self.loadComments()
       }
+      .environmentObject(imageDownloader)
   }
 
   func loadComments() {
