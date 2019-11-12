@@ -43,8 +43,9 @@ struct CommentsView: IdentifiableView {
       Divider().opacity(1.0)
       ForEach(self.commentData.allComments) { comment in
         CommentRowView(comment: comment)
+          .frame(alignment: .leading)
       }
-    }.frame(minWidth: 600, maxWidth: 1000, minHeight: 400, maxHeight: .infinity, alignment: .leading)
+    }.frame(minWidth: 600, minHeight: 400, maxHeight: .infinity)
       .onAppear {
         self.loadComments()
       }
