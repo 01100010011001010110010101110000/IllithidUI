@@ -10,14 +10,15 @@ import Combine
 import Foundation
 import SwiftUI
 
+import AlamofireImage
 import Illithid
 import Willow
 
 struct PostListView: View {
   @ObservedObject var postsData: PostData
   @State private var postListingParams: ListingParameters = .init()
-  let reddit: Illithid = .shared
 
+  let illithid: Illithid = .shared
   let subreddit: Subreddit
   let commentsManager: WindowManager = WindowManager<CommentsView>()
 
@@ -44,15 +45,14 @@ struct PostListView: View {
   }
 
   func loadPosts() {
-    reddit.fetchPosts(for: subreddit, sortBy: .hot, params: postListingParams) { listing in
+    illithid.fetchPosts(for: subreddit, sortBy: .hot, params: postListingParams) { listing in
       if let anchor = listing.after { self.postListingParams.after = anchor }
       self.postsData.posts.append(contentsOf: listing.posts)
     }
   }
 
   func showComments(for post: Post) {
-    commentsManager.showWindow(for: CommentsView(commentData: .init(), post: post, reddit: reddit),
-                               title: post.title)
+    commentsManager.showWindow(for: CommentsView(commentData: .init(), post: post), title: post.title)
   }
 }
 

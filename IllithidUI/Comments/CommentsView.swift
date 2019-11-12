@@ -14,18 +14,17 @@ import Illithid
 struct CommentsView: IdentifiableView {
   @ObservedObject var commentData: CommentData
   @State private var listingParameters = ListingParameters(limit: 100)
-  @ObservedObject var reddit: Illithid
+  let illithid: Illithid = .shared
 
   /// The post to which the comments belong
   let id: Fullname
 
   let post: Post
 
-  init(commentData: CommentData, post: Post, reddit: Illithid) {
+  init(commentData: CommentData, post: Post) {
     self.commentData = commentData
     self.post = post
     id = post.id
-    self.reddit = reddit
   }
 
   var body: some View {
@@ -45,7 +44,7 @@ struct CommentsView: IdentifiableView {
   }
 
   func loadComments() {
-    _ = reddit.comments(for: post, parameters: listingParameters)
+    _ = illithid.comments(for: post, parameters: listingParameters)
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { _ in
 
