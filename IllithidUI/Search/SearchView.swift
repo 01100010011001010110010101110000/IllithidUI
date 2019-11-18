@@ -17,20 +17,34 @@ struct SearchView: View {
     VStack {
       TextField("Search Reddit", text: $searchData.query).textFieldStyle(RoundedBorderTextFieldStyle())
         .padding()
-      List {
-        Section(header: Text("Subreddits").font(.headline)) {
-          ForEach(searchData.subreddits) { subreddit in
-            Text(subreddit.displayName)
+      NavigationView {
+        List {
+          if !searchData.subreddits.isEmpty {
+            Section(header: Text("Subreddits").font(.headline)) {
+              ForEach(searchData.subreddits) { subreddit in
+                NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit)) {
+                  Text(subreddit.displayName)
+                }
+              }
+            }
           }
-        }
-        Section(header: Text("Users").font(.headline)) {
-          ForEach(searchData.accounts) { account in
-            Text(account.name)
+
+          if !searchData.accounts.isEmpty {
+            Section(header: Text("Users").font(.headline)) {
+              ForEach(searchData.accounts) { account in
+                Text(account.name)
+              }
+            }
           }
-        }
-        Section(header: Text("Posts").font(.headline)) {
-          ForEach(searchData.posts) { post in
-            Text(post.title)
+
+          if !searchData.posts.isEmpty {
+            Section(header: Text("Posts").font(.headline)) {
+              ForEach(searchData.posts) { post in
+                NavigationLink(destination: CommentsView(commentData: .init(), post: post)) {
+                  Text(post.title)
+                }
+              }
+            }
           }
         }
       }
