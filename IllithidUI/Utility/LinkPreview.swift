@@ -30,8 +30,10 @@ struct LinkPreview: NSViewRepresentable {
         let metadata = LPLinkMetadata()
         metadata.title = "Failed to fetch metadtaa"
         view.metadata = metadata
-        view.setFrameSize(view.fittingSize)
-        self.reload.toggle()
+        DispatchQueue.main.async {
+          view.setFrameSize(view.fittingSize)
+          self.reload.toggle()
+        }
       }
     }
     return view
