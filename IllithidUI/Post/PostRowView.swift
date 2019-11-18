@@ -70,7 +70,7 @@ public extension Post {
         Text(selftext)
       }.eraseToAnyView()
     case .link:
-      return LinkPreview(link: self.contentUrl)
+      return LinkPreview(link: contentUrl)
         .fixedSize(horizontal: true, vertical: false)
         .eraseToAnyView()
     case .image:
@@ -85,10 +85,13 @@ public extension Post {
       return Text("Rich Video")
         .eraseToAnyView()
     default:
-      // If there is no hint, assume self post. Later we will attempt to guess the post type by other available attributes
-      return GroupBox {
-        Text(selftext)
-      }.eraseToAnyView()
+      if selftext.isEmpty {
+        return LinkPreview(link: contentUrl)
+          .eraseToAnyView()
+      } else {
+        return Text(selftext)
+          .eraseToAnyView()
+      }
     }
   }
 }
