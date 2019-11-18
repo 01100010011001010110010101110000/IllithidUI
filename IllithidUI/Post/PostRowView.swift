@@ -70,17 +70,19 @@ public extension Post {
         Text(selftext)
       }.eraseToAnyView()
     case .link:
-      return EmptyView().eraseToAnyView()
+      return LinkPreview(link: self.contentUrl)
+        .eraseToAnyView()
     case .image:
       return RemoteImage(previews.middle.url)
         .frame(width: CGFloat(integerLiteral: previews.middle.width),
                height: CGFloat(integerLiteral: previews.middle.height))
-        .cornerRadius(10)
         .eraseToAnyView()
     case .hostedVideo:
-      return EmptyView().eraseToAnyView()
+      return Text("Hosted Video")
+        .eraseToAnyView()
     case .richVideo:
-      return EmptyView().eraseToAnyView()
+      return Text("Rich Video")
+        .eraseToAnyView()
     default:
       // If there is no hint, assume self post. Later we will attempt to guess the post type by other available attributes
       return GroupBox {
