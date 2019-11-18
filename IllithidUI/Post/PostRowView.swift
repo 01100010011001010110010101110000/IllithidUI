@@ -71,6 +71,7 @@ public extension Post {
       }.eraseToAnyView()
     case .link:
       return LinkPreview(link: self.contentUrl)
+        .fixedSize(horizontal: true, vertical: false)
         .eraseToAnyView()
     case .image:
       return RemoteImage(previews.middle.url)
