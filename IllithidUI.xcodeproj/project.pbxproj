@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D0A1E45238399B9006CDB86 /* ToolbarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */; };
 		6D0A4EFA237A5CC700626E44 /* EraseToAnyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */; };
 		6D0A4EFD237A6D2F00626E44 /* LinkPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */; };
 		6D16DBCD22BD5D3F00FB891B /* CommentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D16DBCC22BD5D3F00FB891B /* CommentData.swift */; };
@@ -61,6 +62,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarDelegate.swift; sourceTree = "<group>"; };
 		6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EraseToAnyView.swift; sourceTree = "<group>"; };
 		6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreview.swift; sourceTree = "<group>"; };
 		6D16DBCC22BD5D3F00FB891B /* CommentData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentData.swift; sourceTree = "<group>"; };
@@ -129,6 +131,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6D0A1E4123839967006CDB86 /* Toolbar */ = {
+			isa = PBXGroup;
+			children = (
+				6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */,
+			);
+			path = Toolbar;
+			sourceTree = "<group>";
+		};
 		6D28395122D3EB8B00DD08F9 /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -165,6 +175,7 @@
 		6D2EA59222A7FEE20059B6EA /* IllithidUI */ = {
 			isa = PBXGroup;
 			children = (
+				6D0A1E4123839967006CDB86 /* Toolbar */,
 				6D28395122D3EB8B00DD08F9 /* Search */,
 				6DF5DDD122B98B2D00C41786 /* Comments */,
 				6DCD003922B0B8A2002FBE9A /* Preferences */,
@@ -412,6 +423,7 @@
 				6D2EA59922A7FEE20059B6EA /* IllithidUI.xcdatamodeld in Sources */,
 				6D0A4EFD237A6D2F00626E44 /* LinkPreview.swift in Sources */,
 				6D53D9E922A94E7F0018F19D /* SubredditsData.swift in Sources */,
+				6D0A1E45238399B9006CDB86 /* ToolbarDelegate.swift in Sources */,
 				6DDF418622AFFA240081A09D /* RemoteImage.swift in Sources */,
 				6D2EA59422A7FEE20059B6EA /* AppDelegate.swift in Sources */,
 				6D16DBCD22BD5D3F00FB891B /* CommentData.swift in Sources */,

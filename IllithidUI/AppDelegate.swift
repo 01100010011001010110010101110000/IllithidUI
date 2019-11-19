@@ -18,6 +18,8 @@ import Willow
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
   var window: NSWindow!
+  var toolbar: NSToolbar!
+  let toolbarDelegate: ToolbarDelegate = .init()
   let illithid: Illithid = .shared
 
   #if DEBUG
@@ -61,6 +63,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.contentView = NSHostingView(
       rootView: rootView
     )
+    // MARK: Toolbar setup
+    toolbar = NSToolbar(identifier: "illithid.toolbar")
+    toolbar.delegate = toolbarDelegate
+    window.toolbar = toolbar
+
     window.makeKeyAndOrderFront(nil)
   }
 
