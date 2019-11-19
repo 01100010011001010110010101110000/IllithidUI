@@ -23,13 +23,14 @@ struct SubredditsView: View {
         ForEach(self.subredditData.subreddits) { subreddit in
           NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit)) {
             SubredditRowView(subreddit: subreddit)
-              .padding(.leading)
               .conditionalModifier(subreddit == self.subredditData.subreddits.last, OnAppearModifier {
                 self.loadSubreddits()
               })
           }
         }
-      }.listStyle(SidebarListStyle())
+      }
+      .frame(minWidth: 300)
+      .listStyle(SidebarListStyle())
     }.onAppear {
       self.loadSubreddits()
     }
