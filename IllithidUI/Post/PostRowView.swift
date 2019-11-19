@@ -74,10 +74,18 @@ public extension Post {
         .fixedSize(horizontal: true, vertical: false)
         .eraseToAnyView()
     case .image:
-      return RemoteImage(previews.middle.url)
-        .frame(width: CGFloat(integerLiteral: previews.middle.width),
-               height: CGFloat(integerLiteral: previews.middle.height))
+      if !previews.isEmpty {
+        return RemoteImage(previews.middle!.url)
+        .frame(width: CGFloat(integerLiteral: previews.middle!.width),
+               height: CGFloat(integerLiteral: previews.middle!.height))
         .eraseToAnyView()
+      } else {
+        // TODO: Replace with proper placeholder image
+        return Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
+          .scaledToFit()
+          .frame(width: 96, height: 96)
+          .eraseToAnyView()
+      }
     case .hostedVideo:
       return Text("Hosted Video")
         .eraseToAnyView()
