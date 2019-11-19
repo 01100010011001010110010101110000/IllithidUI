@@ -34,6 +34,9 @@ final class SearchData: ObservableObject {
         reddit.search(for: searchFor) { result in
           switch result {
           case let .success(listings):
+            self.accounts.removeAll(keepingCapacity: true)
+            self.subreddits.removeAll(keepingCapacity: true)
+            self.posts.removeAll(keepingCapacity: true)
             // TODO: Optimize this
             for listing in listings {
               self.accounts.append(contentsOf: listing.accounts)
