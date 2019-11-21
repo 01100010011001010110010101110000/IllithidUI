@@ -25,7 +25,7 @@ struct RootView: View {
       SubredditsView(subredditData: .init())
         .tabItem { Text("Subreddits") }
         .tag(TabSelection.subreddits)
-      SearchView(searchData: .init(reddit: reddit))
+      SearchView(searchData: .init())
         .tabItem { Text("Search") }
         .tag(TabSelection.search)
     }

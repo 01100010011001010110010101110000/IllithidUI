@@ -20,18 +20,16 @@ final class SearchData: ObservableObject {
 
   private var results: Listing = .init()
 
-  let reddit: Illithid
+  let illithid: Illithid = .shared
   private var cancelToken: AnyCancellable?
 
-  init(reddit: Illithid) {
-    self.reddit = reddit
-
+  init() {
     cancelToken = $query
       .filter { $0.count > 3 }
       .debounce(for: 0.3, scheduler: RunLoop.current)
       .removeDuplicates()
       .sink { searchFor in
-        reddit.search(for: searchFor) { result in
+        self.illithid.search(for: searchFor) { result in
           switch result {
           case let .success(listings):
             self.accounts.removeAll(keepingCapacity: true)
