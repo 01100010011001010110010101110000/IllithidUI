@@ -22,6 +22,7 @@ struct Player: NSViewRepresentable {
     playerView.controlsStyle = .inline
     playerView.showsFullScreenToggleButton = true
     playerView.showsSharingServiceButton = false
+    playerView.updatesNowPlayingInfoCenter = false
 
     player.play()
 
