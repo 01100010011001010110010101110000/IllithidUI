@@ -25,9 +25,16 @@ public extension Post {
         Text(selftext)
       }.eraseToAnyView()
     case .link:
-      return LinkPreview(link: contentUrl)
-        .fixedSize(horizontal: true, vertical: false)
-        .eraseToAnyView()
+      if preview?.redditVideoPreview?.scrubberMediaUrl != nil {
+        return Player(url: preview!.redditVideoPreview!.hlsUrl)
+          .frame(width: CGFloat(preview!.redditVideoPreview!.width),
+                 height: CGFloat(preview!.redditVideoPreview!.height))
+          .eraseToAnyView()
+      } else {
+        return LinkPreview(link: contentUrl)
+          .fixedSize(horizontal: true, vertical: false)
+          .eraseToAnyView()
+      }
     case .image:
       if !previews.isEmpty {
         return RemoteImage(previews.middle!.url)
@@ -45,10 +52,21 @@ public extension Post {
       return Text("Hosted Video")
         .eraseToAnyView()
     case .richVideo:
-      return Text("Rich Video")
-        .eraseToAnyView()
+      if preview?.redditVideoPreview?.scrubberMediaUrl != nil {
+        return Player(url: preview!.redditVideoPreview!.hlsUrl)
+          .frame(width: CGFloat(preview!.redditVideoPreview!.width),
+                 height: CGFloat(preview!.redditVideoPreview!.height))
+          .eraseToAnyView()
+      } else {
+        return Text("Missing Vdeo Link").eraseToAnyView()
+      }
     default:
-      if selftext.isEmpty {
+      if preview?.redditVideoPreview?.scrubberMediaUrl != nil {
+        return Player(url: preview!.redditVideoPreview!.hlsUrl)
+          .frame(width: CGFloat(preview!.redditVideoPreview!.width),
+                 height: CGFloat(preview!.redditVideoPreview!.height))
+          .eraseToAnyView()
+      } else if selftext.isEmpty {
         return LinkPreview(link: contentUrl)
           .eraseToAnyView()
       } else {

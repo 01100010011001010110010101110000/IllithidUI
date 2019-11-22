@@ -14,7 +14,7 @@ import Illithid
 struct PostRowView: View {
   let reddit: Illithid = .shared
   var post: Post
-  let previews: [ImagePreview.Image]
+  let previews: [Preview.Source]
 
   init(post: Post) {
     self.post = post
