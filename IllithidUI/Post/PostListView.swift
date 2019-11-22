@@ -10,9 +10,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-import AlamofireImage
 import Illithid
-import Willow
 
 struct PostListView: View {
   @ObservedObject var postsData: PostData
@@ -54,16 +52,6 @@ struct PostListView: View {
   func showComments(for post: Post) {
     commentsManager.showWindow(for: CommentsView(commentData: .init(), post: post), title: post.title)
   }
-}
-
-extension HorizontalAlignment {
-  private enum MidStatsAndPreview: AlignmentID {
-    static func defaultValue(in d: ViewDimensions) -> CGFloat {
-      d[HorizontalAlignment.center]
-    }
-  }
-
-  static let midStatsAndPreview = HorizontalAlignment(MidStatsAndPreview.self)
 }
 
 // #if DEBUG

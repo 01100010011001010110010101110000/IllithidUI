@@ -17,7 +17,6 @@ struct SubredditsView: View {
   let reddit: Illithid = .shared
 
   var body: some View {
-    // NavigationView seems to be bugged
     NavigationView {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
@@ -30,8 +29,9 @@ struct SubredditsView: View {
         }
       }
       .frame(minWidth: 300)
-      .listStyle(SidebarListStyle())
-    }.onAppear {
+    }
+    .listStyle(SidebarListStyle())
+    .onAppear {
       self.loadSubreddits()
     }
   }
