@@ -62,48 +62,6 @@ struct PostMetadataBar: View {
   }
 }
 
-public extension Post {
-  func content() -> some View {
-    switch postHint {
-    case .`self`:
-      return GroupBox {
-        Text(selftext)
-      }.eraseToAnyView()
-    case .link:
-      return LinkPreview(link: contentUrl)
-        .fixedSize(horizontal: true, vertical: false)
-        .eraseToAnyView()
-    case .image:
-      if !previews.isEmpty {
-        return RemoteImage(previews.middle!.url)
-        .frame(width: CGFloat(integerLiteral: previews.middle!.width),
-               height: CGFloat(integerLiteral: previews.middle!.height))
-        .eraseToAnyView()
-      } else {
-        // TODO: Replace with proper placeholder image
-        return Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
-          .scaledToFit()
-          .frame(width: 96, height: 96)
-          .eraseToAnyView()
-      }
-    case .hostedVideo:
-      return Text("Hosted Video")
-        .eraseToAnyView()
-    case .richVideo:
-      return Text("Rich Video")
-        .eraseToAnyView()
-    default:
-      if selftext.isEmpty {
-        return LinkPreview(link: contentUrl)
-          .eraseToAnyView()
-      } else {
-        return Text(selftext)
-          .eraseToAnyView()
-      }
-    }
-  }
-}
-
 #if DEBUG
   struct PostRowView_Previews: PreviewProvider {
     static var previews: some View {
