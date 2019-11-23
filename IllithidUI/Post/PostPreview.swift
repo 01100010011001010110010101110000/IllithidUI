@@ -48,10 +48,7 @@ public extension Post {
           .frame(width: 96, height: 96)
           .eraseToAnyView()
       }
-    case .hostedVideo:
-      return Text("Hosted Video")
-        .eraseToAnyView()
-    case .richVideo:
+    case .richVideo, .hostedVideo:
       if preview?.redditVideoPreview?.scrubberMediaUrl != nil {
         return Player(url: preview!.redditVideoPreview!.hlsUrl)
           .frame(width: CGFloat(preview!.redditVideoPreview!.width),
