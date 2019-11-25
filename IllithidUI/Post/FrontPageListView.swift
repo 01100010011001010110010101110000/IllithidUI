@@ -1,29 +1,22 @@
 //
-//  PostListView.swift
+//  FrontPageListView.swift
 //  IllithidUI
 //
-//  Created by Tyler Gregory on 6/9/19.
+//  Created by Tyler Gregory on 11/24/19.
 //  Copyright © 2019 Tyler Gregory. All rights reserved.
 //
 
-import Combine
-import Foundation
 import SwiftUI
 
 import Illithid
 
-struct PostListView: View {
-  @ObservedObject var postsData: PostData
+struct FrontPageListView: View {
+  @ObservedObject var postsData: PostData = .init()
   @State private var postListingParams: ListingParameters = .init()
 
   let illithid: Illithid = .shared
-  let subreddit: Subreddit
+  let page: FrontPage
   let commentsManager: WindowManager = WindowManager<CommentsView>()
-
-  init(postsData: PostData = .init(), subreddit: Subreddit) {
-    self.subreddit = subreddit
-    self.postsData = postsData
-  }
 
   var body: some View {
     List {
@@ -43,7 +36,7 @@ struct PostListView: View {
   }
 
   func loadPosts() {
-    illithid.fetchPosts(for: subreddit, sortBy: .hot, params: postListingParams) { listing in
+    illithid.fetchPosts(for: page, sortBy: .hot, params: postListingParams) { listing in
       if let anchor = listing.after { self.postListingParams.after = anchor }
       self.postsData.posts.append(contentsOf: listing.posts)
     }
@@ -54,10 +47,8 @@ struct PostListView: View {
   }
 }
 
-// #if DEBUG
-// struct PostListView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    PostListView(postsData: .init(), subreddit: .init(), reddit: .init())
-//  }
+// struct FrontPageListView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        FrontPageListView()
+//    }
 // }
-// #endif

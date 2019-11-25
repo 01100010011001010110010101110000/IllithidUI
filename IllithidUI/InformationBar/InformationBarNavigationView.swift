@@ -17,7 +17,18 @@ struct InformationBarNavigationView: View {
     NavigationView {
       List {
         Section(header: Text("Front Page")) {
-          EmptyView()
+          NavigationLink(destination: FrontPageListView(page: .best)) {
+            Text("Home")
+          }
+          NavigationLink(destination: FrontPageListView(page: .popular)) {
+            Text("Popular")
+          }
+          NavigationLink(destination: FrontPageListView(page: .all)) {
+            Text("All")
+          }
+          NavigationLink(destination: FrontPageListView(page: .random)) {
+            Text("Random")
+          }
         }
 
         Section(header: Text("Favorites")) {
