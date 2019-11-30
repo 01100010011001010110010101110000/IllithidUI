@@ -30,7 +30,7 @@ struct PostRowView: View {
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
 
-          post.content()
+          PostPreview(post: post)
 
           PostMetadataBar(post: post)
         }
