@@ -12,7 +12,7 @@ import Illithid
 
 struct PostPreview: View {
   let post: Post
-  
+
   var body: some View {
     return VStack {
       if post.postHint == nil {
