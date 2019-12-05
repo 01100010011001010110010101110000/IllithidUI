@@ -61,7 +61,7 @@ struct InformationBarNavigationView: View {
   func loadSubscriptions() {
     // Load subscribed subreddits and multireddits
     Illithid.shared.accountManager.currentAccount!.subscribedSubreddits { subreddits in
-      self.informationBarData.subscribedSubreddits.append(contentsOf: subreddits.sorted(by: { $0.displayName < $1.displayName }))
+      self.informationBarData.subscribedSubreddits.append(contentsOf: subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending }))
     }
     Illithid.shared.accountManager.currentAccount!.multireddits { multireddits in
       self.informationBarData.multiReddits.append(contentsOf: multireddits)
