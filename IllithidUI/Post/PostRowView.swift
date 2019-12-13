@@ -22,20 +22,18 @@ struct PostRowView: View {
   }
 
   var body: some View {
-    ScrollView {
       GroupBox {
         VStack {
           Text(self.post.title)
             .font(.title)
             .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
+            .tooltip(post.title)
 
           PostPreview(post: post)
 
           PostMetadataBar(post: post)
         }
       }
-    }
   }
 }
 
