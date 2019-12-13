@@ -28,6 +28,7 @@ struct PostRowView: View {
             .font(.title)
             .multilineTextAlignment(.center)
             .tooltip(post.title)
+            .padding()
 
           PostPreview(post: post)
 

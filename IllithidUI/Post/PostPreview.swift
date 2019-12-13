@@ -16,7 +16,10 @@ struct PostPreview: View {
   var body: some View {
     return VStack {
       if post.postHint == .`self` {
-        Text(post.selftext)
+        ScrollView {
+          Text(post.selftext)
+          .padding()
+        }
       } else if post.postHint == .hostedVideo || post.postHint == .richVideo {
         if post.preview?.redditVideoPreview?.scrubberMediaUrl != nil {
           Player(url: post.preview!.redditVideoPreview!.hlsUrl)
@@ -39,7 +42,10 @@ struct PostPreview: View {
       } else {
         // There was no post hint or it did not match any prior case
         if !post.selftext.isEmpty {
-          Text(post.selftext)
+          ScrollView {
+            Text(post.selftext)
+              .padding()
+          }
         } else {
           LinkPreview(link: post.contentUrl)
             .fixedSize(horizontal: true, vertical: false)
