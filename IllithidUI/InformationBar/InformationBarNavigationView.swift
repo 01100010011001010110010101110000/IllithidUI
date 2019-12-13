@@ -37,7 +37,11 @@ struct InformationBarNavigationView: View {
 
         Section(header: Text("Multireddits")) {
           ForEach(informationBarData.multiReddits) { multireddit in
-            NavigationLink(destination: MultiredditListView(multireddit: multireddit)) {
+            NavigationLink(destination: HStack {
+              MultiredditListView(multireddit: multireddit)
+                .frame(minWidth: 400, idealWidth: 600, maxWidth: 800)
+              Spacer()
+            }) {
               Text(multireddit.name)
             }
           }
