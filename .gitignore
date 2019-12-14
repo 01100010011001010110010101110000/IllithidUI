@@ -204,6 +204,7 @@ iOSInjectionProject/
 Packages
 xcuserdata
 *.xcodeproj
+.swiftpm/*
 
 ### Vim ###
 # Swap
