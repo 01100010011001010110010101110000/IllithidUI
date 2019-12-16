@@ -50,7 +50,7 @@ struct PostListView: View {
   }
 
   func showComments(for post: Post) {
-    commentsManager.showWindow(for: CommentsView(commentData: .init(), post: post), title: post.title)
+    commentsManager.showWindow(for: CommentsView(post: post), title: post.title)
   }
 }
 

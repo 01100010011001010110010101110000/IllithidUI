@@ -40,7 +40,7 @@ struct SearchView: View {
           if !searchData.posts.isEmpty {
             Section(header: Text("Posts").font(.headline)) {
               ForEach(searchData.posts) { post in
-                NavigationLink(destination: CommentsView(commentData: .init(), post: post)) {
+                NavigationLink(destination: CommentsView(post: post)) {
                   Text(post.title)
                 }
               }

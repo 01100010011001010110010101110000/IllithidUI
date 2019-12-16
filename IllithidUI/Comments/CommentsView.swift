@@ -14,22 +14,19 @@ import Illithid
 
 struct CommentsView: IdentifiableView {
   @ObservedObject var commentData: CommentData
-  @State private var listingParameters = ListingParameters(limit: 100)
 
   /// The shared `ImageDownloader` to use to fetch images linked in the comments
   /// - Note: This is probably a poor way of doing this, but will suffice until I figure out a better way of bridging `EnvironmentObject` across windows.
   ///        The `ImageDownloader` instantiated in the `AppDelegate` will live for the lifetime of the app.
   let imageDownloader: ImageDownloader = (NSApp.delegate! as! AppDelegate).imageDownloader
 
-  let illithid: Illithid = .shared
-
   /// The post to which the comments belong
   let id: Fullname
 
   let post: Post
 
-  init(commentData: CommentData, post: Post) {
-    self.commentData = commentData
+  init(post: Post) {
+    self.commentData = CommentData(post: post)
     self.post = post
     id = post.id
   }
@@ -47,19 +44,9 @@ struct CommentsView: IdentifiableView {
       }
     }.frame(minWidth: 600, minHeight: 400, maxHeight: .infinity)
       .onAppear {
-        self.loadComments()
+        self.commentData.loadComments()
       }
       .environmentObject(imageDownloader)
-  }
-
-  func loadComments() {
-    _ = illithid.comments(for: post, parameters: listingParameters)
-      .receive(on: RunLoop.main)
-      .sink(receiveCompletion: { _ in
-
-      }) { listing in
-        self.commentData.comments.append(contentsOf: listing.comments)
-      }
   }
 }
 

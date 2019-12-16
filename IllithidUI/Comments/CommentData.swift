@@ -13,10 +13,15 @@ import Illithid
 
 class CommentData: ObservableObject {
   @Published var comments: [Comment] = []
+  @State private var listingParameters = ListingParameters(limit: 100)
 
-  convenience init(from listing: Listing) {
-    self.init()
-    comments = listing.comments
+  let post: Post
+
+  private let illithid: Illithid = .shared
+  private var cancelToken: AnyCancellable?
+
+  init(post: Post) {
+    self.post = post
   }
 
   /// Performs a pre-order depth first search on the comment tree
@@ -43,5 +48,15 @@ class CommentData: ObservableObject {
       preOrder(node: comment, into: &preOrderComments)
     }
     return preOrderComments
+  }
+
+  func loadComments() {
+    cancelToken = illithid.comments(for: post, parameters: listingParameters)
+      .receive(on: RunLoop.main)
+      .sink(receiveCompletion: { value in
+        print("Error fetching comments\(value)")
+      }) { listing in
+        self.comments.append(contentsOf: listing.comments)
+      }
   }
 }
