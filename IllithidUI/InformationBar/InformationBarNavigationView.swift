@@ -37,11 +37,7 @@ struct InformationBarNavigationView: View {
 
         Section(header: Text("Multireddits")) {
           ForEach(informationBarData.multiReddits) { multireddit in
-            NavigationLink(destination: HStack {
-              MultiredditListView(multireddit: multireddit)
-                .frame(minWidth: 400, idealWidth: 600, maxWidth: 800)
-              Spacer()
-            }) {
+            NavigationLink(destination: MultiredditListView(multireddit: multireddit)) {
               Text(multireddit.name)
             }
           }
@@ -56,19 +52,6 @@ struct InformationBarNavigationView: View {
         }
       }
       .listStyle(SidebarListStyle())
-      .onAppear {
-        self.loadSubscriptions()
-      }
-    }
-  }
-
-  func loadSubscriptions() {
-    // Load subscribed subreddits and multireddits
-    Illithid.shared.accountManager.currentAccount!.subscribedSubreddits { subreddits in
-      self.informationBarData.subscribedSubreddits.append(contentsOf: subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending }))
-    }
-    Illithid.shared.accountManager.currentAccount!.multireddits { multireddits in
-      self.informationBarData.multiReddits.append(contentsOf: multireddits)
     }
   }
 }
