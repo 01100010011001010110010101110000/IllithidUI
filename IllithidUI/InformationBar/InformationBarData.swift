@@ -17,6 +17,7 @@ final class InformationBarData: ObservableObject {
   private var defaults: UserDefaults = .standard
   private var decoder = JSONDecoder()
   private var encoder = JSONEncoder()
+  private var cancelToken: AnyCancellable?
 
   @Published var subscribedSubreddits: [Subreddit] {
     didSet {
@@ -58,6 +59,18 @@ final class InformationBarData: ObservableObject {
     if subscribedSubreddits.isEmpty {
       loadSubscriptions()
     }
+
+    // Loading the subscriptions takes a few seconds if the user has many, so use a high period
+    cancelToken = Timer.publish(every: 30.0, on: .main, in: .default)
+      .autoconnect()
+      .sink { [weak self] timestamp in
+        self?.loadMultireddits()
+        self?.loadSubscriptions()
+      }
+  }
+
+  deinit {
+    cancelToken?.cancel()
   }
 
   // TODO: Periodic subscription and multireddit refresh
