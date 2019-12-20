@@ -74,17 +74,22 @@ final class InformationBarData: ObservableObject {
     cancelToken?.cancel()
   }
 
-  // TODO: Periodic subscription and multireddit refresh
-
   func loadMultireddits() {
     Illithid.shared.accountManager.currentAccount!.multireddits { multireddits in
-      self.multiReddits = multireddits
+      let sortedMultireddits = multireddits.sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
+      if self.multiReddits != sortedMultireddits {
+        self.multiReddits = sortedMultireddits
+
+      }
     }
   }
 
   func loadSubscriptions() {
     Illithid.shared.accountManager.currentAccount!.subscribedSubreddits { subreddits in
-      self.subscribedSubreddits = subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending })
+      let sortedSubreddits = subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending })
+      if sortedSubreddits != self.subscribedSubreddits {
+        self.subscribedSubreddits = sortedSubreddits
+      }
     }
   }
 }
