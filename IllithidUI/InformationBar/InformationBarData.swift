@@ -61,9 +61,10 @@ final class InformationBarData: ObservableObject {
     }
 
     // Loading the subscriptions takes a few seconds if the user has many, so use a high period
-    cancelToken = Timer.publish(every: 30.0, on: .main, in: .default)
+    cancelToken = Timer.publish(every: 30.0, on: .main, in: .common)
       .autoconnect()
-      .sink { [weak self] timestamp in
+      .receive(on: DispatchQueue.global(qos: .background))
+      .sink { [weak self] _ in
         self?.loadMultireddits()
         self?.loadSubscriptions()
       }
