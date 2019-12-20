@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import os.log
 import SwiftUI
 
 import Illithid
@@ -18,6 +19,8 @@ final class InformationBarData: ObservableObject {
   private var decoder = JSONDecoder()
   private var encoder = JSONEncoder()
   private var cancelToken: AnyCancellable?
+
+  private let log = OSLog(subsystem: "com.illithid.IllithidUI", category: .pointsOfInterest)
 
   @Published var subscribedSubreddits: [Subreddit] {
     didSet {
@@ -75,21 +78,26 @@ final class InformationBarData: ObservableObject {
   }
 
   func loadMultireddits() {
+    let signpostId = OSSignpostID(log: self.log)
+    os_signpost(.begin, log: self.log, name: "Load Multireddits", signpostID: signpostId)
     Illithid.shared.accountManager.currentAccount!.multireddits { multireddits in
       let sortedMultireddits = multireddits.sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
       if self.multiReddits != sortedMultireddits {
         self.multiReddits = sortedMultireddits
-
       }
+      os_signpost(.end, log: self.log, name: "Load Multireddits", signpostID: signpostId)
     }
   }
 
   func loadSubscriptions() {
+    let signpostId = OSSignpostID(log: self.log)
+    os_signpost(.begin, log: self.log, name: "Load Subscribed Subreddits", signpostID: signpostId)
     Illithid.shared.accountManager.currentAccount!.subscribedSubreddits { subreddits in
       let sortedSubreddits = subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending })
       if sortedSubreddits != self.subscribedSubreddits {
         self.subscribedSubreddits = sortedSubreddits
       }
+      os_signpost(.end, log: self.log, name: "Load Subscribed Subreddits", signpostID: signpostId)
     }
   }
 }
