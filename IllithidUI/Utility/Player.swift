@@ -24,7 +24,8 @@ struct Player: NSViewRepresentable {
     playerView.showsSharingServiceButton = false
     playerView.updatesNowPlayingInfoCenter = false
 
-    player.play()
+    // TODO: Make autoplay a user preference
+//    player.play()
 
     return playerView
   }
