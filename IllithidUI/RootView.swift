@@ -10,25 +10,10 @@ import SwiftUI
 
 import Illithid
 
-enum TabSelection {
-  case information
-  case search
-}
-
 struct RootView: View {
-  @State private var selection: TabSelection = .information
-  let reddit: Illithid = .shared
 
   var body: some View {
-    // TODO: Don't display the tab bar
-    TabView(selection: $selection) {
-      InformationBarNavigationView(informationBarData: .init())
-        .tabItem { Text("Information") }
-        .tag(TabSelection.information)
-      SearchView(searchData: .init())
-        .tabItem { Text("Search") }
-        .tag(TabSelection.search)
-    }
+    InformationBarNavigationView()
   }
 }
 
@@ -38,4 +23,4 @@ struct RootView: View {
 //        RootView()
 //    }
 // }
-// #endif
+// #endif 
