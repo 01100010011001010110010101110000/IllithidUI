@@ -52,8 +52,8 @@ struct MultiredditListView: View {
   }
 }
 
-//struct MultiredditListView_Previews: PreviewProvider {
+// struct MultiredditListView_Previews: PreviewProvider {
 //  static var previews: some View {
 //    MultiredditListView()
 //  }
-//}
+// }
