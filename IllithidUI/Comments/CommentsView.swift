@@ -26,7 +26,7 @@ struct CommentsView: IdentifiableView {
   let post: Post
 
   init(post: Post) {
-    self.commentData = CommentData(post: post)
+    commentData = CommentData(post: post)
     self.post = post
     id = post.id
   }
@@ -42,11 +42,12 @@ struct CommentsView: IdentifiableView {
         CommentRowView(comment: comment)
           .frame(alignment: .leading)
       }
-    }.frame(minWidth: 600, minHeight: 400, maxHeight: .infinity)
-      .onAppear {
-        self.commentData.loadComments()
-      }
-      .environmentObject(imageDownloader)
+    }
+    .frame(minWidth: 600, minHeight: 400, maxHeight: .infinity)
+    .onAppear {
+      self.commentData.loadComments()
+    }
+    .environmentObject(imageDownloader)
   }
 }
 

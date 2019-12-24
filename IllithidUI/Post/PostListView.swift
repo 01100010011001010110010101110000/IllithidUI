@@ -51,6 +51,7 @@ struct PostListView<PostContainer: PostsProvider>: View {
           }
       }
     }
+    .frame(minWidth: 450, idealWidth: 600, maxWidth: 800)
     .onAppear {
       self.loadPosts()
     }
@@ -71,6 +72,7 @@ struct PostListView<PostContainer: PostsProvider>: View {
   func showComments(for post: Post) {
     commentsManager.showWindow(for: CommentsView(post: post), title: post.title)
   }
+
   func showDebugWindow(for post: Post) {
     debugManager.showWindow(for: PostDebugView(post: post), title: "\(post.title) - Debug View")
   }
