@@ -12,7 +12,7 @@ import Illithid
 
 final class SearchData: ObservableObject {
   @Published var query: String = ""
-  @Published var accounts: [RedditAccount] = []
+  @Published var accounts: [Account] = []
   @Published var subreddits: [Subreddit] = []
   @Published var posts: [Post] = []
 
