@@ -1,9 +1,7 @@
 //
-//  PostPreview.swift
-//  IllithidUI
-//
-//  Created by Tyler Gregory on 11/18/19.
-//  Copyright © 2019 Tyler Gregory. All rights reserved.
+// PostPreview.swift
+// Copyright (c) 2019 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
 //
 
 import SwiftUI
@@ -14,7 +12,7 @@ struct PostPreview: View {
   let post: Post
 
   var body: some View {
-    return VStack {
+    VStack {
       if post.postHint == .`self` {
         ScrollView {
           Text(post.selftext)

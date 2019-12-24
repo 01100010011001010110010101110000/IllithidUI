@@ -10,7 +10,7 @@
 --exponentgrouping disabled
 --fractiongrouping disabled
 --fragment false
---header ignore
+--header "\n{file}\nCopyright (c) {year} Flayware\nCreated by Tyler Gregory (@01100010011001010110010101110000) on {created}\n"
 --hexgrouping 4,8
 --hexliteralcase uppercase
 --ifdef indent

@@ -1,9 +1,7 @@
 //
-//  RootView.swift
-//  IllithidUI
-//
-//  Created by Tyler Gregory on 8/11/19.
-//  Copyright © 2019 Tyler Gregory. All rights reserved.
+// RootView.swift
+// Copyright (c) 2019 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
 //
 
 import SwiftUI
@@ -11,7 +9,6 @@ import SwiftUI
 import Illithid
 
 struct RootView: View {
-
   var body: some View {
     InformationBarNavigationView()
   }

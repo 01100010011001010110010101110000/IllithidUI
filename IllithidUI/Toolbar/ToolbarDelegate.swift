@@ -1,15 +1,13 @@
 //
-//  Toolbar.swift
-//  IllithidUI
-//
-//  Created by Tyler Gregory on 11/18/19.
-//  Copyright © 2019 Tyler Gregory. All rights reserved.
+// ToolbarDelegate.swift
+// Copyright (c) 2019 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
 //
 
 import Cocoa
 
 extension NSToolbarItem.Identifier {
-  static let illithidSearchBar = Self.init("illithid.reddit.search.bar")
+  static let illithidSearchBar = Self("illithid.reddit.search.bar")
 }
 
 class ToolbarDelegate: NSObject, NSToolbarDelegate {
@@ -29,14 +27,14 @@ class ToolbarDelegate: NSObject, NSToolbarDelegate {
   }
 
   func toolbarDefaultItemIdentifiers(_: NSToolbar) -> [NSToolbarItem.Identifier] {
-    return [.illithidSearchBar]
+    [.illithidSearchBar]
   }
 
   func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-    return toolbarDefaultItemIdentifiers(toolbar)
+    toolbarDefaultItemIdentifiers(toolbar)
   }
 
   func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-    return toolbarDefaultItemIdentifiers(toolbar)
+    toolbarDefaultItemIdentifiers(toolbar)
   }
 }

@@ -1,9 +1,7 @@
 //
-//  AppDelegate.swift
-//  IllithidUI
-//
-//  Created by Tyler Gregory on 6/5/19.
-//  Copyright © 2019 Tyler Gregory. All rights reserved.
+// AppDelegate.swift
+// Copyright (c) 2019 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
 //
 
 import Cocoa
@@ -63,7 +61,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.contentView = NSHostingView(
       rootView: rootView
     )
+
     // MARK: Toolbar setup
+
     toolbar = NSToolbar(identifier: "illithid.toolbar")
     toolbar.delegate = toolbarDelegate
     window.toolbar = toolbar

@@ -1,9 +1,7 @@
 //
-//  Player.swift
-//  IllithidUI
-//
-//  Created by Tyler Gregory on 11/22/19.
-//  Copyright © 2019 Tyler Gregory. All rights reserved.
+// Player.swift
+// Copyright (c) 2019 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
 //
 
 import AVKit
@@ -33,7 +31,7 @@ struct Player: NSViewRepresentable {
   func updateNSView(_: AVPlayerView, context _: NSViewRepresentableContext<Player>) {}
 
   final class AVLoopedPlayer: AVQueuePlayer {
-    var looper: AVPlayerLooper? = nil
+    var looper: AVPlayerLooper?
 
     override init() {
       super.init()
@@ -46,12 +44,13 @@ struct Player: NSViewRepresentable {
     override init(url URL: URL) {
       super.init(url: URL)
     }
+
     override init(playerItem item: AVPlayerItem?) {
       super.init(playerItem: item)
     }
 
     func loop() {
-      looper = .init(player: self, templateItem: self.currentItem!)
+      looper = .init(player: self, templateItem: currentItem!)
     }
   }
 }

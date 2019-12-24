@@ -1,9 +1,7 @@
 //
-//  InformationBarData.swift
-//  IllithidUI
-//
-//  Created by Tyler Gregory on 11/20/19.
-//  Copyright © 2019 Tyler Gregory. All rights reserved.
+// InformationBarData.swift
+// Copyright (c) 2019 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
 //
 
 import Combine
@@ -80,8 +78,8 @@ final class InformationBarData: ObservableObject {
   // TODO: Refactor these to use OrderedSet or a new SortedSet for more efficient insert
 
   func loadMultireddits() {
-    let signpostId = OSSignpostID(log: self.log)
-    os_signpost(.begin, log: self.log, name: "Load Multireddits", signpostID: signpostId)
+    let signpostId = OSSignpostID(log: log)
+    os_signpost(.begin, log: log, name: "Load Multireddits", signpostID: signpostId)
     Illithid.shared.accountManager.currentAccount!.multireddits { multireddits in
       let sortedMultireddits = multireddits.sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
       if self.multiReddits != sortedMultireddits {
@@ -92,8 +90,8 @@ final class InformationBarData: ObservableObject {
   }
 
   func loadSubscriptions() {
-    let signpostId = OSSignpostID(log: self.log)
-    os_signpost(.begin, log: self.log, name: "Load Subscribed Subreddits", signpostID: signpostId)
+    let signpostId = OSSignpostID(log: log)
+    os_signpost(.begin, log: log, name: "Load Subscribed Subreddits", signpostID: signpostId)
     Illithid.shared.accountManager.currentAccount!.subscribedSubreddits { subreddits in
       let sortedSubreddits = subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending })
       if sortedSubreddits != self.subscribedSubreddits {
