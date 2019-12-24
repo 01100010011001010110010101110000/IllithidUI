@@ -22,7 +22,7 @@ struct SearchView: View {
           if !searchData.subreddits.isEmpty {
             Section(header: Text("Subreddits").font(.headline)) {
               ForEach(searchData.subreddits) { subreddit in
-                NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit)) {
+                NavigationLink(destination: PostListView(postContainer: subreddit)) {
                   Text(subreddit.displayName)
                 }
               }

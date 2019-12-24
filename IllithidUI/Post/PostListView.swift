@@ -12,16 +12,17 @@ import SwiftUI
 
 import Illithid
 
-struct PostListView: View {
+struct PostListView<PostContainer: PostsProvider>: View {
   @ObservedObject var postsData: PostData
   @State private var postListingParams: ListingParameters = .init()
 
   let illithid: Illithid = .shared
-  let subreddit: Subreddit
+  let postContainer: PostContainer
   let commentsManager: WindowManager = WindowManager<CommentsView>()
+  let debugManager: WindowManager = WindowManager<PostDebugView>()
 
-  init(postsData: PostData = .init(), subreddit: Subreddit) {
-    self.subreddit = subreddit
+  init(postsData: PostData = .init(), postContainer: PostContainer) {
+    self.postContainer = postContainer
     self.postsData = postsData
   }
 
@@ -35,6 +36,19 @@ struct PostListView: View {
           .onTapGesture(count: 2) {
             self.showComments(for: post)
           }
+          .contextMenu {
+            Button(action: {
+              self.showComments(for: post)
+            }) {
+              Text("Show comments")
+            }
+            Divider()
+            Button(action: {
+              self.showDebugWindow(for: post)
+            }) {
+              Text("Show debug panel")
+            }
+          }
       }
     }
     .onAppear {
@@ -43,14 +57,22 @@ struct PostListView: View {
   }
 
   func loadPosts() {
-    illithid.fetchPosts(for: subreddit, sortBy: .hot, params: postListingParams) { listing in
-      if let anchor = listing.after { self.postListingParams.after = anchor }
-      self.postsData.posts.append(contentsOf: listing.posts)
+    postContainer.posts(sortBy: .hot, parameters: postListingParams) { result in
+      switch result {
+      case let .success(listing):
+        if let anchor = listing.after { self.postListingParams.after = anchor }
+        self.postsData.posts.append(contentsOf: listing.posts)
+      case let .failure(error):
+        return
+      }
     }
   }
 
   func showComments(for post: Post) {
     commentsManager.showWindow(for: CommentsView(post: post), title: post.title)
+  }
+  func showDebugWindow(for post: Post) {
+    debugManager.showWindow(for: PostDebugView(post: post), title: "\(post.title) - Debug View")
   }
 }
 

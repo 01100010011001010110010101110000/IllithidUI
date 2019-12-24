@@ -17,16 +17,16 @@ struct InformationBarNavigationView: View {
     NavigationView {
       List {
         Section(header: Text("Front Page")) {
-          NavigationLink(destination: FrontPageListView(page: .best)) {
+          NavigationLink(destination: PostListView(postContainer: FrontPage.best)) {
             Text("Home")
           }
-          NavigationLink(destination: FrontPageListView(page: .popular)) {
+          NavigationLink(destination: PostListView(postContainer: FrontPage.popular)) {
             Text("Popular")
           }
-          NavigationLink(destination: FrontPageListView(page: .all)) {
+          NavigationLink(destination: PostListView(postContainer: FrontPage.all)) {
             Text("All")
           }
-          NavigationLink(destination: FrontPageListView(page: .random)) {
+          NavigationLink(destination: PostListView(postContainer: FrontPage.random)) {
             Text("Random")
           }
         }
@@ -37,7 +37,7 @@ struct InformationBarNavigationView: View {
 
         Section(header: Text("Multireddits")) {
           ForEach(informationBarData.multiReddits) { multireddit in
-            NavigationLink(destination: MultiredditListView(multireddit: multireddit)) {
+            NavigationLink(destination: PostListView(postContainer: multireddit)) {
               Text(multireddit.name)
             }
           }
@@ -45,7 +45,7 @@ struct InformationBarNavigationView: View {
 
         Section(header: Text("Subscribed")) {
           ForEach(informationBarData.subscribedSubreddits) { subreddit in
-            NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit)) {
+            NavigationLink(destination: PostListView(postContainer: subreddit)) {
               Text(subreddit.displayName)
             }
           }

@@ -20,7 +20,7 @@ struct SubredditsView: View {
     NavigationView {
       List {
         ForEach(self.subredditData.subreddits) { subreddit in
-          NavigationLink(destination: PostListView(postsData: .init(), subreddit: subreddit)) {
+          NavigationLink(destination: PostListView(postContainer: subreddit)) {
             SubredditRowView(subreddit: subreddit)
               .conditionalModifier(subreddit == self.subredditData.subreddits.last, OnAppearModifier {
                 self.loadSubreddits()
