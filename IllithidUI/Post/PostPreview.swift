@@ -18,14 +18,14 @@ struct PostPreview: View {
       if post.postHint == .`self` {
         ScrollView {
           Text(post.selftext)
-          .padding()
+            .padding()
         }
-      } else if post.postHint == .hostedVideo || post.postHint == .richVideo {
-        if post.preview?.redditVideoPreview?.scrubberMediaUrl != nil {
-          Player(url: post.preview!.redditVideoPreview!.hlsUrl)
-            .frame(width: CGFloat(post.preview!.redditVideoPreview!.width),
-                   height: CGFloat(post.preview!.redditVideoPreview!.height))
-        }
+      } else if post.preview?.redditVideoPreview?.scrubberMediaUrl != nil {
+        // This also covers post.postHint == .hostedVideo or .richVideo
+        Player(url: post.preview!.redditVideoPreview!.hlsUrl)
+          .frame(width: CGFloat(post.preview!.redditVideoPreview!.width),
+                 height: CGFloat(post.preview!.redditVideoPreview!.height))
+
       } else if post.postHint == .image {
         if !post.previews.isEmpty {
           RemoteImage(post.previews.middle!.url)
