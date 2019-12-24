@@ -12,12 +12,23 @@ struct AccountView: View {
   let account: Account
 
   var body: some View {
-    Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    NavigationView {
+      List {
+        NavigationLink("Overview", destination: EmptyView())
+        NavigationLink("Posts", destination: EmptyView())
+        NavigationLink("Comments", destination: EmptyView())
+        NavigationLink("Saved Items", destination: EmptyView())
+        NavigationLink("Hidden", destination: EmptyView())
+        NavigationLink("Upvoted", destination: EmptyView())
+        NavigationLink("Downvoted", destination: EmptyView())
+      }
+    .listStyle(SidebarListStyle())
+    }
   }
 }
 
-//struct AccountView_Previews: PreviewProvider {
+// struct AccountView_Previews: PreviewProvider {
 //  static var previews: some View {
 //    AccountView()
 //  }
-//}
+// }
