@@ -13,10 +13,12 @@ struct PostPreview: View {
 
   var body: some View {
     VStack {
-      if post.postHint == .`self` {
-        ScrollView {
-          Text(post.selftext)
-            .padding()
+      if post.postHint == .`self` || post.isSelf {
+        if !post.selftext.isEmpty {
+          ScrollView {
+            Text(post.selftext)
+              .padding()
+          }
         }
       } else if post.preview?.redditVideoPreview?.scrubberMediaUrl != nil {
         // This also covers post.postHint == .hostedVideo or .richVideo
