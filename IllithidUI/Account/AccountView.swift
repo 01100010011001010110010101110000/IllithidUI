@@ -9,11 +9,12 @@ import SwiftUI
 import Illithid
 
 struct AccountView: View {
-  let account: Account
+  @ObservedObject var accountData: AccountData
 
   var body: some View {
     NavigationView {
       List {
+        Text(self.accountData.account?.name ?? "No author")
         NavigationLink("Overview", destination: EmptyView())
         NavigationLink("Posts", destination: EmptyView())
         NavigationLink("Comments", destination: EmptyView())

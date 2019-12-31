@@ -1,7 +1,7 @@
 //
-// PostRowView.swift
+// {file}
 // Copyright (c) 2019 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
 //
 
 import SwiftUI
@@ -37,11 +37,17 @@ struct PostRowView: View {
 }
 
 struct PostMetadataBar: View {
+  @State var authorPopover = false
   let post: Post
 
   var body: some View {
     HStack {
-      Text(post.author)
+      Button(post.author) {
+        self.authorPopover.toggle()
+      }
+      .popover(isPresented: $authorPopover) {
+        AccountView(accountData: .init(name: self.post.author))
+      }
       Spacer()
       HStack {
         Text("\(post.ups.postAbbreviation())")
