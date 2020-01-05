@@ -1,6 +1,6 @@
 //
 // {file}
-// Copyright (c) 2019 Flayware
+// Copyright (c) 2020 Flayware
 // Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
 //
 
@@ -8,22 +8,42 @@ import SwiftUI
 
 import Illithid
 
+struct AccountOverview: View {
+  @ObservedObject var accountData: AccountData
+
+  var body: some View {
+    Text(accountData.account?.name ?? "No Account")
+  }
+}
+
+struct AccountCommentsView: View {
+  @ObservedObject var accountData: AccountData
+
+  var body: some View {
+    List {
+      ForEach(accountData.comments) { comment in
+        CommentRowView(comment: comment)
+      }
+    }
+    .frame(minWidth: 250, maxWidth: 600, minHeight: 250, maxHeight: 800)
+  }
+}
+
 struct AccountView: View {
   @ObservedObject var accountData: AccountData
 
   var body: some View {
     NavigationView {
       List {
-        Text(self.accountData.account?.name ?? "No author")
-        NavigationLink("Overview", destination: EmptyView())
+        NavigationLink("Overview", destination: AccountOverview(accountData: accountData))
         NavigationLink("Posts", destination: EmptyView())
-        NavigationLink("Comments", destination: EmptyView())
+        NavigationLink("Comments", destination: AccountCommentsView(accountData: accountData))
         NavigationLink("Saved Items", destination: EmptyView())
         NavigationLink("Hidden", destination: EmptyView())
         NavigationLink("Upvoted", destination: EmptyView())
         NavigationLink("Downvoted", destination: EmptyView())
       }
-    .listStyle(SidebarListStyle())
+      .listStyle(SidebarListStyle())
     }
   }
 }
