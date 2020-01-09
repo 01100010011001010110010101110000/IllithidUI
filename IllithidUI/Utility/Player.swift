@@ -21,6 +21,7 @@ struct Player: NSViewRepresentable {
     playerView.showsFullScreenToggleButton = true
     playerView.showsSharingServiceButton = false
     playerView.updatesNowPlayingInfoCenter = false
+    player.isMuted = true
 
     // TODO: Make autoplay a user preference
 //    player.play()
