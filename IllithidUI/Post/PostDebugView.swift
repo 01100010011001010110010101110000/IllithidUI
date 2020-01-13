@@ -1,7 +1,7 @@
 //
-// PostDebugView.swift
-// Copyright (c) 2019 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// {file}
+// Copyright (c) 2020 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
 //
 
 import SwiftUI
@@ -29,9 +29,47 @@ struct PostDebugView: IdentifiableView {
   }
 
   var body: some View {
-    ScrollView {
-      Text(self.prettyJson ?? "Encoding failure")
+    VStack {
+      Text("Metadata")
+        .font(.title)
+      VStack {
+        Text("Preview Type: \(post.previewType())")
+      }
+      Divider()
+      ScrollView {
+        Text(self.prettyJson ?? "Encoding failure")
+      }
     }
+    .frame(alignment: .leading)
+  }
+}
+
+private extension Post {
+  func previewType() -> String {
+    if postHint == .`self` || isSelf {
+      if !selftext.isEmpty {
+        return "selftext"
+      }
+    } else if preview?.redditVideoPreview?.scrubberMediaUrl != nil {
+      // This also covers postHint == .hostedVideo or .richVideo
+      return "player mp4 video"
+    } else if postHint == .image {
+      if !previews.isEmpty {
+        return "remote image"
+      } else {
+        return "default image"
+      }
+    } else if postHint == .link {
+      return "link preview"
+    } else {
+      // There was no post hint or it did not match any prior case
+      if !selftext.isEmpty {
+        return "selftext fallthrough"
+      } else {
+        return "link preview fallthrough"
+      }
+    }
+    return "unhandled"
   }
 }
 
