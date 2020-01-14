@@ -33,7 +33,7 @@ struct CommentsView: IdentifiableView {
     List {
       VStack(alignment: .center) {
         Text(post.title).font(.largeTitle)
-        PostPreview(post: post)
+        PostFullview(post: post)
       }
       Divider().opacity(1.0)
       ForEach(self.commentData.allComments) { comment in

@@ -1,7 +1,7 @@
 //
-// PostPreview.swift
-// Copyright (c) 2019 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// {file}
+// Copyright (c) 2020 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
 //
 
 import SwiftUI
@@ -22,10 +22,18 @@ struct PostPreview: View {
         }
       } else if post.preview?.redditVideoPreview?.scrubberMediaUrl != nil {
         // This also covers post.postHint == .hostedVideo or .richVideo
-        Player(url: post.preview!.redditVideoPreview!.hlsUrl)
-          .frame(width: CGFloat(post.preview!.redditVideoPreview!.width),
-                 height: CGFloat(post.preview!.redditVideoPreview!.height))
-
+        ZStack(alignment: .bottomTrailing) {
+          Player(url: post.preview!.redditVideoPreview!.hlsUrl)
+            .frame(width: CGFloat(post.preview!.redditVideoPreview!.width),
+                   height: CGFloat(post.preview!.redditVideoPreview!.height))
+          Text("gif")
+            .foregroundColor(.black)
+            .padding(2)
+            .background(
+              RoundedRectangle(cornerRadius: 4)
+                .foregroundColor(.white)
+            )
+        }
       } else if post.postHint == .image {
         if !post.previews.isEmpty {
           RemoteImage(post.previews.middle!.url)
