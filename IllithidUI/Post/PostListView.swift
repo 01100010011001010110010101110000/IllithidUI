@@ -38,13 +38,37 @@ struct PostListView<PostContainer: PostsProvider>: View {
             Button(action: {
               self.showComments(for: post)
             }) {
-              Text("Show comments")
+              Text("Show comments…")
+            }
+            Divider()
+            Button(action: {
+              NSWorkspace.shared.open(post.postUrl)
+            }) {
+              Text("Open post in browser…")
+            }
+            Button(action: {
+              NSWorkspace.shared.open(post.contentUrl)
+            }) {
+              Text("Open content in browser…")
+            }
+            Divider()
+            Button(action: {
+              NSPasteboard.general.clearContents()
+              NSPasteboard.general.setString(post.postUrl.absoluteString, forType: .string)
+            }) {
+              Text("Copy post URL")
+            }
+            Button(action: {
+              NSPasteboard.general.clearContents()
+              NSPasteboard.general.setString(post.contentUrl.absoluteString, forType: .string)
+            }) {
+              Text("Copy content URL")
             }
             Divider()
             Button(action: {
               self.showDebugWindow(for: post)
             }) {
-              Text("Show debug panel")
+              Text("Show debug panel…")
             }
           }
       }
