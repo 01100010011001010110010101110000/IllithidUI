@@ -86,7 +86,7 @@ struct PostListView<PostContainer: PostsProvider>: View {
         if let anchor = listing.after { self.postListingParams.after = anchor }
         self.postsData.posts.append(contentsOf: listing.posts)
       case let .failure(error):
-        return
+        Illithid.shared.logger.errorMessage("Failed to load posts: \(error)")
       }
     }
   }
