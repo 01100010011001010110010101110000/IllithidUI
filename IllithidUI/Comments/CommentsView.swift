@@ -31,11 +31,13 @@ struct CommentsView: IdentifiableView {
 
   var body: some View {
     List {
-      VStack(alignment: .center) {
-        Text(post.title).font(.largeTitle)
+      VStack(alignment: .leading) {
         PostFullview(post: post)
+        Text(post.title)
+          .font(.largeTitle)
       }
-      Divider().opacity(1.0)
+      Divider()
+        .opacity(1.0)
       ForEach(self.commentData.allComments) { comment in
         CommentRowView(comment: comment)
           .frame(alignment: .leading)
