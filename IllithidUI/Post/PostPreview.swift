@@ -11,6 +11,8 @@ import Illithid
 struct PostPreview: View {
   let post: Post
 
+  @State var player: Player? = nil
+
   var body: some View {
     VStack {
       if post.postHint == .`self` || post.isSelf {
@@ -22,17 +24,26 @@ struct PostPreview: View {
         }
       } else if post.preview?.redditVideoPreview?.scrubberMediaUrl != nil {
         // This also covers post.postHint == .hostedVideo or .richVideo
-        ZStack(alignment: .bottomTrailing) {
-          Player(url: post.preview!.redditVideoPreview!.hlsUrl)
+        if self.player != nil {
+          ZStack(alignment: .bottomTrailing) {
+            self.player!
+              .frame(width: CGFloat(post.preview!.redditVideoPreview!.width),
+                     height: CGFloat(post.preview!.redditVideoPreview!.height))
+            Text("gif")
+              .foregroundColor(.black)
+              .padding(2)
+              .background(
+                RoundedRectangle(cornerRadius: 4)
+                  .foregroundColor(.white)
+              )
+          }
+        } else {
+          EmptyView()
             .frame(width: CGFloat(post.preview!.redditVideoPreview!.width),
                    height: CGFloat(post.preview!.redditVideoPreview!.height))
-          Text("gif")
-            .foregroundColor(.black)
-            .padding(2)
-            .background(
-              RoundedRectangle(cornerRadius: 4)
-                .foregroundColor(.white)
-            )
+            .onAppear {
+              self.player = Player(url: self.post.preview!.redditVideoPreview!.hlsUrl)
+          }
         }
       } else if post.postHint == .image {
         if !post.previews.isEmpty {
