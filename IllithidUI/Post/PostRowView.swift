@@ -16,7 +16,7 @@ struct PostRowView: View {
 
   init(post: Post) {
     self.post = post
-    previews = post.previews
+    previews = post.imagePreviews
   }
 
   var body: some View {

@@ -33,7 +33,7 @@ struct PostDebugView: IdentifiableView {
       Text("Metadata")
         .font(.title)
       VStack {
-        Text("Preview Type: \(post.previewType())")
+        Text("Preview Type: \(post.previewGuess.rawValue)")
       }
       Divider()
       ScrollView {
@@ -41,35 +41,6 @@ struct PostDebugView: IdentifiableView {
       }
     }
     .frame(alignment: .leading)
-  }
-}
-
-private extension Post {
-  func previewType() -> String {
-    if postHint == .`self` || isSelf {
-      if !selftext.isEmpty {
-        return "selftext"
-      }
-    } else if preview?.redditVideoPreview?.scrubberMediaUrl != nil {
-      // This also covers postHint == .hostedVideo or .richVideo
-      return "player mp4 video"
-    } else if postHint == .image {
-      if !previews.isEmpty {
-        return "remote image"
-      } else {
-        return "default image"
-      }
-    } else if postHint == .link {
-      return "link preview"
-    } else {
-      // There was no post hint or it did not match any prior case
-      if !selftext.isEmpty {
-        return "selftext fallthrough"
-      } else {
-        return "link preview fallthrough"
-      }
-    }
-    return "unhandled"
   }
 }
 
