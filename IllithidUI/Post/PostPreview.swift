@@ -11,8 +11,6 @@ import Illithid
 struct PostPreview: View {
   let post: Post
 
-  @State var player: Player? = nil
-
   var body: some View {
     VStack {
       if post.previewGuess == .text {
@@ -21,27 +19,7 @@ struct PostPreview: View {
             .padding()
         }
       } else if post.previewGuess == .video {
-        if self.player != nil {
-          ZStack(alignment: .bottomTrailing) {
-            self.player!
-              .frame(width: CGFloat(post.preview!.redditVideoPreview!.width),
-                     height: CGFloat(post.preview!.redditVideoPreview!.height))
-            Text("gif")
-              .foregroundColor(.black)
-              .padding(2)
-              .background(
-                RoundedRectangle(cornerRadius: 4)
-                  .foregroundColor(.white)
-              )
-          }
-        } else {
-          Rectangle()
-            .frame(width: CGFloat(post.preview!.redditVideoPreview!.width),
-                   height: CGFloat(post.preview!.redditVideoPreview!.height))
-            .onAppear {
-              self.player = Player(url: self.post.preview!.redditVideoPreview!.hlsUrl)
-          }
-        }
+        VideoPostPreview(post: self.post)
       } else if post.previewGuess == .image {
         if !post.imagePreviews.isEmpty {
           RemoteImage(post.imagePreviews.middle!.url)
@@ -60,6 +38,45 @@ struct PostPreview: View {
   }
 }
 
+private struct VideoPostPreview: View {
+  let post: Post
+  private let preview: Preview.Source?
+
+  @State var player: Player? = nil
+
+  init(post: Post) {
+    self.post = post
+    preview = post.bestVideoPreview
+  }
+
+  var body: some View {
+    VStack {
+      if preview == nil {
+        Text("No available video preview")
+      } else if self.player != nil {
+        ZStack(alignment: .bottomTrailing) {
+          self.player!
+            .frame(width: CGFloat(preview!.width), height: CGFloat(preview!.height))
+          Text("gif")
+            .foregroundColor(.black)
+            .padding(4)
+            .background(
+              RoundedRectangle(cornerRadius: 4)
+                .foregroundColor(.white)
+            )
+        }
+      } else {
+        Rectangle()
+          .frame(width: CGFloat(preview!.width),
+                 height: CGFloat(preview!.height))
+          .onAppear {
+            self.player = Player(url: self.preview!.url)
+          }
+      }
+    }
+  }
+}
+
 extension Post {
   enum PostPreviewType: String {
     case image
@@ -72,8 +89,7 @@ extension Post {
   var previewGuess: PostPreviewType {
     if isSelf || postHint == .`self` {
       return .text
-    } else if preview?.redditVideoPreview?.scrubberMediaUrl != nil ||
-        preview?.images.first?.variants?.mp4 != nil {
+    } else if bestVideoPreview != nil {
       return .video
     } else if postHint == .link && domain != "imgur.com" {
       return .link
@@ -84,5 +100,15 @@ extension Post {
     } else {
       return .link
     }
+  }
+
+  var bestVideoPreview: Preview.Source? {
+    guard let postPreview = preview else { return nil }
+    if let redditPreview = postPreview.redditVideoPreview {
+      return Preview.Source(url: redditPreview.hlsUrl, width: redditPreview.width, height: redditPreview.height)
+    } else if let mp4Preview = postPreview.images.first?.variants?.mp4 {
+      return mp4Preview.resolutions.middle ?? mp4Preview.source
+    }
+    return nil
   }
 }
