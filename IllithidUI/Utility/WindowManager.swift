@@ -4,6 +4,7 @@
 // Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
 //
 
+import Combine
 import Foundation
 import SwiftUI
 
@@ -16,6 +17,7 @@ final class WindowManager<V: IdentifiableView> {
     .closable,
   ]
   fileprivate var controllers: [V.ID: WindowController<V>] = [:]
+  fileprivate var cancelBag: [AnyCancellable] = []
 
   func showWindow(for view: V, title: String = "") {
     if let controller = windowController(for: view) {
@@ -23,6 +25,13 @@ final class WindowManager<V: IdentifiableView> {
       controller.window?.makeKeyAndOrderFront(nil)
     } else {
       let controller = makeWindowController(for: view, title: title)
+      cancelBag.append(NotificationCenter.default.publisher(for: NSWindow.willCloseNotification, object: controller.window)
+        .compactMap { $0.object as? NSWindow }
+        .sink { window in
+          self.controllers.forEach { (id, controller) in
+            if window == controller.window { self.controllers.removeValue(forKey: id) }
+          }
+      })
       controller.window?.center()
       controller.window?.makeKeyAndOrderFront(nil)
     }
