@@ -38,6 +38,20 @@ struct PostPreview: View {
   }
 }
 
+struct MediaStamp: View {
+  let mediaType: String
+
+  var body: some View {
+    Text(mediaType)
+      .foregroundColor(.black)
+      .padding(4)
+      .background(
+        RoundedRectangle(cornerRadius: 4)
+          .foregroundColor(.white)
+      )
+  }
+}
+
 private struct VideoPostPreview: View {
   let post: Post
   private let preview: Preview.Source?
@@ -54,26 +68,18 @@ private struct VideoPostPreview: View {
       if preview == nil {
         Text("No available video preview")
       } else if self.player != nil {
-        ZStack(alignment: .bottomTrailing) {
-          self.player!
-            .frame(width: CGFloat(preview!.width), height: CGFloat(preview!.height))
-          Text("gif")
-            .foregroundColor(.black)
-            .padding(4)
-            .background(
-              RoundedRectangle(cornerRadius: 4)
-                .foregroundColor(.white)
-            )
-        }
+        self.player!
       } else {
         Rectangle()
-          .frame(width: CGFloat(preview!.width),
-                 height: CGFloat(preview!.height))
           .onAppear {
             self.player = Player(url: self.preview!.url)
           }
       }
     }
+    .frame(width: CGFloat(preview!.width), height: CGFloat(preview!.height))
+    .overlay(MediaStamp(mediaType: "gif")
+              .padding([.bottom, .trailing], 4),
+             alignment: .bottomTrailing)
   }
 }
 
@@ -110,5 +116,11 @@ extension Post {
       return mp4Preview.resolutions.middle ?? mp4Preview.source
     }
     return nil
+  }
+}
+
+struct PostPreview_Previews: PreviewProvider {
+  static var previews: some View {
+    EmptyView()
   }
 }

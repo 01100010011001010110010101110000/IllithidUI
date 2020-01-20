@@ -16,16 +16,10 @@ struct PostFullview: View {
   var body: some View {
     VStack {
       if post.domain == "gfycat.com" {
-        ZStack(alignment: .bottomTrailing) {
-          GfycatFullview(gfyId: String(post.contentUrl.path.dropFirst()))
-          Text("gfycat")
-            .foregroundColor(.black)
-            .padding(2)
-            .background(
-              RoundedRectangle(cornerRadius: 4)
-                .foregroundColor(.white)
-            )
-        }
+        GfycatFullview(gfyId: String(post.contentUrl.path.dropFirst()))
+        .overlay(MediaStamp(mediaType: "gif")
+         .padding([.bottom, .trailing], 4),
+        alignment: .bottomTrailing)
       } else {
         PostPreview(post: post)
       }
