@@ -8,12 +8,22 @@ import AVKit
 import SwiftUI
 
 struct Player: NSViewRepresentable {
-  let url: URL
+  private let player: AVLoopedPlayer
+
+  init(items: [AVPlayerItem]) {
+    player = AVLoopedPlayer(items: items)
+    player.loop()
+    player.volume = 0.0
+  }
+
+  init(url: URL) {
+    player = AVLoopedPlayer(url: url)
+    player.loop()
+    player.volume = 0.0
+  }
 
   func makeNSView(context _: NSViewRepresentableContext<Player>) -> AVPlayerView {
     let playerView: AVPlayerView = .init()
-    let player = AVLoopedPlayer(url: url)
-    player.loop()
 
     playerView.player = player
     playerView.allowsPictureInPicturePlayback = true
@@ -21,10 +31,6 @@ struct Player: NSViewRepresentable {
     playerView.showsFullScreenToggleButton = true
     playerView.showsSharingServiceButton = false
     playerView.updatesNowPlayingInfoCenter = false
-    player.volume = 0.0
-
-    // TODO: Make autoplay a user preference
-//    player.play()
 
     return playerView
   }
@@ -52,6 +58,10 @@ struct Player: NSViewRepresentable {
 
     func loop() {
       looper = .init(player: self, templateItem: currentItem!)
+    }
+
+    deinit {
+      print("DEINIT")
     }
   }
 }

@@ -54,31 +54,30 @@ struct MediaStamp: View {
 
 private struct VideoPostPreview: View {
   let post: Post
-  private let preview: Preview.Source?
+  private let preview: Preview.Source
 
-  @State var player: Player? = nil
+  @State private var url: URL? = nil
 
   init(post: Post) {
     self.post = post
-    preview = post.bestVideoPreview
+    preview = post.bestVideoPreview!
   }
 
   var body: some View {
     VStack {
-      if preview == nil {
-        Text("No available video preview")
-      } else if self.player != nil {
-        self.player!
+      if self.url != nil {
+        Player(url: self.url!)
       } else {
         Rectangle()
+          .opacity(0.0)
           .onAppear {
-            self.player = Player(url: self.preview!.url)
+            self.url = self.preview.url
           }
       }
     }
-    .frame(width: CGFloat(preview!.width), height: CGFloat(preview!.height))
+    .frame(width: CGFloat(preview.width), height: CGFloat(preview.height))
     .overlay(MediaStamp(mediaType: "gif")
-              .padding([.bottom, .trailing], 4),
+      .padding([.bottom, .trailing], 4),
              alignment: .bottomTrailing)
   }
 }
