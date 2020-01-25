@@ -57,7 +57,7 @@ class CommentData: ObservableObject {
   func loadComments() {
     let id = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Comments", signpostID: id, "%{public}s", post.title)
-    cancelToken = illithid.comments(for: post, parameters: listingParameters)
+    cancelToken = illithid.comments(for: post, parameters: listingParameters, queue: .global(qos: .userInteractive))
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { value in
         print("Error fetching comments\(value)")

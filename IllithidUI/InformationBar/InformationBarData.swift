@@ -65,7 +65,6 @@ final class InformationBarData: ObservableObject {
     // Loading the subscriptions takes a few seconds if the user has many, so use a high period
     cancelToken = Timer.publish(every: 30.0, on: .main, in: .common)
       .autoconnect()
-      .receive(on: DispatchQueue.global(qos: .background))
       .sink { [weak self] _ in
         self?.loadMultireddits()
         self?.loadSubscriptions()
@@ -81,10 +80,12 @@ final class InformationBarData: ObservableObject {
   func loadMultireddits() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Multireddits", signpostID: signpostId)
-    Illithid.shared.accountManager.currentAccount?.multireddits { multireddits in
+    Illithid.shared.accountManager.currentAccount?.multireddits(queue: .global(qos: .utility)) { multireddits in
       let sortedMultireddits = multireddits.sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
       if self.multiReddits != sortedMultireddits {
-        self.multiReddits = sortedMultireddits
+        DispatchQueue.main.async {
+          self.multiReddits = sortedMultireddits
+        }
       }
       os_signpost(.end, log: self.log, name: "Load Multireddits", signpostID: signpostId)
     }
@@ -93,10 +94,12 @@ final class InformationBarData: ObservableObject {
   func loadSubscriptions() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Subscribed Subreddits", signpostID: signpostId)
-    Illithid.shared.accountManager.currentAccount?.subscribedSubreddits { subreddits in
+    Illithid.shared.accountManager.currentAccount?.subscribedSubreddits(queue: .global(qos: .utility)) { subreddits in
       let sortedSubreddits = subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending })
       if sortedSubreddits != self.subscribedSubreddits {
-        self.subscribedSubreddits = sortedSubreddits
+        DispatchQueue.main.async {
+          self.subscribedSubreddits = sortedSubreddits
+        }
       }
       os_signpost(.end, log: self.log, name: "Load Subscribed Subreddits", signpostID: signpostId)
     }

@@ -53,10 +53,12 @@ private class GfycatData: ObservableObject {
 
   init(gfyId id: String) {
     self.id = id
-    ulithari.fetchGfycat(id: id) { result in
+    ulithari.fetchGfycat(id: id, queue: .global(qos: .userInteractive)) { result in
       switch result {
       case let .success(item):
-        self.item = item
+        DispatchQueue.main.async {
+          self.item = item
+        }
       case let .failure(error):
         print("Failed to fetch gfyitem: \(error)")
       }

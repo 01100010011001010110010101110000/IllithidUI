@@ -27,17 +27,19 @@ final class SearchData: ObservableObject {
       .debounce(for: 0.3, scheduler: RunLoop.current)
       .removeDuplicates()
       .sink { searchFor in
-        self.illithid.search(for: searchFor) { result in
+        self.illithid.search(for: searchFor, queue: .global(qos: .userInteractive)) { result in
           switch result {
           case let .success(listings):
-            self.accounts.removeAll(keepingCapacity: true)
-            self.subreddits.removeAll(keepingCapacity: true)
-            self.posts.removeAll(keepingCapacity: true)
-            // TODO: Optimize this
-            for listing in listings {
-              self.accounts.append(contentsOf: listing.accounts)
-              self.subreddits.append(contentsOf: listing.subreddits)
-              self.posts.append(contentsOf: listing.posts)
+            DispatchQueue.main.async {
+              self.accounts.removeAll(keepingCapacity: true)
+              self.subreddits.removeAll(keepingCapacity: true)
+              self.posts.removeAll(keepingCapacity: true)
+              // TODO: Optimize this
+              for listing in listings {
+                self.accounts.append(contentsOf: listing.accounts)
+                self.subreddits.append(contentsOf: listing.subreddits)
+                self.posts.append(contentsOf: listing.posts)
+              }
             }
           case let .failure(error):
             print("Failed to search: \(error)")

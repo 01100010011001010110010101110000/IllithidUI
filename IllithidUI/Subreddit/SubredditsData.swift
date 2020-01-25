@@ -21,9 +21,11 @@ final class SubredditData: ObservableObject {
   func loadSubreddits() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Subreddits", signpostID: signpostId)
-    illithid.subreddits(params: listingParams) { listing in
+    illithid.subreddits(params: listingParams, queue: .global(qos: .userInteractive)) { listing in
       if let anchor = listing.after { self.listingParams.after = anchor }
-      self.subreddits.append(contentsOf: listing.subreddits)
+      DispatchQueue.main.async {
+        self.subreddits.append(contentsOf: listing.subreddits)
+      }
       os_signpost(.end, log: self.log, name: "Load Subreddits")
     }
   }

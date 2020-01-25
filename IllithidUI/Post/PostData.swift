@@ -21,11 +21,13 @@ final class PostData: ObservableObject {
   func loadPosts(container: PostsProvider) {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
-    container.posts(sortBy: .hot, parameters: postListingParams) { result in
+    container.posts(sortBy: .hot, parameters: postListingParams, queue: .global(qos: .userInteractive)) { result in
       switch result {
       case let .success(listing):
         if let anchor = listing.after { self.postListingParams.after = anchor }
-        self.posts.append(contentsOf: listing.posts)
+        DispatchQueue.main.async {
+          self.posts.append(contentsOf: listing.posts)
+        }
       case let .failure(error):
         Illithid.shared.logger.errorMessage("Failed to load posts: \(error)")
       }
