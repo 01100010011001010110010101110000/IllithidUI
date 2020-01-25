@@ -43,6 +43,7 @@ struct MediaStamp: View {
 
   var body: some View {
     Text(mediaType)
+      .font(.caption)
       .foregroundColor(.black)
       .padding(4)
       .background(
