@@ -18,7 +18,8 @@ final class InformationBarData: ObservableObject {
   private var encoder = JSONEncoder()
   private var cancelToken: AnyCancellable?
 
-  private let log = OSLog(subsystem: "com.illithid.IllithidUI", category: .pointsOfInterest)
+  private let log = OSLog(subsystem: "com.illithid.IllithidUI.InformationBar",
+                          category: .pointsOfInterest)
 
   @Published var subscribedSubreddits: [Subreddit] {
     didSet {

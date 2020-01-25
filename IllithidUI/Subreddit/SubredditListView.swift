@@ -10,9 +10,7 @@ import Illithid
 import Willow
 
 struct SubredditsView: View {
-  @State private var listingParams: ListingParameters = .init()
   @ObservedObject var subredditData: SubredditData
-  let reddit: Illithid = .shared
 
   var body: some View {
     NavigationView {
@@ -21,7 +19,7 @@ struct SubredditsView: View {
           NavigationLink(destination: PostListView(postContainer: subreddit)) {
             SubredditRowView(subreddit: subreddit)
               .conditionalModifier(subreddit == self.subredditData.subreddits.last, OnAppearModifier {
-                self.loadSubreddits()
+                self.subredditData.loadSubreddits()
               })
           }
         }
@@ -30,14 +28,7 @@ struct SubredditsView: View {
     }
     .listStyle(SidebarListStyle())
     .onAppear {
-      self.loadSubreddits()
-    }
-  }
-
-  func loadSubreddits() {
-    reddit.subreddits(params: listingParams) { listing in
-      if let anchor = listing.after { self.listingParams.after = anchor }
-      self.subredditData.subreddits.append(contentsOf: listing.subreddits)
+      self.subredditData.loadSubreddits()
     }
   }
 }

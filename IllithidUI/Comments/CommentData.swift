@@ -1,10 +1,11 @@
 //
-// CommentData.swift
-// Copyright (c) 2019 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// {file}
+// Copyright (c) 2020 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
 //
 
 import Combine
+import os.log
 import SwiftUI
 
 import Illithid
@@ -17,6 +18,8 @@ class CommentData: ObservableObject {
 
   private let illithid: Illithid = .shared
   private var cancelToken: AnyCancellable?
+  private let log = OSLog(subsystem: "com.illithid.IllithidUI.Comments",
+                          category: .pointsOfInterest)
 
   init(post: Post) {
     self.post = post
@@ -40,21 +43,27 @@ class CommentData: ObservableObject {
   }
 
   var allComments: [Comment] {
+    let id = OSSignpostID(log: log)
+    os_signpost(.begin, log: log, name: "Traverse Comments", signpostID: id, "%{public}s", post.title)
     var preOrderComments: [Comment] = []
     preOrderComments.reserveCapacity(100)
     comments.forEach { comment in
       preOrder(node: comment, into: &preOrderComments)
     }
+    os_signpost(.end, log: log, name: "Traverse Comments", signpostID: id, "%{public}s", post.title)
     return preOrderComments
   }
 
   func loadComments() {
+    let id = OSSignpostID(log: log)
+    os_signpost(.begin, log: log, name: "Load Comments", signpostID: id, "%{public}s", post.title)
     cancelToken = illithid.comments(for: post, parameters: listingParameters)
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { value in
         print("Error fetching comments\(value)")
       }) { listing in
         self.comments.append(contentsOf: listing.comments)
+        os_signpost(.end, log: self.log, name: "Load Comments", signpostID: id, "%{public}s", self.post.title)
       }
   }
 }

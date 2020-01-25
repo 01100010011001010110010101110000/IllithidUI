@@ -12,9 +12,7 @@ import Illithid
 
 struct PostListView<PostContainer: PostsProvider>: View {
   @ObservedObject var postsData: PostData
-  @State private var postListingParams: ListingParameters = .init()
 
-  let illithid: Illithid = .shared
   let postContainer: PostContainer
   let commentsManager: WindowManager = WindowManager<CommentsView>()
   let debugManager: WindowManager = WindowManager<PostDebugView>()
@@ -29,7 +27,7 @@ struct PostListView<PostContainer: PostsProvider>: View {
       ForEach(self.postsData.posts) { post in
         PostRowView(post: post)
           .conditionalModifier(post == self.postsData.posts.last, OnAppearModifier {
-            self.loadPosts()
+            self.postsData.loadPosts(container: self.postContainer)
           })
           .onTapGesture(count: 2) {
             self.showComments(for: post)
@@ -75,19 +73,7 @@ struct PostListView<PostContainer: PostsProvider>: View {
     }
     .frame(minWidth: 450, idealWidth: 600, maxWidth: 800)
     .onAppear {
-      self.loadPosts()
-    }
-  }
-
-  func loadPosts() {
-    postContainer.posts(sortBy: .hot, parameters: postListingParams) { result in
-      switch result {
-      case let .success(listing):
-        if let anchor = listing.after { self.postListingParams.after = anchor }
-        self.postsData.posts.append(contentsOf: listing.posts)
-      case let .failure(error):
-        Illithid.shared.logger.errorMessage("Failed to load posts: \(error)")
-      }
+      self.postsData.loadPosts(container: self.postContainer)
     }
   }
 

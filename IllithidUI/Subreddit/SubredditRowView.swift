@@ -10,7 +10,6 @@ import Illithid
 
 struct SubredditRowView: View {
   let subreddit: Subreddit
-  let reddit: Illithid = .shared
 
   var body: some View {
     HStack {
