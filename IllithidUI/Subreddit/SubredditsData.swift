@@ -21,12 +21,17 @@ final class SubredditData: ObservableObject {
   func loadSubreddits() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Subreddits", signpostID: signpostId)
-    illithid.subreddits(params: listingParams, queue: .global(qos: .userInteractive)) { listing in
-      if let anchor = listing.after { self.listingParams.after = anchor }
-      DispatchQueue.main.async {
-        self.subreddits.append(contentsOf: listing.subreddits)
+    illithid.subreddits(params: listingParams, queue: .global(qos: .userInteractive)) { result in
+      switch result {
+      case let .success(listing):
+        if let anchor = listing.after { self.listingParams.after = anchor }
+        DispatchQueue.main.async {
+          self.subreddits.append(contentsOf: listing.subreddits)
+          os_signpost(.end, log: self.log, name: "Load Subreddits")
+        }
+      case let .failure(error):
+        self.illithid.logger.errorMessage("Error fetching subreddit data: \(error)")
       }
-      os_signpost(.end, log: self.log, name: "Load Subreddits")
     }
   }
 }
