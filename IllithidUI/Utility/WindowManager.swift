@@ -1,6 +1,6 @@
 //
 // WindowManager.swift
-// Copyright (c) 2019 Flayware
+// Copyright (c) 2020 Flayware
 // Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
 //
 
@@ -28,7 +28,7 @@ final class WindowManager<V: IdentifiableView> {
       cancelBag.append(NotificationCenter.default.publisher(for: NSWindow.willCloseNotification, object: controller.window)
         .compactMap { $0.object as? NSWindow }
         .sink { window in
-          self.controllers.forEach { (id, controller) in
+          self.controllers.forEach { id, controller in
             if window == controller.window { self.controllers.removeValue(forKey: id) }
           }
       })

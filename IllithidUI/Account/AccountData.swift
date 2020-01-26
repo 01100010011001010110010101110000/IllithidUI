@@ -1,7 +1,7 @@
 //
-// {file}
+// AccountData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/25/19
 //
 
 import Combine
@@ -39,7 +39,7 @@ final class AccountData: ObservableObject {
   fileprivate func loadAccount(_ account: Account) {
     let commentsId = OSSignpostID(log: log)
     let submissionsId = OSSignpostID(log: log)
-    
+
     os_signpost(.begin, log: log, name: "Load Comments", signpostID: commentsId, "%{public}s", account.name)
     account.comments { result in
       switch result {

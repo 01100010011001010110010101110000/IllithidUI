@@ -1,7 +1,7 @@
 //
-// {file}
+// PostFullview.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 1/13/20
 //
 
 import Combine
@@ -17,9 +17,9 @@ struct PostFullview: View {
     VStack {
       if post.domain == "gfycat.com" {
         GfycatFullview(gfyId: String(post.contentUrl.path.dropFirst()))
-        .overlay(MediaStamp(mediaType: "gif")
-         .padding([.bottom, .trailing], 4),
-        alignment: .bottomTrailing)
+          .overlay(MediaStamp(mediaType: "gif")
+            .padding([.bottom, .trailing], 4),
+                   alignment: .bottomTrailing)
       } else {
         PostPreview(post: post)
       }
