@@ -1,31 +1,23 @@
 //
-// Player.swift
-// Copyright (c) 2019 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// {file}
+// Copyright (c) 2020 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
 //
 
 import AVKit
 import SwiftUI
 
 struct Player: NSViewRepresentable {
-  private let player: AVLoopedPlayer
-
-  init(items: [AVPlayerItem]) {
-    player = AVLoopedPlayer(items: items)
-    player.loop()
-    player.volume = 0.0
-  }
+  @ObservedObject private var playerData: PlayerData
 
   init(url: URL) {
-    player = AVLoopedPlayer(url: url)
-    player.loop()
-    player.volume = 0.0
+    playerData = PlayerData(url: url)
   }
 
   func makeNSView(context _: NSViewRepresentableContext<Player>) -> AVPlayerView {
     let playerView: AVPlayerView = .init()
 
-    playerView.player = player
+    playerView.player = playerData.player
     playerView.allowsPictureInPicturePlayback = true
     playerView.controlsStyle = .inline
     playerView.showsFullScreenToggleButton = true
@@ -36,33 +28,16 @@ struct Player: NSViewRepresentable {
   }
 
   func updateNSView(_: AVPlayerView, context _: NSViewRepresentableContext<Player>) {}
+}
 
-  final class AVLoopedPlayer: AVQueuePlayer {
-    var looper: AVPlayerLooper?
+final class PlayerData: ObservableObject {
+  fileprivate let player: AVQueuePlayer
+  fileprivate let looper: AVPlayerLooper
 
-    override init() {
-      super.init()
-    }
-
-    override init(items: [AVPlayerItem]) {
-      super.init(items: items)
-    }
-
-    override init(url URL: URL) {
-      super.init(url: URL)
-    }
-
-    override init(playerItem item: AVPlayerItem?) {
-      super.init(playerItem: item)
-    }
-
-    func loop() {
-      looper = .init(player: self, templateItem: currentItem!)
-    }
-
-    deinit {
-      print("DEINIT")
-    }
+  init(url: URL) {
+    player = AVQueuePlayer(url: url)
+    looper = AVPlayerLooper(player: player, templateItem: player.currentItem!)
+    player.volume = 0.0
   }
 }
 
