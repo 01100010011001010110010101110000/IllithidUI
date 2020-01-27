@@ -34,7 +34,10 @@ struct InformationBarNavigationView: View {
         Section(header: Text("Subscribed")) {
           ForEach(informationBarData.subscribedSubreddits) { subreddit in
             NavigationLink(destination: PostListView(postContainer: subreddit)) {
-              Text(subreddit.displayName)
+              HStack {
+                Text(subreddit.displayName)
+                Spacer()
+              }
             }
           }
         }
