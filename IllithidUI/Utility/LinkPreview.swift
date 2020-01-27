@@ -36,10 +36,8 @@ struct LinkPreview: View {
             .frame(width: 32, height: 32)
             .scaledToFill()
         } else {
-          Image(nsImage: NSImage(imageLiteralResourceName: "NSAdvanced"))
-            .resizable()
-            .frame(width: 32, height: 32)
-            .scaledToFill()
+          Rectangle()
+            .opacity(0.0)
         }
         Divider()
           .frame(height: 32)
@@ -81,7 +79,7 @@ struct LinkPreview: View {
           // Fetch page's preview favicon link from meta tags
           do {
             self.previewIconUrl = try document.select("link")
-              .first { try $0.attr("rel") == "shortcut icon" }
+              .first { try $0.attr("rel") == "icon" || $0.attr("rel") == "shortcut icon" }
               .flatMap { try URL(string: $0.attr("href"), relativeTo: self.link) }
           } catch {
             print("Error parsing link favicon URL: \(error)")
