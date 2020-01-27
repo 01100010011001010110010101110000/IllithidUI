@@ -34,14 +34,12 @@ struct RemoteImage: View {
   }
 }
 
-#if DEBUG
-  struct RemoteImage_Previews: PreviewProvider {
-    static var previews: some View {
-      RemoteImage(URL(string: "https://upload.wikimedia.org/wikipedia/en/1/13/Illithid_Sorcerer.png")!)
-        .environmentObject(ImageDownloader())
-    }
+struct RemoteImage_Previews: PreviewProvider {
+  static var previews: some View {
+    RemoteImage(URL(string: "https://upload.wikimedia.org/wikipedia/en/1/13/Illithid_Sorcerer.png")!)
+      .environmentObject(ImageDownloader())
   }
-#endif
+}
 
 extension View {
   func bind<P: Publisher, Value>(_ publisher: P, to state: Binding<Value>)

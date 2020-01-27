@@ -1,35 +1,37 @@
 //
-// LinkPreview.swift
+// {file}
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
 //
 
 import Foundation
 import LinkPresentation
+import os.log
 import SwiftUI
+
+import SwiftSoup
 
 // FIX: Wide aspect ratio resizing
 
 struct LinkPreview: View {
-  @State private var previewImage: NSImage? = nil
-  @State private var previewIcon: NSImage? = nil
+  @State private var previewImageUrl: URL? = nil
+  @State private var previewIconUrl: URL? = nil
   let link: URL
+
+  private let log = OSLog(subsystem: "com.illithid.IllithidUI.LinkPreview", category: .pointsOfInterest)
 
   var body: some View {
     VStack {
-      if previewImage != nil {
-        Image(nsImage: previewImage!)
-          .resizable()
-          .scaledToFit()
+      if previewImageUrl != nil {
+        RemoteImage(previewImageUrl!, resizable: true)
       } else {
         Rectangle()
           .opacity(0.0)
       }
       Divider()
       HStack {
-        if self.previewIcon != nil {
-          Image(nsImage: previewIcon!)
-            .resizable()
+        if self.previewIconUrl != nil {
+          RemoteImage(previewIconUrl!, resizable: true)
             .frame(width: 32, height: 32)
             .scaledToFill()
         } else {
@@ -51,38 +53,40 @@ struct LinkPreview: View {
     .frame(maxWidth: 512, minHeight: 384, maxHeight: 384)
     .border(Color.gray, width: 2)
     .onAppear {
-      self.loadMetadata(link: self.link)
+      self.loadMetadata()
     }
   }
 
-  private func loadMetadata(link _: URL) {
-    let provider = LPMetadataProvider()
-    provider.startFetchingMetadata(for: link) { metadata, error in
-      if let metadata = metadata {
-        metadata.imageProvider?.loadDataRepresentation(forTypeIdentifier: String(kUTTypeImage), completionHandler: { data, error in
-          guard error == nil else {
-            print("Error fetching preview image: \(error!)")
-            return
-          }
-          guard let data = data else {
-            print("No image data")
-            return
-          }
-          self.previewImage = NSImage(data: data)
-        })
-        metadata.iconProvider?.loadDataRepresentation(forTypeIdentifier: String(kUTTypeImage), completionHandler: { data, error in
-          guard error == nil else {
-            print("Error fetching preview icon: \(error!)")
-            return
-          }
-          guard let data = data else {
-            print("No icon data")
-            return
-          }
-          self.previewIcon = NSImage(data: data)
-        })
-      } else if let error = error {
-        print("Error fetching metadata: \(error)")
+  private func loadMetadata() {
+    DispatchQueue.global(qos: .userInitiated).async {
+      // Fetch link's HTML document
+      let documentResult = Swift.Result<Document, Error> {
+        // TODO: Switch this to AF
+        let html = try String(contentsOf: self.link)
+        return try SwiftSoup.parse(html, self.link.absoluteString)
+      }
+
+      switch documentResult {
+      case let .success(document):
+        // Fetch page's preview image link from meta tags
+        do {
+          self.previewImageUrl = try document.select("meta")
+            .first { try $0.attr("property") == "og:image" }
+            .flatMap { try URL(string: $0.attr("content")) }
+        } catch {
+          print("Error parsing link preview image URL: \(error)")
+        }
+
+        // Fetch page's preview favicon link from meta tags
+        do {
+          self.previewIconUrl = try document.select("link")
+            .first { try $0.attr("rel") == "shortcut icon" }
+            .flatMap { try URL(string: $0.attr("href"), relativeTo: self.link) }
+        } catch {
+          print("Error parsing link favicon URL: \(error)")
+        }
+      case let .failure(error):
+        print("Error parsing link DOM: \(error)")
       }
     }
   }

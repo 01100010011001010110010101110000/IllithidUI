@@ -23,7 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   #if DEBUG
     let logger: Logger = .debugLogger()
   #else
-    let logger: Logger = .releaseLogger(subsystem: "com.illithid.illithid")
+    let logger: Logger = .releaseLogger(subsystem: "com.illithid.IllithidUI")
   #endif
 
   let imageDownloader = ImageDownloader(maximumActiveDownloads: 20)
