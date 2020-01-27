@@ -9,6 +9,7 @@ import LinkPresentation
 import os.log
 import SwiftUI
 
+import Alamofire
 import SwiftSoup
 
 // FIX: Wide aspect ratio resizing
@@ -58,35 +59,38 @@ struct LinkPreview: View {
   }
 
   private func loadMetadata() {
-    DispatchQueue.global(qos: .userInitiated).async {
-      // Fetch link's HTML document
-      let documentResult = Swift.Result<Document, Error> {
-        // TODO: Switch this to AF
-        let html = try String(contentsOf: self.link)
-        return try SwiftSoup.parse(html, self.link.absoluteString)
-      }
-
-      switch documentResult {
-      case let .success(document):
-        // Fetch page's preview image link from meta tags
-        do {
-          self.previewImageUrl = try document.select("meta")
-            .first { try $0.attr("property") == "og:image" }
-            .flatMap { try URL(string: $0.attr("content")) }
-        } catch {
-          print("Error parsing link preview image URL: \(error)")
+    Alamofire.request(link).responseString(queue: .global(qos: .userInitiated)) { response in
+      switch response.result {
+      case let .success(html):
+        // Fetch link's HTML document
+        let documentResult = Swift.Result<Document, Error> {
+          return try SwiftSoup.parse(html, self.link.absoluteString)
         }
 
-        // Fetch page's preview favicon link from meta tags
-        do {
-          self.previewIconUrl = try document.select("link")
-            .first { try $0.attr("rel") == "shortcut icon" }
-            .flatMap { try URL(string: $0.attr("href"), relativeTo: self.link) }
-        } catch {
-          print("Error parsing link favicon URL: \(error)")
+        switch documentResult {
+        case let .success(document):
+          // Fetch page's preview image link from meta tags
+          do {
+            self.previewImageUrl = try document.select("meta")
+              .first { try $0.attr("property") == "og:image" }
+              .flatMap { try URL(string: $0.attr("content")) }
+          } catch {
+            print("Error parsing link preview image URL: \(error)")
+          }
+
+          // Fetch page's preview favicon link from meta tags
+          do {
+            self.previewIconUrl = try document.select("link")
+              .first { try $0.attr("rel") == "shortcut icon" }
+              .flatMap { try URL(string: $0.attr("href"), relativeTo: self.link) }
+          } catch {
+            print("Error parsing link favicon URL: \(error)")
+          }
+        case let .failure(error):
+          print("Error parsing link DOM: \(error)")
         }
       case let .failure(error):
-        print("Error parsing link DOM: \(error)")
+        print("Error fetching HTML: \(error)")
       }
     }
   }

@@ -97,7 +97,7 @@ extension Post {
       return .text
     } else if bestVideoPreview != nil {
       return .video
-    } else if postHint == .link && domain != "imgur.com" {
+    } else if postHint == .link && domain != "imgur.com" && domain != "m.imgur.com" {
       return .link
     } else if postHint == .image || !imagePreviews.isEmpty {
       return .image
