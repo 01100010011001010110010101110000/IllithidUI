@@ -109,12 +109,21 @@ extension Post {
   }
 
   var bestVideoPreview: Preview.Source? {
+    // Reddit hosted videos
+    if let redditVideo = secureMedia?.redditVideo {
+      return Preview.Source(url: redditVideo.hlsUrl, width: redditVideo.width, height: redditVideo.height)
+    } else if let redditVideo = media?.redditVideo {
+      return Preview.Source(url: redditVideo.hlsUrl, width: redditVideo.width, height: redditVideo.height)
+    }
+
+    // Video previews
     guard let postPreview = preview else { return nil }
     if let redditPreview = postPreview.redditVideoPreview {
       return Preview.Source(url: redditPreview.hlsUrl, width: redditPreview.width, height: redditPreview.height)
     } else if let mp4Preview = postPreview.images.first?.variants?.mp4 {
       return mp4Preview.resolutions.middle ?? mp4Preview.source
     }
+
     return nil
   }
 }
