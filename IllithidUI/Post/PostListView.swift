@@ -12,6 +12,7 @@ import Illithid
 
 struct PostListView<PostContainer: PostsProvider>: View {
   @ObservedObject var postsData: PostData
+  @State private var searchText: String = ""
 
   let postContainer: PostContainer
   let commentsManager: WindowManager = WindowManager<CommentsView>()
@@ -23,58 +24,66 @@ struct PostListView<PostContainer: PostsProvider>: View {
   }
 
   var body: some View {
-    List {
-      ForEach(self.postsData.posts) { post in
-        PostRowView(post: post)
-          .conditionalModifier(post == self.postsData.posts.last, OnAppearModifier {
-            self.postsData.loadPosts(container: self.postContainer)
-          })
-          .onTapGesture(count: 2) {
-            self.showComments(for: post)
-          }
-          .contextMenu {
-            Button(action: {
+    VStack {
+      TextField("Search Posts", text: $searchText)
+        .textFieldStyle(RoundedBorderTextFieldStyle())
+        .padding()
+      List {
+        ForEach(self.postsData.posts.filter {
+          $0.author.hasPrefix(searchText) || $0.title.hasPrefix(searchText) ||
+            $0.subreddit.hasPrefix(searchText) || $0.selftext.contains(searchText)
+        }) { post in
+          PostRowView(post: post)
+            .conditionalModifier(post == self.postsData.posts.last, OnAppearModifier {
+              self.postsData.loadPosts(container: self.postContainer)
+            })
+            .onTapGesture(count: 2) {
               self.showComments(for: post)
-            }) {
-              Text("Show comments…")
             }
-            Divider()
-            Button(action: {
-              NSWorkspace.shared.open(post.postUrl)
-            }) {
-              Text("Open post in browser…")
+            .contextMenu {
+              Button(action: {
+                self.showComments(for: post)
+              }) {
+                Text("Show comments…")
+              }
+              Divider()
+              Button(action: {
+                NSWorkspace.shared.open(post.postUrl)
+              }) {
+                Text("Open post in browser…")
+              }
+              Button(action: {
+                NSWorkspace.shared.open(post.contentUrl)
+              }) {
+                Text("Open content in browser…")
+              }
+              Divider()
+              Button(action: {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(post.postUrl.absoluteString, forType: .string)
+              }) {
+                Text("Copy post URL")
+              }
+              Button(action: {
+                NSPasteboard.general.clearContents()
+                NSPasteboard.general.setString(post.contentUrl.absoluteString, forType: .string)
+              }) {
+                Text("Copy content URL")
+              }
+              Divider()
+              Button(action: {
+                self.showDebugWindow(for: post)
+              }) {
+                Text("Show debug panel…")
+              }
             }
-            Button(action: {
-              NSWorkspace.shared.open(post.contentUrl)
-            }) {
-              Text("Open content in browser…")
-            }
-            Divider()
-            Button(action: {
-              NSPasteboard.general.clearContents()
-              NSPasteboard.general.setString(post.postUrl.absoluteString, forType: .string)
-            }) {
-              Text("Copy post URL")
-            }
-            Button(action: {
-              NSPasteboard.general.clearContents()
-              NSPasteboard.general.setString(post.contentUrl.absoluteString, forType: .string)
-            }) {
-              Text("Copy content URL")
-            }
-            Divider()
-            Button(action: {
-              self.showDebugWindow(for: post)
-            }) {
-              Text("Show debug panel…")
-            }
-          }
+        }
+      }
+      .onAppear {
+        self.postsData.loadPosts(container: self.postContainer)
       }
     }
     .frame(minWidth: 450, idealWidth: 600, maxWidth: 800)
-    .onAppear {
-      self.postsData.loadPosts(container: self.postContainer)
-    }
   }
 
   func showComments(for post: Post) {
