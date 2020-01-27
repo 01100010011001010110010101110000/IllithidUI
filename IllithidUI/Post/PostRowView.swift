@@ -12,6 +12,17 @@ import Illithid
 struct PostRowView: View {
   let reddit: Illithid = .shared
   let post: Post
+  let crosspostParent: Post?
+
+  init(post: Post) {
+    self.post = post
+
+    if post.crosspostParentList != nil, !post.crosspostParentList!.isEmpty {
+      crosspostParent = post.crosspostParentList?.first!
+    } else {
+      crosspostParent = nil
+    }
+  }
 
   var body: some View {
     GroupBox {
@@ -22,7 +33,23 @@ struct PostRowView: View {
           .tooltip(post.title)
           .padding()
 
-        PostPreview(post: post)
+        if crosspostParent != nil {
+          GroupBox {
+            VStack {
+              Text(crosspostParent!.title)
+                .font(.title)
+                .multilineTextAlignment(.center)
+                .tooltip(post.title)
+                .padding()
+
+              PostPreview(post: crosspostParent!)
+
+              PostMetadataBar(post: crosspostParent!)
+            }
+          }
+        } else {
+          PostPreview(post: post)
+        }
 
         PostMetadataBar(post: post)
       }
