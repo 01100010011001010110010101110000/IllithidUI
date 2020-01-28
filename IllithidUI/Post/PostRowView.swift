@@ -27,11 +27,17 @@ struct PostRowView: View {
   var body: some View {
     GroupBox {
       VStack {
-        Text(self.post.title)
-          .font(.title)
-          .multilineTextAlignment(.center)
-          .tooltip(post.title)
-          .padding()
+        VStack {
+          if crosspostParent != nil {
+            Text("Crossposted by \(self.post.author) \(self.post.relativePostTime) ago")
+              .font(.caption)
+          }
+          Text(self.post.title)
+            .font(.title)
+            .multilineTextAlignment(.center)
+            .tooltip(post.title)
+            .padding([.leading, .trailing, .bottom])
+        }
 
         if crosspostParent != nil {
           GroupBox {
