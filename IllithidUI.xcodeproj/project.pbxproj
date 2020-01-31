@@ -35,6 +35,7 @@
 		6D639D7F22B2EE4600A24E72 /* IllithidConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */; };
 		6D731BFF22A826CD0065183B /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
 		6D85952D23AD502700FC90E0 /* PostDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D85952C23AD502700FC90E0 /* PostDebugView.swift */; };
+		6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
 		6DC19CD122B069B0002F027B /* PostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC19CD022B069B0002F027B /* PostRowView.swift */; };
 		6DC19CD322B06AA7002F027B /* SubredditRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC19CD222B06AA7002F027B /* SubredditRowView.swift */; };
 		6DC67CF522CFE043001B85C7 /* comments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6DC67CF422CFE043001B85C7 /* comments.json */; };
@@ -126,6 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */,
 				6D731BFF22A826CD0065183B /* Illithid in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -340,6 +342,7 @@
 			name = IllithidUI;
 			packageProductDependencies = (
 				6D731BFE22A826CD0065183B /* Illithid */,
+				6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */,
 			);
 			productName = IllithidUI;
 			productReference = 6D2EA59022A7FEE20059B6EA /* IllithidUI.app */;
@@ -413,6 +416,9 @@
 				Base,
 			);
 			mainGroup = 6D2EA58722A7FEE20059B6EA;
+			packageReferences = (
+				6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+			);
 			productRefGroup = 6D2EA59122A7FEE20059B6EA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -825,10 +831,26 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = exactVersion;
+				version = "1.0.0-beta";
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		6D731BFE22A826CD0065183B /* Illithid */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Illithid;
+		};
+		6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 

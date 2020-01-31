@@ -7,6 +7,7 @@
 import SwiftUI
 
 import Illithid
+import SDWebImageSwiftUI
 
 struct SubredditRowView: View {
   let subreddit: Subreddit
@@ -14,7 +15,8 @@ struct SubredditRowView: View {
   var body: some View {
     HStack {
       if subreddit.headerImg != nil {
-        RemoteImage(subreddit.headerImg!, resizable: true)
+        WebImage(url: subreddit.headerImg!)
+          .resizable()
           .scaledToFit()
           .frame(width: 96, height: 96)
       } else {

@@ -7,6 +7,7 @@
 import SwiftUI
 
 import Illithid
+import SDWebImageSwiftUI
 
 struct PostPreview: View {
   let post: Post
@@ -22,7 +23,7 @@ struct PostPreview: View {
         VideoPostPreview(post: self.post)
       } else if post.previewGuess == .image {
         if !post.imagePreviews.isEmpty {
-          RemoteImage(post.imagePreviews.middle!.url)
+          WebImage(url: post.imagePreviews.middle!.url)
             .frame(width: CGFloat(integerLiteral: post.imagePreviews.middle!.width),
                    height: CGFloat(integerLiteral: post.imagePreviews.middle!.height))
         } else {

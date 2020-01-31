@@ -10,6 +10,7 @@ import os.log
 import SwiftUI
 
 import Alamofire
+import SDWebImageSwiftUI
 import SwiftSoup
 
 // FIX: Wide aspect ratio resizing
@@ -24,7 +25,8 @@ struct LinkPreview: View {
   var body: some View {
     VStack {
       if previewImageUrl != nil {
-        RemoteImage(previewImageUrl!, resizable: true)
+        WebImage(url: previewImageUrl!)
+          .resizable()
       } else {
         Rectangle()
           .opacity(0.0)
@@ -32,7 +34,8 @@ struct LinkPreview: View {
       Divider()
       HStack {
         if self.previewIconUrl != nil {
-          RemoteImage(previewIconUrl!, resizable: true)
+          WebImage(url: previewIconUrl!)
+            .resizable()
             .frame(width: 32, height: 32)
             .scaledToFill()
         } else {
