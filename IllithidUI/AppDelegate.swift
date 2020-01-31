@@ -26,8 +26,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let logger: Logger = .releaseLogger(subsystem: "com.illithid.IllithidUI")
   #endif
 
-  let imageDownloader = ImageDownloader(maximumActiveDownloads: 20)
-
   var preferencesWindowController: WindowController<PreferencesView>!
 
   func applicationDidFinishLaunching(_: Notification) {
@@ -56,7 +54,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.center()
     window.setFrameAutosaveName("Main Window")
 
-    let rootView = RootView().environmentObject(imageDownloader)
+    let rootView = RootView()
 
     window.contentView = NSHostingView(
       rootView: rootView

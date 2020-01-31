@@ -13,11 +13,6 @@ import Illithid
 struct CommentsView: IdentifiableView {
   @ObservedObject var commentData: CommentData
 
-  /// The shared `ImageDownloader` to use to fetch images linked in the comments
-  /// - Note: This is probably a poor way of doing this, but will suffice until I figure out a better way of bridging `EnvironmentObject` across windows.
-  ///        The `ImageDownloader` instantiated in the `AppDelegate` will live for the lifetime of the app.
-  let imageDownloader: ImageDownloader = (NSApp.delegate! as! AppDelegate).imageDownloader
-
   /// The post to which the comments belong
   let id: Fullname
 
@@ -47,7 +42,6 @@ struct CommentsView: IdentifiableView {
     .onAppear {
       self.commentData.loadComments()
     }
-    .environmentObject(imageDownloader)
   }
 }
 

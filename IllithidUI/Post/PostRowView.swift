@@ -103,7 +103,7 @@ struct PostMetadataBar: View {
       let data = try! Data(contentsOf: singlePostURL)
       let post = try! decoder.decode(Post.self, from: data)
 
-      return PostRowView(post: post).environmentObject(ImageDownloader())
+      return PostRowView(post: post)
     }
   }
 #endif
