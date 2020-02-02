@@ -215,13 +215,13 @@ struct ImgurView: View {
         EmptyView()
       } else if imgurData.imgurImage!.data.animated {
         if imgurData.imgurImage!.data.hasSound {
-          Player(url: imgurData.imgurImage!.data.hls!)
+          Player(url: imgurData.imgurImage!.data.mp4!)
             .frame(idealWidth: CGFloat(imgurData.imgurImage!.data.width),
                    maxWidth: CGFloat(imgurData.imgurImage!.data.width),
                    idealHeight: CGFloat(imgurData.imgurImage!.data.height),
                    maxHeight: CGFloat(imgurData.imgurImage!.data.height))
         } else {
-          Player(url: imgurData.imgurImage!.data.hls!)
+          Player(url: imgurData.imgurImage!.data.mp4!)
             .frame(idealWidth: CGFloat(imgurData.imgurImage!.data.width),
                    maxWidth: CGFloat(imgurData.imgurImage!.data.width),
                    idealHeight: CGFloat(imgurData.imgurImage!.data.height),
