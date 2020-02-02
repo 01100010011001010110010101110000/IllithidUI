@@ -122,6 +122,7 @@ struct PostRowView: View {
   }
 }
 
+// TODO: Sync saved and voted state with model
 struct PostActionBar: View {
   @State private var vote: VoteDirection = .clear
   @State private var saved: Bool = false

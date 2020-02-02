@@ -41,6 +41,7 @@ struct CommentRowView: View {
   }
 }
 
+// TODO: Sync saved and voted state with model
 struct CommentActionBar: View {
   @State private var vote: VoteDirection = .clear
   @State private var saved: Bool = false
