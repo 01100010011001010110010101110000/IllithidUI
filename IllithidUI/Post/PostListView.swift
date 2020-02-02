@@ -37,9 +37,6 @@ struct PostListView<PostContainer: PostsProvider>: View {
             .conditionalModifier(post == self.postsData.posts.last, OnAppearModifier {
               self.postsData.loadPosts(container: self.postContainer)
             })
-            .onTapGesture(count: 2) {
-              self.showComments(for: post)
-            }
             .contextMenu {
               Button(action: {
                 self.showComments(for: post)

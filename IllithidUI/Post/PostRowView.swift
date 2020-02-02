@@ -13,8 +13,11 @@ struct PostRowView: View {
   let post: Post
   let crosspostParent: Post?
 
-  init(post: Post) {
+  let commentsManager: WindowManager<CommentsView>
+
+  init(post: Post, commentsManager: WindowManager<CommentsView> = .init()) {
     self.post = post
+    self.commentsManager = commentsManager
 
     if post.crosspostParentList != nil, !post.crosspostParentList!.isEmpty {
       crosspostParent = post.crosspostParentList?.first!
@@ -44,13 +47,16 @@ struct PostRowView: View {
               Text(crosspostParent!.title)
                 .font(.title)
                 .multilineTextAlignment(.center)
-                .tooltip(post.title)
+                .tooltip(crosspostParent!.title)
                 .padding()
 
               PostContent(post: crosspostParent!)
 
               PostMetadataBar(post: crosspostParent!)
             }
+          }
+          .onTapGesture(count: 2) {
+            self.showComments(for: self.crosspostParent!)
           }
         } else {
           PostContent(post: post)
@@ -59,6 +65,13 @@ struct PostRowView: View {
         PostMetadataBar(post: post)
       }
     }
+    .onTapGesture(count: 2) {
+      self.showComments(for: self.post)
+    }
+  }
+
+  func showComments(for post: Post) {
+    commentsManager.showWindow(for: CommentsView(post: post), title: post.title)
   }
 }
 
