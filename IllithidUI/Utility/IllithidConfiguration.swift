@@ -22,7 +22,7 @@ struct IllithidConfiguration: ClientConfiguration {
 
   let consumerSecret = ""
 
-  let scope = "identity mysubreddits read vote wikiread history"
+  let scope = "identity edit account creddits mysubreddits read vote wikiread history save flair report livemanage modconfig modcontributors modflair modlog modmail modothers modposts modself modwiki submit subscribe wikiedit structuredstyles privatemessages"
 
   let responseType: OAuthResponseType = .code
 

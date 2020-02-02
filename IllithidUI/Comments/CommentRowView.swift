@@ -41,6 +41,103 @@ struct CommentRowView: View {
   }
 }
 
+struct CommentActionBar: View {
+  @State private var vote: VoteDirection = .clear
+  @State private var saved: Bool = false
+  let comment: Comment
+
+  init(comment: Comment) {
+    self.comment = comment
+  }
+
+  var body: some View {
+    VStack {
+      Button(action: {
+        if self.vote == .up {
+          self.vote = .clear
+          self.comment.clearVote(queue: .global(qos: .utility)) { result in
+            if case let Result.failure(error) = result {
+              print("Error clearing vote on \(self.comment.fullname): \(error)")
+            }
+          }
+        } else {
+          self.vote = .up
+          self.comment.upvote(queue: .global(qos: .utility)) { result in
+            if case let Result.failure(error) = result {
+              print("Error upvoting \(self.comment.fullname): \(error)")
+            }
+          }
+        }
+      }) {
+        Text("Up")
+        .foregroundColor(vote == .up ? .orange : nil)
+      }
+      Button(action: {
+        if self.vote == .down {
+          self.vote = .clear
+          self.comment.clearVote(queue: .global(qos: .utility)) { result in
+            if case let Result.failure(error) = result {
+              print("Error clearing vote on \(self.comment.fullname): \(error)")
+            }
+          }
+        } else {
+          self.vote = .down
+          self.comment.downvote(queue: .global(qos: .utility)) { result in
+            if case let Result.failure(error) = result {
+              print("Error downvoting \(self.comment.fullname): \(error)")
+            }
+          }
+        }
+      }) {
+        Text("Down")
+        .foregroundColor(vote == .down ? .purple : nil)
+      }
+      Button(action: {
+        if self.saved {
+          self.saved = false
+          self.comment.unsave(queue: .global(qos: .utility)) { result in
+            if case let Result.failure(error) = result {
+              print("Error unsaving \(self.comment.fullname): \(error)")
+            }
+          }
+        } else {
+          self.saved = true
+          self.comment.save(queue: .global(qos: .utility)) { result in
+            if case let Result.failure(error) = result {
+              print("Error saving \(self.comment.fullname): \(error)")
+            }
+          }
+        }
+      }) {
+        Text("Save")
+        .foregroundColor(comment.saved ? .green : nil)
+      }
+      // TODO: Pass binding to enable removing a hidden post
+      Button(action: {
+        return
+      }) {
+        Text("Hide")
+        .foregroundColor(.red)
+      }
+      Button(action: {
+        return
+      }) {
+        Text("Report")
+        .foregroundColor(.red)
+      }
+      Spacer()
+    }
+    .onAppear {
+      if let likeDirection = self.comment.likes {
+        self.vote = likeDirection ? .up : .down
+      } else {
+        self.vote = .clear
+      }
+      self.saved = self.comment.saved
+    }
+  }
+}
+
 // #if DEBUG
 // struct CommentRowView_Previews: PreviewProvider {
 //    static var previews: some View {

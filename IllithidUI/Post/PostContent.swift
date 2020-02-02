@@ -95,7 +95,8 @@ private struct VideoPostPreview: View {
           }
       }
     }
-    .frame(width: CGFloat(preview.width), height: CGFloat(preview.height))
+    .frame(idealWidth: CGFloat(preview.width), maxWidth: CGFloat(preview.width),
+           idealHeight: CGFloat(preview.height), maxHeight: CGFloat(preview.height))
     .overlay(MediaStamp(mediaType: "video")
       .padding([.bottom, .trailing], 4),
              alignment: .bottomTrailing)

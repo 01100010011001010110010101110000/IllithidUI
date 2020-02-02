@@ -33,61 +33,16 @@ struct PostListView<PostContainer: PostsProvider>: View {
           $0.author.hasPrefix(searchText) || $0.title.hasPrefix(searchText) ||
             $0.subreddit.hasPrefix(searchText) || $0.selftext.contains(searchText)
         }) { post in
-          PostRowView(post: post)
+          PostRowView(post: post, commentsManager: self.commentsManager, debugManager: self.debugManager)
             .conditionalModifier(post == self.postsData.posts.last, OnAppearModifier {
               self.postsData.loadPosts(container: self.postContainer)
             })
-            .contextMenu {
-              Button(action: {
-                self.showComments(for: post)
-              }) {
-                Text("Show comments…")
-              }
-              Divider()
-              Button(action: {
-                NSWorkspace.shared.open(post.postUrl)
-              }) {
-                Text("Open post in browser…")
-              }
-              Button(action: {
-                NSWorkspace.shared.open(post.contentUrl)
-              }) {
-                Text("Open content in browser…")
-              }
-              Divider()
-              Button(action: {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(post.postUrl.absoluteString, forType: .string)
-              }) {
-                Text("Copy post URL")
-              }
-              Button(action: {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(post.contentUrl.absoluteString, forType: .string)
-              }) {
-                Text("Copy content URL")
-              }
-              Divider()
-              Button(action: {
-                self.showDebugWindow(for: post)
-              }) {
-                Text("Show debug panel…")
-              }
-            }
         }
       }
       .onAppear {
         self.postsData.loadPosts(container: self.postContainer)
       }
     }
-  }
-
-  func showComments(for post: Post) {
-    commentsManager.showWindow(for: CommentsView(post: post), title: post.title)
-  }
-
-  func showDebugWindow(for post: Post) {
-    debugManager.showWindow(for: PostDebugView(post: post), title: "\(post.title) - Debug View")
   }
 }
 
