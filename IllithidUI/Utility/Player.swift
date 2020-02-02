@@ -23,6 +23,8 @@ struct Player: NSViewRepresentable {
     playerView.showsFullScreenToggleButton = true
     playerView.showsSharingServiceButton = false
     playerView.updatesNowPlayingInfoCenter = false
+    playerView.videoGravity = .resizeAspect
+    playerView.autoresizingMask = [.height, .width]
 
     return playerView
   }

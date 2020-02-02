@@ -52,7 +52,6 @@ struct PostContent: View {
         }
       } else if post.previewGuess == .link {
         LinkPreview(link: post.contentUrl)
-          .fixedSize(horizontal: true, vertical: false)
       }
     }
   }
@@ -172,10 +171,12 @@ struct GfycatView: View {
         EmptyView()
       } else if gfyData.item!.hasAudio {
         Player(url: gfyData.item!.mp4URL)
-          .frame(width: CGFloat(gfyData.item!.width), height: CGFloat(gfyData.item!.height))
+          .frame(idealWidth: CGFloat(gfyData.item!.width), maxWidth: CGFloat(gfyData.item!.width),
+                 idealHeight: CGFloat(gfyData.item!.height), maxHeight: CGFloat(gfyData.item!.height))
       } else {
         Player(url: gfyData.item!.mp4URL)
-          .frame(width: CGFloat(gfyData.item!.width), height: CGFloat(gfyData.item!.height))
+          .frame(idealWidth: CGFloat(gfyData.item!.width), maxWidth: CGFloat(gfyData.item!.width),
+                 idealHeight: CGFloat(gfyData.item!.height), maxHeight: CGFloat(gfyData.item!.height))
       }
     }
   }
@@ -215,12 +216,16 @@ struct ImgurView: View {
       } else if imgurData.imgurImage!.data.animated {
         if imgurData.imgurImage!.data.hasSound {
           Player(url: imgurData.imgurImage!.data.hls!)
-            .frame(width: CGFloat(integerLiteral: imgurData.imgurImage!.data.width),
-                   height: CGFloat(integerLiteral: imgurData.imgurImage!.data.height))
+            .frame(idealWidth: CGFloat(imgurData.imgurImage!.data.width),
+                   maxWidth: CGFloat(imgurData.imgurImage!.data.width),
+                   idealHeight: CGFloat(imgurData.imgurImage!.data.height),
+                   maxHeight: CGFloat(imgurData.imgurImage!.data.height))
         } else {
           Player(url: imgurData.imgurImage!.data.hls!)
-            .frame(width: CGFloat(integerLiteral: imgurData.imgurImage!.data.width),
-                 height: CGFloat(integerLiteral: imgurData.imgurImage!.data.height))
+            .frame(idealWidth: CGFloat(imgurData.imgurImage!.data.width),
+                   maxWidth: CGFloat(imgurData.imgurImage!.data.width),
+                   idealHeight: CGFloat(imgurData.imgurImage!.data.height),
+                   maxHeight: CGFloat(imgurData.imgurImage!.data.height))
         }
       } else {
         WebImage(url: imgurData.imgurImage!.data.link)
