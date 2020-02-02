@@ -9,8 +9,8 @@ import SwiftUI
 import Illithid
 import SDWebImageSwiftUI
 
-struct PostPreview: View {
-  @State private var isAnimating: Bool = false
+struct PostContent: View {
+  @State private var isAnimating: Bool = true
   let post: Post
 
   var body: some View {
@@ -32,19 +32,18 @@ struct PostPreview: View {
         }
       } else if post.previewGuess == .gif {
         AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)
-          .onHover { inFrame in
-            self.isAnimating = inFrame
-          }
-          .onDisappear { self.isAnimating = false }
-          .frame(width: CGFloat(integerLiteral: post.gifPreviews.last!.width),
-                 height: CGFloat(integerLiteral: post.gifPreviews.last!.height))
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .overlay(MediaStamp(mediaType: "gfycat")
+            .padding([.bottom, .trailing], 4),
+                   alignment: .bottomTrailing)
       } else if post.previewGuess == .video {
         VideoPostPreview(post: self.post)
       } else if post.previewGuess == .image {
         if !post.imagePreviews.isEmpty {
           WebImage(url: post.imagePreviews.middle!.url)
-            .frame(width: CGFloat(integerLiteral: post.imagePreviews.middle!.width),
-                   height: CGFloat(integerLiteral: post.imagePreviews.middle!.height))
+            .resizable()
+            .aspectRatio(contentMode: .fit)
         } else {
           Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
             .scaledToFit()
@@ -156,6 +155,96 @@ extension Post {
 //    }
 
     return nil
+  }
+}
+
+struct GfycatView: View {
+  @ObservedObject var gfyData: GfycatData
+
+  init(gfyId id: String) {
+    gfyData = .init(gfyId: id)
+  }
+
+  var body: some View {
+    VStack {
+      if gfyData.item == nil {
+        EmptyView()
+      } else if gfyData.item!.hasAudio {
+        Player(url: gfyData.item!.mp4URL)
+          .frame(width: CGFloat(gfyData.item!.width), height: CGFloat(gfyData.item!.height))
+      } else {
+        Player(url: gfyData.item!.mp4URL)
+          .frame(width: CGFloat(gfyData.item!.width), height: CGFloat(gfyData.item!.height))
+      }
+    }
+  }
+}
+
+class GfycatData: ObservableObject {
+  @Published var item: GfyItem? = nil
+  let id: String
+  let ulithari: Ulithari = .shared
+
+  init(gfyId id: String) {
+    self.id = id
+    ulithari.fetchGfycat(id: id, queue: .global(qos: .userInteractive)) { result in
+      switch result {
+      case let .success(item):
+        DispatchQueue.main.async {
+          self.item = item
+        }
+      case let .failure(error):
+        print("Failed to fetch gfyitem: \(error)")
+      }
+    }
+  }
+}
+
+struct ImgurView: View {
+  @ObservedObject var imgurData: ImgurData
+
+  init(imageId: String) {
+    imgurData = .init(imageId: imageId)
+  }
+
+  var body: some View {
+    VStack {
+      if imgurData.imgurImage == nil {
+        EmptyView()
+      } else if imgurData.imgurImage!.data.animated {
+        if imgurData.imgurImage!.data.hasSound {
+          Player(url: imgurData.imgurImage!.data.hls!)
+            .frame(width: CGFloat(integerLiteral: imgurData.imgurImage!.data.width),
+                   height: CGFloat(integerLiteral: imgurData.imgurImage!.data.height))
+        } else {
+          Player(url: imgurData.imgurImage!.data.hls!)
+            .frame(width: CGFloat(integerLiteral: imgurData.imgurImage!.data.width),
+                 height: CGFloat(integerLiteral: imgurData.imgurImage!.data.height))
+        }
+      } else {
+        WebImage(url: imgurData.imgurImage!.data.link)
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+      }
+    }
+  }
+}
+
+class ImgurData: ObservableObject {
+  @Published var imgurImage: ImgurImage? = nil
+  let ulithari: Ulithari = .shared
+
+  init(imageId: String) {
+    ulithari.fetchImgurImage(id: imageId, queue: .global(qos: .userInteractive)) { result in
+      switch result {
+      case let .success(imgurImage):
+        DispatchQueue.main.async {
+          self.imgurImage = imgurImage
+        }
+      case let .failure(error):
+        print("Failed to fetch \(imageId) data: \(error)")
+      }
+    }
   }
 }
 

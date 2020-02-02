@@ -47,13 +47,13 @@ struct PostRowView: View {
                 .tooltip(post.title)
                 .padding()
 
-              PostPreview(post: crosspostParent!)
+              PostContent(post: crosspostParent!)
 
               PostMetadataBar(post: crosspostParent!)
             }
           }
         } else {
-          PostPreview(post: post)
+          PostContent(post: post)
         }
 
         PostMetadataBar(post: post)

@@ -83,7 +83,6 @@ struct PostListView<PostContainer: PostsProvider>: View {
         self.postsData.loadPosts(container: self.postContainer)
       }
     }
-    .frame(minWidth: 450, idealWidth: 600, maxWidth: 800)
   }
 
   func showComments(for post: Post) {

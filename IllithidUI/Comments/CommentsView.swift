@@ -26,7 +26,7 @@ struct CommentsView: IdentifiableView {
   var body: some View {
     List {
       VStack(alignment: .leading) {
-        PostFullview(post: post)
+        PostContent(post: post)
         Text(post.title)
           .font(.largeTitle)
       }
@@ -44,7 +44,6 @@ struct CommentsView: IdentifiableView {
   }
 }
 
-// #if DEBUG
 // struct CommentsView_Previews: PreviewProvider {
 //  static var previews: some View {
 //    let testCommentsPath = Bundle.main.path(forResource: "comments", ofType: "json")!
@@ -55,4 +54,3 @@ struct CommentsView: IdentifiableView {
 //    return CommentsView(commentData: .init(from: listing), reddit: .init(configuration: IllithidConfiguration()))
 //  }
 // }
-// #endif
