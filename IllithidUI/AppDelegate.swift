@@ -8,9 +8,9 @@ import Cocoa
 import SwiftUI
 
 import Alamofire
-import AlamofireImage
 import Illithid
 import OAuthSwift
+import Ulithari
 import Willow
 
 @NSApplicationMain
@@ -30,6 +30,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationDidFinishLaunching(_: Notification) {
     illithid.configure(configuration: IllithidConfiguration())
+    Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
     illithid.logger = logger
 
     // MARK: Preferences Window Controller

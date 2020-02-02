@@ -10,15 +10,34 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct PostPreview: View {
+  @State private var isAnimating: Bool = false
   let post: Post
 
   var body: some View {
     VStack {
-      if post.previewGuess == .text {
+      if post.previewGuess == .imgur {
+        ImgurView(imageId: String(post.contentUrl.path.dropFirst().split(separator: ".").first!))
+          .overlay(MediaStamp(mediaType: "imgur")
+            .padding([.bottom, .trailing], 4),
+                   alignment: .bottomTrailing)
+      } else if post.previewGuess == .gfycat {
+        GfycatView(gfyId: String(post.contentUrl.path.dropFirst()))
+          .overlay(MediaStamp(mediaType: "gfycat")
+            .padding([.bottom, .trailing], 4),
+                   alignment: .bottomTrailing)
+      } else if post.previewGuess == .text {
         ScrollView {
           Text(post.selftext)
             .padding()
         }
+      } else if post.previewGuess == .gif {
+        AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)
+          .onHover { inFrame in
+            self.isAnimating = inFrame
+          }
+          .onDisappear { self.isAnimating = false }
+          .frame(width: CGFloat(integerLiteral: post.gifPreviews.last!.width),
+                 height: CGFloat(integerLiteral: post.gifPreviews.last!.height))
       } else if post.previewGuess == .video {
         VideoPostPreview(post: self.post)
       } else if post.previewGuess == .image {
@@ -78,7 +97,7 @@ private struct VideoPostPreview: View {
       }
     }
     .frame(width: CGFloat(preview.width), height: CGFloat(preview.height))
-    .overlay(MediaStamp(mediaType: "gif")
+    .overlay(MediaStamp(mediaType: "video")
       .padding([.bottom, .trailing], 4),
              alignment: .bottomTrailing)
   }
@@ -90,15 +109,26 @@ extension Post {
     case link
     case text
     case video
+    case gif
+
+    // Site specific previews
+    case imgur
+    case gfycat
   }
 
   /// Illithid's guess at the best type of preview to use for this post
   var previewGuess: PostPreviewType {
-    if isSelf || postHint == .`self` {
+    if domain.contains("imgur.com") {
+      return .imgur
+    } else if domain.contains("gfycat.com") {
+      return .gfycat
+    } else if isSelf || postHint == .`self` {
       return .text
     } else if bestVideoPreview != nil {
       return .video
-    } else if postHint == .link && domain != "imgur.com" && domain != "m.imgur.com" {
+    } else if !gifPreviews.isEmpty {
+      return .gif
+    } else if postHint == .link {
       return .link
     } else if postHint == .image || !imagePreviews.isEmpty {
       return .image
@@ -117,13 +147,13 @@ extension Post {
       return Preview.Source(url: redditVideo.hlsUrl, width: redditVideo.width, height: redditVideo.height)
     }
 
-    // Video previews
-    guard let postPreview = preview else { return nil }
-    if let redditPreview = postPreview.redditVideoPreview {
-      return Preview.Source(url: redditPreview.hlsUrl, width: redditPreview.width, height: redditPreview.height)
-    } else if let mp4Preview = postPreview.images.first?.variants?.mp4 {
-      return mp4Preview.resolutions.middle ?? mp4Preview.source
-    }
+//    // Video previews
+//    guard let postPreview = preview else { return nil }
+//    if let redditPreview = postPreview.redditVideoPreview {
+//      return Preview.Source(url: redditPreview.hlsUrl, width: redditPreview.width, height: redditPreview.height)
+//    } else if let mp4Preview = postPreview.images.first?.variants?.mp4 {
+//      return mp4Preview.resolutions.middle ?? mp4Preview.source
+//    }
 
     return nil
   }

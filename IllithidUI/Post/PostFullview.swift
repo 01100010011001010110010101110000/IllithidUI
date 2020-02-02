@@ -8,7 +8,8 @@ import Combine
 import SwiftUI
 
 import Illithid
-import Ulithcat
+import SDWebImageSwiftUI
+import Ulithari
 
 struct PostFullview: View {
   let post: Post
@@ -16,7 +17,7 @@ struct PostFullview: View {
   var body: some View {
     VStack {
       if post.domain == "gfycat.com" {
-        GfycatFullview(gfyId: String(post.contentUrl.path.dropFirst()))
+        GfycatView(gfyId: String(post.contentUrl.path.dropFirst()))
           .overlay(MediaStamp(mediaType: "gif")
             .padding([.bottom, .trailing], 4),
                    alignment: .bottomTrailing)
@@ -27,7 +28,7 @@ struct PostFullview: View {
   }
 }
 
-private struct GfycatFullview: View {
+struct GfycatView: View {
   @ObservedObject var gfyData: GfycatData
 
   init(gfyId id: String) {
@@ -38,6 +39,9 @@ private struct GfycatFullview: View {
     VStack {
       if gfyData.item == nil {
         EmptyView()
+      } else if gfyData.item!.hasAudio {
+        Player(url: gfyData.item!.mp4URL)
+          .frame(width: CGFloat(gfyData.item!.width), height: CGFloat(gfyData.item!.height))
       } else {
         Player(url: gfyData.item!.mp4URL)
           .frame(width: CGFloat(gfyData.item!.width), height: CGFloat(gfyData.item!.height))
@@ -46,10 +50,10 @@ private struct GfycatFullview: View {
   }
 }
 
-private class GfycatData: ObservableObject {
+class GfycatData: ObservableObject {
   @Published var item: GfyItem? = nil
   let id: String
-  let ulithari: Ulithcat = .init()
+  let ulithari: Ulithari = .shared
 
   init(gfyId id: String) {
     self.id = id
@@ -61,6 +65,54 @@ private class GfycatData: ObservableObject {
         }
       case let .failure(error):
         print("Failed to fetch gfyitem: \(error)")
+      }
+    }
+  }
+}
+
+struct ImgurView: View {
+  @ObservedObject var imgurData: ImgurData
+
+  init(imageId: String) {
+    imgurData = .init(imageId: imageId)
+  }
+
+  var body: some View {
+    VStack {
+      if imgurData.imgurImage == nil {
+        EmptyView()
+      } else if imgurData.imgurImage!.data.animated {
+        if imgurData.imgurImage!.data.hasSound {
+          Player(url: imgurData.imgurImage!.data.hls!)
+            .frame(width: CGFloat(integerLiteral: imgurData.imgurImage!.data.width),
+                   height: CGFloat(integerLiteral: imgurData.imgurImage!.data.height))
+        } else {
+          Player(url: imgurData.imgurImage!.data.hls!)
+            .frame(width: CGFloat(integerLiteral: imgurData.imgurImage!.data.width),
+                 height: CGFloat(integerLiteral: imgurData.imgurImage!.data.height))
+        }
+      } else {
+        WebImage(url: imgurData.imgurImage!.data.link)
+          .frame(width: CGFloat(integerLiteral: imgurData.imgurImage!.data.width),
+               height: CGFloat(integerLiteral: imgurData.imgurImage!.data.height))
+      }
+    }
+  }
+}
+
+class ImgurData: ObservableObject {
+  @Published var imgurImage: ImgurImage? = nil
+  let ulithari: Ulithari = .shared
+
+  init(imageId: String) {
+    ulithari.fetchImgurImage(id: imageId, queue: .global(qos: .userInteractive)) { result in
+      switch result {
+      case let .success(imgurImage):
+        DispatchQueue.main.async {
+          self.imgurImage = imgurImage
+        }
+      case let .failure(error):
+        print("Failed to fetch \(imageId) data: \(error)")
       }
     }
   }

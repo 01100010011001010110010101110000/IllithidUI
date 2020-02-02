@@ -7,7 +7,6 @@
 import Combine
 import SwiftUI
 
-import AlamofireImage
 import Illithid
 
 struct CommentsView: IdentifiableView {

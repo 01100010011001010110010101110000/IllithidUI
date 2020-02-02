@@ -6,7 +6,6 @@
 
 import SwiftUI
 
-import AlamofireImage
 import Illithid
 
 struct PostRowView: View {
