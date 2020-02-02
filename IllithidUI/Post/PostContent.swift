@@ -8,6 +8,7 @@ import SwiftUI
 
 import Illithid
 import SDWebImageSwiftUI
+import Ulithari
 
 struct PostContent: View {
   @State private var isAnimating: Bool = true
