@@ -8,6 +8,8 @@ import SwiftUI
 
 import Illithid
 
+// MARK: Main row view
+
 struct PostRowView: View {
   let reddit: Illithid = .shared
   let post: Post
@@ -122,6 +124,8 @@ struct PostRowView: View {
   }
 }
 
+// MARK: Post meta views
+
 // TODO: Sync saved and voted state with model
 struct PostActionBar: View {
   @State private var vote: VoteDirection = .clear
@@ -134,81 +138,84 @@ struct PostActionBar: View {
 
   var body: some View {
     VStack {
-      Button(action: {
-        if self.vote == .up {
-          self.vote = .clear
-          self.post.clearVote(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              print("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+      RoundedRectangle(cornerRadius: 2.0)
+        .foregroundColor(vote == .up ? .orange : Color(.darkGray))
+        .overlay(Text("Up"), alignment: .center)
+        .foregroundColor(.white)
+        .onTapGesture {
+          if self.vote == .up {
+            self.vote = .clear
+            self.post.clearVote(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                print("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+              }
             }
-          }
-        } else {
-          self.vote = .up
-          self.post.upvote(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              print("Error upvoting \(self.post.title) - \(self.post.fullname): \(error)")
-            }
-          }
-        }
-      }) {
-        Text("Up")
-        .foregroundColor(vote == .up ? .orange : nil)
-      }
-      Button(action: {
-        if self.vote == .down {
-          self.vote = .clear
-          self.post.clearVote(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              print("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
-            }
-          }
-        } else {
-          self.vote = .down
-          self.post.downvote(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              print("Error downvoting \(self.post.title) - \(self.post.fullname): \(error)")
+          } else {
+            self.vote = .up
+            self.post.upvote(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                print("Error upvoting \(self.post.title) - \(self.post.fullname): \(error)")
+              }
             }
           }
         }
-      }) {
-        Text("Down")
-        .foregroundColor(vote == .down ? .purple : nil)
-      }
-      Button(action: {
-        if self.saved {
-          self.saved = false
-          self.post.unsave(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              print("Error unsaving \(self.post.title) - \(self.post.fullname): \(error)")
+        .frame(width: 32, height: 32)
+      RoundedRectangle(cornerRadius: 2.0)
+        .foregroundColor(vote == .down ? .purple : Color(.darkGray))
+        .overlay(Text("Down"), alignment: .center)
+        .foregroundColor(.white)
+        .onTapGesture {
+          if self.vote == .down {
+            self.vote = .clear
+            self.post.clearVote(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                print("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+              }
             }
-          }
-        } else {
-          self.saved = true
-          self.post.save(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              print("Error saving \(self.post.title) - \(self.post.fullname): \(error)")
+          } else {
+            self.vote = .down
+            self.post.downvote(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                print("Error downvoting \(self.post.title) - \(self.post.fullname): \(error)")
+              }
             }
           }
         }
-      }) {
-        Text("Save")
-        .foregroundColor(saved ? .green : nil)
-      }
-      // TODO: Pass binding to enable removing a hidden post
-      Button(action: {
-        return
-      }) {
-        Text("Hide")
+        .frame(width: 32, height: 32)
+      RoundedRectangle(cornerRadius: 2.0)
+        .foregroundColor(saved ? .green : Color(.darkGray))
+        .overlay(Text("Save"), alignment: .center)
+        .foregroundColor(.white)
+        .onTapGesture {
+          self.saved.toggle()
+          if self.saved {
+            self.post.save(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                print("Error saving \(self.post.title) - \(self.post.fullname): \(error)")
+              }
+            }
+          } else {
+            self.post.unsave(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                print("Error unsaving \(self.post.title) - \(self.post.fullname): \(error)")
+              }
+            }
+          }
+        }
+        .frame(width: 32, height: 32)
+      RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(.red)
-      }
-      Button(action: {
-        return
-      }) {
-        Text("Report")
+        .overlay(Text("Hide"), alignment: .center)
+        .foregroundColor(.white)
+        .frame(width: 32, height: 32)
+      RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(.red)
-      }
+        .overlay(Text("Report"), alignment: .center)
+        .foregroundColor(.white)
+        .frame(width: 32, height: 32)
       Spacer()
     }
+    .padding(10)
     .onAppear {
       if let likeDirection = self.post.likes {
         self.vote = likeDirection ? .up : .down
@@ -232,12 +239,11 @@ struct PostMetadataBar: View {
       .popover(isPresented: $authorPopover) {
         AccountView(accountData: .init(name: self.post.author))
       }
+      Text("\(post.relativePostTime) ago")
       Spacer()
       HStack {
         Text("\(post.ups.postAbbreviation())")
           .foregroundColor(.orange)
-        Text("\(post.downs.postAbbreviation())")
-          .foregroundColor(.purple)
         Text("\(post.numComments.postAbbreviation())")
           .foregroundColor(.blue)
       }
@@ -249,18 +255,18 @@ struct PostMetadataBar: View {
   }
 }
 
-#if DEBUG
-  struct PostRowView_Previews: PreviewProvider {
-    static var previews: some View {
-      let decoder = JSONDecoder()
-      decoder.keyDecodingStrategy = .convertFromSnakeCase
-      decoder.dateDecodingStrategy = .secondsSince1970
+// MARK: Static Previews
 
-      let singlePostURL = Bundle.main.url(forResource: "single_post", withExtension: "json")!
-      let data = try! Data(contentsOf: singlePostURL)
-      let post = try! decoder.decode(Post.self, from: data)
+struct PostRowView_Previews: PreviewProvider {
+  static var previews: some View {
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    decoder.dateDecodingStrategy = .secondsSince1970
 
-      return PostRowView(post: post)
-    }
+    let singlePostURL = Bundle.main.url(forResource: "single_post", withExtension: "json")!
+    let data = try! Data(contentsOf: singlePostURL)
+    let post = try! decoder.decode(Post.self, from: data)
+
+    return PostRowView(post: post)
   }
-#endif
+}

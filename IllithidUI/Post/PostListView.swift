@@ -33,11 +33,13 @@ struct PostListView<PostContainer: PostsProvider>: View {
             Text(sortMethod.rawValue).tag(sortMethod)
           }
         }
+        .frame(maxWidth: 100)
+        .padding()
         Spacer()
       }
       TextField("Search Posts", text: $searchText)
         .textFieldStyle(RoundedBorderTextFieldStyle())
-        .padding()
+        .padding([.bottom, .leading, .trailing])
       List {
         ForEach(self.postsData.posts.filter {
           $0.author.hasPrefix(searchText) || $0.title.hasPrefix(searchText) ||
