@@ -17,7 +17,7 @@ struct InformationBarNavigationView: View {
         NavigationLink("Search", destination: SearchView(searchData: .init()))
           .padding([.top])
         Section(header: Text("Front Page")) {
-          NavigationLink("Home", destination: PostListView(postContainer: FrontPage.best))
+          NavigationLink("Home", destination: PostListView(postContainer: FrontPage.home))
           NavigationLink("Popular", destination: PostListView(postContainer: FrontPage.popular))
           NavigationLink("All", destination: PostListView(postContainer: FrontPage.all))
           NavigationLink("Random", destination: PostListView(postContainer: FrontPage.random))

@@ -11,20 +11,30 @@ import SwiftUI
 import Illithid
 
 struct PostListView<PostContainer: PostsProvider>: View {
-  @ObservedObject var postsData: PostData
+  @ObservedObject var postsData: PostData<PostContainer>
   @State private var searchText: String = ""
 
   let postContainer: PostContainer
   let commentsManager: WindowManager = WindowManager<CommentsView>()
   let debugManager: WindowManager = WindowManager<PostDebugView>()
 
-  init(postsData: PostData = .init(), postContainer: PostContainer) {
+  private let cancelToken: AnyCancellable? = nil
+
+  init(postContainer: PostContainer) {
     self.postContainer = postContainer
-    self.postsData = postsData
+    self.postsData = PostData(provider: self.postContainer)
   }
 
   var body: some View {
     VStack {
+      HStack {
+        Picker(selection: $postsData.sort, label: EmptyView()) {
+          ForEach(PostSort.allCases) { sortMethod in
+            Text(sortMethod.rawValue).tag(sortMethod)
+          }
+        }
+        Spacer()
+      }
       TextField("Search Posts", text: $searchText)
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .padding()
@@ -35,12 +45,12 @@ struct PostListView<PostContainer: PostsProvider>: View {
         }) { post in
           PostRowView(post: post, commentsManager: self.commentsManager, debugManager: self.debugManager)
             .conditionalModifier(post == self.postsData.posts.last, OnAppearModifier {
-              self.postsData.loadPosts(container: self.postContainer)
+              self.postsData.loadPosts()
             })
         }
       }
       .onAppear {
-        self.postsData.loadPosts(container: self.postContainer)
+        self.postsData.loadPosts()
       }
     }
   }

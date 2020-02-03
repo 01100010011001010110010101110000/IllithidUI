@@ -10,18 +10,32 @@ import SwiftUI
 
 import Illithid
 
-final class PostData: ObservableObject {
+final class PostData<PostContainer: PostsProvider>: ObservableObject {
   @Published var posts: [Post] = []
+  @Published var sort: PostSort = .best {
+    willSet {
+      posts.removeAll(keepingCapacity: true)
+      postListingParams = .init()
+    }
+    didSet {
+      loadPosts()
+    }
+  }
 
+  private let postsProvider: PostsProvider
   private var postListingParams: ListingParameters = .init()
   private let illithid: Illithid = .shared
   private let log = OSLog(subsystem: "com.illithid.IllithidUI.Posts",
                           category: .pointsOfInterest)
 
-  func loadPosts(container: PostsProvider) {
+  init(provider: PostsProvider) {
+    postsProvider = provider
+  }
+
+  func loadPosts() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
-    container.posts(sortBy: .hot, parameters: postListingParams, queue: .global(qos: .userInteractive)) { result in
+    postsProvider.posts(sortBy: sort, parameters: postListingParams, queue: .global(qos: .userInteractive)) { result in
       switch result {
       case let .success(listing):
         if let anchor = listing.after { self.postListingParams.after = anchor }
