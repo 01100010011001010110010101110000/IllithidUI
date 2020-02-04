@@ -13,8 +13,12 @@ struct SearchView: View {
 
   var body: some View {
     VStack {
-      TextField("Search Reddit", text: $searchData.query).textFieldStyle(RoundedBorderTextFieldStyle())
-        .padding()
+      TextField("Search Reddit", text: $searchData.query) {
+        // Allows the user to force a search for a string shorter than 3 characters
+        self.searchData.search(for: self.searchData.query)
+      }
+      .textFieldStyle(RoundedBorderTextFieldStyle())
+      .padding()
       NavigationView {
         List {
           if !searchData.subreddits.isEmpty {
