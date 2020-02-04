@@ -27,9 +27,13 @@ struct PostContent: View {
             .padding([.bottom, .trailing], 4),
                    alignment: .bottomTrailing)
       } else if post.previewGuess == .text {
-        ScrollView {
-          Text(post.selftext)
-            .padding()
+        if !post.selftext.isEmpty {
+          ScrollView {
+            Text(post.selftext)
+              .padding()
+          }
+        } else {
+          Spacer()
         }
       } else if post.previewGuess == .gif {
         AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)

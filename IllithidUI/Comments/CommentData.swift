@@ -60,7 +60,7 @@ class CommentData: ObservableObject {
     cancelToken = illithid.comments(for: post, parameters: listingParameters, queue: .global(qos: .userInteractive))
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { value in
-        illithid.logger.errorMessage("Error fetching comments\(value)")
+        self.illithid.logger.errorMessage("Error fetching comments\(value)")
       }) { listing in
         self.comments.append(contentsOf: listing.comments)
         os_signpost(.end, log: self.log, name: "Load Comments", signpostID: id, "%{public}s", self.post.title)
