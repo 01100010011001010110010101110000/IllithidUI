@@ -10,11 +10,15 @@ import Illithid
 
 struct CommentRowView: View {
   let comment: Comment
-  let depth: Int
+  private let depth: Int
+  private let authorColor: Color
 
   init(comment: Comment) {
     self.comment = comment
     depth = comment.depth ?? 0
+    if comment.isSubmitter { authorColor = .blue }
+    else if comment.canModPost { authorColor = .green }
+    else { authorColor = .white }
   }
 
   var body: some View {
@@ -26,9 +30,17 @@ struct CommentRowView: View {
       }
 
       VStack(alignment: .leading, spacing: 0) {
-        Text(comment.author)
-          .font(.subheadline)
-          .fontWeight(.heavy)
+        HStack {
+          Text(comment.author)
+            .font(.subheadline)
+            .fontWeight(.heavy)
+            .foregroundColor(authorColor)
+
+          Text("\(comment.ups)")
+            .foregroundColor(.orange)
+          Spacer()
+          Text(comment.relativeCommentTime)
+        }
 
         Text(comment.body)
           .font(.body)

@@ -27,8 +27,15 @@ struct CommentsView: IdentifiableView {
     List {
       VStack(alignment: .leading) {
         PostContent(post: post)
-        Text(post.title)
-          .font(.largeTitle)
+        HStack {
+          Text(post.title)
+            .font(.largeTitle)
+          Spacer()
+          VStack {
+            Text("in \(post.subreddit) by \(post.author)")
+            Text("\(post.relativePostTime) ago")
+          }
+        }
       }
       Divider()
         .opacity(1.0)
