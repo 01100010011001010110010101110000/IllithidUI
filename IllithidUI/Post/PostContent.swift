@@ -42,7 +42,7 @@ struct PostContent: View {
         VideoPostPreview(post: self.post)
       } else if post.previewGuess == .image {
         if !post.imagePreviews.isEmpty {
-          WebImage(url: post.imagePreviews.middle!.url)
+          WebImage(url: post.imagePreviews.last!.url)
             .resizable()
             .aspectRatio(contentMode: .fit)
         } else {
@@ -97,7 +97,7 @@ private struct VideoPostPreview: View {
     }
     .frame(idealWidth: CGFloat(preview.width), maxWidth: CGFloat(preview.width),
            idealHeight: CGFloat(preview.height), maxHeight: CGFloat(preview.height))
-    .overlay(MediaStamp(mediaType: "video")
+    .overlay(MediaStamp(mediaType: "reddit")
       .padding([.bottom, .trailing], 4),
              alignment: .bottomTrailing)
   }
