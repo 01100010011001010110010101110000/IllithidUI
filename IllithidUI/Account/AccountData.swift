@@ -31,7 +31,7 @@ final class AccountData: ObservableObject {
         self.loadAccount(account)
       case let .failure(error):
         self.account = nil
-        print("Failure fetching account: \(error)")
+        Illithid.shared.logger.errorMessage("Failure fetching account: \(error)")
       }
     }
   }
@@ -46,7 +46,7 @@ final class AccountData: ObservableObject {
       case let .success(comments):
         self.comments.append(contentsOf: comments)
       case let .failure(error):
-        print("Failed to fetch comments: \(error)")
+        Illithid.shared.logger.errorMessage("Failed to fetch comments: \(error)")
       }
       os_signpost(.end, log: self.log, name: "Load Comments", signpostID: commentsId, "%{public}s", account.name)
     }
@@ -57,7 +57,7 @@ final class AccountData: ObservableObject {
       case let .success(posts):
         self.submissions.append(contentsOf: posts)
       case let .failure(error):
-        print("Failed to fetch submissions: \(error)")
+        Illithid.shared.logger.errorMessage("Failed to fetch submissions: \(error)")
       }
       os_signpost(.end, log: self.log, name: "Load Submissions", signpostID: submissionsId, "%{public}s", account.name)
     }

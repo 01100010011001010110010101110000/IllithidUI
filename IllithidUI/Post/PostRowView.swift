@@ -147,14 +147,14 @@ struct PostActionBar: View {
             self.vote = .clear
             self.post.clearVote(queue: .global(qos: .utility)) { result in
               if case let Result.failure(error) = result {
-                print("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           } else {
             self.vote = .up
             self.post.upvote(queue: .global(qos: .utility)) { result in
               if case let Result.failure(error) = result {
-                print("Error upvoting \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           }
@@ -169,14 +169,14 @@ struct PostActionBar: View {
             self.vote = .clear
             self.post.clearVote(queue: .global(qos: .utility)) { result in
               if case let Result.failure(error) = result {
-                print("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           } else {
             self.vote = .down
             self.post.downvote(queue: .global(qos: .utility)) { result in
               if case let Result.failure(error) = result {
-                print("Error downvoting \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           }
@@ -191,13 +191,13 @@ struct PostActionBar: View {
           if self.saved {
             self.post.save(queue: .global(qos: .utility)) { result in
               if case let Result.failure(error) = result {
-                print("Error saving \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           } else {
             self.post.unsave(queue: .global(qos: .utility)) { result in
               if case let Result.failure(error) = result {
-                print("Error unsaving \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           }

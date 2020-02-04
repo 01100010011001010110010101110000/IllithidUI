@@ -58,14 +58,14 @@ struct CommentActionBar: View {
           self.vote = .clear
           self.comment.clearVote(queue: .global(qos: .utility)) { result in
             if case let Result.failure(error) = result {
-              print("Error clearing vote on \(self.comment.fullname): \(error)")
+              Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.fullname): \(error)")
             }
           }
         } else {
           self.vote = .up
           self.comment.upvote(queue: .global(qos: .utility)) { result in
             if case let Result.failure(error) = result {
-              print("Error upvoting \(self.comment.fullname): \(error)")
+              Illithid.shared.logger.errorMessage("Error upvoting \(self.comment.fullname): \(error)")
             }
           }
         }
@@ -78,14 +78,14 @@ struct CommentActionBar: View {
           self.vote = .clear
           self.comment.clearVote(queue: .global(qos: .utility)) { result in
             if case let Result.failure(error) = result {
-              print("Error clearing vote on \(self.comment.fullname): \(error)")
+              Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.fullname): \(error)")
             }
           }
         } else {
           self.vote = .down
           self.comment.downvote(queue: .global(qos: .utility)) { result in
             if case let Result.failure(error) = result {
-              print("Error downvoting \(self.comment.fullname): \(error)")
+              Illithid.shared.logger.errorMessage("Error downvoting \(self.comment.fullname): \(error)")
             }
           }
         }
@@ -98,14 +98,14 @@ struct CommentActionBar: View {
           self.saved = false
           self.comment.unsave(queue: .global(qos: .utility)) { result in
             if case let Result.failure(error) = result {
-              print("Error unsaving \(self.comment.fullname): \(error)")
+              Illithid.shared.logger.errorMessage("Error unsaving \(self.comment.fullname): \(error)")
             }
           }
         } else {
           self.saved = true
           self.comment.save(queue: .global(qos: .utility)) { result in
             if case let Result.failure(error) = result {
-              print("Error saving \(self.comment.fullname): \(error)")
+              Illithid.shared.logger.errorMessage("Error saving \(self.comment.fullname): \(error)")
             }
           }
         }
