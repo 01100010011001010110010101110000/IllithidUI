@@ -197,7 +197,7 @@ class GfycatData: ObservableObject {
           self.item = item
         }
       case let .failure(error):
-        print("Failed to fetch gfyitem: \(error)")
+        Illithid.shared.logger.errorMessage("Failed to fetch gfyitem: \(error)")
       }
     }
   }
@@ -249,7 +249,7 @@ class ImgurData: ObservableObject {
           self.imgurImage = imgurImage
         }
       case let .failure(error):
-        print("Failed to fetch \(imageId) data: \(error)")
+        Illithid.shared.logger.errorMessage("Failed to fetch \(imageId) data: \(error)")
       }
     }
   }
