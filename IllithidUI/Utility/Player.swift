@@ -5,6 +5,7 @@
 //
 
 import AVKit
+import Combine
 import SwiftUI
 
 struct Player: NSViewRepresentable {
@@ -32,14 +33,25 @@ struct Player: NSViewRepresentable {
   func updateNSView(_: AVPlayerView, context _: NSViewRepresentableContext<Player>) {}
 }
 
-final class PlayerData: ObservableObject {
-  fileprivate let player: AVQueuePlayer
-  fileprivate let looper: AVPlayerLooper
+final class PlayerData: NSObject, ObservableObject {
+  fileprivate let player: AVPlayer
+  private var cancelToken: AnyCancellable? = nil
 
   init(url: URL) {
-    player = AVQueuePlayer(url: url)
-    looper = AVPlayerLooper(player: player, templateItem: player.currentItem!)
+    player = AVPlayer(url: url)
+    super.init()
     player.volume = 0.0
+    cancelToken = NotificationCenter.default
+      .publisher(for: .AVPlayerItemDidPlayToEndTime, object: player.currentItem!)
+      .receive(on: RunLoop.main)
+      .sink { [weak self] notification in
+        self?.player.seek(to: .zero)
+        self?.player.play()
+    }
+  }
+
+  deinit {
+    cancelToken?.cancel()
   }
 }
 
