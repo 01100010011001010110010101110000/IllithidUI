@@ -22,7 +22,7 @@ struct PostContent: View {
             .padding([.bottom, .trailing], 4),
                    alignment: .bottomTrailing)
       } else if post.previewGuess == .gfycat {
-        GfycatView(gfyId: String(post.contentUrl.path.dropFirst()))
+        GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
           .overlay(MediaStamp(mediaType: "gfycat")
             .padding([.bottom, .trailing], 4),
                    alignment: .bottomTrailing)
@@ -201,7 +201,7 @@ class GfycatData: ObservableObject {
           self.item = item
         }
       case let .failure(error):
-        Illithid.shared.logger.errorMessage("Failed to fetch gfyitem: \(error)")
+        Illithid.shared.logger.errorMessage("Failed to fetch gfyitem \(id): \(error)")
       }
     }
   }
