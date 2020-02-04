@@ -16,8 +16,9 @@ struct CommentRowView: View {
   init(comment: Comment) {
     self.comment = comment
     depth = comment.depth ?? 0
-    if comment.isSubmitter { authorColor = .blue }
+    if comment.canModPost && comment.isSubmitter { authorColor = .purple }
     else if comment.canModPost { authorColor = .green }
+    else if comment.isSubmitter { authorColor = .blue }
     else { authorColor = .white }
   }
 
