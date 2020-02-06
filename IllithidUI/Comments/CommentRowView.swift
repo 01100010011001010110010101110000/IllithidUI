@@ -40,7 +40,7 @@ struct CommentRowView: View {
           Text("\(comment.ups)")
             .foregroundColor(.orange)
           Spacer()
-          Text(comment.relativeCommentTime)
+          Text("\(comment.relativeCommentTime) ago")
         }
 
         Text(comment.body)
