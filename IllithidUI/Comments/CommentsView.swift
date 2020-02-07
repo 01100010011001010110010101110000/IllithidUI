@@ -39,14 +39,32 @@ struct CommentsView: IdentifiableView {
       }
       Divider()
         .opacity(1.0)
-      ForEach(self.commentData.allComments) { comment in
-        CommentRowView(comment: comment)
-          .frame(alignment: .leading)
+      ForEach(self.commentData.comments) { comment in
+        self.viewBuilder(wrapper: comment)
       }
     }
     .frame(minWidth: 600, minHeight: 400, maxHeight: .infinity)
     .onAppear {
       self.commentData.loadComments()
+    }
+  }
+  func viewBuilder(wrapper: CommentWrapper) -> AnyView {
+    switch wrapper {
+    case let .comment(comment):
+      return CommentRowView(comment: comment)
+        .eraseToAnyView()
+    case let .more(more):
+      return HStack {
+        if more.depth > 0 {
+          RoundedRectangle(cornerRadius: 1.5)
+            .foregroundColor(Color(hue: 1.0 / Double(more.depth), saturation: 1.0, brightness: 1.0))
+            .frame(width: 3)
+        }
+        Text("\(more.count) more replies")
+        Spacer()
+      }
+      .padding(.leading, 20 * CGFloat(integerLiteral: more.depth))
+      .eraseToAnyView()
     }
   }
 }

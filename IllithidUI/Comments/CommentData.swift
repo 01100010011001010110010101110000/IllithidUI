@@ -11,7 +11,7 @@ import SwiftUI
 import Illithid
 
 class CommentData: ObservableObject {
-  @Published var comments: [Comment] = []
+  @Published private(set) var comments: [CommentWrapper] = []
   @State private var listingParameters = ListingParameters(limit: 100)
 
   let post: Post
@@ -27,31 +27,18 @@ class CommentData: ObservableObject {
 
   /// Performs a pre-order depth first search on the comment tree
   ///
-  /// Performing a pre-order DFS on the comment tree has the effect of flattening the tree into an array while preserving the comment order,
-  /// i.e. given an index in `results`, the successor is one of:
-  /// *
+  /// Performing a pre-order DFS on the comment tree has the effect of flattening the tree into an array while preserving the comment order
   /// - Parameter node: The root comment to traverse
-  /// - Parameter results: The array in which to place comment nodes
   /// - Complexity: `O(n)` where `n` is the number of comments in the tree
-  fileprivate func preOrder(node: Comment, into results: inout [Comment]) {
-    results.append(node)
-    if let replies = node.replies?.comments, !replies.isEmpty {
-      replies.forEach { comment in
-        preOrder(node: comment, into: &results)
+  private func preOrder(node: CommentWrapper) {
+    self.comments.append(node)
+    if case let CommentWrapper.comment(comment) = node {
+      if let replies = comment.replies, !replies.isEmpty {
+        replies.allComments.forEach { comment in
+          preOrder(node: comment)
+        }
       }
     }
-  }
-
-  var allComments: [Comment] {
-    let id = OSSignpostID(log: log)
-    os_signpost(.begin, log: log, name: "Traverse Comments", signpostID: id, "%{public}s", post.title)
-    var preOrderComments: [Comment] = []
-    preOrderComments.reserveCapacity(100)
-    comments.forEach { comment in
-      preOrder(node: comment, into: &preOrderComments)
-    }
-    os_signpost(.end, log: log, name: "Traverse Comments", signpostID: id, "%{public}s", post.title)
-    return preOrderComments
   }
 
   func loadComments() {
@@ -62,7 +49,14 @@ class CommentData: ObservableObject {
       .sink(receiveCompletion: { value in
         self.illithid.logger.errorMessage("Error fetching comments\(value)")
       }) { listing in
-        self.comments.append(contentsOf: listing.comments)
+        let id = OSSignpostID(log: self.log)
+        os_signpost(.begin, log: self.log, name: "Traverse Comments", signpostID: id, "%{public}s", self.post.title)
+        let unsortedComments = listing.allComments
+        self.comments.reserveCapacity(unsortedComments.capacity)
+        unsortedComments.forEach { comment in
+          self.preOrder(node: comment)
+        }
+        os_signpost(.end, log: self.log, name: "Traverse Comments", signpostID: id, "%{public}s", self.post.title)
         os_signpost(.end, log: self.log, name: "Load Comments", signpostID: id, "%{public}s", self.post.title)
       }
   }
