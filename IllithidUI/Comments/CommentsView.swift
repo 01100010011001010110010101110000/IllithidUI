@@ -1,7 +1,7 @@
 //
-// CommentsView.swift
+// {file}
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
 //
 
 import Combine
@@ -21,6 +21,12 @@ struct CommentsView: IdentifiableView {
     commentData = CommentData(post: post)
     self.post = post
     id = post.id
+  }
+
+  fileprivate init(from listing: Listing) {
+    self.post = listing.posts.first!
+    id = post.id
+    commentData = CommentData(from: listing)
   }
 
   var body: some View {
@@ -48,6 +54,7 @@ struct CommentsView: IdentifiableView {
       self.commentData.loadComments()
     }
   }
+
   func viewBuilder(wrapper: CommentWrapper) -> AnyView {
     switch wrapper {
     case let .comment(comment):
@@ -60,13 +67,13 @@ struct CommentsView: IdentifiableView {
   }
 }
 
-// struct CommentsView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    let testCommentsPath = Bundle.main.path(forResource: "comments", ofType: "json")!
-//    let data = try! Data(contentsOf: URL(fileURLWithPath: testCommentsPath))
-//    let decoder = JSONDecoder()
-//    let listing = try! decoder.decode(Listing.self, from: data)
-//
-//    return CommentsView(commentData: .init(from: listing), reddit: .init(configuration: IllithidConfiguration()))
-//  }
-// }
+struct CommentsView_Previews: PreviewProvider {
+  static var previews: some View {
+    let testCommentsPath = Bundle.main.path(forResource: "comments", ofType: "json")!
+    let data = try! Data(contentsOf: URL(fileURLWithPath: testCommentsPath))
+    let decoder = JSONDecoder()
+    let listing = try! decoder.decode(Listing.self, from: data)
+
+    return CommentsView(from: listing)
+  }
+}

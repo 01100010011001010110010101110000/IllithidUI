@@ -37,7 +37,7 @@ struct CommentRowView: View {
             .fontWeight(.heavy)
             .foregroundColor(authorColor)
 
-          Text("\(comment.ups)")
+          Text(comment.scoreHidden ? "-" : String(comment.ups))
             .foregroundColor(.orange)
           Spacer()
           Text("\(comment.relativeCommentTime) ago")
@@ -64,7 +64,8 @@ struct MoreCommentsRowView: View {
           .foregroundColor(Color(hue: 1.0 / Double(more.depth), saturation: 1.0, brightness: 1.0))
           .frame(width: 3)
       }
-      Text("\(more.count) more replies")
+      Text("\(more.count) more \(more.count == 1 ? "reply" : "replies")")
+        .font(.footnote)
       Spacer()
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: more.depth))

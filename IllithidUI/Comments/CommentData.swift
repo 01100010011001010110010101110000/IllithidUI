@@ -25,6 +25,15 @@ class CommentData: ObservableObject {
     self.post = post
   }
 
+  init(from listing: Listing) {
+    self.post = listing.posts.first!
+    let unsortedComments = listing.allComments
+    self.comments.reserveCapacity(unsortedComments.capacity)
+    unsortedComments.forEach { comment in
+      self.preOrder(node: comment)
+    }
+  }
+
   /// Performs a pre-order depth first search on the comment tree
   ///
   /// Performing a pre-order DFS on the comment tree has the effect of flattening the tree into an array while preserving the comment order
