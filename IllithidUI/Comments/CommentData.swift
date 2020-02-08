@@ -11,7 +11,14 @@ import SwiftUI
 import Illithid
 
 class CommentData: ObservableObject {
-  @Published var showComment: [ID36: Bool] = [:]
+  enum CollapseState {
+    case expanded
+    case parentCollapsed
+    case collapsed
+    case collapsedParentCollapsed
+  }
+
+  @Published var showComment: [ID36: CollapseState] = [:]
   @Published private(set) var comments: [CommentWrapper] = []
   @State private var listingParameters = ListingParameters(limit: 100)
 
@@ -33,7 +40,7 @@ class CommentData: ObservableObject {
     unsortedComments.forEach { comment in
       self.preOrder(node: comment) { wrapper in
         self.comments.append(wrapper)
-        self.showComment[comment.id] = true
+        self.showComment[comment.id] = .expanded
       }
     }
   }
@@ -42,14 +49,19 @@ class CommentData: ObservableObject {
   ///
   /// Traverses the tree, executing `body` on a node before visiting its children
   /// - Parameter node: The root comment to traverse
+  /// - Parameter visitChildren: A closure which will prevent traversal of a node's children if `false`
   /// - Parameter body: The closure to execute on each comment
   /// - Complexity: `O(n)` where `n` is the number of comments in the tree
-  func preOrder(node: CommentWrapper, body: (CommentWrapper) -> Void) {
+  func preOrder(node: CommentWrapper,
+                visitChildren: (CommentWrapper) -> Bool = { _ in return true },
+                body: (CommentWrapper) -> Void) {
     body(node)
     if case let CommentWrapper.comment(comment) = node {
       if let replies = comment.replies, !replies.isEmpty {
-        replies.allComments.forEach { comment in
-          preOrder(node: comment) { body($0) }
+        if visitChildren(node) {
+          replies.allComments.forEach { comment in
+            preOrder(node: comment, visitChildren: visitChildren) { body($0) }
+          }
         }
       }
     }
@@ -60,13 +72,18 @@ class CommentData: ObservableObject {
   /// Traverses the tree, executing `body` on a node only when it has no children or all its children
   /// have been visited
   /// - Parameter node: The root comment to traverse
+  /// - Parameter visitChildren: A closure which will prevent traversal of a node's children if `false`
   /// - Parameter body: The closure to execute on each comment
   /// - Complexity: `O(n)` where `n` is the number of comments in the tree
-  func postOrder(node: CommentWrapper, body: (CommentWrapper) -> Void) {
+  func postOrder(node: CommentWrapper,
+                 visitChildren: (CommentWrapper) -> Bool = { _ in return true },
+                 body: (CommentWrapper) -> Void) {
     if case let CommentWrapper.comment(comment) = node {
       if let replies = comment.replies, !replies.isEmpty {
-        replies.allComments.forEach { node in
-          postOrder(node: node) { body($0) }
+        if visitChildren(node) {
+          replies.allComments.forEach { node in
+            postOrder(node: node, visitChildren: visitChildren) { body($0) }
+          }
         }
       }
     }
@@ -84,12 +101,11 @@ class CommentData: ObservableObject {
         let id = OSSignpostID(log: self.log)
         os_signpost(.begin, log: self.log, name: "Traverse Comments", signpostID: id, "%{public}s", self.post.title)
         let unsortedComments = listing.allComments
-        self.comments.reserveCapacity(unsortedComments.capacity)
+        self.comments.reserveCapacity(unsortedComments.count)
         unsortedComments.forEach { comment in
-          self.showComment[comment.id] = true
           self.preOrder(node: comment) { wrapper in
             self.comments.append(wrapper)
-            self.showComment[wrapper.id] = true
+            self.showComment[wrapper.id] = .expanded
           }
         }
         os_signpost(.end, log: self.log, name: "Traverse Comments", signpostID: id, "%{public}s", self.post.title)

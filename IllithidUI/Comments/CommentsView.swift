@@ -1,7 +1,7 @@
 //
-// {file}
+// CommentsView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
 //
 
 import Combine
@@ -55,24 +55,84 @@ struct CommentsView: IdentifiableView {
     }
   }
 
+  // TODO: Clean up this abomination
   func viewBuilder(wrapper: CommentWrapper) -> AnyView {
-    if commentData.showComment[wrapper.id] == true {
+    if commentData.showComment[wrapper.id] == .expanded {
       switch wrapper {
       case let .comment(comment):
         return CommentRowView(comment: comment)
           .onTapGesture {
-              DispatchQueue.main.async {
-                withAnimation {
-                  self.commentData.postOrder(node: .comment(comment)) { wrapper in
-                    self.commentData.showComment[wrapper.id]?.toggle()
+            DispatchQueue.main.async {
+              withAnimation {
+                self.commentData.postOrder(node: wrapper) { wrappedNode in
+                  let state = self.commentData.showComment[wrappedNode.id]
+                  let wasClicked = wrappedNode.id == comment.id
+                  switch state {
+                  case .expanded:
+                    if wasClicked { self.commentData.showComment[wrappedNode.id] = .collapsed }
+                    else { self.commentData.showComment[wrappedNode.id] = .parentCollapsed }
+                  case .parentCollapsed:
+                    if wasClicked { assertionFailure("A comment that was collapsed because a parent was collapsed was clicked") }
+                  case .collapsed:
+                    if wasClicked { self.commentData.showComment[wrappedNode.id] = .expanded }
+                    else { self.commentData.showComment[wrappedNode.id] = .collapsedParentCollapsed }
+                  case .collapsedParentCollapsed:
+                    if wasClicked { assertionFailure("A comment that was collapsed because a parent was collapsed was clicked") }
+                  case .none:
+                    assertionFailure("A comment without a collapse state was encountered")
                   }
                 }
               }
+            }
           }
           .eraseToAnyView()
       case let .more(more):
         return MoreCommentsRowView(more: more)
           .eraseToAnyView()
+      }
+    } else if commentData.showComment[wrapper.id] == .collapsed {
+      switch wrapper {
+      case let .comment(comment):
+        return HStack {
+          if (comment.depth ?? 0) > 0 {
+            RoundedRectangle(cornerRadius: 1.5)
+              .foregroundColor(Color(hue: 1.0 / Double(comment.depth ?? 0), saturation: 1.0, brightness: 1.0))
+              .frame(width: 3)
+          }
+          Text(comment.author)
+          Spacer()
+        }
+        .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
+        .onTapGesture {
+          DispatchQueue.main.async {
+            withAnimation {
+              self.commentData.preOrder(node: wrapper,
+                                        visitChildren: {
+                                          print(self.commentData.showComment[$0.id]!)
+                                          return self.commentData.showComment[$0.id] != .collapsed
+              }) { wrappedNode in
+                let state = self.commentData.showComment[wrappedNode.id]
+                let wasClicked = wrappedNode.id == comment.id
+                switch state {
+                case .expanded:
+                  assertionFailure("We are expanding a collapsed comment, we should not encounter any expanded comments")
+                case .parentCollapsed:
+                  self.commentData.showComment[wrappedNode.id] = .expanded
+                case .collapsed:
+                  if wasClicked { self.commentData.showComment[wrapper.id] = .expanded }
+                case .collapsedParentCollapsed:
+                  self.commentData.showComment[wrappedNode.id] = .collapsed
+                case .none:
+                  assertionFailure("A comment without a collapse state was encountered")
+                }
+              }
+            }
+          }
+        }
+        .eraseToAnyView()
+      case .more:
+        return EmptyView()
+        .eraseToAnyView()
       }
     } else {
       return EmptyView()
