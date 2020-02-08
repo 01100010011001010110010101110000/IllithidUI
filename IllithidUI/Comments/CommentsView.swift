@@ -24,7 +24,7 @@ struct CommentsView: IdentifiableView {
   }
 
   fileprivate init(from listing: Listing) {
-    self.post = listing.posts.first!
+    post = listing.posts.first!
     id = post.id
     commentData = CommentData(from: listing)
   }
@@ -56,12 +56,24 @@ struct CommentsView: IdentifiableView {
   }
 
   func viewBuilder(wrapper: CommentWrapper) -> AnyView {
-    switch wrapper {
-    case let .comment(comment):
-      return CommentRowView(comment: comment)
-        .eraseToAnyView()
-    case let .more(more):
-      return MoreCommentsRowView(more: more)
+    if commentData.showComment[wrapper.id] == true {
+      switch wrapper {
+      case let .comment(comment):
+        return CommentRowView(comment: comment)
+          .onTapGesture {
+            withAnimation {
+              self.commentData.preOrder(node: .comment(comment)) { wrapper in
+                self.commentData.showComment[wrapper.id]?.toggle()
+              }
+            }
+          }
+          .eraseToAnyView()
+      case let .more(more):
+        return MoreCommentsRowView(more: more)
+          .eraseToAnyView()
+      }
+    } else {
+      return EmptyView()
         .eraseToAnyView()
     }
   }

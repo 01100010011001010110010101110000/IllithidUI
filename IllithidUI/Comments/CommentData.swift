@@ -11,6 +11,7 @@ import SwiftUI
 import Illithid
 
 class CommentData: ObservableObject {
+  @Published var showComment: [ID36: Bool] = [:]
   @Published private(set) var comments: [CommentWrapper] = []
   @State private var listingParameters = ListingParameters(limit: 100)
 
@@ -30,7 +31,10 @@ class CommentData: ObservableObject {
     let unsortedComments = listing.allComments
     self.comments.reserveCapacity(unsortedComments.capacity)
     unsortedComments.forEach { comment in
-      self.preOrder(node: comment)
+      self.preOrder(node: comment) { wrapper in
+        self.comments.append(wrapper)
+        self.showComment[comment.id] = true
+      }
     }
   }
 
@@ -38,13 +42,14 @@ class CommentData: ObservableObject {
   ///
   /// Performing a pre-order DFS on the comment tree has the effect of flattening the tree into an array while preserving the comment order
   /// - Parameter node: The root comment to traverse
+  /// - Parameter body: The closure to execute on each comment
   /// - Complexity: `O(n)` where `n` is the number of comments in the tree
-  private func preOrder(node: CommentWrapper) {
-    self.comments.append(node)
+  func preOrder(node: CommentWrapper, body: (CommentWrapper) -> Void) {
+    body(node)
     if case let CommentWrapper.comment(comment) = node {
       if let replies = comment.replies, !replies.isEmpty {
         replies.allComments.forEach { comment in
-          preOrder(node: comment)
+          preOrder(node: comment) { body($0) }
         }
       }
     }
@@ -63,7 +68,11 @@ class CommentData: ObservableObject {
         let unsortedComments = listing.allComments
         self.comments.reserveCapacity(unsortedComments.capacity)
         unsortedComments.forEach { comment in
-          self.preOrder(node: comment)
+          self.showComment[comment.id] = true
+          self.preOrder(node: comment) { wrapper in
+            self.comments.append(wrapper)
+            self.showComment[wrapper.id] = true
+          }
         }
         os_signpost(.end, log: self.log, name: "Traverse Comments", signpostID: id, "%{public}s", self.post.title)
         os_signpost(.end, log: self.log, name: "Load Comments", signpostID: id, "%{public}s", self.post.title)
