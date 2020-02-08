@@ -55,6 +55,17 @@ class CommentData: ObservableObject {
     }
   }
 
+  func postOrder(node: CommentWrapper, body: (CommentWrapper) -> Void) {
+    if case let CommentWrapper.comment(comment) = node {
+      if let replies = comment.replies, !replies.isEmpty {
+        replies.allComments.forEach { node in
+          postOrder(node: node) { body($0) }
+        }
+      }
+    }
+    body(node)
+  }
+
   func loadComments() {
     let id = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Comments", signpostID: id, "%{public}s", post.title)

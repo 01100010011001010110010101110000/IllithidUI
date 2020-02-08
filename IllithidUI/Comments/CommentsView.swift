@@ -61,11 +61,13 @@ struct CommentsView: IdentifiableView {
       case let .comment(comment):
         return CommentRowView(comment: comment)
           .onTapGesture {
-            withAnimation {
-              self.commentData.preOrder(node: .comment(comment)) { wrapper in
-                self.commentData.showComment[wrapper.id]?.toggle()
+              DispatchQueue.main.async {
+                withAnimation {
+                  self.commentData.postOrder(node: .comment(comment)) { wrapper in
+                    self.commentData.showComment[wrapper.id]?.toggle()
+                  }
+                }
               }
-            }
           }
           .eraseToAnyView()
       case let .more(more):
