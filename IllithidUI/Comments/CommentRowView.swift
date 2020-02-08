@@ -16,7 +16,7 @@ struct CommentRowView: View {
   init(comment: Comment) {
     self.comment = comment
     depth = comment.depth ?? 0
-    if comment.canModPost && comment.isSubmitter { authorColor = .purple }
+    if comment.canModPost, comment.isSubmitter { authorColor = .purple }
     else if comment.canModPost { authorColor = .green }
     else if comment.isSubmitter { authorColor = .blue }
     else { authorColor = .white }
@@ -50,7 +50,24 @@ struct CommentRowView: View {
         Divider()
           .opacity(1.0)
       }
-    }.padding(.leading, 20 * CGFloat(integerLiteral: depth))
+    }.padding(.leading, 12 * CGFloat(integerLiteral: depth))
+  }
+}
+
+struct MoreCommentsRowView: View {
+  let more: More
+
+  var body: some View {
+    HStack {
+      if more.depth > 0 {
+        RoundedRectangle(cornerRadius: 1.5)
+          .foregroundColor(Color(hue: 1.0 / Double(more.depth), saturation: 1.0, brightness: 1.0))
+          .frame(width: 3)
+      }
+      Text("\(more.count) more replies")
+      Spacer()
+    }
+    .padding(.leading, 12 * CGFloat(integerLiteral: more.depth))
   }
 }
 
@@ -84,7 +101,7 @@ struct CommentActionBar: View {
         }
       }) {
         Text("Up")
-        .foregroundColor(vote == .up ? .orange : nil)
+          .foregroundColor(vote == .up ? .orange : nil)
       }
       Button(action: {
         if self.vote == .down {
@@ -104,7 +121,7 @@ struct CommentActionBar: View {
         }
       }) {
         Text("Down")
-        .foregroundColor(vote == .down ? .purple : nil)
+          .foregroundColor(vote == .down ? .purple : nil)
       }
       Button(action: {
         if self.saved {
@@ -124,20 +141,16 @@ struct CommentActionBar: View {
         }
       }) {
         Text("Save")
-        .foregroundColor(comment.saved ? .green : nil)
+          .foregroundColor(comment.saved ? .green : nil)
       }
       // TODO: Pass binding to enable removing a hidden post
-      Button(action: {
-        return
-      }) {
+      Button(action: {}) {
         Text("Hide")
-        .foregroundColor(.red)
+          .foregroundColor(.red)
       }
-      Button(action: {
-        return
-      }) {
+      Button(action: {}) {
         Text("Report")
-        .foregroundColor(.red)
+          .foregroundColor(.red)
       }
       Spacer()
     }
