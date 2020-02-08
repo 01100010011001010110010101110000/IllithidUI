@@ -40,7 +40,7 @@ class CommentData: ObservableObject {
 
   /// Performs a pre-order depth first search on the comment tree
   ///
-  /// Performing a pre-order DFS on the comment tree has the effect of flattening the tree into an array while preserving the comment order
+  /// Traverses the tree, executing `body` on a node before visiting its children
   /// - Parameter node: The root comment to traverse
   /// - Parameter body: The closure to execute on each comment
   /// - Complexity: `O(n)` where `n` is the number of comments in the tree
@@ -55,6 +55,13 @@ class CommentData: ObservableObject {
     }
   }
 
+  /// Performs a post-order depth first search on the comment tree
+  ///
+  /// Traverses the tree, executing `body` on a node only when it has no children or all its children
+  /// have been visited
+  /// - Parameter node: The root comment to traverse
+  /// - Parameter body: The closure to execute on each comment
+  /// - Complexity: `O(n)` where `n` is the number of comments in the tree
   func postOrder(node: CommentWrapper, body: (CommentWrapper) -> Void) {
     if case let CommentWrapper.comment(comment) = node {
       if let replies = comment.replies, !replies.isEmpty {
