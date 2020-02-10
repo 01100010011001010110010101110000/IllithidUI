@@ -16,8 +16,6 @@ final class SearchData: ObservableObject {
   @Published var subreddits: [Subreddit] = []
   @Published var posts: [Post] = []
 
-  private var results: Listing = .init()
-
   let illithid: Illithid = .shared
   private var cancelToken: AnyCancellable?
 

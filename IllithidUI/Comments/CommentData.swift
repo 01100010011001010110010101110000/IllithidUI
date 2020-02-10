@@ -21,11 +21,13 @@ class CommentData: ObservableObject {
   @Published var showComment: [ID36: CollapseState] = [:]
   @Published private(set) var comments: [CommentWrapper] = []
   @State private var listingParameters = ListingParameters(limit: 100)
+  var root = Node<CommentWrapper>()
 
   let post: Post
 
   private let illithid: Illithid = .shared
   private var cancelToken: AnyCancellable?
+  private var moreCancelToken: AnyCancellable?
   private let log = OSLog(subsystem: "com.illithid.IllithidUI.Comments",
                           category: .pointsOfInterest)
 
@@ -44,6 +46,8 @@ class CommentData: ObservableObject {
       }
     }
   }
+
+  // MARK: Tree functions
 
   /// Performs a pre-order depth first search on the comment tree
   ///
@@ -90,26 +94,138 @@ class CommentData: ObservableObject {
     body(node)
   }
 
+  // MARK: Comment loading
+
   func loadComments() {
-    let id = OSSignpostID(log: log)
-    os_signpost(.begin, log: log, name: "Load Comments", signpostID: id, "%{public}s", post.title)
     cancelToken = illithid.comments(for: post, parameters: listingParameters, queue: .global(qos: .userInteractive))
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { value in
         self.illithid.logger.errorMessage("Error fetching comments\(value)")
       }) { listing in
-        let id = OSSignpostID(log: self.log)
-        os_signpost(.begin, log: self.log, name: "Traverse Comments", signpostID: id, "%{public}s", self.post.title)
-        let unsortedComments = listing.allComments
-        self.comments.reserveCapacity(unsortedComments.count)
-        unsortedComments.forEach { comment in
-          self.preOrder(node: comment) { wrapper in
-            self.comments.append(wrapper)
-            self.showComment[wrapper.id] = .expanded
+        // Append the top level comments
+        self.root.append(contentsOf: listing.allComments)
+
+        // Recursively insert replies into the tree by fetching them from the initial nodes
+        // Each layer of nodes populated into the tree adds more nodes to traverse, fetching additional replies until
+        //   we are at leaf comments
+        self.root.traverse(preOrder: { node in
+          if let value = node.value {
+            if case let CommentWrapper.comment(comment) = value {
+              node.append(contentsOf: comment.replies?.allComments ?? [])
+            }
+            self.showComment[value.id] = .expanded
+            self.comments.append(value)
           }
-        }
-        os_signpost(.end, log: self.log, name: "Traverse Comments", signpostID: id, "%{public}s", self.post.title)
-        os_signpost(.end, log: self.log, name: "Load Comments", signpostID: id, "%{public}s", self.post.title)
+        })
       }
+  }
+
+  func loadMoreComments(more: More) {
+    moreCancelToken = illithid.moreComments(for: more, in: post, queue: .global(qos: .userInteractive))
+      .receive(on: RunLoop.main)
+    .sink(receiveCompletion: { value in
+      self.illithid.logger.errorMessage("Error fetching more comments\(value)")
+    }) { wrappers in
+      // Remove More object from tree
+      self.root.removeSubtree { node in
+        node.value?.id == more.id
+      }
+      wrappers.forEach { wrapper in
+        // Insert fetched comments into the tree
+        self.showComment[wrapper.id] = .expanded
+        if wrapper.parentId == self.post.fullname {
+          self.root.append(child: wrapper)
+        } else {
+          self.root.insert(wrapper, firstWhere: { node in
+            guard let value = node.value else { return false }
+            if case let CommentWrapper.comment(parent) = value {
+              return wrapper.parentId == parent.fullname
+            }
+            return false
+          })
+        }
+      }
+
+      // Update comments with the new tree, flattened into an array in the approrpiate order
+      var newComments: [CommentWrapper] = []
+      self.root.traverse(preOrder: { node in
+        guard let value = node.value else { return }
+        newComments.append(value)
+      })
+      self.comments = newComments
+    }
+  }
+}
+
+class Node<Element> {
+  let value: Element?
+  var children: [Node<Element>]
+  let parent: Node<Element>?
+
+  init(value: Element? = nil, children: [Node<Element>] = [], parent: Node<Element>? = nil) {
+    self.value = value
+    self.children = children
+    self.parent = parent
+  }
+
+  func append(child: Element) {
+    self.children.append(Node(value: child, parent: self))
+  }
+
+  func append(contentsOf: [Element]) {
+    self.children.append(contentsOf: contentsOf.map { Node(value: $0, parent: self) })
+  }
+
+  func first(where body: (Node<Element>) -> Bool) -> Node<Element>? {
+    var result: Node<Element>? = nil
+    traverse(preOrder: { node in
+      if body(node) { result = node }
+    })
+    return result
+  }
+
+  func insert(_ newElement: Element, firstWhere: (Node<Element>) -> Bool) {
+    traverse(preOrder: { node in
+      if firstWhere(node) { node.append(child: newElement) }
+    })
+  }
+
+  func removeSubtree(firstWhere: (Node<Element>) -> Bool) {
+    if let index = children.firstIndex(where: { firstWhere($0) }) {
+      children.remove(at: index)
+    } else {
+      children.forEach { child in
+        child.traverse(preOrder: { node in
+          if let index = node.children.firstIndex(where: { firstWhere($0) }) {
+            node.children.remove(at: index)
+          }
+        })
+      }
+    }
+  }
+
+  func traverse(preOrder: (Node<Element>) -> Void = { _ in }, postOrder: (Node<Element>) -> Void = { _ in },
+                visitChildren: (Node<Element>) -> Bool = { _ in return true }) {
+    preOrder(self)
+    if visitChildren(self) {
+      children.forEach { child in
+        child.traverse(preOrder: preOrder, postOrder: postOrder, visitChildren: visitChildren)
+      }
+    }
+    postOrder(self)
+  }
+}
+
+extension Node: Equatable where Element: Equatable {
+  static func == (lhs: Node<Element>, rhs: Node<Element>) -> Bool {
+    return lhs.children == rhs.children &&
+      lhs.parent == rhs.parent &&
+      lhs.value == rhs.value
+  }
+
+  func insert(at node: Node<Element>, newElement: Element) {
+    traverse(preOrder: { subNode in
+      if node == subNode { node.append(child: newElement) }
+    })
   }
 }

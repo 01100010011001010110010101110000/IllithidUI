@@ -64,30 +64,35 @@ struct CommentsView: IdentifiableView {
           .onTapGesture {
             DispatchQueue.main.async {
               withAnimation {
-                self.commentData.postOrder(node: wrapper) { wrappedNode in
-                  let state = self.commentData.showComment[wrappedNode.id]
-                  let wasClicked = wrappedNode.id == comment.id
+                guard let node = self.commentData.root.first(where: { $0.value?.id == comment.id }) else { return }
+                node.traverse(postOrder: { wrappedNode in
+                  guard let value = wrappedNode.value else { return }
+                  let state = self.commentData.showComment[value.id]
+                  let wasClicked = value.id == comment.id
                   switch state {
                   case .expanded:
-                    if wasClicked { self.commentData.showComment[wrappedNode.id] = .collapsed }
-                    else { self.commentData.showComment[wrappedNode.id] = .parentCollapsed }
+                    if wasClicked { self.commentData.showComment[value.id] = .collapsed }
+                    else { self.commentData.showComment[value.id] = .parentCollapsed }
                   case .parentCollapsed:
                     if wasClicked { assertionFailure("A comment that was collapsed because a parent was collapsed was clicked") }
                   case .collapsed:
-                    if wasClicked { self.commentData.showComment[wrappedNode.id] = .expanded }
-                    else { self.commentData.showComment[wrappedNode.id] = .collapsedParentCollapsed }
+                    if wasClicked { self.commentData.showComment[value.id] = .expanded }
+                    else { self.commentData.showComment[value.id] = .collapsedParentCollapsed }
                   case .collapsedParentCollapsed:
                     if wasClicked { assertionFailure("A comment that was collapsed because a parent was collapsed was clicked") }
                   case .none:
                     assertionFailure("A comment without a collapse state was encountered")
                   }
-                }
+                })
               }
             }
           }
           .eraseToAnyView()
       case let .more(more):
         return MoreCommentsRowView(more: more)
+          .onTapGesture {
+            self.commentData.loadMoreComments(more: more)
+          }
           .eraseToAnyView()
       }
     } else if commentData.showComment[wrapper.id] == .collapsed {
@@ -106,26 +111,27 @@ struct CommentsView: IdentifiableView {
         .onTapGesture {
           DispatchQueue.main.async {
             withAnimation {
-              self.commentData.preOrder(node: wrapper,
-                                        visitChildren: {
-                                          print(self.commentData.showComment[$0.id]!)
-                                          return self.commentData.showComment[$0.id] != .collapsed
-              }) { wrappedNode in
-                let state = self.commentData.showComment[wrappedNode.id]
-                let wasClicked = wrappedNode.id == comment.id
+              guard let node = self.commentData.root.first(where: { $0.value?.id == comment.id }) else { return }
+              node.traverse(preOrder: { wrappedNode in
+                guard let value = wrappedNode.value else { return }
+                let state = self.commentData.showComment[value.id]
+                let wasClicked = value.id == comment.id
                 switch state {
                 case .expanded:
                   assertionFailure("We are expanding a collapsed comment, we should not encounter any expanded comments")
                 case .parentCollapsed:
-                  self.commentData.showComment[wrappedNode.id] = .expanded
+                  self.commentData.showComment[value.id] = .expanded
                 case .collapsed:
                   if wasClicked { self.commentData.showComment[wrapper.id] = .expanded }
                 case .collapsedParentCollapsed:
-                  self.commentData.showComment[wrappedNode.id] = .collapsed
+                  self.commentData.showComment[value.id] = .collapsed
                 case .none:
                   assertionFailure("A comment without a collapse state was encountered")
                 }
-              }
+              }, visitChildren: { node in
+                guard let value = node.value else { return true }
+                return self.commentData.showComment[value.id] != .collapsed
+              })
             }
           }
         }
