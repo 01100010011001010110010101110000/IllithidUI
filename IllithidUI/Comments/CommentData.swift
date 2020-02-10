@@ -157,6 +157,8 @@ class CommentData: ObservableObject {
   }
 }
 
+// MARK: Tree structure
+
 class Node<Element> {
   let value: Element?
   var children: [Node<Element>]

@@ -7,6 +7,7 @@
 import SwiftUI
 
 import Illithid
+import SDWebImage
 import SDWebImageSwiftUI
 import Ulithari
 
@@ -46,9 +47,7 @@ struct PostContent: View {
         VideoPostPreview(post: self.post)
       } else if post.previewGuess == .image {
         if !post.imagePreviews.isEmpty {
-          WebImage(url: post.imagePreviews.last!.url)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
+          WebImage(url: post.imagePreviews.last!.url, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 800), scaleMode: .aspectFill)])
         } else {
           Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
             .scaledToFit()
@@ -107,6 +106,8 @@ private struct VideoPostPreview: View {
   }
 }
 
+// MARK: Preview guessing
+
 extension Post {
   enum PostPreviewType: String {
     case image
@@ -163,6 +164,8 @@ extension Post {
   }
 }
 
+// MARK: Gfycat
+
 struct GfycatView: View {
   @ObservedObject var gfyData: GfycatData
 
@@ -207,6 +210,8 @@ class GfycatData: ObservableObject {
   }
 }
 
+// MARK: Imgur
+
 struct ImgurView: View {
   @ObservedObject var imgurData: ImgurData
 
@@ -233,9 +238,7 @@ struct ImgurView: View {
                    maxHeight: CGFloat(imgurData.imgurImage!.data.height))
         }
       } else {
-        WebImage(url: imgurData.imgurImage!.data.link)
-          .resizable()
-          .aspectRatio(contentMode: .fit)
+        WebImage(url: imgurData.imgurImage!.data.link, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 800), scaleMode: .aspectFill)])
       }
     }
   }
