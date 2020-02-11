@@ -47,7 +47,7 @@ struct PostContent: View {
         VideoPostPreview(post: self.post)
       } else if post.previewGuess == .image {
         if !post.imagePreviews.isEmpty {
-          WebImage(url: post.imagePreviews.last!.url, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 800), scaleMode: .aspectFill)])
+          WebImage(url: post.imagePreviews.last!.url, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600), scaleMode: .aspectFit)])
         } else {
           Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
             .scaledToFit()
