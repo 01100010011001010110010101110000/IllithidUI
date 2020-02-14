@@ -20,6 +20,15 @@ struct PostListView<PostContainer: PostsProvider>: View {
 
   private let cancelToken: AnyCancellable? = nil
 
+  private var filteredPosts: [Post] {
+    self.postsData.posts.filter {
+      $0.author.hasPrefix(searchText) ||
+        $0.title.hasPrefix(searchText) ||
+        $0.subreddit.hasPrefix(searchText) ||
+        $0.selftext.contains(searchText)
+    }
+  }
+
   init(postContainer: PostContainer) {
     self.postContainer = postContainer
     self.postsData = PostData(provider: self.postContainer)
@@ -41,12 +50,9 @@ struct PostListView<PostContainer: PostsProvider>: View {
         .textFieldStyle(RoundedBorderTextFieldStyle())
         .padding([.bottom, .leading, .trailing])
       List {
-        ForEach(self.postsData.posts.filter {
-          $0.author.hasPrefix(searchText) || $0.title.hasPrefix(searchText) ||
-            $0.subreddit.hasPrefix(searchText) || $0.selftext.contains(searchText)
-        }) { post in
+        ForEach(filteredPosts) { post in
           PostRowView(post: post, commentsManager: self.commentsManager, debugManager: self.debugManager)
-            .conditionalModifier(post == self.postsData.posts.last, OnAppearModifier {
+            .conditionalModifier(post == self.filteredPosts.last, OnAppearModifier {
               self.postsData.loadPosts()
             })
         }
