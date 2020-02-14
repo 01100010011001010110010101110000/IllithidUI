@@ -22,10 +22,10 @@ struct PostListView<PostContainer: PostsProvider>: View {
 
   private var filteredPosts: [Post] {
     self.postsData.posts.filter {
-      $0.author.hasPrefix(searchText) ||
-        $0.title.hasPrefix(searchText) ||
-        $0.subreddit.hasPrefix(searchText) ||
-        $0.selftext.contains(searchText)
+      $0.author.range(of: searchText, options: .diacriticInsensitive) != nil ||
+        $0.title.range(of: searchText, options: .diacriticInsensitive) != nil ||
+        $0.subreddit.range(of: searchText, options: .diacriticInsensitive) != nil ||
+        $0.selftext.range(of: searchText, options: .diacriticInsensitive) != nil
     }
   }
 
