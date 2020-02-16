@@ -22,7 +22,8 @@ struct PostListView<PostContainer: PostsProvider>: View {
 
   private var filteredPosts: [Post] {
     self.postsData.posts.filter {
-      $0.author.range(of: searchText, options: .diacriticInsensitive) != nil ||
+      if searchText.isEmpty { return true }
+      return $0.author.range(of: searchText, options: .diacriticInsensitive) != nil ||
         $0.title.range(of: searchText, options: .diacriticInsensitive) != nil ||
         $0.subreddit.range(of: searchText, options: .diacriticInsensitive) != nil ||
         $0.selftext.range(of: searchText, options: .diacriticInsensitive) != nil

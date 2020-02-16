@@ -60,11 +60,11 @@ struct LinkPreview: View {
   }
 
   private func loadMetadata() {
-    Alamofire.request(link).responseString(queue: .global(qos: .userInitiated)) { response in
+    AF.request(link).responseString(queue: .global(qos: .userInitiated)) { response in
       switch response.result {
       case let .success(html):
         // Fetch link's HTML document
-        let documentResult = Swift.Result<Document, Error> {
+        let documentResult = Result<Document, Error> {
           return try SwiftSoup.parse(html, self.link.absoluteString)
         }
 

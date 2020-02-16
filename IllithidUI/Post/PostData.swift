@@ -35,7 +35,7 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
   func loadPosts() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
-    postsProvider.posts(sortBy: sort, parameters: postListingParams, queue: .global(qos: .userInteractive)) { result in
+    postsProvider.posts(sortBy: sort, location: nil, topInterval: nil, parameters: postListingParams, queue: .global(qos: .userInteractive)) { result in
       switch result {
       case let .success(listing):
         if let anchor = listing.after { self.postListingParams.after = anchor }
