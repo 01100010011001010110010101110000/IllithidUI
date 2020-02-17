@@ -38,37 +38,40 @@ struct PostListView<PostContainer: PostsProvider>: View {
   }
 
   var body: some View {
-    VStack {
-      HStack {
-        Picker(selection: $postsData.sort, label: EmptyView()) {
-          ForEach(PostSort.allCases) { sortMethod in
-            Text(sortMethod.rawValue).tag(sortMethod)
-          }
-        }
-        .frame(maxWidth: 100)
-        if postsData.sort == .top || postsData.sort == .controversial {
-          Picker(selection: $postsData.topInterval, label: EmptyView()) {
-            ForEach(TopInterval.allCases) { interval in
-              Text(interval.rawValue).tag(interval)
+    VStack(spacing: 0.0) {
+      VStack {
+        HStack {
+          Picker(selection: $postsData.sort, label: EmptyView()) {
+            ForEach(PostSort.allCases) { sortMethod in
+              Text(sortMethod.rawValue).tag(sortMethod)
             }
           }
           .frame(maxWidth: 100)
+          if postsData.sort == .top || postsData.sort == .controversial {
+            Picker(selection: $postsData.topInterval, label: EmptyView()) {
+              ForEach(TopInterval.allCases) { interval in
+                Text(interval.rawValue).tag(interval)
+              }
+            }
+            .frame(maxWidth: 100)
+          }
+          Spacer()
         }
-        Spacer()
-      }
-      .padding([.top, .leading])
-      HStack {
-        TextField("Search Posts", text: $searchText)
-          .textFieldStyle(RoundedBorderTextFieldStyle())
-        if postContainer is Subreddit {
-          Button("Sidebar") {
-            withAnimation {
-              self.showSidebar.toggle()
+        .padding([.top, .leading, .trailing], 10)
+        HStack {
+          TextField("Search Posts", text: $searchText)
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+          if postContainer is Subreddit {
+            Button("Sidebar") {
+              withAnimation {
+                self.showSidebar.toggle()
+              }
             }
           }
         }
+        .padding([.bottom, .leading, .trailing], 10)
       }
-      .padding([.bottom, .leading, .trailing])
+      .background(Color(.controlBackgroundColor))
       HSplitView {
         List {
           ForEach(filteredPosts) { post in
