@@ -89,16 +89,47 @@ struct PostListView<PostContainer: PostsProvider>: View {
 }
 
 struct SidebarView: View {
+  @State private var subscribed: Bool = false
   let subreddit: Subreddit
 
   var body: some View {
     VStack {
-      if subreddit.headerImg != nil {
-        WebImage(url: subreddit.headerImg!)
+      HStack {
+        Text(subreddit.displayName)
+        if subreddit.headerImg != nil {
+          WebImage(url: subreddit.headerImg!)
+        }
       }
+      Divider()
+      HStack {
+        RoundedRectangle(cornerRadius: 2.0)
+          .foregroundColor(subscribed ? .blue : Color(.darkGray))
+          .overlay(Text("Subscribe"), alignment: .center)
+          .foregroundColor(.white)
+          .onTapGesture {
+            if self.subscribed {
+              self.subreddit.unsubscribe(queue: .global(qos: .userInteractive)) { result in
+                if case Result.success = result {
+                  self.subscribed = false
+                }
+              }
+            } else {
+              self.subreddit.subscribe(queue: .global(qos: .userInteractive)) { result in
+                if case Result.success = result {
+                  self.subscribed = true
+                }
+              }
+            }
+          }
+          .frame(width: 32, height: 32)
+      }
+      Divider()
       ScrollView {
         Text(subreddit.description)
       }
+    }
+    .onAppear {
+      self.subscribed = self.subreddit.userIsSubscriber
     }
   }
 }
