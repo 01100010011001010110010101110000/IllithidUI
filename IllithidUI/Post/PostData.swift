@@ -13,11 +13,16 @@ import Illithid
 final class PostData<PostContainer: PostsProvider>: ObservableObject {
   @Published var posts: [Post] = []
   @Published var sort: PostSort = .best {
-    willSet {
+    didSet {
       posts.removeAll(keepingCapacity: true)
       postListingParams = .init()
+      loadPosts()
     }
+  }
+  @Published var topInterval: TopInterval = .day {
     didSet {
+      posts.removeAll(keepingCapacity: true)
+      postListingParams = .init()
       loadPosts()
     }
   }
@@ -35,7 +40,7 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
   func loadPosts() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
-    postsProvider.posts(sortBy: sort, location: nil, topInterval: nil, parameters: postListingParams, queue: .global(qos: .userInteractive)) { result in
+    postsProvider.posts(sortBy: sort, location: nil, topInterval: topInterval, parameters: postListingParams, queue: .global(qos: .userInteractive)) { result in
       switch result {
       case let .success(listing):
         if let anchor = listing.after { self.postListingParams.after = anchor }

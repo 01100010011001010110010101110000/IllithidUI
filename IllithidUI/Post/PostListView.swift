@@ -46,9 +46,17 @@ struct PostListView<PostContainer: PostsProvider>: View {
           }
         }
         .frame(maxWidth: 100)
-        .padding()
+        if postsData.sort == .top || postsData.sort == .controversial {
+          Picker(selection: $postsData.topInterval, label: EmptyView()) {
+            ForEach(TopInterval.allCases) { interval in
+              Text(interval.rawValue).tag(interval)
+            }
+          }
+          .frame(maxWidth: 100)
+        }
         Spacer()
       }
+      .padding([.top, .leading])
       HStack {
         TextField("Search Posts", text: $searchText)
           .textFieldStyle(RoundedBorderTextFieldStyle())
