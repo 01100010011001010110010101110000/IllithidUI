@@ -60,9 +60,11 @@ struct PostListView<PostContainer: PostsProvider>: View {
       HStack {
         TextField("Search Posts", text: $searchText)
           .textFieldStyle(RoundedBorderTextFieldStyle())
-        Button("Sidebar") {
-          withAnimation {
-            self.showSidebar.toggle()
+        if postContainer is Subreddit {
+          Button("Sidebar") {
+            withAnimation {
+              self.showSidebar.toggle()
+            }
           }
         }
       }
@@ -95,10 +97,11 @@ struct SidebarView: View {
   var body: some View {
     VStack {
       HStack {
-        Text(subreddit.displayName)
         if subreddit.headerImg != nil {
           WebImage(url: subreddit.headerImg!)
         }
+        Text(subreddit.displayName)
+          .font(.largeTitle)
       }
       Divider()
       HStack {
@@ -122,6 +125,8 @@ struct SidebarView: View {
             }
           }
           .frame(width: 32, height: 32)
+          .padding(.leading, 10)
+        Spacer()
       }
       Divider()
       ScrollView {
