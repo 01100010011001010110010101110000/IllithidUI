@@ -47,6 +47,9 @@ struct CommentRowView: View {
           .font(.body)
           .padding()
 
+        CommentActionBar(comment: comment)
+          .padding(.bottom, 5)
+
         Divider()
           .opacity(1.0)
       }
@@ -78,83 +81,86 @@ struct CommentActionBar: View {
   @State private var saved: Bool = false
   let comment: Comment
 
-  init(comment: Comment) {
-    self.comment = comment
-  }
-
   var body: some View {
-    VStack {
-      Button(action: {
-        if self.vote == .up {
-          self.vote = .clear
-          self.comment.clearVote(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.fullname): \(error)")
+    HStack {
+      RoundedRectangle(cornerRadius: 2.0)
+        .foregroundColor(vote == .up ? .orange : Color(.darkGray))
+        .overlay(Text("Up"), alignment: .center)
+        .foregroundColor(.white)
+        .onTapGesture {
+          if self.vote == .up {
+            self.vote = .clear
+            self.comment.clearVote(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+              }
             }
-          }
-        } else {
-          self.vote = .up
-          self.comment.upvote(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error upvoting \(self.comment.fullname): \(error)")
-            }
-          }
-        }
-      }) {
-        Text("Up")
-          .foregroundColor(vote == .up ? .orange : nil)
-      }
-      Button(action: {
-        if self.vote == .down {
-          self.vote = .clear
-          self.comment.clearVote(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.fullname): \(error)")
-            }
-          }
-        } else {
-          self.vote = .down
-          self.comment.downvote(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error downvoting \(self.comment.fullname): \(error)")
+          } else {
+            self.vote = .up
+            self.comment.upvote(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+              }
             }
           }
         }
-      }) {
-        Text("Down")
-          .foregroundColor(vote == .down ? .purple : nil)
-      }
-      Button(action: {
-        if self.saved {
-          self.saved = false
-          self.comment.unsave(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error unsaving \(self.comment.fullname): \(error)")
+        .frame(width: 32, height: 32)
+      RoundedRectangle(cornerRadius: 2.0)
+        .foregroundColor(vote == .down ? .purple : Color(.darkGray))
+        .overlay(Text("Down"), alignment: .center)
+        .foregroundColor(.white)
+        .onTapGesture {
+          if self.vote == .down {
+            self.vote = .clear
+            self.comment.clearVote(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+              }
             }
-          }
-        } else {
-          self.saved = true
-          self.comment.save(queue: .global(qos: .utility)) { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error saving \(self.comment.fullname): \(error)")
+          } else {
+            self.vote = .down
+            self.comment.downvote(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+              }
             }
           }
         }
-      }) {
-        Text("Save")
-          .foregroundColor(comment.saved ? .green : nil)
-      }
-      // TODO: Pass binding to enable removing a hidden post
-      Button(action: {}) {
-        Text("Hide")
-          .foregroundColor(.red)
-      }
-      Button(action: {}) {
-        Text("Report")
-          .foregroundColor(.red)
-      }
+        .frame(width: 32, height: 32)
+      RoundedRectangle(cornerRadius: 2.0)
+        .foregroundColor(saved ? .green : Color(.darkGray))
+        .overlay(Text("Save"), alignment: .center)
+        .foregroundColor(.white)
+        .onTapGesture {
+          self.saved.toggle()
+          if self.saved {
+            self.comment.save(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+              }
+            }
+          } else {
+            self.comment.unsave(queue: .global(qos: .utility)) { result in
+              if case let Result.failure(error) = result {
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+              }
+            }
+          }
+        }
+        .frame(width: 32, height: 32)
+      RoundedRectangle(cornerRadius: 2.0)
+        .foregroundColor(.red)
+        .overlay(Text("Hide"), alignment: .center)
+        .foregroundColor(.white)
+        .frame(width: 32, height: 32)
+      RoundedRectangle(cornerRadius: 2.0)
+        .foregroundColor(.red)
+        .overlay(Text("Report"), alignment: .center)
+        .foregroundColor(.white)
+        .frame(width: 32, height: 32)
       Spacer()
     }
+    .padding(10)
     .onAppear {
       if let likeDirection = self.comment.likes {
         self.vote = likeDirection ? .up : .down
