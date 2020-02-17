@@ -238,7 +238,7 @@ struct ImgurView: View {
                    maxHeight: CGFloat(imgurData.imgurImage!.data.height))
         }
       } else {
-        WebImage(url: imgurData.imgurImage!.data.link, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 800), scaleMode: .aspectFill)])
+        WebImage(url: imgurData.imgurImage!.data.link, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600), scaleMode: .aspectFill)])
       }
     }
   }
