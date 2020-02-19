@@ -36,9 +36,9 @@ class CommentData: ObservableObject {
   }
 
   init(from listing: Listing) {
-    self.post = listing.posts.first!
+    post = listing.posts.first!
     let unsortedComments = listing.allComments
-    self.comments.reserveCapacity(unsortedComments.capacity)
+    comments.reserveCapacity(unsortedComments.capacity)
     unsortedComments.forEach { comment in
       self.preOrder(node: comment) { wrapper in
         self.comments.append(wrapper)
@@ -57,7 +57,7 @@ class CommentData: ObservableObject {
   /// - Parameter body: The closure to execute on each comment
   /// - Complexity: `O(n)` where `n` is the number of comments in the tree
   func preOrder(node: CommentWrapper,
-                visitChildren: (CommentWrapper) -> Bool = { _ in return true },
+                visitChildren: (CommentWrapper) -> Bool = { _ in true },
                 body: (CommentWrapper) -> Void) {
     body(node)
     if case let CommentWrapper.comment(comment) = node {
@@ -80,7 +80,7 @@ class CommentData: ObservableObject {
   /// - Parameter body: The closure to execute on each comment
   /// - Complexity: `O(n)` where `n` is the number of comments in the tree
   func postOrder(node: CommentWrapper,
-                 visitChildren: (CommentWrapper) -> Bool = { _ in return true },
+                 visitChildren: (CommentWrapper) -> Bool = { _ in true },
                  body: (CommentWrapper) -> Void) {
     if case let CommentWrapper.comment(comment) = node {
       if let replies = comment.replies, !replies.isEmpty {
@@ -97,7 +97,7 @@ class CommentData: ObservableObject {
   // MARK: Comment loading
 
   func loadComments() {
-    cancelToken = illithid.comments(for: post, parameters: listingParameters, queue: .global(qos: .userInteractive))
+    cancelToken = illithid.comments(for: post, parameters: listingParameters)
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { value in
         self.illithid.logger.errorMessage("Error fetching comments\(value)")
@@ -121,39 +121,39 @@ class CommentData: ObservableObject {
   }
 
   func loadMoreComments(more: More) {
-    moreCancelToken = illithid.moreComments(for: more, in: post, queue: .global(qos: .userInteractive))
+    moreCancelToken = illithid.moreComments(for: more, in: post)
       .receive(on: RunLoop.main)
-    .sink(receiveCompletion: { value in
-      self.illithid.logger.errorMessage("Error fetching more comments\(value)")
+      .sink(receiveCompletion: { value in
+        self.illithid.logger.errorMessage("Error fetching more comments\(value)")
     }) { wrappers in
-      // Remove More object from tree
-      self.root.removeSubtree { node in
-        node.value?.id == more.id
-      }
-      wrappers.forEach { wrapper in
-        // Insert fetched comments into the tree
-        self.showComment[wrapper.id] = .expanded
-        if wrapper.parentId == self.post.fullname {
-          self.root.append(child: wrapper)
-        } else {
-          self.root.insert(wrapper, firstWhere: { node in
-            guard let value = node.value else { return false }
-            if case let CommentWrapper.comment(parent) = value {
-              return wrapper.parentId == parent.fullname
-            }
-            return false
-          })
+        // Remove More object from tree
+        self.root.removeSubtree { node in
+          node.value?.id == more.id
         }
-      }
+        wrappers.forEach { wrapper in
+          // Insert fetched comments into the tree
+          self.showComment[wrapper.id] = .expanded
+          if wrapper.parentId == self.post.fullname {
+            self.root.append(child: wrapper)
+          } else {
+            self.root.insert(wrapper, firstWhere: { node in
+              guard let value = node.value else { return false }
+              if case let CommentWrapper.comment(parent) = value {
+                return wrapper.parentId == parent.fullname
+              }
+              return false
+          })
+          }
+        }
 
-      // Update comments with the new tree, flattened into an array in the approrpiate order
-      var newComments: [CommentWrapper] = []
-      self.root.traverse(preOrder: { node in
-        guard let value = node.value else { return }
-        newComments.append(value)
+        // Update comments with the new tree, flattened into an array in the approrpiate order
+        var newComments: [CommentWrapper] = []
+        self.root.traverse(preOrder: { node in
+          guard let value = node.value else { return }
+          newComments.append(value)
       })
-      self.comments = newComments
-    }
+        self.comments = newComments
+      }
   }
 }
 
@@ -171,15 +171,15 @@ class Node<Element> {
   }
 
   func append(child: Element) {
-    self.children.append(Node(value: child, parent: self))
+    children.append(Node(value: child, parent: self))
   }
 
   func append(contentsOf: [Element]) {
-    self.children.append(contentsOf: contentsOf.map { Node(value: $0, parent: self) })
+    children.append(contentsOf: contentsOf.map { Node(value: $0, parent: self) })
   }
 
   func first(where body: (Node<Element>) -> Bool) -> Node<Element>? {
-    var result: Node<Element>? = nil
+    var result: Node<Element>?
     traverse(preOrder: { node in
       if body(node) { result = node }
     })
@@ -207,7 +207,7 @@ class Node<Element> {
   }
 
   func traverse(preOrder: (Node<Element>) -> Void = { _ in }, postOrder: (Node<Element>) -> Void = { _ in },
-                visitChildren: (Node<Element>) -> Bool = { _ in return true }) {
+                visitChildren: (Node<Element>) -> Bool = { _ in true }) {
     preOrder(self)
     if visitChildren(self) {
       children.forEach { child in

@@ -114,13 +114,13 @@ struct SidebarView: View {
           .foregroundColor(.white)
           .onTapGesture {
             if self.subscribed {
-              self.subreddit.unsubscribe(queue: .global(qos: .userInteractive)) { result in
+              self.subreddit.unsubscribe { result in
                 if case Result.success = result {
                   self.subscribed = false
                 }
               }
             } else {
-              self.subreddit.subscribe(queue: .global(qos: .userInteractive)) { result in
+              self.subreddit.subscribe { result in
                 if case Result.success = result {
                   self.subscribed = true
                 }

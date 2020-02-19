@@ -80,7 +80,7 @@ final class InformationBarData: ObservableObject {
   func loadMultireddits() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Multireddits", signpostID: signpostId)
-    Illithid.shared.accountManager.currentAccount?.multireddits(queue: .global(qos: .utility)) { result in
+    Illithid.shared.accountManager.currentAccount?.multireddits(queue: .illithid) { result in
       switch result {
       case let .success(multireddits):
         let sortedMultireddits = multireddits.sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
@@ -99,7 +99,7 @@ final class InformationBarData: ObservableObject {
   func loadSubscriptions() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Subscribed Subreddits", signpostID: signpostId)
-    Illithid.shared.accountManager.currentAccount?.subscribedSubreddits(queue: .global(qos: .utility)) { result in
+    Illithid.shared.accountManager.currentAccount?.subscribedSubreddits(queue: .illithid) { result in
       switch result {
       case let .success(subreddits):
         let sortedSubreddits = subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending })

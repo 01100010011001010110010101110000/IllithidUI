@@ -90,14 +90,14 @@ struct CommentActionBar: View {
         .onTapGesture {
           if self.vote == .up {
             self.vote = .clear
-            self.comment.clearVote(queue: .global(qos: .utility)) { result in
+            self.comment.clearVote { result in
               if case let Result.failure(error) = result {
                 Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
               }
             }
           } else {
             self.vote = .up
-            self.comment.upvote(queue: .global(qos: .utility)) { result in
+            self.comment.upvote { result in
               if case let Result.failure(error) = result {
                 Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
               }
@@ -112,14 +112,14 @@ struct CommentActionBar: View {
         .onTapGesture {
           if self.vote == .down {
             self.vote = .clear
-            self.comment.clearVote(queue: .global(qos: .utility)) { result in
+            self.comment.clearVote { result in
               if case let Result.failure(error) = result {
                 Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
               }
             }
           } else {
             self.vote = .down
-            self.comment.downvote(queue: .global(qos: .utility)) { result in
+            self.comment.downvote { result in
               if case let Result.failure(error) = result {
                 Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
               }
@@ -134,13 +134,13 @@ struct CommentActionBar: View {
         .onTapGesture {
           self.saved.toggle()
           if self.saved {
-            self.comment.save(queue: .global(qos: .utility)) { result in
+            self.comment.save { result in
               if case let Result.failure(error) = result {
                 Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
               }
             }
           } else {
-            self.comment.unsave(queue: .global(qos: .utility)) { result in
+            self.comment.unsave { result in
               if case let Result.failure(error) = result {
                 Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
               }

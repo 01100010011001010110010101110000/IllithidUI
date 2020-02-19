@@ -60,7 +60,7 @@ struct LinkPreview: View {
   }
 
   private func loadMetadata() {
-    AF.request(link).responseString(queue: .global(qos: .userInitiated)) { response in
+    AF.request(link).responseString(queue: .illithid) { response in
       switch response.result {
       case let .success(html):
         // Fetch link's HTML document

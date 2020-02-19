@@ -35,7 +35,7 @@ final class SearchData: ObservableObject {
 
   // TODO: Cancel inflight searches if another is started
   func search(for searchText: String) {
-    illithid.search(for: searchText, queue: .global(qos: .userInteractive)) { result in
+    illithid.search(for: searchText, queue: .illithid) { result in
       switch result {
       case let .success(listings):
         DispatchQueue.main.async {

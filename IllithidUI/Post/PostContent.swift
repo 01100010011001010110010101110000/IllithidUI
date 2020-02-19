@@ -197,12 +197,10 @@ class GfycatData: ObservableObject {
 
   init(gfyId id: String) {
     self.id = id
-    ulithari.fetchGfycat(id: id, queue: .global(qos: .userInteractive)) { result in
+    ulithari.fetchGfycat(id: id) { result in
       switch result {
       case let .success(item):
-        DispatchQueue.main.async {
-          self.item = item
-        }
+        self.item = item
       case let .failure(error):
         Illithid.shared.logger.errorMessage("Failed to fetch gfyitem \(id): \(error)")
       }
@@ -249,7 +247,7 @@ class ImgurData: ObservableObject {
   let ulithari: Ulithari = .shared
 
   init(imageId: String) {
-    ulithari.fetchImgurImage(id: imageId, queue: .global(qos: .userInteractive)) { result in
+    ulithari.fetchImgurImage(id: imageId, queue: .illithid) { result in
       switch result {
       case let .success(imgurImage):
         DispatchQueue.main.async {
