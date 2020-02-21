@@ -18,7 +18,8 @@ final class InformationBarData: ObservableObject {
   private var encoder = JSONEncoder()
   private var cancelToken: AnyCancellable?
 
-  private let log = OSLog(subsystem: "com.illithid.IllithidUI.InformationBar",
+  private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.InformationBar")
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.InformationBar",
                           category: .pointsOfInterest)
 
   @Published var subscribedSubreddits: [Subreddit] {
@@ -80,7 +81,7 @@ final class InformationBarData: ObservableObject {
   func loadMultireddits() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Multireddits", signpostID: signpostId)
-    Illithid.shared.accountManager.currentAccount?.multireddits(queue: .illithid) { result in
+    Illithid.shared.accountManager.currentAccount?.multireddits(queue: Self.queue) { result in
       switch result {
       case let .success(multireddits):
         let sortedMultireddits = multireddits.sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
@@ -99,7 +100,7 @@ final class InformationBarData: ObservableObject {
   func loadSubscriptions() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Subscribed Subreddits", signpostID: signpostId)
-    Illithid.shared.accountManager.currentAccount?.subscribedSubreddits(queue: .illithid) { result in
+    Illithid.shared.accountManager.currentAccount?.subscribedSubreddits(queue: Self.queue) { result in
       switch result {
       case let .success(subreddits):
         let sortedSubreddits = subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending })

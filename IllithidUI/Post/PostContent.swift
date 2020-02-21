@@ -247,12 +247,10 @@ class ImgurData: ObservableObject {
   let ulithari: Ulithari = .shared
 
   init(imageId: String) {
-    ulithari.fetchImgurImage(id: imageId, queue: .illithid) { result in
+    ulithari.fetchImgurImage(id: imageId) { result in
       switch result {
       case let .success(imgurImage):
-        DispatchQueue.main.async {
-          self.imgurImage = imgurImage
-        }
+        self.imgurImage = imgurImage
       case let .failure(error):
         Illithid.shared.logger.errorMessage("Failed to fetch \(imageId) data: \(error)")
       }

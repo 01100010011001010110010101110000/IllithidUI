@@ -35,19 +35,17 @@ final class SearchData: ObservableObject {
 
   // TODO: Cancel inflight searches if another is started
   func search(for searchText: String) {
-    illithid.search(for: searchText, queue: .illithid) { result in
+    illithid.search(for: searchText) { result in
       switch result {
       case let .success(listings):
-        DispatchQueue.main.async {
-          self.accounts.removeAll(keepingCapacity: true)
-          self.subreddits.removeAll(keepingCapacity: true)
-          self.posts.removeAll(keepingCapacity: true)
-          // TODO: Optimize this
-          for listing in listings {
-            self.accounts.append(contentsOf: listing.accounts)
-            self.subreddits.append(contentsOf: listing.subreddits)
-            self.posts.append(contentsOf: listing.posts)
-          }
+        self.accounts.removeAll(keepingCapacity: true)
+        self.subreddits.removeAll(keepingCapacity: true)
+        self.posts.removeAll(keepingCapacity: true)
+        // TODO: Optimize this
+        for listing in listings {
+          self.accounts.append(contentsOf: listing.accounts)
+          self.subreddits.append(contentsOf: listing.subreddits)
+          self.posts.append(contentsOf: listing.posts)
         }
       case let .failure(error):
         self.illithid.logger.errorMessage("Failed to search: \(error)")

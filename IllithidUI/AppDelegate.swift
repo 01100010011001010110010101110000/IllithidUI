@@ -179,7 +179,3 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     return .terminateNow
   }
 }
-
-extension DispatchQueue {
-  static var illithid = DispatchQueue(label: "com.illithid.IllithidUI", qos: .default)
-}

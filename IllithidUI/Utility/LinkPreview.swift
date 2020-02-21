@@ -20,7 +20,8 @@ struct LinkPreview: View {
   @State private var previewIconUrl: URL? = nil
   let link: URL
 
-  private let log = OSLog(subsystem: "com.illithid.IllithidUI.LinkPreview", category: .pointsOfInterest)
+  private static let queue = DispatchQueue(label: "com.fayware.IllithidUI.LinkPreview")
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
 
   var body: some View {
     VStack {
@@ -60,7 +61,7 @@ struct LinkPreview: View {
   }
 
   private func loadMetadata() {
-    AF.request(link).responseString(queue: .illithid) { response in
+    AF.request(link).responseString(queue: Self.queue) { response in
       switch response.result {
       case let .success(html):
         // Fetch link's HTML document
