@@ -29,6 +29,7 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
 
   private let postsProvider: PostsProvider
   private var postListingParams: ListingParameters = .init()
+  private var exhausted: Bool = false
   private let illithid: Illithid = .shared
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.posts",
                           category: .pointsOfInterest)
@@ -40,15 +41,18 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
   func loadPosts() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
-    postsProvider.posts(sortBy: sort, location: nil, topInterval: topInterval, parameters: postListingParams, queue: .main) { result in
-      switch result {
-      case let .success(listing):
-        if let anchor = listing.after { self.postListingParams.after = anchor }
-        self.posts.append(contentsOf: listing.posts)
-      case let .failure(error):
-        Illithid.shared.logger.errorMessage("Failed to load posts: \(error)")
+    if !exhausted {
+      postsProvider.posts(sortBy: sort, location: nil, topInterval: topInterval, parameters: postListingParams, queue: .main) { result in
+        switch result {
+        case let .success(listing):
+          if let anchor = listing.after { self.postListingParams.after = anchor }
+          else { self.exhausted = true }
+          self.posts.append(contentsOf: listing.posts)
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Failed to load posts: \(error)")
+        }
+        os_signpost(.end, log: self.log, name: "Load Posts", signpostID: signpostId)
       }
-      os_signpost(.end, log: self.log, name: "Load Posts", signpostID: signpostId)
     }
   }
 }
