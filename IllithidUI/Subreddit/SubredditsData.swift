@@ -15,7 +15,7 @@ final class SubredditData: ObservableObject {
 
   let illithid: Illithid = .shared
   private var listingParams: ListingParameters = .init()
-  private let log = OSLog(subsystem: "com.illithid.IllithidUI.Subreddits",
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.subreddits",
                           category: .pointsOfInterest)
 
   func loadSubreddits() {

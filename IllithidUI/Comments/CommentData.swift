@@ -28,7 +28,7 @@ class CommentData: ObservableObject {
   private let illithid: Illithid = .shared
   private var cancelToken: AnyCancellable?
   private var moreCancelToken: AnyCancellable?
-  private let log = OSLog(subsystem: "com.illithid.IllithidUI.Comments",
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.comments",
                           category: .pointsOfInterest)
 
   init(post: Post) {

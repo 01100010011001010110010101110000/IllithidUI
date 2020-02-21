@@ -30,7 +30,7 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
   private let postsProvider: PostsProvider
   private var postListingParams: ListingParameters = .init()
   private let illithid: Illithid = .shared
-  private let log = OSLog(subsystem: "com.illithid.IllithidUI.Posts",
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.posts",
                           category: .pointsOfInterest)
 
   init(provider: PostsProvider) {

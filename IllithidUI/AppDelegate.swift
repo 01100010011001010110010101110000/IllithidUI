@@ -23,7 +23,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   #if DEBUG
     let logger: Logger = .debugLogger()
   #else
-    let logger: Logger = .releaseLogger(subsystem: "com.illithid.IllithidUI")
+    let logger: Logger = .releaseLogger(subsystem: "com.flayware.IllithidUI")
   #endif
 
   var preferencesWindowController: WindowController<PreferencesView>!

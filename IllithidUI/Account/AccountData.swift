@@ -15,7 +15,7 @@ final class AccountData: ObservableObject {
   @Published private(set) var comments: [Comment] = []
   @Published private(set) var submissions: [Post] = []
 
-  private let log = OSLog(subsystem: "com.illithid.IllithidUI.Accounts", category: .pointsOfInterest)
+  private let log = OSLog(subsystem: "com.flayware.illithid.accounts", category: .pointsOfInterest)
 
   init(account: Account?) {
     self.account = account
