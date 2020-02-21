@@ -25,10 +25,10 @@ struct PostListView<PostContainer: PostsProvider>: View {
   private var filteredPosts: [Post] {
     if searchText.isEmpty { return postsData.posts }
     return postsData.posts.filter {
-      $0.author.range(of: searchText, options: .diacriticInsensitive) != nil ||
-        $0.title.range(of: searchText, options: .diacriticInsensitive) != nil ||
-        $0.subreddit.range(of: searchText, options: .diacriticInsensitive) != nil ||
-        $0.selftext.range(of: searchText, options: .diacriticInsensitive) != nil
+      $0.author.range(of: searchText, options: .caseInsensitive) != nil ||
+        $0.title.range(of: searchText, options: .caseInsensitive) != nil ||
+        $0.subreddit.range(of: searchText, options: .caseInsensitive) != nil ||
+        $0.selftext.range(of: searchText, options: .caseInsensitive) != nil
     }
   }
 
