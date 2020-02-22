@@ -55,9 +55,6 @@ struct PostContent: View {
         }
       } else if post.previewGuess == .link {
         LinkPreview(link: post.contentUrl)
-          .onTapGesture {
-            NSWorkspace.shared.open(self.post.contentUrl)
-          }
       }
     }
   }

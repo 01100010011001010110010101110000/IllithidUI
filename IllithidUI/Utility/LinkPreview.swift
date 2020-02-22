@@ -20,6 +20,7 @@ struct LinkPreview: View {
   @State private var previewImageUrl: URL? = nil
   @State private var audioUrl: URL? = nil
   @State private var videoUrl: URL? = nil
+  @State private var hover: Bool = false
 
   let link: URL
 
@@ -57,6 +58,13 @@ struct LinkPreview: View {
               .lineLimit(1)
               .truncationMode(.tail)
             Spacer()
+          }
+          .overlay(Rectangle().foregroundColor(.gray).opacity(self.hover ? 0.5 : 0.0))
+          .onHover(perform: { entered in
+            self.hover = entered
+          })
+          .onTapGesture {
+            NSWorkspace.shared.open(self.link)
           }
           .padding(4)
           .frame(maxHeight: 32, alignment: .leading)
