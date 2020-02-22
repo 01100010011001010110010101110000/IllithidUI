@@ -10,6 +10,7 @@ import os.log
 import SwiftUI
 
 import Alamofire
+import SDWebImage
 import SDWebImageSwiftUI
 import SwiftSoup
 
@@ -17,7 +18,6 @@ import SwiftSoup
 
 struct LinkPreview: View {
   @State private var previewImageUrl: URL? = nil
-  @State private var previewIconUrl: URL? = nil
   @State private var audioUrl: URL? = nil
   @State private var videoUrl: URL? = nil
 
@@ -39,34 +39,30 @@ struct LinkPreview: View {
       } else {
         VStack {
           if previewImageUrl != nil {
-            WebImage(url: previewImageUrl!)
-              .resizable()
-          } else {
-            Rectangle()
-              .opacity(0.0)
-          }
-          Divider()
-          HStack {
-            if self.previewIconUrl != nil {
-              WebImage(url: previewIconUrl!)
-                .resizable()
-                .frame(width: 32, height: 32)
-                .scaledToFill()
-            } else {
-              Rectangle()
-                .opacity(0.0)
+            VStack {
+              WebImage(url: previewImageUrl!, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
+              Divider()
+                .background(Color(.separatorColor))
+                .padding([.leading, .trailing], 2)
             }
-            Divider()
-              .frame(height: 32)
+          } else {
+            EmptyView()
+          }
+          HStack {
+            Image(nsImage: NSImage(named: .compass)!)
+              .resizable()
+              .foregroundColor(.white)
+              .frame(width: 32, height: 32)
             Text(link.absoluteString)
               .lineLimit(1)
               .truncationMode(.tail)
             Spacer()
           }
-          .padding([.bottom, .leading, .trailing], 4)
-          .frame(alignment: .leading)
+          .padding(4)
+          .frame(maxHeight: 32, alignment: .leading)
         }
-        .frame(maxWidth: 512, minHeight: 384, maxHeight: 384)
+        .frame(width: 512)
+        .background(Color(.controlBackgroundColor))
         .border(Color.gray, width: 2)
         .onAppear {
           self.loadMetadata()
@@ -115,14 +111,6 @@ struct LinkPreview: View {
             print("Error parsing link preview image URL: \(error)")
           }
 
-          // Fetch page's preview favicon link from meta tags
-          do {
-            self.previewIconUrl = try document.select("link")
-              .first { try $0.attr("rel") == "icon" || $0.attr("rel") == "shortcut icon" }
-              .flatMap { try URL(string: $0.attr("href"), relativeTo: self.link) }
-          } catch {
-            print("Error parsing link favicon URL: \(error)")
-          }
         case let .failure(error):
           print("Error parsing link DOM: \(error)")
         }

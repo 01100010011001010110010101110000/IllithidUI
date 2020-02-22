@@ -54,6 +54,7 @@ struct PreferencesView: View {
 
 extension NSImage.Name {
   static let checkmark = NSImage.Name("checkmark")
+  static let compass = NSImage.Name("compass")
 }
 
 // #if DEBUG

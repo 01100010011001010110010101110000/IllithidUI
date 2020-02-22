@@ -55,6 +55,9 @@ struct PostContent: View {
         }
       } else if post.previewGuess == .link {
         LinkPreview(link: post.contentUrl)
+          .onTapGesture {
+            NSWorkspace.shared.open(self.post.contentUrl)
+          }
       }
     }
   }
@@ -177,10 +180,6 @@ struct GfycatView: View {
     VStack {
       if gfyData.item == nil {
         EmptyView()
-      } else if gfyData.item!.hasAudio {
-        Player(url: gfyData.item!.mp4URL)
-          .frame(idealWidth: CGFloat(gfyData.item!.width), maxWidth: CGFloat(gfyData.item!.width),
-                 idealHeight: CGFloat(gfyData.item!.height), maxHeight: CGFloat(gfyData.item!.height))
       } else {
         Player(url: gfyData.item!.mp4URL)
           .frame(idealWidth: CGFloat(gfyData.item!.width), maxWidth: CGFloat(gfyData.item!.width),

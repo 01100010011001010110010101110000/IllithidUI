@@ -35,7 +35,7 @@ struct Player: NSViewRepresentable {
 
 final class PlayerData: NSObject, ObservableObject {
   fileprivate let player: AVPlayer
-  private var cancelToken: AnyCancellable? = nil
+  private var cancelToken: AnyCancellable?
 
   init(url: URL) {
     player = AVPlayer(url: url)
