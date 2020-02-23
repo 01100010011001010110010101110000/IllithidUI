@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-public extension View {
+extension View {
   /// Overlays this view with a view that provides a tooltip with the given string.
   func tooltip(_ tooltip: String?) -> some View {
     overlay(TooltipView(tooltip: tooltip))
