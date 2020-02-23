@@ -19,6 +19,8 @@ struct PostContent: View {
     VStack {
       if post.previewGuess == .imgur {
         ImgurView(imageId: String(post.contentUrl.path.dropFirst().split(separator: ".").first!))
+          .draggable()
+          .zoomable()
           .overlay(MediaStamp(mediaType: "imgur")
             .padding([.bottom, .trailing], 4),
                    alignment: .bottomTrailing)
@@ -48,6 +50,8 @@ struct PostContent: View {
       } else if post.previewGuess == .image {
         if !post.imagePreviews.isEmpty {
           WebImage(url: post.imagePreviews.last!.url, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600), scaleMode: .aspectFit)])
+            .draggable()
+            .zoomable()
         } else {
           Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
             .scaledToFit()

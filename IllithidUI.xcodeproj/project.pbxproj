@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		6D062E4F2402F6C500A3BDD0 /* IllithidButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */; };
+		6D062E512403067300A3BDD0 /* ZoomModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D062E502403067300A3BDD0 /* ZoomModifier.swift */; };
+		6D062E53240306DF00A3BDD0 /* DraggableModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D062E52240306DF00A3BDD0 /* DraggableModifier.swift */; };
 		6D0A1E45238399B9006CDB86 /* ToolbarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */; };
 		6D0A1E472383B06C006CDB86 /* PostContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A1E462383B06C006CDB86 /* PostContent.swift */; };
 		6D0A4EFA237A5CC700626E44 /* EraseToAnyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */; };
@@ -72,6 +74,8 @@
 
 /* Begin PBXFileReference section */
 		6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllithidButton.swift; sourceTree = "<group>"; };
+		6D062E502403067300A3BDD0 /* ZoomModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomModifier.swift; sourceTree = "<group>"; };
+		6D062E52240306DF00A3BDD0 /* DraggableModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableModifier.swift; sourceTree = "<group>"; };
 		6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarDelegate.swift; sourceTree = "<group>"; };
 		6D0A1E462383B06C006CDB86 /* PostContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostContent.swift; sourceTree = "<group>"; };
 		6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EraseToAnyView.swift; sourceTree = "<group>"; };
@@ -287,6 +291,8 @@
 				6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */,
 				6DF68D8B2387BDD00009CA74 /* Player.swift */,
 				6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */,
+				6D062E502403067300A3BDD0 /* ZoomModifier.swift */,
+				6D062E52240306DF00A3BDD0 /* DraggableModifier.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -468,6 +474,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D2EA59922A7FEE20059B6EA /* IllithidUI.xcdatamodeld in Sources */,
+				6D062E512403067300A3BDD0 /* ZoomModifier.swift in Sources */,
 				6D0A4EFD237A6D2F00626E44 /* LinkPreview.swift in Sources */,
 				6D53D9E922A94E7F0018F19D /* SubredditsData.swift in Sources */,
 				6D0A1E45238399B9006CDB86 /* ToolbarDelegate.swift in Sources */,
@@ -493,6 +500,7 @@
 				6D0A4EFA237A5CC700626E44 /* EraseToAnyView.swift in Sources */,
 				6D558A0E230080140092AA88 /* RootView.swift in Sources */,
 				6D0EF1EC23B2BC8C007B4CCE /* AccountView.swift in Sources */,
+				6D062E53240306DF00A3BDD0 /* DraggableModifier.swift in Sources */,
 				6D28395322D3EBA400DD08F9 /* SearchView.swift in Sources */,
 				6DD5534E22A8901700A00033 /* SubredditListView.swift in Sources */,
 				6DDE004222BA8006008E6AF0 /* WindowManager.swift in Sources */,

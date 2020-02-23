@@ -58,7 +58,10 @@ struct InformationBarNavigationView: View {
       }
       .listStyle(SidebarListStyle())
     }
-    .sheet(isPresented: self.$isEditingMulti, content: {
+    .sheet(isPresented: self.$isEditingMulti, onDismiss: {
+      self.multiredditSearch.clearData()
+      self.multiredditSearch.clearQuery()
+    }, content: {
       VStack {
         MultiredditEditView(id: self.editing!, searchData: self.multiredditSearch)
           .environmentObject(self.informationBarData)
@@ -66,8 +69,6 @@ struct InformationBarNavigationView: View {
           Spacer()
           Button(action: {
             self.isEditingMulti = false
-            self.multiredditSearch.clearData()
-            self.multiredditSearch.clearQuery()
           }) {
             Text("Done")
           }
