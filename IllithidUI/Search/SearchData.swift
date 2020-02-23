@@ -17,9 +17,11 @@ final class SearchData: ObservableObject {
   @Published var posts: [Post] = []
 
   let illithid: Illithid = .shared
+  let searchTargets: Set<SearchType>
   private var cancelToken: AnyCancellable?
 
-  init() {
+  init(for targets: Set<SearchType> = [.subreddit, .post, .user]) {
+    searchTargets = targets
     cancelToken = $query
       .filter { $0.count >= 3 }
       .debounce(for: 0.3, scheduler: RunLoop.current)
@@ -35,12 +37,10 @@ final class SearchData: ObservableObject {
 
   // TODO: Cancel inflight searches if another is started
   func search(for searchText: String) {
-    illithid.search(for: searchText) { result in
+    illithid.search(for: searchText, resultTypes: searchTargets) { result in
       switch result {
       case let .success(listings):
-        self.accounts.removeAll(keepingCapacity: true)
-        self.subreddits.removeAll(keepingCapacity: true)
-        self.posts.removeAll(keepingCapacity: true)
+        self.clearData()
         // TODO: Optimize this
         for listing in listings {
           self.accounts.append(contentsOf: listing.accounts)
@@ -51,5 +51,15 @@ final class SearchData: ObservableObject {
         self.illithid.logger.errorMessage("Failed to search: \(error)")
       }
     }
+  }
+
+  func clearData() {
+    accounts.removeAll(keepingCapacity: true)
+    subreddits.removeAll(keepingCapacity: true)
+    posts.removeAll(keepingCapacity: true)
+  }
+
+  func clearQuery() {
+    query.removeAll()
   }
 }

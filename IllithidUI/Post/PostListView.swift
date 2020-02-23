@@ -133,11 +133,11 @@ struct SidebarView: View {
       }
       Divider()
       ScrollView {
-        Text(subreddit.description)
+        Text(subreddit.description ?? "")
       }
     }
     .onAppear {
-      self.subscribed = self.subreddit.userIsSubscriber
+      self.subscribed = self.subreddit.userIsSubscriber ?? false
     }
   }
 }
