@@ -11,6 +11,7 @@ import Illithid
 // MARK: Main row view
 
 struct PostRowView: View {
+  @EnvironmentObject var subredditManager: WindowManager<PostListView<Subreddit>>
   let reddit: Illithid = .shared
   let post: Post
   let crosspostParent: Post?

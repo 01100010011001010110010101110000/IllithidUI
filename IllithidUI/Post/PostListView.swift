@@ -142,6 +142,12 @@ struct SidebarView: View {
   }
 }
 
+extension PostListView: Identifiable where PostContainer: Identifiable {
+  var id: PostContainer.ID {
+    postContainer.id
+  }
+}
+
 // #if DEBUG
 // struct PostListView_Previews: PreviewProvider {
 //  static var previews: some View {

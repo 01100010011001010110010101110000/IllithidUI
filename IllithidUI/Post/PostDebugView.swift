@@ -8,7 +8,7 @@ import SwiftUI
 
 import Illithid
 
-struct PostDebugView: IdentifiableView {
+struct PostDebugView: View, Identifiable {
   let post: Post
   let id: String
   private var encoder = JSONEncoder()

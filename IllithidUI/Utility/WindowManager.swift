@@ -10,7 +10,7 @@ import SwiftUI
 
 import Illithid
 
-final class WindowManager<V: IdentifiableView> {
+final class WindowManager<V: View & Identifiable>: ObservableObject {
   let styleMask: NSWindow.StyleMask = [
     .resizable,
     .titled,
@@ -47,5 +47,3 @@ final class WindowManager<V: IdentifiableView> {
     return controller
   }
 }
-
-protocol IdentifiableView: View, Identifiable {}

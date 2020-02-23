@@ -49,7 +49,10 @@ struct PostContent: View {
         VideoPostPreview(post: self.post)
       } else if post.previewGuess == .image {
         if !post.imagePreviews.isEmpty {
-          WebImage(url: post.imagePreviews.last!.url, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600), scaleMode: .aspectFit)])
+          WebImage(url: post.imagePreviews.last!.url, context: [
+            .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600),
+                                                          scaleMode: .aspectFit)
+          ])
             .draggable()
             .zoomable()
         } else {
@@ -222,21 +225,16 @@ struct ImgurView: View {
       if imgurData.imgurImage == nil {
         EmptyView()
       } else if imgurData.imgurImage!.data.animated {
-        if imgurData.imgurImage!.data.hasSound {
-          Player(url: imgurData.imgurImage!.data.mp4!)
-            .frame(idealWidth: CGFloat(imgurData.imgurImage!.data.width),
-                   maxWidth: CGFloat(imgurData.imgurImage!.data.width),
-                   idealHeight: CGFloat(imgurData.imgurImage!.data.height),
-                   maxHeight: CGFloat(imgurData.imgurImage!.data.height))
-        } else {
-          Player(url: imgurData.imgurImage!.data.mp4!)
-            .frame(idealWidth: CGFloat(imgurData.imgurImage!.data.width),
-                   maxWidth: CGFloat(imgurData.imgurImage!.data.width),
-                   idealHeight: CGFloat(imgurData.imgurImage!.data.height),
-                   maxHeight: CGFloat(imgurData.imgurImage!.data.height))
-        }
+        Player(url: imgurData.imgurImage!.data.mp4!)
+          .frame(idealWidth: CGFloat(imgurData.imgurImage!.data.width),
+                 maxWidth: CGFloat(imgurData.imgurImage!.data.width),
+                 idealHeight: CGFloat(imgurData.imgurImage!.data.height),
+                 maxHeight: CGFloat(imgurData.imgurImage!.data.height))
       } else {
-        WebImage(url: imgurData.imgurImage!.data.link, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600), scaleMode: .aspectFill)])
+        WebImage(url: imgurData.imgurImage!.data.link, context: [
+          .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600),
+                                                        scaleMode: .aspectFill)
+        ])
       }
     }
   }

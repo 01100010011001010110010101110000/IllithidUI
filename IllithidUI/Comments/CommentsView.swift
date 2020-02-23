@@ -9,7 +9,7 @@ import SwiftUI
 
 import Illithid
 
-struct CommentsView: IdentifiableView {
+struct CommentsView: View, Identifiable {
   @ObservedObject var commentData: CommentData
 
   /// The post to which the comments belong
