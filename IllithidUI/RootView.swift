@@ -9,11 +9,8 @@ import SwiftUI
 import Illithid
 
 struct RootView: View {
-  var subredditWindowManager: WindowManager = WindowManager<PostListView<Subreddit>>()
-
   var body: some View {
     InformationBarNavigationView()
-      .environmentObject(subredditWindowManager)
   }
 }
 

@@ -148,6 +148,42 @@ extension PostListView: Identifiable where PostContainer: Identifiable {
   }
 }
 
+/// Loads a PostListView when we have only a subreddit name
+struct SubredditLoader: View, Identifiable {
+  @State private var subreddit: Subreddit?
+
+  let subredditFullname: Fullname
+
+  var id: String { subredditFullname }
+
+  init(fullname subredditFullname: Fullname) {
+    self.subredditFullname = subredditFullname
+  }
+
+  var body: some View {
+    Group {
+      if subreddit == nil {
+        Rectangle()
+          .opacity(0.0)
+          .onAppear {
+            Illithid.shared.info(name: self.subredditFullname) { result in
+              switch result {
+              case let .success(listing):
+                self.subreddit = listing.subreddits.first!
+              case let .failure(error):
+                Illithid.shared.logger.errorMessage("Error loading subreddit: \(error)")
+              }
+            }
+          }
+      } else {
+        subreddit.map { toDisplay in
+          PostListView(postContainer: toDisplay)
+        }
+      }
+    }
+  }
+}
+
 // #if DEBUG
 // struct PostListView_Previews: PreviewProvider {
 //  static var previews: some View {

@@ -11,7 +11,6 @@ import Illithid
 // MARK: Main row view
 
 struct PostRowView: View {
-  @EnvironmentObject var subredditManager: WindowManager<PostListView<Subreddit>>
   let reddit: Illithid = .shared
   let post: Post
   let crosspostParent: Post?
@@ -230,6 +229,8 @@ struct PostActionBar: View {
 
 struct PostMetadataBar: View {
   @State var authorPopover = false
+  private static let subredditManager = WindowManager<SubredditLoader>()
+
   let post: Post
 
   var body: some View {
@@ -250,6 +251,10 @@ struct PostMetadataBar: View {
       }
       Spacer()
       Text(post.subredditNamePrefixed)
+        .onTapGesture {
+          Self.subredditManager.showWindow(for: .init(fullname: self.post.subredditId),
+                                           title: self.post.subredditNamePrefixed)
+        }
     }
     .padding(10)
     .font(.caption)

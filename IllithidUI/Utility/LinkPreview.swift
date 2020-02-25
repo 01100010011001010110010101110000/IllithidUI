@@ -102,7 +102,7 @@ struct LinkPreview: View {
               for match in matches {
                 if let url = match.url, url.pathExtension == "m4a" {
                   self.audioUrl = url
-                  break
+                  return
                 }
               }
             }
