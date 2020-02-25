@@ -24,7 +24,7 @@ struct LinkPreview: View {
 
   let link: URL
 
-  private static let queue = DispatchQueue(label: "com.fayware.IllithidUI.LinkPreview")
+  private static let queue = DispatchQueue(label: "com.fayware.IllithidUI.LinkPreview", attributes: .concurrent)
   private let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
 

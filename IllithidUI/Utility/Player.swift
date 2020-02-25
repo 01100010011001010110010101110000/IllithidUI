@@ -15,6 +15,10 @@ struct Player: NSViewRepresentable {
     playerData = PlayerData(url: url)
   }
 
+  init(_ playerData: PlayerData) {
+    self.playerData = playerData
+  }
+
   func makeNSView(context _: NSViewRepresentableContext<Player>) -> AVPlayerView {
     let playerView: AVPlayerView = .init()
 
@@ -33,13 +37,12 @@ struct Player: NSViewRepresentable {
   func updateNSView(_: AVPlayerView, context _: NSViewRepresentableContext<Player>) {}
 }
 
-final class PlayerData: NSObject, ObservableObject {
-  fileprivate let player: AVPlayer
+final class PlayerData: ObservableObject {
+  let player: AVPlayer
   private var cancelToken: AnyCancellable?
 
   init(url: URL) {
     player = AVPlayer(url: url)
-    super.init()
     player.volume = 0.0
     cancelToken = NotificationCenter.default
       .publisher(for: .AVPlayerItemDidPlayToEndTime, object: player.currentItem!)
