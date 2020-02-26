@@ -166,10 +166,10 @@ struct SubredditLoader: View, Identifiable {
         Rectangle()
           .opacity(0.0)
           .onAppear {
-            Illithid.shared.info(name: self.subredditFullname) { result in
+            Subreddit.fetch(name: self.subredditFullname) { result in
               switch result {
-              case let .success(listing):
-                self.subreddit = listing.subreddits.first!
+              case let .success(subreddit):
+                self.subreddit = subreddit
               case let .failure(error):
                 Illithid.shared.logger.errorMessage("Error loading subreddit: \(error)")
               }
