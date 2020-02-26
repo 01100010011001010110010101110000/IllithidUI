@@ -38,40 +38,45 @@ struct LinkPreview: View {
         Player(url: audioUrl!)
           .frame(width: 512, height: 256)
       } else {
-        VStack {
+        VStack(spacing: 0.0) {
           if previewImageUrl != nil {
             VStack {
               WebImage(url: previewImageUrl!, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
-              Divider()
-                .background(Color(.separatorColor))
-                .padding([.leading, .trailing], 2)
             }
           } else {
             EmptyView()
           }
-          HStack {
+
+          HStack(alignment: .center) {
             Image(nsImage: NSImage(named: .compass)!)
               .resizable()
               .foregroundColor(.white)
               .frame(width: 32, height: 32)
+              .padding(.leading, 4.0)
+              .scaleEffect(self.hover ? 1.3 : 1.0)
+            Rectangle()
+              .fill(Color(.darkGray))
+              .frame(width: 2, height: 24)
             Text(link.absoluteString)
               .lineLimit(1)
               .truncationMode(.tail)
             Spacer()
           }
-          .overlay(Rectangle().foregroundColor(.gray).opacity(self.hover ? 0.5 : 0.0))
           .onHover(perform: { entered in
-            self.hover = entered
+            withAnimation(.easeInOut(duration: 0.7)) {
+              self.hover = entered
+            }
           })
           .onTapGesture {
             NSWorkspace.shared.open(self.link)
           }
           .padding(4)
           .frame(maxHeight: 32, alignment: .leading)
+
         }
         .frame(width: 512)
         .background(Color(.controlBackgroundColor))
-        .border(Color.gray, width: 2)
+        .modifier(RoundedBorder(style: Color(.darkGray), cornerRadius: 8.0, width: 2.0))
         .onAppear {
           self.loadMetadata()
         }
