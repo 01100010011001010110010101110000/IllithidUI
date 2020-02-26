@@ -51,7 +51,7 @@ struct LinkPreview: View {
             Image(nsImage: NSImage(named: .compass)!)
               .resizable()
               .foregroundColor(.white)
-              .frame(width: 32, height: 32)
+              .frame(width: 24, height: 24)
               .padding(.leading, 4.0)
               .scaleEffect(self.hover ? 1.3 : 1.0)
             Rectangle()

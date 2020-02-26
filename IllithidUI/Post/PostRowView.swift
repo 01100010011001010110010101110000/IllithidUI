@@ -139,9 +139,11 @@ struct PostActionBar: View {
   var body: some View {
     VStack {
       RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(vote == .up ? .orange : Color(.darkGray))
-        .overlay(Text("Up"), alignment: .center)
-        .foregroundColor(.white)
+        .foregroundColor(Color(.darkGray))
+        .overlay(Image(nsImage: NSImage(named: .arrowUp)!)
+          .resizable()
+          .foregroundColor(vote == .up ? .orange : .white)
+          .frame(width: 24, height: 24), alignment: .center)
         .onTapGesture {
           if self.vote == .up {
             self.vote = .clear
@@ -161,9 +163,11 @@ struct PostActionBar: View {
         }
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(vote == .down ? .purple : Color(.darkGray))
-        .overlay(Text("Down"), alignment: .center)
-        .foregroundColor(.white)
+        .foregroundColor(Color(.darkGray))
+        .overlay(Image(nsImage: NSImage(named: .arrowDown)!)
+          .resizable()
+          .foregroundColor(vote == .down ? .purple : .white)
+          .frame(width: 24, height: 24), alignment: .center)
         .onTapGesture {
           if self.vote == .down {
             self.vote = .clear
@@ -183,9 +187,11 @@ struct PostActionBar: View {
         }
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(saved ? .green : Color(.darkGray))
-        .overlay(Text("Save"), alignment: .center)
-        .foregroundColor(.white)
+        .foregroundColor(Color(.darkGray))
+        .overlay(Image(nsImage: NSImage(named: .bookmark)!)
+          .resizable()
+          .foregroundColor(saved ? .green : .white)
+          .frame(width: 24, height: 24), alignment: .center)
         .onTapGesture {
           self.saved.toggle()
           if self.saved {
@@ -205,12 +211,17 @@ struct PostActionBar: View {
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(.red)
-        .overlay(Text("Hide"), alignment: .center)
-        .foregroundColor(.white)
+        .overlay(Image(nsImage: NSImage(named: .eyeSlash)!)
+          .resizable()
+          .foregroundColor(.white)
+          .frame(width: 24, height: 24), alignment: .center)
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(.red)
-        .overlay(Text("Report"), alignment: .center)
+        .overlay(Image(nsImage: NSImage(named: .flag)!)
+          .resizable()
+          .foregroundColor(.white)
+          .frame(width: 24, height: 24), alignment: .center)
         .foregroundColor(.white)
         .frame(width: 32, height: 32)
       Spacer()
