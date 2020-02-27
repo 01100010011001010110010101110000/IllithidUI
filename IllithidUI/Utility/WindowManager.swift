@@ -37,6 +37,10 @@ final class WindowManager<V: View & Identifiable>: ObservableObject {
     }
   }
 
+  deinit {
+    cancelBag.forEach { $0.cancel() }
+  }
+
   fileprivate func windowController(for view: V) -> WindowController<V>? {
     controllers[view.id]
   }

@@ -4,6 +4,7 @@
 // Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
 //
 
+import Combine
 import Foundation
 import LinkPresentation
 import os.log
@@ -23,6 +24,26 @@ struct LinkPreview: View {
   @State private var hover: Bool = false
 
   let link: URL
+  
+  private let browserImage: NSImage
+
+  init(link: URL) {
+    self.link = link
+    switch DefaultBrowser.atStartup {
+    case .safari:
+      browserImage = NSImage(named: .compass)!
+    case .chrome:
+      browserImage = NSImage(named: .chrome)!
+    case .firefox:
+      browserImage = NSImage(named: .firefox)!
+    default:
+      browserImage = NSImage(named: .compass)!
+    }
+  }
+
+  func observe(notification: Notification) {
+    print(notification)
+  }
 
   private static let queue = DispatchQueue(label: "com.fayware.IllithidUI.LinkPreview", attributes: .concurrent)
   private let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
@@ -48,7 +69,7 @@ struct LinkPreview: View {
           }
 
           HStack(alignment: .center) {
-            Image(nsImage: NSImage(named: .compass)!)
+            Image(nsImage: browserImage)
               .resizable()
               .foregroundColor(.white)
               .frame(width: 24, height: 24)
