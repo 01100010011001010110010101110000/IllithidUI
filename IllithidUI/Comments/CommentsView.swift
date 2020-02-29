@@ -105,6 +105,8 @@ struct CommentsView: View, Identifiable {
               .frame(width: 3)
           }
           Text(comment.author)
+            .font(.subheadline)
+            .fontWeight(.heavy)
           Spacer()
         }
         .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
