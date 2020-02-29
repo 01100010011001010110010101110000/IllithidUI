@@ -29,6 +29,7 @@ struct LinkPreview: View {
 
   init(link: URL) {
     self.link = link
+    
     switch DefaultBrowser.atStartup {
     case .safari:
       browserImage = NSImage(named: .compass)!
@@ -39,10 +40,6 @@ struct LinkPreview: View {
     default:
       browserImage = NSImage(named: .compass)!
     }
-  }
-
-  func observe(notification: Notification) {
-    print(notification)
   }
 
   private static let queue = DispatchQueue(label: "com.fayware.IllithidUI.LinkPreview", attributes: .concurrent)
