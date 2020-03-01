@@ -9,6 +9,7 @@ import Combine
 import SwiftUI
 
 struct VideoPlayer: View {
+  @EnvironmentObject var preferences: PreferencesData
   @ObservedObject private var view: PlayerView
 
   init(url: URL) {
@@ -27,6 +28,9 @@ struct VideoPlayer: View {
       .onDisappear {
         self.view.player?.pause()
       }
+    .onAppear {
+      self.view.player?.volume = self.preferences.muteAudio ? 0.0 : 100.0
+    }
       .frame(idealWidth: view.size.width, maxWidth: max(view.fullSize.width, view.size.width),
              idealHeight: view.size.height, maxHeight: max(view.fullSize.height, view.size.height))
     }
@@ -62,7 +66,6 @@ private final class PlayerView: AVPlayerView, ObservableObject {
   convenience init(url: URL) {
     self.init(frame: .zero)
     player = AVPlayer(url: url)
-    player?.volume = 0.0
 
     readyToken = self.publisher(for: \.player?.currentItem?.presentationSize)
       .receive(on: RunLoop.main)

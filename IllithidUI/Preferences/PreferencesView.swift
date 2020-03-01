@@ -9,6 +9,47 @@ import SwiftUI
 import Illithid
 
 struct PreferencesView: View {
+  @ObservedObject var preferences: PreferencesData
+  @ObservedObject var accountManager: AccountManager
+
+  var body: some View {
+    TabView {
+      GeneralPreferences()
+        .tabItem {
+          Text("General")
+        }
+      AccountsPreferences(accountManager: accountManager)
+        .tabItem {
+          Text("Accounts")
+        }
+    }
+    .environmentObject(preferences)
+    .frame(minWidth: 300, minHeight: 500)
+  }
+}
+
+struct GeneralPreferences: View {
+  @EnvironmentObject var preferences: PreferencesData
+
+  var body: some View {
+    VStack {
+      GroupBox(label: Text("Content").font(.headline)) {
+        Toggle(isOn: $preferences.hideNsfw) {
+          Text("Hide NSFW Content")
+        }
+      }
+      GroupBox(label: Text("Playback").font(.headline)) {
+        Toggle(isOn: $preferences.muteAudio) {
+          Text("Mute audio content")
+        }
+      }
+      Spacer()
+    }
+    .frame(alignment: .leading)
+  }
+}
+
+struct AccountsPreferences: View {
   @ObservedObject var accountManager: AccountManager
 
   var body: some View {
@@ -47,8 +88,9 @@ struct PreferencesView: View {
         Button(action: {
           self.accountManager.removeAll()
         }) { Text("Remove all accounts") }
-      }.padding()
-    }.frame(minWidth: 300, minHeight: 500)
+      }
+      .padding()
+    }
   }
 }
 

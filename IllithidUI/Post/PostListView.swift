@@ -12,6 +12,7 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct PostListView<PostContainer: PostsProvider>: View {
+  @EnvironmentObject var preferences: PreferencesData
   @ObservedObject var postsData: PostData<PostContainer>
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
@@ -23,12 +24,17 @@ struct PostListView<PostContainer: PostsProvider>: View {
   private let cancelToken: AnyCancellable? = nil
 
   private var filteredPosts: [Post] {
-    if searchText.isEmpty { return postsData.posts }
-    return postsData.posts.filter {
-      $0.author.range(of: searchText, options: .caseInsensitive) != nil ||
-        $0.title.range(of: searchText, options: .caseInsensitive) != nil ||
-        $0.subreddit.range(of: searchText, options: .caseInsensitive) != nil ||
-        $0.selftext.range(of: searchText, options: .caseInsensitive) != nil
+    return postsData.posts.filter { post in
+      if preferences.hideNsfw, post.over18 {
+        return false
+      }
+      if !searchText.isEmpty {
+        return post.author.range(of: searchText, options: .caseInsensitive) != nil ||
+          post.title.range(of: searchText, options: .caseInsensitive) != nil ||
+          post.subreddit.range(of: searchText, options: .caseInsensitive) != nil ||
+          post.selftext.range(of: searchText, options: .caseInsensitive) != nil
+      }
+      return true
     }
   }
 

@@ -8,6 +8,7 @@ import Combine
 import Foundation
 import SwiftUI
 
+import Alamofire
 import Illithid
 
 final class SearchData: ObservableObject {
@@ -19,6 +20,7 @@ final class SearchData: ObservableObject {
   let illithid: Illithid = .shared
   let searchTargets: Set<SearchType>
   private var cancelToken: AnyCancellable?
+  private var request: DataRequest?
 
   init(for targets: Set<SearchType> = [.subreddit, .post, .user]) {
     searchTargets = targets
@@ -27,7 +29,8 @@ final class SearchData: ObservableObject {
       .debounce(for: 0.3, scheduler: RunLoop.current)
       .removeDuplicates()
       .sink { searchFor in
-        self.search(for: searchFor)
+        self.request?.cancel()
+        self.request = self.search(for: searchFor)
       }
   }
 
@@ -36,8 +39,8 @@ final class SearchData: ObservableObject {
   }
 
   // TODO: Cancel inflight searches if another is started
-  func search(for searchText: String) {
-    illithid.search(for: searchText, resultTypes: searchTargets) { result in
+  func search(for searchText: String) -> DataRequest {
+    return illithid.search(for: searchText, resultTypes: searchTargets) { result in
       switch result {
       case let .success(listings):
         self.clearData()
@@ -59,7 +62,7 @@ final class SearchData: ObservableObject {
     posts.removeAll(keepingCapacity: true)
   }
 
-  func clearQuery() {
+  func clearQueryText() {
     query.removeAll()
   }
 }

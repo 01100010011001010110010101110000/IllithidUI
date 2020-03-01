@@ -9,6 +9,7 @@ import SwiftUI
 import Illithid
 
 struct InformationBarNavigationView: View {
+  @EnvironmentObject var preferences: PreferencesData
   @ObservedObject var informationBarData: InformationBarData = .init()
   let multiredditSearch = SearchData(for: [.subreddit])
 
@@ -32,7 +33,13 @@ struct InformationBarNavigationView: View {
         }
 
         Section(header: Text("Multireddits")) {
-          ForEach(informationBarData.multiReddits) { multireddit in
+          ForEach(informationBarData.multiReddits.filter { multi in
+            if preferences.hideNsfw {
+              return !(multi.over18 ?? false)
+            } else {
+              return true
+            }
+          }) { multireddit in
             NavigationLink(multireddit.name, destination: PostListView(postContainer: multireddit))
               .contextMenu {
                 Button(action: {
@@ -46,7 +53,13 @@ struct InformationBarNavigationView: View {
         }
 
         Section(header: Text("Subscribed")) {
-          ForEach(informationBarData.subscribedSubreddits) { subreddit in
+          ForEach(informationBarData.subscribedSubreddits.filter { sub in
+            if preferences.hideNsfw {
+              return !(sub.over18 ?? false)
+            } else {
+              return true
+            }
+          }) { subreddit in
             NavigationLink(destination: PostListView(postContainer: subreddit)) {
               HStack {
                 Text(subreddit.displayName)
@@ -60,7 +73,7 @@ struct InformationBarNavigationView: View {
     }
     .sheet(isPresented: self.$isEditingMulti, onDismiss: {
       self.multiredditSearch.clearData()
-      self.multiredditSearch.clearQuery()
+      self.multiredditSearch.clearQueryText()
     }, content: {
       VStack {
         MultiredditEditView(id: self.editing!, searchData: self.multiredditSearch)
