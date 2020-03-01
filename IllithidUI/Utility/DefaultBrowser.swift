@@ -14,9 +14,7 @@ enum DefaultBrowser {
   static var atStartup: DefaultBrowser = {
     guard let bundleUrl = NSWorkspace.shared.urlForApplication(toOpen: URL(string: "https://reddit.com")!) else { return .safari }
     guard let identifier = Bundle(url: bundleUrl)?.bundleIdentifier else { return .safari }
-
-    print(identifier)
-
+    
     switch identifier {
     case "com.apple.Safari":
       return .safari

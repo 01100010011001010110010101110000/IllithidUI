@@ -47,58 +47,47 @@ struct LinkPreview: View {
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
 
   var body: some View {
-    Group {
-      if videoUrl != nil {
-        Player(url: videoUrl!)
-          .frame(width: 512, height: 256)
-      }
-      else if audioUrl != nil {
-        Player(url: audioUrl!)
-          .frame(width: 512, height: 256)
+    VStack(spacing: 0.0) {
+      if previewImageUrl != nil {
+        VStack {
+          WebImage(url: previewImageUrl!, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
+        }
       } else {
-        VStack(spacing: 0.0) {
-          if previewImageUrl != nil {
-            VStack {
-              WebImage(url: previewImageUrl!, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
-            }
-          } else {
-            EmptyView()
-          }
-
-          HStack(alignment: .center) {
-            Image(nsImage: browserImage)
-              .resizable()
-              .foregroundColor(.white)
-              .frame(width: 24, height: 24)
-              .padding(.leading, 4.0)
-              .scaleEffect(self.hover ? 1.3 : 1.0)
-            Rectangle()
-              .fill(Color(.darkGray))
-              .frame(width: 2, height: 24)
-            Text(link.absoluteString)
-              .lineLimit(1)
-              .truncationMode(.tail)
-            Spacer()
-          }
-          .onHover(perform: { entered in
-            withAnimation(.easeInOut(duration: 0.7)) {
-              self.hover = entered
-            }
-          })
-          .onTapGesture {
-            NSWorkspace.shared.open(self.link)
-          }
-          .padding(4)
-          .frame(maxHeight: 32, alignment: .leading)
-
-        }
-        .frame(width: 512)
-        .background(Color(.controlBackgroundColor))
-        .modifier(RoundedBorder(style: Color(.darkGray), cornerRadius: 8.0, width: 2.0))
-        .onAppear {
-          self.loadMetadata()
-        }
+        EmptyView()
       }
+
+      HStack(alignment: .center) {
+        Image(nsImage: browserImage)
+          .resizable()
+          .foregroundColor(.white)
+          .frame(width: 24, height: 24)
+          .padding(.leading, 4.0)
+          .scaleEffect(self.hover ? 1.3 : 1.0)
+        Rectangle()
+          .fill(Color(.darkGray))
+          .frame(width: 2, height: 24)
+        Text(link.absoluteString)
+          .lineLimit(1)
+          .truncationMode(.tail)
+        Spacer()
+      }
+      .onHover(perform: { entered in
+        withAnimation(.easeInOut(duration: 0.7)) {
+          self.hover = entered
+        }
+      })
+      .onTapGesture {
+        NSWorkspace.shared.open(self.link)
+      }
+      .padding(4)
+      .frame(maxHeight: 32, alignment: .leading)
+
+    }
+    .frame(width: 512)
+    .background(Color(.controlBackgroundColor))
+    .modifier(RoundedBorder(style: Color(.darkGray), cornerRadius: 8.0, width: 2.0))
+    .onAppear {
+      self.loadMetadata()
     }
   }
 

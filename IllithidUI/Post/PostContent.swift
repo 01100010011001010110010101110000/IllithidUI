@@ -96,7 +96,7 @@ private struct VideoPostPreview: View {
   var body: some View {
     VStack {
       if self.url != nil {
-        Player(url: self.url!)
+        VideoPlayer(url: self.url!)
       } else {
         Rectangle()
           .opacity(0.0)
@@ -105,8 +105,6 @@ private struct VideoPostPreview: View {
           }
       }
     }
-    .frame(idealWidth: CGFloat(preview.width), maxWidth: CGFloat(preview.width),
-           idealHeight: CGFloat(preview.height), maxHeight: CGFloat(preview.height))
     .overlay(MediaStamp(mediaType: "reddit")
       .padding([.bottom, .trailing], 4),
              alignment: .bottomTrailing)
@@ -185,9 +183,7 @@ struct GfycatView: View {
       if gfyData.item == nil {
         EmptyView()
       } else {
-        Player(url: gfyData.item!.mp4URL)
-          .frame(idealWidth: CGFloat(gfyData.item!.width), maxWidth: CGFloat(gfyData.item!.width),
-                 idealHeight: CGFloat(gfyData.item!.height), maxHeight: CGFloat(gfyData.item!.height))
+        VideoPlayer(url: gfyData.item!.mp4URL)
       }
     }
   }
@@ -225,11 +221,7 @@ struct ImgurView: View {
       if imgurData.imgurImage == nil {
         EmptyView()
       } else if imgurData.imgurImage!.data.animated {
-        Player(url: imgurData.imgurImage!.data.mp4!)
-          .frame(idealWidth: CGFloat(imgurData.imgurImage!.data.width),
-                 maxWidth: CGFloat(imgurData.imgurImage!.data.width),
-                 idealHeight: CGFloat(imgurData.imgurImage!.data.height),
-                 maxHeight: CGFloat(imgurData.imgurImage!.data.height))
+        VideoPlayer(url: imgurData.imgurImage!.data.mp4!)
       } else {
         WebImage(url: imgurData.imgurImage!.data.link, context: [
           .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600),
