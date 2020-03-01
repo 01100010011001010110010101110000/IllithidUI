@@ -84,6 +84,9 @@ struct PostListView<PostContainer: PostsProvider>: View {
         .onAppear {
           self.postsData.loadPosts()
         }
+        .onDisappear {
+          self.postsData.cancel()
+        }
         if postContainer is Subreddit && showSidebar {
           SidebarView(subreddit: postContainer as! Subreddit)
             .frame(minWidth: 200, maxWidth: 400)

@@ -217,16 +217,16 @@ struct ImgurView: View {
   }
 
   var body: some View {
-    VStack {
-      if imgurData.imgurImage == nil {
-        EmptyView()
-      } else if imgurData.imgurImage!.data.animated {
-        VideoPlayer(url: imgurData.imgurImage!.data.mp4!)
-      } else {
-        WebImage(url: imgurData.imgurImage!.data.link, context: [
-          .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600),
-                                                        scaleMode: .aspectFill)
-        ])
+    imgurData.imgurImage.map { image in
+      VStack {
+        if image.data.animated {
+          VideoPlayer(url: imgurData.imgurImage!.data.mp4!)
+        } else {
+          WebImage(url: image.data.link, context: [
+            .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600),
+                                                          scaleMode: .aspectFill)
+          ])
+        }
       }
     }
   }

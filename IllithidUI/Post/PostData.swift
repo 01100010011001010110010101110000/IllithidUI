@@ -8,6 +8,7 @@ import Combine
 import os.log
 import SwiftUI
 
+import Alamofire
 import Illithid
 
 final class PostData<PostContainer: PostsProvider>: ObservableObject {
@@ -27,12 +28,14 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
     }
   }
 
-  private let postsProvider: PostsProvider
+  let postsProvider: PostsProvider
+
   private var postListingParams: ListingParameters = .init()
   private var exhausted: Bool = false
   private let illithid: Illithid = .shared
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.posts",
                           category: .pointsOfInterest)
+  private var requests: [DataRequest] = []
 
   init(provider: PostsProvider) {
     postsProvider = provider
@@ -42,7 +45,7 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
     if !exhausted {
-      postsProvider.posts(sortBy: sort, location: nil, topInterval: topInterval, parameters: postListingParams, queue: .main) { result in
+      let request = postsProvider.posts(sortBy: sort, location: nil, topInterval: topInterval, parameters: postListingParams, queue: .main) { result in
         switch result {
         case let .success(listing):
           if let anchor = listing.after { self.postListingParams.after = anchor }
@@ -53,6 +56,13 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
         }
         os_signpost(.end, log: self.log, name: "Load Posts", signpostID: signpostId)
       }
+      requests.append(request)
+    }
+  }
+
+  func cancel() {
+    while !self.requests.isEmpty {
+      self.requests.popLast()?.cancel()
     }
   }
 }
