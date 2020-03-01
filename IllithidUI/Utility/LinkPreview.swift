@@ -15,20 +15,14 @@ import SDWebImage
 import SDWebImageSwiftUI
 import SwiftSoup
 
-// FIX: Wide aspect ratio resizing
-
 struct LinkPreview: View {
-  @State private var previewImageUrl: URL? = nil
-  @State private var audioUrl: URL? = nil
-  @State private var videoUrl: URL? = nil
   @State private var hover: Bool = false
-
-  let link: URL
+  @ObservedObject var previewData: LinkPreviewData
   
   private let browserImage: NSImage
 
   init(link: URL) {
-    self.link = link
+    self.previewData = .init(link: link)
     
     switch DefaultBrowser.atStartup {
     case .safari:
@@ -42,18 +36,12 @@ struct LinkPreview: View {
     }
   }
 
-  private static let queue = DispatchQueue(label: "com.fayware.IllithidUI.LinkPreview", attributes: .concurrent)
-  private let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-  private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
-
   var body: some View {
     VStack(spacing: 0.0) {
-      if previewImageUrl != nil {
-        VStack {
-          WebImage(url: previewImageUrl!, context: [.imageTransformer: SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
-        }
-      } else {
-        EmptyView()
+      previewData.previewImageUrl.map { url in
+        WebImage(url: url, context: [.imageTransformer:
+          SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)
+        ])
       }
 
       HStack(alignment: .center) {
@@ -66,9 +54,9 @@ struct LinkPreview: View {
         Rectangle()
           .fill(Color(.darkGray))
           .frame(width: 2, height: 24)
-        Text(link.absoluteString)
-          .lineLimit(1)
-          .truncationMode(.tail)
+        Text(previewData.link.host ?? "")
+          + Text(previewData.link.path)
+            .foregroundColor(.secondary)
         Spacer()
       }
       .onHover(perform: { entered in
@@ -77,7 +65,7 @@ struct LinkPreview: View {
         }
       })
       .onTapGesture {
-        NSWorkspace.shared.open(self.link)
+        NSWorkspace.shared.open(self.previewData.link)
       }
       .padding(4)
       .frame(maxHeight: 32, alignment: .leading)
@@ -87,12 +75,30 @@ struct LinkPreview: View {
     .background(Color(.controlBackgroundColor))
     .modifier(RoundedBorder(style: Color(.darkGray), cornerRadius: 8.0, width: 2.0))
     .onAppear {
-      self.loadMetadata()
+      self.previewData.loadMetadata()
+    }
+    .onDisappear {
+      self.previewData.cancel()
     }
   }
+}
 
-  private func loadMetadata() {
-    AF.request(link).responseString(queue: Self.queue) { response in
+final class LinkPreviewData: ObservableObject {
+  @Published var previewImageUrl: URL?
+  @Published var previewImage: NSImage?
+
+  let link: URL
+  private var request: DataRequest?
+
+  init(link: URL) {
+    self.link = link
+  }
+
+  private static let queue = DispatchQueue(label: "com.fayware.IllithidUI.LinkPreview")
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
+
+  func loadMetadata() {
+    self.request = AF.request(link).responseString(queue: Self.queue) { response in
       switch response.result {
       case let .success(html):
         // Fetch link's HTML document
@@ -102,31 +108,14 @@ struct LinkPreview: View {
 
         switch documentResult {
         case let .success(document):
-          // Fetch page's audio media
-          do {
-            self.audioUrl = try document.select("audio")
-              .first()
-              .flatMap { try URL(string: $0.attr("src")) }
-            if self.audioUrl == nil {
-              let text = try document.html()
-              let matches = self.detector.matches(in: text, options: [],
-                                                  range: NSRange(location: 0, length: text.count))
-              for match in matches {
-                if let url = match.url, url.pathExtension == "m4a" {
-                  self.audioUrl = url
-                  return
-                }
-              }
-            }
-          } catch {
-            print("Error parsing audio URL")
-          }
-
           // Fetch page's preview image link from meta tags
           do {
-            self.previewImageUrl = try document.select("meta")
+            let url = try document.select("meta")
               .first { try $0.attr("property") == "og:image" }
               .flatMap { try URL(string: $0.attr("content")) }
+            DispatchQueue.main.async {
+              self.previewImageUrl = url
+            }
           } catch {
             print("Error parsing link preview image URL: \(error)")
           }
@@ -138,6 +127,10 @@ struct LinkPreview: View {
         print("Error fetching HTML: \(error)")
       }
     }
+  }
+
+  func cancel() {
+    self.request?.cancel()
   }
 }
 

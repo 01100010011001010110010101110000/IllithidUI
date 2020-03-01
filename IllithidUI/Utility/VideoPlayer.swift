@@ -16,7 +16,7 @@ struct VideoPlayer: View {
     view.allowsPictureInPicturePlayback = true
     view.controlsStyle = .floating
     view.showsFullScreenToggleButton = false
-    view.showsSharingServiceButton = false
+    view.showsSharingServiceButton = true
     view.updatesNowPlayingInfoCenter = false
     view.videoGravity = .resizeAspect
     view.autoresizingMask = [.height, .width]
