@@ -37,7 +37,7 @@ struct CommentRowView: View {
             .fontWeight(.heavy)
             .foregroundColor(authorColor)
 
-          Text(comment.scoreHidden ? "-" : String(comment.ups))
+          Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
             .foregroundColor(.orange)
           Spacer()
           Text("\(comment.relativeCommentTime) ago")
