@@ -9,7 +9,7 @@ import SwiftUI
 import Illithid
 
 struct InformationBarNavigationView: View {
-  @EnvironmentObject var preferences: PreferencesData
+  @ObservedObject var preferences: PreferencesData = .shared
   @ObservedObject var informationBarData: InformationBarData = .init()
   let multiredditSearch = SearchData(for: [.subreddit])
 

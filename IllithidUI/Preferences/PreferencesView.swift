@@ -9,7 +9,6 @@ import SwiftUI
 import Illithid
 
 struct PreferencesView: View {
-  @ObservedObject var preferences: PreferencesData
   @ObservedObject var accountManager: AccountManager
 
   var body: some View {
@@ -24,14 +23,13 @@ struct PreferencesView: View {
         }
     }
     .padding()
-    .environmentObject(preferences)
     .frame(minWidth: 300, minHeight: 500)
   }
 }
 
 struct GeneralPreferences: View {
-  @EnvironmentObject var preferences: PreferencesData
-
+  @ObservedObject var preferences: PreferencesData = .shared
+  
   var body: some View {
     VStack(alignment: .leading) {
       GroupBox(label: Text("Content").font(.headline)) {
@@ -102,22 +100,60 @@ struct AccountsPreferences: View {
   }
 }
 
-extension NSImage.Name {
-  static let arrowDown = NSImage.Name("arrow-down")
-  static let arrowUp = NSImage.Name("arrow-up")
-  static let bookmark = NSImage.Name("bookmark")
-  static let eyeSlash = NSImage.Name("eye-slash")
-  static let flag = NSImage.Name("flag")
+final class PreferencesData: ObservableObject, Codable {
+  static let shared: PreferencesData = {
+    guard let data = UserDefaults.standard.data(forKey: "preferences") else { return .init() }
+    let value = try? JSONDecoder().decode(PreferencesData.self, from: data)
+    return value ?? .init()
+  }()
 
-  static let checkmark = NSImage.Name("checkmark")
+  // TODO: When Swift 5.2 releases, replace this with property wrapper composition
+  @Published fileprivate(set) var  hideNsfw: Bool = false {
+    didSet {
+      updateDefaults()
+    }
+  }
 
-  // Browsers
-  static let chrome = NSImage.Name("chrome")
-  static let compass = NSImage.Name("compass")
-  static let firefox = NSImage.Name("firefox")
-  static let safari = NSImage.Name("safari")
+  // MARK: Playback
+  @Published fileprivate(set) var muteAudio: Bool = true {
+    didSet {
+      updateDefaults()
+    }
+  }
+  @Published fileprivate(set) var autoPlayGifs: Bool = false {
+    didSet {
+      updateDefaults()
+    }
+  }
 
-  static let redditSquare = NSImage.Name("reddit-square")
+  enum CodingKeys: CodingKey {
+    case hideNsfw
+    case muteAudio
+    case autoPlayGifs
+  }
+
+  private init() {}
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    hideNsfw = try container.decode(Bool.self, forKey: .hideNsfw)
+    muteAudio = try container.decode(Bool.self, forKey: .muteAudio)
+    autoPlayGifs = (try? container.decode(Bool.self, forKey: .autoPlayGifs)) ?? false
+  }
+
+  func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+
+    try container.encode(hideNsfw, forKey: .hideNsfw)
+    try container.encode(muteAudio, forKey: .muteAudio)
+    try container.encode(autoPlayGifs, forKey: .autoPlayGifs)
+  }
+
+  private func updateDefaults() {
+    let data = try? JSONEncoder().encode(self)
+    UserDefaults.standard.set(data, forKey: "preferences")
+  }
 }
 
 // #if DEBUG

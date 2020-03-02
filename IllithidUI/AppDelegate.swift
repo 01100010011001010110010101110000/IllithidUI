@@ -20,11 +20,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   var toolbar: NSToolbar!
   let toolbarDelegate = ToolbarDelegate()
   let illithid: Illithid = .shared
-  var preferences: PreferencesData = {
-    guard let data = UserDefaults.standard.data(forKey: "preferences") else { return .init() }
-    let value = try? JSONDecoder().decode(PreferencesData.self, from: data)
-    return value ?? .init()
-  }()
 
   #if DEBUG
     let logger: Logger = .debugLogger()
@@ -41,8 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     // MARK: Preferences Window Controller
 
-    preferencesWindowController = WindowController(rootView: PreferencesView(preferences: preferences,
-                                                                             accountManager: illithid.accountManager),
+    preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: illithid.accountManager),
                                                    styleMask: [.closable, .titled],
                                                    title: "Illithid Preferences")
     preferencesWindowController.window!.center()
@@ -62,7 +56,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.center()
     window.setFrameAutosaveName("Main Window")
 
-    let rootView = RootView(preferences: preferences)
+    let rootView = RootView()
 
     window.contentView = NSHostingView(
       rootView: rootView
