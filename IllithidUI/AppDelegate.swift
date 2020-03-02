@@ -5,6 +5,7 @@
 //
 
 import Cocoa
+import Combine
 import SwiftUI
 
 import Alamofire
@@ -17,10 +18,13 @@ import Willow
 class AppDelegate: NSObject, NSApplicationDelegate {
   var window: NSWindow!
   var toolbar: NSToolbar!
-  let toolbarDelegate: ToolbarDelegate = .init()
+  let toolbarDelegate = ToolbarDelegate()
   let illithid: Illithid = .shared
-  // TODO: Persist preferences
-  var preferences: PreferencesData = .init()
+  var preferences: PreferencesData = {
+    guard let data = UserDefaults.standard.data(forKey: "preferences") else { return .init() }
+    let value = try? JSONDecoder().decode(PreferencesData.self, from: data)
+    return value ?? .init()
+  }()
 
   #if DEBUG
     let logger: Logger = .debugLogger()
