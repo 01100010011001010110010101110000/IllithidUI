@@ -43,7 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     preferencesWindowController = WindowController(rootView: PreferencesView(preferences: preferences,
                                                                              accountManager: illithid.accountManager),
-                                                   styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
+                                                   styleMask: [.closable, .titled],
                                                    title: "Illithid Preferences")
     preferencesWindowController.window!.center()
 

@@ -28,9 +28,14 @@ struct VideoPlayer: View {
       .onDisappear {
         self.view.player?.pause()
       }
-    .onAppear {
-      self.view.player?.volume = self.preferences.muteAudio ? 0.0 : 100.0
-    }
+      .onAppear {
+        self.view.player?.volume = self.preferences.muteAudio ? 0.0 : 100.0
+      }
+      .onReceive(view.$isReady, perform: { ready in
+        if ready, self.preferences.autoPlayGifs {
+          self.view.player?.play()
+        }
+      })
       .frame(idealWidth: view.size.width, maxWidth: max(view.fullSize.width, view.size.width),
              idealHeight: view.size.height, maxHeight: max(view.fullSize.height, view.size.height))
     }
@@ -53,9 +58,11 @@ private struct _VideoPlayer: NSViewRepresentable {
 private final class PlayerView: AVPlayerView, ObservableObject {
   @Published var size: NSSize = .zero
   @Published var fullSize: NSSize = .init(width: 3840, height: 2160)
+  @Published var isReady: Bool = false
 
   var inverseAspectRatio: CGFloat = .zero
 
+  private var presentationToken: AnyCancellable?
   private var readyToken: AnyCancellable?
   private var didEndToken: AnyCancellable?
 
@@ -67,7 +74,10 @@ private final class PlayerView: AVPlayerView, ObservableObject {
     self.init(frame: .zero)
     player = AVPlayer(url: url)
 
-    readyToken = self.publisher(for: \.player?.currentItem?.presentationSize)
+    readyToken = self.publisher(for: \.isReadyForDisplay)
+      .receive(on: RunLoop.main)
+      .assign(to: \.isReady, on: self)
+    presentationToken = self.publisher(for: \.player?.currentItem?.presentationSize)
       .receive(on: RunLoop.main)
       .sink { size in
         self.fullSize = size ?? .zero
@@ -99,6 +109,7 @@ private final class PlayerView: AVPlayerView, ObservableObject {
   }
 
   deinit {
+    presentationToken?.cancel()
     readyToken?.cancel()
     didEndToken?.cancel()
   }

@@ -23,6 +23,7 @@ struct PreferencesView: View {
           Text("Accounts")
         }
     }
+    .padding()
     .environmentObject(preferences)
     .frame(minWidth: 300, minHeight: 500)
   }
@@ -32,20 +33,27 @@ struct GeneralPreferences: View {
   @EnvironmentObject var preferences: PreferencesData
 
   var body: some View {
-    VStack {
+    VStack(alignment: .leading) {
       GroupBox(label: Text("Content").font(.headline)) {
-        Toggle(isOn: $preferences.hideNsfw) {
-          Text("Hide NSFW Content")
+        VStack(alignment: .leading) {
+          Toggle(isOn: $preferences.hideNsfw) {
+            Text("Hide NSFW Content")
+          }
         }
       }
+
       GroupBox(label: Text("Playback").font(.headline)) {
-        Toggle(isOn: $preferences.muteAudio) {
-          Text("Mute audio content")
+        VStack(alignment: .leading) {
+          Toggle(isOn: $preferences.muteAudio) {
+            Text("Mute audio content")
+          }
+          Toggle(isOn: $preferences.autoPlayGifs) {
+            Text("Auto play GIFs")
+          }
         }
       }
       Spacer()
     }
-    .frame(alignment: .leading)
   }
 }
 

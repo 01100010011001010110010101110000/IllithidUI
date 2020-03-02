@@ -16,7 +16,13 @@ final class PreferencesData: ObservableObject, Codable {
     }
   }
 
+  // MARK: Playback
   @Published var muteAudio: Bool = true {
+    didSet {
+      updateDefaults()
+    }
+  }
+  @Published var autoPlayGifs: Bool = false {
     didSet {
       updateDefaults()
     }
@@ -25,6 +31,7 @@ final class PreferencesData: ObservableObject, Codable {
   enum CodingKeys: CodingKey {
     case hideNsfw
     case muteAudio
+    case autoPlayGifs
   }
 
   init() {}
@@ -34,6 +41,7 @@ final class PreferencesData: ObservableObject, Codable {
 
     hideNsfw = try container.decode(Bool.self, forKey: .hideNsfw)
     muteAudio = try container.decode(Bool.self, forKey: .muteAudio)
+    autoPlayGifs = (try? container.decode(Bool.self, forKey: .autoPlayGifs)) ?? false
   }
 
   func encode(to encoder: Encoder) throws {
@@ -41,6 +49,7 @@ final class PreferencesData: ObservableObject, Codable {
 
     try container.encode(hideNsfw, forKey: .hideNsfw)
     try container.encode(muteAudio, forKey: .muteAudio)
+    try container.encode(autoPlayGifs, forKey: .autoPlayGifs)
   }
 
   private func updateDefaults() {
