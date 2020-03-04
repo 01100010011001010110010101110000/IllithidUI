@@ -18,7 +18,7 @@ final class InformationBarData: ObservableObject {
   private var encoder = JSONEncoder()
   private var cancelToken: AnyCancellable?
 
-  private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.InformationBar")
+  private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.InformationBar", qos: .background)
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.InformationBar",
                           category: .pointsOfInterest)
 
@@ -82,13 +82,15 @@ final class InformationBarData: ObservableObject {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Multireddits", signpostID: signpostId)
     Illithid.shared.accountManager.currentAccount?.multireddits(queue: Self.queue) { result in
+      defer {
+        os_signpost(.end, log: self.log, name: "Load Multireddits", signpostID: signpostId)
+      }
       switch result {
       case let .success(multireddits):
         let sortedMultireddits = multireddits.sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
         if self.multiReddits != sortedMultireddits {
           DispatchQueue.main.async {
             self.multiReddits = sortedMultireddits
-            os_signpost(.end, log: self.log, name: "Load Multireddits", signpostID: signpostId)
           }
         }
       case let .failure(error):
@@ -101,13 +103,15 @@ final class InformationBarData: ObservableObject {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Subscribed Subreddits", signpostID: signpostId)
     Illithid.shared.accountManager.currentAccount?.subscribedSubreddits(queue: Self.queue) { result in
+      defer {
+        os_signpost(.end, log: self.log, name: "Load Subscribed Subreddits", signpostID: signpostId)
+      }
       switch result {
       case let .success(subreddits):
         let sortedSubreddits = subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending })
         if sortedSubreddits != self.subscribedSubreddits {
           DispatchQueue.main.async {
             self.subscribedSubreddits = sortedSubreddits
-            os_signpost(.end, log: self.log, name: "Load Subscribed Subreddits", signpostID: signpostId)
           }
         }
       case let .failure(error):
