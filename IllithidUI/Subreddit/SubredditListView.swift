@@ -10,7 +10,7 @@ import Illithid
 import Willow
 
 struct SubredditsView: View {
-  @ObservedObject var subredditData: SubredditData
+  @ObservedObject var subredditData: SubredditListData
 
   var body: some View {
     NavigationView {

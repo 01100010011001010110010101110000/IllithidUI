@@ -9,17 +9,15 @@ import SwiftUI
 import Illithid
 
 struct CommentRowView: View {
+  @EnvironmentObject var commentData: CommentData
+  @State private var authorColor: Color = .white
+
   let comment: Comment
   private let depth: Int
-  private let authorColor: Color
 
   init(comment: Comment) {
     self.comment = comment
     depth = comment.depth ?? 0
-    if comment.canModPost, comment.isSubmitter { authorColor = .purple }
-    else if comment.canModPost { authorColor = .green }
-    else if comment.isSubmitter { authorColor = .blue }
-    else { authorColor = .white }
   }
 
   var body: some View {
@@ -53,7 +51,12 @@ struct CommentRowView: View {
         Divider()
           .opacity(1.0)
       }
-    }.padding(.leading, 12 * CGFloat(integerLiteral: depth))
+    }
+    .onAppear {
+      if self.comment.isSubmitter { self.authorColor = .blue }
+      else { self.authorColor = .white }
+    }
+    .padding(.leading, 12 * CGFloat(integerLiteral: depth))
   }
 }
 

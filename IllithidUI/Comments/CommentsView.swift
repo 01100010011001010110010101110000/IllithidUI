@@ -38,7 +38,9 @@ struct CommentsView: View, Identifiable {
             .font(.largeTitle)
           Spacer()
           VStack {
-            Text("in \(post.subreddit) by \(post.author)")
+            Text("in \(post.subreddit) by ")
+              + Text(post.author)
+              .foregroundColor(.blue)
             Text("\(post.relativePostTime) ago")
           }
         }

@@ -75,7 +75,9 @@ struct LinkPreview: View {
     .background(Color(.controlBackgroundColor))
     .modifier(RoundedBorder(style: Color(.darkGray), cornerRadius: 8.0, width: 2.0))
     .onAppear {
-      self.previewData.loadMetadata()
+      if self.previewData.previewImageUrl == nil {
+        self.previewData.loadMetadata()
+      }
     }
     .onDisappear {
       self.previewData.cancel()
@@ -85,7 +87,6 @@ struct LinkPreview: View {
 
 final class LinkPreviewData: ObservableObject {
   @Published var previewImageUrl: URL?
-  @Published var previewImage: NSImage?
 
   let link: URL
   private var request: DataRequest?
@@ -95,10 +96,14 @@ final class LinkPreviewData: ObservableObject {
   }
 
   private static let queue = DispatchQueue(label: "com.fayware.IllithidUI.LinkPreview")
+  private let session = (NSApp.delegate! as! AppDelegate).session
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
 
   func loadMetadata() {
-    self.request = AF.request(link).responseString(queue: Self.queue) { response in
+    self.request = session.request(link)
+      .validate()
+      .cacheResponse(using: ResponseCacher.cache)
+      .responseString(queue: Self.queue) { response in
       switch response.result {
       case let .success(html):
         // Fetch link's HTML document

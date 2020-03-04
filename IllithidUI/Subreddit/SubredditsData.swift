@@ -10,7 +10,7 @@ import os.log
 
 import Illithid
 
-final class SubredditData: ObservableObject {
+final class SubredditListData: ObservableObject {
   @Published var subreddits: [Subreddit] = []
 
   let illithid: Illithid = .shared

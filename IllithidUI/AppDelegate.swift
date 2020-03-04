@@ -11,6 +11,7 @@ import SwiftUI
 import Alamofire
 import Illithid
 import OAuthSwift
+import SDWebImage
 import Ulithari
 import Willow
 
@@ -21,18 +22,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   let toolbarDelegate = ToolbarDelegate()
   let illithid: Illithid = .shared
 
-  #if DEBUG
+  let logger: Logger
+
+  let session: Session
+
+  let preferencesWindowController: WindowController<PreferencesView>
+
+  override init() {
+    #if DEBUG
     let logger: Logger = .debugLogger()
-  #else
+    #else
     let logger: Logger = .releaseLogger(subsystem: "com.flayware.IllithidUI")
-  #endif
+    #endif
+    self.logger = logger
+    session = {
+      let alamoConfiguration = URLSessionConfiguration.default
 
-  var preferencesWindowController: WindowController<PreferencesView>!
+      // TODO: Make this some function of the system's available disk and memory
+      alamoConfiguration.urlCache = URLCache(memoryCapacity: 10_485_760, diskCapacity: 209_715_200)
 
-  func applicationDidFinishLaunching(_: Notification) {
-    illithid.configure(configuration: IllithidConfiguration())
-    Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
-    illithid.logger = logger
+      let cacher: ResponseCacher = .cache
+      let session = Session(configuration: alamoConfiguration,
+                            rootQueue: DispatchQueue(label: "com.flayware.IllithidUI.AFRootQueue"),
+                            serializationQueue: DispatchQueue(label: "com.flayware.IllithidUI.AFSerializationQueue"),
+                            cachedResponseHandler: cacher,
+                            eventMonitors: [FireLogger(logger: logger)])
+
+      return session
+    }()
 
     // MARK: Preferences Window Controller
 
@@ -40,6 +57,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                                    styleMask: [.closable, .titled],
                                                    title: "Illithid Preferences")
     preferencesWindowController.window!.center()
+
+    super.init()
+  }
+
+  func applicationDidFinishLaunching(_: Notification) {
+    illithid.configure(configuration: IllithidConfiguration())
+    Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
+    illithid.logger = logger
 
     let menu = NSApp.mainMenu!
     let preferencesItem = menu.item(withTitle: "Illithid")!.submenu!.item(withTitle: "Preferences…")!
@@ -67,6 +92,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     toolbar = NSToolbar(identifier: "illithid.toolbar")
     toolbar.delegate = toolbarDelegate
     window.toolbar = toolbar
+
+    // MARK: SDWebImage configuration
+
+    let cache = SDImageCache()
+    cache.config.diskCacheExpireType = .modificationDate
+    cache.config.maxDiskSize = 1024 * 1024 * 1024 * 2
+    cache.config.maxMemoryCost = 1024 * 1024 * 200
+    SDImageCachesManager.shared.caches = [cache]
+    SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
 
     window.makeKeyAndOrderFront(nil)
   }
