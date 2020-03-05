@@ -58,6 +58,7 @@
 		6DF68D8723878F4B0009CA74 /* InformationBarNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF68D8623878F4B0009CA74 /* InformationBarNavigationView.swift */; };
 		6DFB42F622CA884500272845 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6DFB42F522CA884500272845 /* README.md */; };
 		6DFB42F822CA885000272845 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 6DFB42F722CA885000272845 /* LICENSE */; };
+		6DFD531C2410D4A90066E70F /* ModeratorData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFD531B2410D4A90066E70F /* ModeratorData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +134,7 @@
 		6DF68D8623878F4B0009CA74 /* InformationBarNavigationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InformationBarNavigationView.swift; sourceTree = "<group>"; };
 		6DFB42F522CA884500272845 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		6DFB42F722CA885000272845 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		6DFD531B2410D4A90066E70F /* ModeratorData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeratorData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +244,7 @@
 				6D2EA5A322A7FEE40059B6EA /* IllithidUI.entitlements */,
 				6D2EA59722A7FEE20059B6EA /* IllithidUI.xcdatamodeld */,
 				6D2EA59C22A7FEE40059B6EA /* Preview Content */,
+				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
 			);
 			path = IllithidUI;
 			sourceTree = "<group>";
@@ -489,6 +492,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D1780B5240C975F005D7FD6 /* UserDefault.swift in Sources */,
+				6DFD531C2410D4A90066E70F /* ModeratorData.swift in Sources */,
 				6D2EA59922A7FEE20059B6EA /* IllithidUI.xcdatamodeld in Sources */,
 				6D062E512403067300A3BDD0 /* ZoomModifier.swift in Sources */,
 				6D0A4EFD237A6D2F00626E44 /* LinkPreview.swift in Sources */,

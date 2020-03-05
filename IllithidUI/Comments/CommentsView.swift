@@ -11,6 +11,7 @@ import Illithid
 
 struct CommentsView: View, Identifiable {
   @ObservedObject var commentData: CommentData
+  @ObservedObject var modData: ModeratorData = .shared
 
   /// The post to which the comments belong
   let id: Fullname
@@ -40,7 +41,7 @@ struct CommentsView: View, Identifiable {
           VStack {
             Text("in \(post.subreddit) by ")
               + Text(post.author)
-              .foregroundColor(.blue)
+                .foregroundColor(modData.moderators[post.subreddit, default: []].contains { post.author == $0.name } ? .green : .blue)
             Text("\(post.relativePostTime) ago")
           }
         }

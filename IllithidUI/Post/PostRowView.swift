@@ -243,14 +243,20 @@ struct PostActionBar: View {
 
 struct PostMetadataBar: View {
   @State var authorPopover = false
+  @ObservedObject var modData: ModeratorData = .shared
   private static let subredditManager = WindowManager<SubredditLoader>()
 
   let post: Post
 
+  init(post: Post) {
+    self.post = post
+    modData.loadModerators(for: post.subreddit)
+  }
+
   var body: some View {
     HStack {
       Text(post.author)
-        .foregroundColor(.white)
+        .foregroundColor(modData.moderators[post.subreddit, default: []].contains { post.author == $0.name } ? .green : .white)
         .onTapGesture {
           self.authorPopover.toggle()
         }
