@@ -10,10 +10,13 @@ import Illithid
 
 struct CommentRowView: View {
   @EnvironmentObject var commentData: CommentData
-  @State private var authorColor: Color = .white
 
   let comment: Comment
   private let depth: Int
+  private var authorColor: Color {
+    if comment.isSubmitter { return .blue }
+    else { return .white }
+  }
 
   init(comment: Comment) {
     self.comment = comment
@@ -51,10 +54,6 @@ struct CommentRowView: View {
         Divider()
           .opacity(1.0)
       }
-    }
-    .onAppear {
-      if self.comment.isSubmitter { self.authorColor = .blue }
-      else { self.authorColor = .white }
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: depth))
   }

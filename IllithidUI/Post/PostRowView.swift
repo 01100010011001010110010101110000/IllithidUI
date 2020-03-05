@@ -6,6 +6,7 @@
 
 import SwiftUI
 
+import Alamofire
 import Illithid
 
 // MARK: Main row view
@@ -18,7 +19,9 @@ struct PostRowView: View {
   let commentsManager: WindowManager<CommentsView>
   let debugManager: WindowManager<PostDebugView>
 
-  init(post: Post, commentsManager: WindowManager<CommentsView> = .init(), debugManager: WindowManager<PostDebugView> = .init()) {
+  init(post: Post,
+       commentsManager: WindowManager<CommentsView> = .init(),
+       debugManager: WindowManager<PostDebugView> = .init()) {
     self.post = post
     self.commentsManager = commentsManager
     self.debugManager = debugManager
@@ -246,12 +249,14 @@ struct PostMetadataBar: View {
 
   var body: some View {
     HStack {
-      Button(post.author) {
-        self.authorPopover.toggle()
-      }
-      .popover(isPresented: $authorPopover) {
-        AccountView(accountData: .init(name: self.post.author))
-      }
+      Text(post.author)
+        .foregroundColor(.white)
+        .onTapGesture {
+          self.authorPopover.toggle()
+        }
+        .popover(isPresented: $authorPopover) {
+          AccountView(accountData: .init(name: self.post.author))
+        }
       Text("\(post.relativePostTime) ago")
       Spacer()
       HStack {

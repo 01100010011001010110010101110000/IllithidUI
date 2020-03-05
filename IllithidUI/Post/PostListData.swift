@@ -11,7 +11,7 @@ import SwiftUI
 import Alamofire
 import Illithid
 
-final class PostData<PostContainer: PostsProvider>: ObservableObject {
+final class PostListData<PostContainer: PostsProvider>: ObservableObject {
   @Published var posts: [Post] = []
   @Published var sort: PostSort = .best {
     didSet {
@@ -20,6 +20,7 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
       loadPosts()
     }
   }
+
   @Published var topInterval: TopInterval = .day {
     didSet {
       posts.removeAll(keepingCapacity: true)
@@ -27,6 +28,8 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
       loadPosts()
     }
   }
+
+  @Published var moderators: [String: [Moderator]] = [:]
 
   let postsProvider: PostsProvider
 
@@ -45,14 +48,15 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
     if !exhausted {
-      let request = postsProvider.posts(sortBy: sort, location: nil, topInterval: topInterval, parameters: postListingParams, queue: .main) { result in
+      let request = postsProvider.posts(sortBy: sort, location: nil, topInterval: topInterval,
+                                        parameters: postListingParams, queue: .main) { result in
         switch result {
         case let .success(listing):
           if let anchor = listing.after { self.postListingParams.after = anchor }
           else { self.exhausted = true }
           self.posts.append(contentsOf: listing.posts)
         case let .failure(error):
-          Illithid.shared.logger.errorMessage("Failed to load posts: \(error)")
+          self.illithid.logger.errorMessage("Failed to load posts: \(error)")
         }
         os_signpost(.end, log: self.log, name: "Load Posts", signpostID: signpostId)
       }
@@ -61,8 +65,8 @@ final class PostData<PostContainer: PostsProvider>: ObservableObject {
   }
 
   func cancel() {
-    while !self.requests.isEmpty {
-      self.requests.popLast()?.cancel()
+    while !requests.isEmpty {
+      requests.popLast()?.cancel()
     }
   }
 }

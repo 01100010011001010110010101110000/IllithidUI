@@ -13,7 +13,7 @@ import SDWebImageSwiftUI
 
 struct PostListView<PostContainer: PostsProvider>: View {
   @ObservedObject var preferences: PreferencesData = .shared
-  @ObservedObject var postsData: PostData<PostContainer>
+  @ObservedObject var postsData: PostListData<PostContainer>
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
 
@@ -40,7 +40,7 @@ struct PostListView<PostContainer: PostsProvider>: View {
 
   init(postContainer: PostContainer) {
     self.postContainer = postContainer
-    postsData = PostData(provider: self.postContainer)
+    postsData = PostListData(provider: self.postContainer)
   }
 
   var body: some View {
@@ -84,7 +84,7 @@ struct PostListView<PostContainer: PostsProvider>: View {
             PostRowView(post: post, commentsManager: self.commentsManager, debugManager: self.debugManager)
               .conditionalModifier(post == self.filteredPosts.last, OnAppearModifier {
                 self.postsData.loadPosts()
-                })
+              })
           }
         }
         .onAppear {
