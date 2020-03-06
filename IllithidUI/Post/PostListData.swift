@@ -31,7 +31,7 @@ final class PostListData<PostContainer: PostsProvider>: ObservableObject {
 
   @Published var moderators: [String: [Moderator]] = [:]
 
-  let postsProvider: PostsProvider
+  let postsProvider: PostContainer
 
   private var postListingParams: ListingParameters = .init()
   private var exhausted: Bool = false
@@ -40,7 +40,7 @@ final class PostListData<PostContainer: PostsProvider>: ObservableObject {
                           category: .pointsOfInterest)
   private var requests: [DataRequest] = []
 
-  init(provider: PostsProvider) {
+  init(provider: PostContainer) {
     postsProvider = provider
   }
 

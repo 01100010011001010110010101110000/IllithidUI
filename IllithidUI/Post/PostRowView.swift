@@ -117,7 +117,7 @@ struct PostRowView: View {
   }
 
   func showComments(for post: Post) {
-    windowManager.showWindow(with: post.id, title: post.title) {
+    windowManager.showWindow(withId: post.id, title: post.title) {
       CommentsView(post: post)
         .environmentObject(self.moderators)
         .environmentObject(self.preferences)
@@ -125,7 +125,7 @@ struct PostRowView: View {
   }
 
   func showDebugWindow(for post: Post) {
-    windowManager.showWindow(with: post.id, title: "\(post.title) - Debug View") {
+    windowManager.showWindow(withId: post.id, title: "\(post.title) - Debug View") {
       PostDebugView(post: post)
         .environmentObject(self.moderators)
         .environmentObject(self.preferences)
@@ -280,7 +280,7 @@ struct PostMetadataBar: View {
       Spacer()
       Text(post.subredditNamePrefixed)
         .onTapGesture {
-          self.windowManager.showWindow(with: self.post.subredditId, title: self.post.subredditNamePrefixed) {
+          self.windowManager.showWindow(withId: self.post.subredditId, title: self.post.subredditNamePrefixed) {
             SubredditLoader(fullname: self.post.subredditId)
               .environmentObject(self.moderators)
               .environmentObject(self.preferences)

@@ -41,6 +41,11 @@ struct PostListView<PostContainer: PostsProvider>: View {
     postsData = PostListData(provider: self.postContainer)
   }
 
+  init(data: PostListData<PostContainer>) {
+    self.postsData = data
+    self.postContainer = data.postsProvider
+  }
+
   var body: some View {
     VStack(spacing: 0.0) {
       VStack {

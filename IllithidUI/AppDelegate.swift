@@ -28,11 +28,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   let preferencesWindowController = NSWindowController()
 
-  let preferences: PreferencesData = {
-    guard let data = UserDefaults.standard.data(forKey: "preferences") else { return .init() }
-    let value = try? JSONDecoder().decode(PreferencesData.self, from: data)
-    return value ?? .init()
-  }()
+  let preferences: PreferencesData
 
   let moderators = ModeratorData()
 
@@ -43,6 +39,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let logger: Logger = .releaseLogger(subsystem: "com.flayware.IllithidUI")
     #endif
     self.logger = logger
+    if let data = UserDefaults.standard.data(forKey: "preferences"),
+      let value = try? JSONDecoder().decode(PreferencesData.self, from: data) {
+      preferences = value
+    } else {
+      preferences = .init()
+    }
     session = {
       let alamoConfiguration = URLSessionConfiguration.default
 
@@ -55,7 +57,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                             serializationQueue: DispatchQueue(label: "com.flayware.IllithidUI.AFSerializationQueue"),
                             cachedResponseHandler: cacher,
                             eventMonitors: [FireLogger(logger: logger)])
-
       return session
     }()
 

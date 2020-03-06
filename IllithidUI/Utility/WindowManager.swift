@@ -14,16 +14,18 @@ final class WindowManager {
   static let shared = WindowManager()
   
   typealias ID = String
-  let styleMask: NSWindow.StyleMask = [
+
+  private let styleMask: NSWindow.StyleMask = [
     .resizable,
     .titled,
     .closable,
   ]
-  fileprivate var controllers: [String: NSWindowController] = [:]
-  fileprivate var cancelBag: [AnyCancellable] = []
 
-  func showWindow<Content: View>(with id: ID, title: String = "", @ViewBuilder view: () -> Content) {
-    if let controller = windowController(with: id) {
+  private var controllers: [String: NSWindowController] = [:]
+  private var cancelBag: [AnyCancellable] = []
+
+  func showWindow<Content: View>(withId id: ID, title: String = "", @ViewBuilder view: () -> Content) {
+    if let controller = windowController(withId: id) {
       controller.window?.center()
       controller.window?.makeKeyAndOrderFront(nil)
     } else {
@@ -44,7 +46,7 @@ final class WindowManager {
     cancelBag.forEach { $0.cancel() }
   }
 
-  fileprivate func windowController(with id: ID) -> NSWindowController? {
+  fileprivate func windowController(withId id: ID) -> NSWindowController? {
     controllers[id]
   }
 
