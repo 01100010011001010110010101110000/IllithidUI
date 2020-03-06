@@ -26,7 +26,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   let session: Session
 
-  let preferencesWindowController: WindowController<PreferencesView>
+  let preferencesWindowController = NSWindowController()
+
+  let preferences: PreferencesData = {
+    guard let data = UserDefaults.standard.data(forKey: "preferences") else { return .init() }
+    let value = try? JSONDecoder().decode(PreferencesData.self, from: data)
+    return value ?? .init()
+  }()
+
+  let moderators = ModeratorData()
 
   override init() {
     #if DEBUG
@@ -51,12 +59,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       return session
     }()
 
-    // MARK: Preferences Window Controller
+    // MARK: SDWebImage configuration
 
-    preferencesWindowController = WindowController(rootView: PreferencesView(accountManager: illithid.accountManager),
-                                                   styleMask: [.closable, .titled],
-                                                   title: "Illithid Preferences")
-    preferencesWindowController.window!.center()
+    let cache = SDImageCache()
+    cache.config.diskCacheExpireType = .modificationDate
+    cache.config.maxDiskSize = 1024 * 1024 * 1024 * 2
+    cache.config.maxMemoryCost = 1024 * 1024 * 200
+    SDImageCachesManager.shared.caches = [cache]
+    SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
 
     super.init()
   }
@@ -65,6 +75,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     illithid.configure(configuration: IllithidConfiguration())
     Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
     illithid.logger = logger
+
+    // MARK: Preferences Window
+
+    preferencesWindowController.window = Window(styleMask: [.closable, .titled], title: "Illithid Preferences") {
+      PreferencesView(accountManager: illithid.accountManager)
+        .environmentObject(preferences)
+    }
+    preferencesWindowController.window!.center()
 
     let menu = NSApp.mainMenu!
     let preferencesItem = menu.item(withTitle: "Illithid")!.submenu!.item(withTitle: "Preferences…")!
@@ -82,6 +100,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.setFrameAutosaveName("Main Window")
 
     let rootView = RootView()
+      .environmentObject(moderators)
+      .environmentObject(preferences)
 
     window.contentView = NSHostingView(
       rootView: rootView
@@ -92,15 +112,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     toolbar = NSToolbar(identifier: "illithid.toolbar")
     toolbar.delegate = toolbarDelegate
     window.toolbar = toolbar
-
-    // MARK: SDWebImage configuration
-
-    let cache = SDImageCache()
-    cache.config.diskCacheExpireType = .modificationDate
-    cache.config.maxDiskSize = 1024 * 1024 * 1024 * 2
-    cache.config.maxMemoryCost = 1024 * 1024 * 200
-    SDImageCachesManager.shared.caches = [cache]
-    SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
 
     window.makeKeyAndOrderFront(nil)
   }

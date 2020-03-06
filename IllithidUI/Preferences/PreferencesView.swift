@@ -28,7 +28,7 @@ struct PreferencesView: View {
 }
 
 struct GeneralPreferences: View {
-  @ObservedObject var preferences: PreferencesData = .shared
+  @EnvironmentObject var preferences: PreferencesData
   
   var body: some View {
     VStack(alignment: .leading) {
@@ -101,12 +101,6 @@ struct AccountsPreferences: View {
 }
 
 final class PreferencesData: ObservableObject, Codable {
-  static let shared: PreferencesData = {
-    guard let data = UserDefaults.standard.data(forKey: "preferences") else { return .init() }
-    let value = try? JSONDecoder().decode(PreferencesData.self, from: data)
-    return value ?? .init()
-  }()
-
   // TODO: When Swift 5.2 releases, replace this with property wrapper composition
   @Published fileprivate(set) var  hideNsfw: Bool = false {
     didSet {
@@ -132,7 +126,7 @@ final class PreferencesData: ObservableObject, Codable {
     case autoPlayGifs
   }
 
-  private init() {}
+  init() {}
 
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

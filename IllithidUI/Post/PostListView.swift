@@ -12,14 +12,12 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct PostListView<PostContainer: PostsProvider>: View {
-  @ObservedObject var preferences: PreferencesData = .shared
+  @EnvironmentObject var preferences: PreferencesData
   @ObservedObject var postsData: PostListData<PostContainer>
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
 
   let postContainer: PostContainer
-  let commentsManager: WindowManager = WindowManager<CommentsView>()
-  let debugManager: WindowManager = WindowManager<PostDebugView>()
 
   private let cancelToken: AnyCancellable? = nil
 
@@ -81,7 +79,7 @@ struct PostListView<PostContainer: PostsProvider>: View {
       HSplitView {
         List {
           ForEach(filteredPosts) { post in
-            PostRowView(post: post, commentsManager: self.commentsManager, debugManager: self.debugManager)
+            PostRowView(post: post)
               .conditionalModifier(post == self.filteredPosts.last, OnAppearModifier {
                 self.postsData.loadPosts()
               })

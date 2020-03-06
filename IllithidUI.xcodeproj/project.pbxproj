@@ -237,6 +237,7 @@
 				6DE756B322AE15A400A1F87B /* Subreddit */,
 				6DE756B422AE15AD00A1F87B /* Post */,
 				6D558A0D230080140092AA88 /* RootView.swift */,
+				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
 				6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */,
 				6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */,
 				6D2EA59F22A7FEE40059B6EA /* Main.storyboard */,
@@ -244,7 +245,6 @@
 				6D2EA5A322A7FEE40059B6EA /* IllithidUI.entitlements */,
 				6D2EA59722A7FEE20059B6EA /* IllithidUI.xcdatamodeld */,
 				6D2EA59C22A7FEE40059B6EA /* Preview Content */,
-				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
 			);
 			path = IllithidUI;
 			sourceTree = "<group>";

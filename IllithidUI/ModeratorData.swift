@@ -9,18 +9,16 @@ import SwiftUI
 import Illithid
 
 final class ModeratorData: ObservableObject {
-  static let shared: ModeratorData = .init()
-
   @Published var moderators: [String: [Moderator]] = [:]
   private var loading: Set<String> = []
 
-  private init() {}
+  init() {}
 
   func loadModerators(for subredditName: String) {
     if moderators.index(forKey: subredditName) == nil, !loading.contains(subredditName) {
       loading.insert(subredditName)
-      Illithid.shared.moderatorsOf(displayName: subredditName) { result in
-        result.map { self.moderators[subredditName] = $0 }
+      _ = Illithid.shared.moderatorsOf(displayName: subredditName) { result in
+        _ = result.map { self.moderators[subredditName] = $0 }
         self.loading.remove(subredditName)
       }
     }

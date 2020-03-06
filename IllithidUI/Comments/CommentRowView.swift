@@ -9,7 +9,7 @@ import SwiftUI
 import Illithid
 
 struct CommentRowView: View {
-  @ObservedObject var modData: ModeratorData = .shared
+  @EnvironmentObject var modData: ModeratorData
 
   let comment: Comment
   private let depth: Int

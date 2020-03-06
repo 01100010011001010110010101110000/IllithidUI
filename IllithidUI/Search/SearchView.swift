@@ -15,7 +15,7 @@ struct SearchView: View {
     VStack {
       TextField("Search Reddit", text: $searchData.query) {
         // Allows the user to force a search for a string shorter than 3 characters
-        self.searchData.search(for: self.searchData.query)
+        _ = self.searchData.search(for: self.searchData.query)
       }
       .textFieldStyle(RoundedBorderTextFieldStyle())
       .padding()

@@ -12,19 +12,17 @@ import Illithid
 // MARK: Main row view
 
 struct PostRowView: View {
+  @EnvironmentObject var preferences: PreferencesData
+  @EnvironmentObject var moderators: ModeratorData
+
   let reddit: Illithid = .shared
   let post: Post
   let crosspostParent: Post?
 
-  let commentsManager: WindowManager<CommentsView>
-  let debugManager: WindowManager<PostDebugView>
+  let windowManager: WindowManager = .shared
 
-  init(post: Post,
-       commentsManager: WindowManager<CommentsView> = .init(),
-       debugManager: WindowManager<PostDebugView> = .init()) {
+  init(post: Post) {
     self.post = post
-    self.commentsManager = commentsManager
-    self.debugManager = debugManager
 
     if post.crosspostParentList != nil, !post.crosspostParentList!.isEmpty {
       crosspostParent = post.crosspostParentList?.first!
@@ -119,11 +117,19 @@ struct PostRowView: View {
   }
 
   func showComments(for post: Post) {
-    commentsManager.showWindow(for: CommentsView(post: post), title: post.title)
+    windowManager.showWindow(with: post.id, title: post.title) {
+      CommentsView(post: post)
+        .environmentObject(self.moderators)
+        .environmentObject(self.preferences)
+    }
   }
 
   func showDebugWindow(for post: Post) {
-    debugManager.showWindow(for: PostDebugView(post: post), title: "\(post.title) - Debug View")
+    windowManager.showWindow(with: post.id, title: "\(post.title) - Debug View") {
+      PostDebugView(post: post)
+        .environmentObject(self.moderators)
+        .environmentObject(self.preferences)
+    }
   }
 }
 
@@ -243,20 +249,20 @@ struct PostActionBar: View {
 
 struct PostMetadataBar: View {
   @State var authorPopover = false
-  @ObservedObject var modData: ModeratorData = .shared
-  private static let subredditManager = WindowManager<SubredditLoader>()
+  @EnvironmentObject var moderators: ModeratorData
+  @EnvironmentObject var preferences: PreferencesData
+  private let windowManager: WindowManager = .shared
 
   let post: Post
 
   init(post: Post) {
     self.post = post
-    modData.loadModerators(for: post.subreddit)
   }
 
   var body: some View {
     HStack {
       Text(post.author)
-        .foregroundColor(modData.moderators[post.subreddit, default: []].contains { post.author == $0.name } ? .green : .white)
+        .foregroundColor(moderators.moderators[post.subreddit, default: []].contains { post.author == $0.name } ? .green : .white)
         .onTapGesture {
           self.authorPopover.toggle()
         }
@@ -274,9 +280,15 @@ struct PostMetadataBar: View {
       Spacer()
       Text(post.subredditNamePrefixed)
         .onTapGesture {
-          Self.subredditManager.showWindow(for: .init(fullname: self.post.subredditId),
-                                           title: self.post.subredditNamePrefixed)
+          self.windowManager.showWindow(with: self.post.subredditId, title: self.post.subredditNamePrefixed) {
+            SubredditLoader(fullname: self.post.subredditId)
+              .environmentObject(self.moderators)
+              .environmentObject(self.preferences)
+          }
         }
+    }
+    .onAppear {
+      self.moderators.loadModerators(for: self.post.subreddit)
     }
     .padding(10)
     .font(.caption)

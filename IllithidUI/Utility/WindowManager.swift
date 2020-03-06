@@ -10,21 +10,24 @@ import SwiftUI
 
 import Illithid
 
-final class WindowManager<V: View & Identifiable>: ObservableObject {
+final class WindowManager {
+  static let shared = WindowManager()
+  
+  typealias ID = String
   let styleMask: NSWindow.StyleMask = [
     .resizable,
     .titled,
     .closable,
   ]
-  fileprivate var controllers: [V.ID: WindowController<V>] = [:]
+  fileprivate var controllers: [String: NSWindowController] = [:]
   fileprivate var cancelBag: [AnyCancellable] = []
 
-  func showWindow(for view: V, title: String = "") {
-    if let controller = windowController(for: view) {
+  func showWindow<Content: View>(with id: ID, title: String = "", @ViewBuilder view: () -> Content) {
+    if let controller = windowController(with: id) {
       controller.window?.center()
       controller.window?.makeKeyAndOrderFront(nil)
     } else {
-      let controller = makeWindowController(for: view, title: title)
+      let controller = makeWindowController(with: id, title: title, view: view)
       cancelBag.append(NotificationCenter.default.publisher(for: NSWindow.willCloseNotification, object: controller.window)
         .compactMap { $0.object as? NSWindow }
         .sink { window in
@@ -41,13 +44,15 @@ final class WindowManager<V: View & Identifiable>: ObservableObject {
     cancelBag.forEach { $0.cancel() }
   }
 
-  fileprivate func windowController(for view: V) -> WindowController<V>? {
-    controllers[view.id]
+  fileprivate func windowController(with id: ID) -> NSWindowController? {
+    controllers[id]
   }
 
-  fileprivate func makeWindowController(for view: V, title: String = "") -> WindowController<V> {
-    let controller = WindowController(rootView: view, styleMask: styleMask, title: title)
-    controllers[view.id] = controller
+  fileprivate func makeWindowController<Content: View>(with id: ID, title: String = "",
+                                                       @ViewBuilder view: () -> Content) -> NSWindowController {
+    let controller = NSWindowController()
+    controller.window = Window(styleMask: styleMask, title: title, rootView: view)
+    controllers[id] = controller
     return controller
   }
 }
