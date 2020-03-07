@@ -9,12 +9,12 @@ import SwiftUI
 import Illithid
 
 struct CommentRowView: View {
-  @EnvironmentObject var modData: ModeratorData
+  @EnvironmentObject var moderators: ModeratorData
 
   let comment: Comment
   private let depth: Int
   private var authorColor: Color {
-    if modData.moderators[comment.subreddit, default: []].contains(where: { comment.author == $0.name }) {
+    if moderators.isModerator(username: comment.author, ofSubreddit: comment.subreddit) {
       return .green
     } else if comment.isSubmitter {
       return .blue

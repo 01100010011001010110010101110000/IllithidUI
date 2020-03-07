@@ -262,7 +262,7 @@ struct PostMetadataBar: View {
   var body: some View {
     HStack {
       Text(post.author)
-        .foregroundColor(moderators.moderators[post.subreddit, default: []].contains { post.author == $0.name } ? .green : .white)
+        .foregroundColor(moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) ? .green : .white)
         .onTapGesture {
           self.authorPopover.toggle()
         }
@@ -286,9 +286,6 @@ struct PostMetadataBar: View {
               .environmentObject(self.preferences)
           }
         }
-    }
-    .onAppear {
-      self.moderators.loadModerators(for: self.post.subreddit)
     }
     .padding(10)
     .font(.caption)

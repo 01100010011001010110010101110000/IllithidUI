@@ -14,7 +14,15 @@ final class ModeratorData: ObservableObject {
 
   init() {}
 
-  func loadModerators(for subredditName: String) {
+  func isModerator(username: String, ofSubreddit subredditName: String) -> Bool {
+    guard let mods = moderators[subredditName] else {
+      loadModerators(for: subredditName)
+      return false
+    }
+    return mods.contains { $0.name == username }
+  }
+
+  private func loadModerators(for subredditName: String) {
     if moderators.index(forKey: subredditName) == nil, !loading.contains(subredditName) {
       loading.insert(subredditName)
       _ = Illithid.shared.moderatorsOf(displayName: subredditName) { result in
