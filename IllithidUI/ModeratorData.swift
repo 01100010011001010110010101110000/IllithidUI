@@ -9,7 +9,7 @@ import SwiftUI
 import Illithid
 
 final class ModeratorData: ObservableObject {
-  @Published var moderators: [String: [Moderator]] = [:]
+  @Published private(set) var moderators: [String: [Moderator]] = [:]
   private var loading: Set<String> = []
 
   init() {}

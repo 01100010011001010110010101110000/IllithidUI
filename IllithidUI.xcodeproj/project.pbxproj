@@ -328,8 +328,8 @@
 		6DE756B422AE15AD00A1F87B /* Post */ = {
 			isa = PBXGroup;
 			children = (
-				6DE756B722AE16E300A1F87B /* PostListData.swift */,
 				6DE756BB22AE176E00A1F87B /* PostListView.swift */,
+				6DE756B722AE16E300A1F87B /* PostListData.swift */,
 				6DC19CD022B069B0002F027B /* PostRowView.swift */,
 				6D0A1E462383B06C006CDB86 /* PostContent.swift */,
 				6D85952C23AD502700FC90E0 /* PostDebugView.swift */,
