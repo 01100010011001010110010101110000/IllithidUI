@@ -17,6 +17,18 @@ struct InformationBarNavigationView: View {
 
   @State private var isEditingMulti: Bool = false
   @State private var editing: Multireddit.ID?
+  @State private var providers: [String: PostListData] = [:]
+
+  private func formData(id: String, for provider: PostProvider) -> PostListData {
+    if let data = providers[id] { return data }
+    else {
+      let data = PostListData(provider: provider)
+      DispatchQueue.main.async {
+        self.providers[id] = data
+      }
+      return data
+    }
+  }
 
   var body: some View {
     NavigationView {
@@ -26,16 +38,16 @@ struct InformationBarNavigationView: View {
           .environmentObject(moderators))
           .padding([.top])
         Section(header: Text("Front Page")) {
-          NavigationLink("Home", destination: PostListView(postContainer: FrontPage.home)
+          NavigationLink("Home", destination: PostListView(data: formData(id: FrontPage.home.rawValue, for: FrontPage.home))
             .environmentObject(preferences)
             .environmentObject(moderators))
-          NavigationLink("Popular", destination: PostListView(postContainer: FrontPage.popular)
+          NavigationLink("Popular", destination: PostListView(data: formData(id: FrontPage.popular.rawValue, for: FrontPage.popular))
             .environmentObject(preferences)
             .environmentObject(moderators))
-          NavigationLink("All", destination: PostListView(postContainer: FrontPage.all)
+          NavigationLink("All", destination: PostListView(data: formData(id: FrontPage.all.rawValue, for: FrontPage.all))
             .environmentObject(preferences)
             .environmentObject(moderators))
-          NavigationLink("Random", destination: PostListView(postContainer: FrontPage.random)
+          NavigationLink("Random", destination: PostListView(data: formData(id: FrontPage.random.rawValue, for: FrontPage.random))
             .environmentObject(preferences)
             .environmentObject(moderators))
         }
@@ -52,7 +64,7 @@ struct InformationBarNavigationView: View {
               return true
             }
           }) { multireddit in
-            NavigationLink(multireddit.name, destination: PostListView(postContainer: multireddit)
+            NavigationLink(multireddit.name, destination: PostListView(data: self.formData(id: multireddit.id, for: multireddit))
               .environmentObject(self.preferences)
               .environmentObject(self.moderators))
               .contextMenu {
@@ -74,7 +86,7 @@ struct InformationBarNavigationView: View {
               return true
             }
           }) { subreddit in
-            NavigationLink(destination: PostListView(postContainer: subreddit)
+            NavigationLink(destination: PostListView(data: self.formData(id: subreddit.id, for: subreddit))
               .environmentObject(self.preferences)
               .environmentObject(self.moderators)) {
               HStack {

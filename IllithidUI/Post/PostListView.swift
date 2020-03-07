@@ -11,13 +11,13 @@ import SwiftUI
 import Illithid
 import SDWebImageSwiftUI
 
-struct PostListView<PostContainer: PostsProvider>: View {
+struct PostListView: View {
   @EnvironmentObject var preferences: PreferencesData
-  @ObservedObject var postsData: PostListData<PostContainer>
+  @ObservedObject var postsData: PostListData
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
 
-  let postContainer: PostContainer
+  let postContainer: PostProvider
 
   private let cancelToken: AnyCancellable? = nil
 
@@ -36,12 +36,12 @@ struct PostListView<PostContainer: PostsProvider>: View {
     }
   }
 
-  init(postContainer: PostContainer) {
+  init(postContainer: PostProvider) {
     self.postContainer = postContainer
     postsData = PostListData(provider: self.postContainer)
   }
 
-  init(data: PostListData<PostContainer>) {
+  init(data: PostListData) {
     self.postsData = data
     self.postContainer = data.postsProvider
   }
@@ -151,12 +151,6 @@ struct SidebarView: View {
     .onAppear {
       self.subscribed = self.subreddit.userIsSubscriber ?? false
     }
-  }
-}
-
-extension PostListView: Identifiable where PostContainer: Identifiable {
-  var id: PostContainer.ID {
-    postContainer.id
   }
 }
 

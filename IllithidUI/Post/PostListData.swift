@@ -11,7 +11,7 @@ import SwiftUI
 import Alamofire
 import Illithid
 
-final class PostListData<PostContainer: PostsProvider>: ObservableObject {
+final class PostListData: ObservableObject {
   @Published var posts: [Post] = []
   @Published var sort: PostSort = .best {
     didSet {
@@ -29,9 +29,7 @@ final class PostListData<PostContainer: PostsProvider>: ObservableObject {
     }
   }
 
-  @Published var moderators: [String: [Moderator]] = [:]
-
-  let postsProvider: PostContainer
+  let postsProvider: PostProvider
 
   private var postListingParams: ListingParameters = .init()
   private var exhausted: Bool = false
@@ -40,7 +38,7 @@ final class PostListData<PostContainer: PostsProvider>: ObservableObject {
                           category: .pointsOfInterest)
   private var requests: [DataRequest] = []
 
-  init(provider: PostContainer) {
+  init(provider: PostProvider) {
     postsProvider = provider
   }
 
