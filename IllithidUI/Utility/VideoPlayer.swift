@@ -9,7 +9,7 @@ import Combine
 import SwiftUI
 
 struct VideoPlayer: View {
-  @EnvironmentObject var preferences: PreferencesData
+  @ObservedObject var preferences: PreferencesData = .shared
   @ObservedObject private var view: PlayerView
 
   init(url: URL) {

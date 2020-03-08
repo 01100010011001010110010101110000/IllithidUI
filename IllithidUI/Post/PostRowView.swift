@@ -12,9 +12,6 @@ import Illithid
 // MARK: Main row view
 
 struct PostRowView: View {
-  @EnvironmentObject var preferences: PreferencesData
-  @EnvironmentObject var moderators: ModeratorData
-
   let reddit: Illithid = .shared
   let post: Post
   let crosspostParent: Post?
@@ -119,16 +116,12 @@ struct PostRowView: View {
   func showComments(for post: Post) {
     windowManager.showWindow(withId: post.id, title: post.title) {
       CommentsView(post: post)
-        .environmentObject(self.moderators)
-        .environmentObject(self.preferences)
     }
   }
 
   func showDebugWindow(for post: Post) {
     windowManager.showWindow(withId: post.id, title: "\(post.title) - Debug View") {
       PostDebugView(post: post)
-        .environmentObject(self.moderators)
-        .environmentObject(self.preferences)
     }
   }
 }
@@ -249,8 +242,7 @@ struct PostActionBar: View {
 
 struct PostMetadataBar: View {
   @State var authorPopover = false
-  @EnvironmentObject var moderators: ModeratorData
-  @EnvironmentObject var preferences: PreferencesData
+  @ObservedObject var moderators: ModeratorData = .shared
   private let windowManager: WindowManager = .shared
 
   let post: Post
@@ -282,8 +274,6 @@ struct PostMetadataBar: View {
         .onTapGesture {
           self.windowManager.showWindow(withId: self.post.subredditId, title: self.post.subredditNamePrefixed) {
             SubredditLoader(fullname: self.post.subredditId)
-              .environmentObject(self.moderators)
-              .environmentObject(self.preferences)
           }
         }
     }

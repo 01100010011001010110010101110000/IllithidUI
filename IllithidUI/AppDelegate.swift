@@ -28,10 +28,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   let preferencesWindowController = NSWindowController()
 
-  let preferences: PreferencesData
-
-  let moderators = ModeratorData()
-
   override init() {
     #if DEBUG
     let logger: Logger = .debugLogger()
@@ -39,12 +35,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let logger: Logger = .releaseLogger(subsystem: "com.flayware.IllithidUI")
     #endif
     self.logger = logger
-    if let data = UserDefaults.standard.data(forKey: "preferences"),
-      let value = try? JSONDecoder().decode(PreferencesData.self, from: data) {
-      preferences = value
-    } else {
-      preferences = .init()
-    }
     session = {
       let alamoConfiguration = URLSessionConfiguration.default
 
@@ -81,7 +71,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     preferencesWindowController.window = Window(styleMask: [.closable, .titled], title: "Illithid Preferences") {
       PreferencesView(accountManager: illithid.accountManager)
-        .environmentObject(preferences)
     }
     preferencesWindowController.window!.center()
 
@@ -101,8 +90,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.setFrameAutosaveName("Main Window")
 
     let rootView = RootView()
-      .environmentObject(moderators)
-      .environmentObject(preferences)
 
     window.contentView = NSHostingView(
       rootView: rootView

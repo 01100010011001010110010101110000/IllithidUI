@@ -9,8 +9,7 @@ import SwiftUI
 import Illithid
 
 struct InformationBarNavigationView: View {
-  @EnvironmentObject var preferences: PreferencesData
-  @EnvironmentObject var moderators: ModeratorData
+  @ObservedObject var preferences: PreferencesData = .shared
 
   @ObservedObject var informationBarData = InformationBarData()
   let multiredditSearch = SearchData(for: [.subreddit])
@@ -33,23 +32,13 @@ struct InformationBarNavigationView: View {
   var body: some View {
     NavigationView {
       List {
-        NavigationLink("Search", destination: SearchView(searchData: .init())
-          .environmentObject(preferences)
-          .environmentObject(moderators))
+        NavigationLink("Search", destination: SearchView(searchData: .init()))
           .padding([.top])
         Section(header: Text("Front Page")) {
-          NavigationLink("Home", destination: PostListView(data: formData(id: FrontPage.home.rawValue, for: FrontPage.home))
-            .environmentObject(preferences)
-            .environmentObject(moderators))
-          NavigationLink("Popular", destination: PostListView(data: formData(id: FrontPage.popular.rawValue, for: FrontPage.popular))
-            .environmentObject(preferences)
-            .environmentObject(moderators))
-          NavigationLink("All", destination: PostListView(data: formData(id: FrontPage.all.rawValue, for: FrontPage.all))
-            .environmentObject(preferences)
-            .environmentObject(moderators))
-          NavigationLink("Random", destination: PostListView(data: formData(id: FrontPage.random.rawValue, for: FrontPage.random))
-            .environmentObject(preferences)
-            .environmentObject(moderators))
+          NavigationLink("Home", destination: PostListView(postContainer: FrontPage.home))
+          NavigationLink("Popular", destination: PostListView(postContainer: FrontPage.popular))
+          NavigationLink("All", destination: PostListView(postContainer: FrontPage.all))
+          NavigationLink("Random", destination: PostListView(postContainer: FrontPage.random))
         }
 
         Section(header: Text("Favorites")) {
@@ -64,9 +53,7 @@ struct InformationBarNavigationView: View {
               return true
             }
           }) { multireddit in
-            NavigationLink(multireddit.name, destination: PostListView(data: self.formData(id: multireddit.id, for: multireddit))
-              .environmentObject(self.preferences)
-              .environmentObject(self.moderators))
+            NavigationLink(multireddit.name, destination: PostListView(postContainer: multireddit))
               .contextMenu {
                 Button(action: {
                   self.isEditingMulti = true
@@ -86,9 +73,7 @@ struct InformationBarNavigationView: View {
               return true
             }
           }) { subreddit in
-            NavigationLink(destination: PostListView(data: self.formData(id: subreddit.id, for: subreddit))
-              .environmentObject(self.preferences)
-              .environmentObject(self.moderators)) {
+            NavigationLink(destination: PostListView(postContainer: subreddit)) {
               HStack {
                 Text(subreddit.displayName)
                 Spacer()

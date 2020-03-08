@@ -12,7 +12,9 @@ final class ModeratorData: ObservableObject {
   @Published private(set) var moderators: [String: [Moderator]] = [:]
   private var loading: Set<String> = []
 
-  init() {}
+  private init() {}
+
+  static let shared: ModeratorData = .init()
 
   func isModerator(username: String, ofSubreddit subredditName: String) -> Bool {
     guard let mods = moderators[subredditName] else {

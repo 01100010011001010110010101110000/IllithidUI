@@ -12,7 +12,7 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct PostListView: View {
-  @EnvironmentObject var preferences: PreferencesData
+  @ObservedObject var preferences: PreferencesData = .shared
   @ObservedObject var postsData: PostListData
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false

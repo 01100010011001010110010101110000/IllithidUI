@@ -28,7 +28,7 @@ struct PreferencesView: View {
 }
 
 struct GeneralPreferences: View {
-  @EnvironmentObject var preferences: PreferencesData
+  @ObservedObject var preferences: PreferencesData = .shared
   
   var body: some View {
     VStack(alignment: .leading) {
@@ -126,7 +126,16 @@ final class PreferencesData: ObservableObject, Codable {
     case autoPlayGifs
   }
 
-  init() {}
+  private init() {}
+
+  static let shared: PreferencesData = {
+    if let data = UserDefaults.standard.data(forKey: "preferences"),
+      let value = try? JSONDecoder().decode(PreferencesData.self, from: data) {
+      return value
+    } else {
+      return .init()
+    }
+  }()
 
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)

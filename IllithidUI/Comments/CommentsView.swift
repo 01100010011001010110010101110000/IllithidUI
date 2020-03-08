@@ -11,7 +11,7 @@ import Illithid
 
 struct CommentsView: View, Identifiable {
   @ObservedObject var commentData: CommentData
-  @EnvironmentObject var moderators: ModeratorData
+  @ObservedObject var moderators: ModeratorData = .shared
 
   /// The post to which the comments belong
   let id: Fullname
