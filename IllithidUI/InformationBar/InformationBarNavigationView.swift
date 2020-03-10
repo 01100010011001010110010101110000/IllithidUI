@@ -16,18 +16,6 @@ struct InformationBarNavigationView: View {
 
   @State private var isEditingMulti: Bool = false
   @State private var editing: Multireddit.ID?
-  @State private var providers: [String: PostListData] = [:]
-
-  private func formData(id: String, for provider: PostProvider) -> PostListData {
-    if let data = providers[id] { return data }
-    else {
-      let data = PostListData(provider: provider)
-      DispatchQueue.main.async {
-        self.providers[id] = data
-      }
-      return data
-    }
-  }
 
   var body: some View {
     NavigationView {
@@ -35,10 +23,10 @@ struct InformationBarNavigationView: View {
         NavigationLink("Search", destination: SearchView(searchData: .init()))
           .padding([.top])
         Section(header: Text("Front Page")) {
-          NavigationLink("Home", destination: PostListView(postContainer: FrontPage.home))
-          NavigationLink("Popular", destination: PostListView(postContainer: FrontPage.popular))
-          NavigationLink("All", destination: PostListView(postContainer: FrontPage.all))
-          NavigationLink("Random", destination: PostListView(postContainer: FrontPage.random))
+          NavigationLink("Home", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.home)))
+          NavigationLink("Popular", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.popular)))
+          NavigationLink("All", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.all)))
+          NavigationLink("Random", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.random)))
         }
 
         Section(header: Text("Favorites")) {
@@ -53,7 +41,7 @@ struct InformationBarNavigationView: View {
               return true
             }
           }) { multireddit in
-            NavigationLink(multireddit.name, destination: PostListView(postContainer: multireddit))
+            NavigationLink(multireddit.name, destination: PostListView(data: self.informationBarData.postContainer(for: multireddit)))
               .contextMenu {
                 Button(action: {
                   self.isEditingMulti = true
@@ -73,7 +61,7 @@ struct InformationBarNavigationView: View {
               return true
             }
           }) { subreddit in
-            NavigationLink(destination: PostListView(postContainer: subreddit)) {
+            NavigationLink(destination: PostListView(data: self.informationBarData.postContainer(for: subreddit))) {
               HStack {
                 Text(subreddit.displayName)
                 Spacer()
@@ -108,75 +96,5 @@ struct InformationBarNavigationView: View {
 struct InformationBarListView_Previews: PreviewProvider {
   static var previews: some View {
     InformationBarNavigationView(informationBarData: .init())
-  }
-}
-
-struct MultiredditEditView: View {
-  @EnvironmentObject var informationBarData: InformationBarData
-  @ObservedObject var searchData: SearchData
-  @State private var tapped: Bool = false
-
-  let editingId: Multireddit.ID
-
-  init(id: Multireddit.ID, searchData: SearchData) {
-    editingId = id
-    self.searchData = searchData
-  }
-
-  var body: some View {
-    let editing = informationBarData.multiReddits.first { $0.id == editingId }!
-    return VStack {
-      VStack {
-        Text(editing.displayName)
-          .font(.title)
-          .padding(.top)
-        Text(editing.descriptionMd)
-        Divider()
-        VSplitView {
-          List {
-            ForEach(editing.subreddits) { subreddit in
-              Text(subreddit.name)
-            }
-            .onDelete { indexSet in
-              indexSet.forEach { index in
-                editing.removeSubreddit(editing.subreddits[index]) { result in
-                  switch result {
-                  case .success:
-                    self.informationBarData.loadMultireddits()
-                  case let .failure(error):
-                    print("Error removing \(editing.subreddits[index].name) from \(editing.displayName): \(error)")
-                  }
-                }
-              }
-            }
-          }
-          TextField("Search for subreddits to add", text: $searchData.query) {
-            _ = self.searchData.search(for: self.searchData.query)
-          }
-          .padding([.top], 5)
-          List {
-            ForEach(searchData.subreddits.filter { subreddit in
-              !editing.subreddits.map { $0.name }.contains(subreddit.displayName)
-            }) { subreddit in
-              HStack {
-                Text(subreddit.displayName)
-                Spacer()
-                IllithidButton(action: {
-                  editing.addSubreddit(subreddit) { result in
-                    switch result {
-                    case .success:
-                      self.informationBarData.loadMultireddits()
-                    case let .failure(error):
-                      print("Error adding \(subreddit.displayName) to \(editing.displayName): \(error)")
-                    }
-                  }
-                }, label: "Add to \(editing.displayName)")
-              }
-            }
-          }
-        }
-      }
-    }
-    .frame(minWidth: 600, minHeight: 500)
   }
 }

@@ -36,6 +36,8 @@ final class InformationBarData: ObservableObject {
     }
   }
 
+  var postContainers: [String: PostListData] = [:]
+
   init() {
     decoder.dateDecodingStrategy = .secondsSince1970
     decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -74,6 +76,15 @@ final class InformationBarData: ObservableObject {
 
   deinit {
     cancelToken?.cancel()
+  }
+
+  func postContainer(for provider: PostProvider) -> PostListData {
+    if let container = postContainers[provider.id] { return container }
+    else {
+      let container = PostListData(provider: provider)
+      postContainers[provider.id] = container
+      return container
+    }
   }
 
   // TODO: Refactor these to use OrderedSet or a new SortedSet for more efficient insert
