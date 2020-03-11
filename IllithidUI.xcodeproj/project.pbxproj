@@ -300,21 +300,16 @@
 		6DDF418422AFFA110081A09D /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				6DE918722418B6C000C19F5E /* Extensions */,
+				6DE918712418B66F00C19F5E /* Modifiers */,
 				6DDE004122BA8006008E6AF0 /* WindowManager.swift */,
 				6DF5DDCF22B95C1900C41786 /* WindowController.swift */,
-				6D544EE822FF40C100196C25 /* ConditionalModifier.swift */,
-				6D5B274E2350D33500C6F52A /* Tooltips.swift */,
-				6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */,
 				6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */,
 				6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */,
 				6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */,
-				6D062E502403067300A3BDD0 /* ZoomModifier.swift */,
-				6D062E52240306DF00A3BDD0 /* DraggableModifier.swift */,
-				6D1DAF682407100C0020A9D6 /* RoundedBorderModifier.swift */,
 				6D1DAF6A24073BA80020A9D6 /* DefaultBrowser.swift */,
 				6D581E3D240AD2EE00B84606 /* VideoPlayer.swift */,
 				6D1780B4240C975F005D7FD6 /* UserDefault.swift */,
-				6D1780B6240CD47B005D7FD6 /* NSImageNames.swift */,
 				6DBE9E4D240F73DE004E7375 /* FireLogger.swift */,
 				6D3062372418943700D9E47B /* RedditLinkView.swift */,
 			);
@@ -341,6 +336,27 @@
 				6D85952C23AD502700FC90E0 /* PostDebugView.swift */,
 			);
 			path = Post;
+			sourceTree = "<group>";
+		};
+		6DE918712418B66F00C19F5E /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				6D062E502403067300A3BDD0 /* ZoomModifier.swift */,
+				6D544EE822FF40C100196C25 /* ConditionalModifier.swift */,
+				6D062E52240306DF00A3BDD0 /* DraggableModifier.swift */,
+				6D1DAF682407100C0020A9D6 /* RoundedBorderModifier.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		6DE918722418B6C000C19F5E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6D1780B6240CD47B005D7FD6 /* NSImageNames.swift */,
+				6D5B274E2350D33500C6F52A /* Tooltips.swift */,
+				6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		6DF5DDD122B98B2D00C41786 /* Comments */ = {
