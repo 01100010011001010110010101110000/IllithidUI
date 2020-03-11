@@ -12,7 +12,10 @@ struct VideoPlayer: View {
   @ObservedObject var preferences: PreferencesData = .shared
   @ObservedObject private var view: PlayerView
 
-  init(url: URL) {
+  private let fullSize: NSSize
+
+  init(url: URL, fullSize: NSSize = .zero) {
+    self.fullSize = fullSize
     view = PlayerView(url: url)
     view.allowsPictureInPicturePlayback = true
     view.controlsStyle = .floating
@@ -36,8 +39,8 @@ struct VideoPlayer: View {
           self.view.player?.play()
         }
       })
-      .frame(idealWidth: view.size.width, maxWidth: max(view.fullSize.width, view.size.width),
-             idealHeight: view.size.height, maxHeight: max(view.fullSize.height, view.size.height))
+      .frame(idealWidth: view.size.width, maxWidth: fullSize.width,
+             idealHeight: view.size.height, maxHeight: fullSize.height)
     }
 }
 
@@ -57,12 +60,9 @@ private struct _VideoPlayer: NSViewRepresentable {
 
 private final class PlayerView: AVPlayerView, ObservableObject {
   @Published var size: NSSize = .zero
-  @Published var fullSize: NSSize = .init(width: 3840, height: 2160)
   @Published var isReady: Bool = false
 
-  var inverseAspectRatio: CGFloat = .zero
-
-  private var presentationToken: AnyCancellable?
+  private var inverseAspectRatio: CGFloat = .zero
   private var readyToken: AnyCancellable?
   private var didEndToken: AnyCancellable?
 
@@ -76,13 +76,13 @@ private final class PlayerView: AVPlayerView, ObservableObject {
 
     readyToken = self.publisher(for: \.isReadyForDisplay)
       .receive(on: RunLoop.main)
-      .assign(to: \.isReady, on: self)
-    presentationToken = self.publisher(for: \.player?.currentItem?.presentationSize)
-      .receive(on: RunLoop.main)
-      .sink { size in
-        self.fullSize = size ?? .zero
-        self.size = self.fullSize
-        self.inverseAspectRatio = self.fullSize.height / self.fullSize.width
+      .sink { ready in
+        self.isReady = ready
+        if ready {
+          let currentItem = self.player!.currentItem!
+          self.inverseAspectRatio = currentItem.presentationSize.height / currentItem.presentationSize.width
+          self.size = self.calculateFrame()
+        }
       }
     didEndToken = NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime, object: self.player?.currentItem)
       .receive(on: RunLoop.main)
@@ -102,22 +102,27 @@ private final class PlayerView: AVPlayerView, ObservableObject {
 
   override func viewDidEndLiveResize() {
     super.viewDidEndLiveResize()
-    if self.isReadyForDisplay, fullSize != .zero {
-      self.size = NSSize(width: bounds.size.width,
-                         height: (self.inverseAspectRatio * bounds.size.width))
+    if self.isReadyForDisplay {
+      self.size = self.calculateFrame()
     }
   }
 
+  private func calculateFrame() -> NSSize {
+    NSSize(width: bounds.size.width, height: (inverseAspectRatio * bounds.size.width))
+  }
+
   deinit {
-    presentationToken?.cancel()
     readyToken?.cancel()
     didEndToken?.cancel()
   }
 }
 
-//struct VideoPlayer_Previews: PreviewProvider {
-//  static var previews: some View {
-//    VideoPlayer()
-//  }
-//}
+struct VideoPlayer_Previews: PreviewProvider {
+  static var previews: some View {
+    ForEach(["https://giant.gfycat.com/AbandonedFlatFox.mp4",
+             "https://v.redd.it/qaiv863zjwl41/HLSPlaylist.m3u8"], id: \.self) { urlString in
+              VideoPlayer(url: URL(string: urlString)!)
+    }
+  }
+}
 

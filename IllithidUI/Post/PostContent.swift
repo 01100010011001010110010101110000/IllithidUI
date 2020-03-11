@@ -96,7 +96,7 @@ private struct VideoPostPreview: View {
   var body: some View {
     VStack {
       if self.url != nil {
-        VideoPlayer(url: self.url!)
+        VideoPlayer(url: self.url!, fullSize: .init(width: preview.width, height: preview.height))
       } else {
         Rectangle()
           .opacity(0.0)
@@ -183,7 +183,9 @@ struct GfycatView: View {
       if gfyData.item == nil {
         EmptyView()
       } else {
-        VideoPlayer(url: gfyData.item!.mp4URL)
+        VideoPlayer(url: gfyData.item!.mp4URL,
+                    fullSize: .init(width: gfyData.item!.width,
+                                    height: gfyData.item!.height))
       }
     }
   }
@@ -220,7 +222,9 @@ struct ImgurView: View {
     imgurData.imgurImage.map { image in
       VStack {
         if image.data.animated {
-          VideoPlayer(url: imgurData.imgurImage!.data.mp4!)
+          VideoPlayer(url: imgurData.imgurImage!.data.mp4!,
+                      fullSize: .init(width: imgurData.imgurImage!.data.width,
+                                      height: imgurData.imgurImage!.data.height))
         } else {
           WebImage(url: image.data.link, context: [
             .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600),
