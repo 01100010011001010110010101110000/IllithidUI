@@ -60,6 +60,8 @@ struct PostContent: View {
             .scaledToFit()
             .frame(width: 96, height: 96)
         }
+      } else if post.previewGuess == .reddit {
+        RedditLinkView(link: post.contentUrl)
       } else if post.previewGuess == .link {
         LinkPreview(link: post.contentUrl)
       }
@@ -124,6 +126,7 @@ extension Post {
     // Site specific previews
     case imgur
     case gfycat
+    case reddit
   }
 
   /// Illithid's guess at the best type of preview to use for this post
@@ -132,6 +135,8 @@ extension Post {
       return .imgur
     } else if domain.contains("gfycat.com") {
       return .gfycat
+    } else if domain == "reddit.com" || domain == "old.reddit.com" {
+      return .reddit
     } else if isSelf || postHint == .`self` {
       return .text
     } else if bestVideoPreview != nil {

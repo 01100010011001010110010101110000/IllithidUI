@@ -39,8 +39,8 @@ struct VideoPlayer: View {
           self.view.player?.play()
         }
       })
-      .frame(idealWidth: view.size.width, maxWidth: fullSize.width,
-             idealHeight: view.size.height, maxHeight: fullSize.height)
+      .frame(idealWidth: min(view.size.width, fullSize.width), maxWidth: fullSize.width,
+             idealHeight: min(view.size.height, fullSize.height), maxHeight: fullSize.height)
     }
 }
 

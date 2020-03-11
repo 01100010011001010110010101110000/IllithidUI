@@ -16,7 +16,6 @@ import SDWebImageSwiftUI
 import SwiftSoup
 
 struct LinkPreview: View {
-  @State private var hover: Bool = false
   @ObservedObject var previewData: LinkPreviewData
   
   private let browserImage: NSImage
@@ -44,32 +43,10 @@ struct LinkPreview: View {
         ])
       }
 
-      HStack(alignment: .center) {
-        Image(nsImage: browserImage)
-          .resizable()
-          .foregroundColor(.white)
-          .frame(width: 24, height: 24)
-          .padding(.leading, 4.0)
-          .scaleEffect(self.hover ? 1.3 : 1.0)
-        Rectangle()
-          .fill(Color(.darkGray))
-          .frame(width: 2, height: 24)
-        Text(previewData.link.host ?? "")
-          + Text(previewData.link.path)
-            .foregroundColor(.secondary)
-        Spacer()
-      }
-      .onHover(perform: { entered in
-        withAnimation(.easeInOut(duration: 0.7)) {
-          self.hover = entered
-        }
-      })
+      LinkBar(icon: browserImage, link: previewData.link)
       .onTapGesture {
         NSWorkspace.shared.open(self.previewData.link)
       }
-      .padding(4)
-      .frame(maxHeight: 32, alignment: .leading)
-
     }
     .frame(width: 512)
     .background(Color(.controlBackgroundColor))
@@ -147,5 +124,37 @@ struct LinkPreview_Previews: PreviewProvider {
     ForEach(Self.urls, id: \.absoluteString) { url in
       LinkPreview(link: url)
     }
+  }
+}
+
+struct LinkBar: View {
+  @State private var hover: Bool = false
+
+  let icon: NSImage
+  let link: URL
+
+  var body: some View {
+    HStack(alignment: .center) {
+      Image(nsImage: icon)
+        .resizable()
+        .foregroundColor(.white)
+        .frame(width: 24, height: 24)
+        .padding(.leading, 4.0)
+        .scaleEffect(self.hover ? 1.3 : 1.0)
+      Rectangle()
+        .fill(Color(.darkGray))
+        .frame(width: 2, height: 24)
+      Text(link.host ?? "")
+        + Text(link.path)
+          .foregroundColor(.secondary)
+      Spacer()
+    }
+    .onHover(perform: { entered in
+      withAnimation(.easeInOut(duration: 0.7)) {
+        self.hover = entered
+      }
+    })
+    .padding(4)
+    .frame(maxHeight: 32, alignment: .leading)
   }
 }

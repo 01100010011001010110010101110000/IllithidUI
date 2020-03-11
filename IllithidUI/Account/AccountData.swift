@@ -24,7 +24,7 @@ final class AccountData: ObservableObject {
 
   convenience init(name: String) {
     self.init(account: nil)
-    Account.fetch(name: name) { result in
+    Account.fetch(username: name) { result in
       switch result {
       case let .success(account):
         self.account = account
