@@ -33,7 +33,7 @@ struct RedditLinkView: View {
     let multiRegex = try! NSRegularExpression(pattern: #"\/user\/(?<user>\w+)\/m\/(?<name>\w+)(\/)?$"#, options: [])
     let subredditRegex = try! NSRegularExpression(pattern: #"\/r\/(?<subreddit>\w+)(\/)?$"#, options: [])
     let accountRegex = try! NSRegularExpression(pattern: #"\/user\/(?<user>\w+)(\/)?$"#, options: [])
-    let postRegex = try! NSRegularExpression(pattern: #"\/r\/(?<subreddit>\w+)\/comments\/(?<postId36>\w+)(\/\w+)?(\/)?$"#, options: [])
+    let postRegex = try! NSRegularExpression(pattern: #"\/r\/(?<subreddit>\w+)\/comments\/(?<postId36>\w+)(\/\w+(\/(?<commentId36>\w+))?)?(\/)?$"#, options: [])
 
     if let match = multiRegex.firstMatch(in: path, options: [], range: fullRange),
       let userRange = Range(match.range(withName: "user"), in: path),
@@ -79,11 +79,13 @@ struct RedditLinkView: View {
     } else if let match = postRegex.firstMatch(in: path, options: [], range: fullRange),
       let postId36Range = Range(match.range(withName: "postId36"), in: path) {
       let postId36 = String(path[postId36Range])
+      let focusedCommentRange = Range(match.range(withName: "commentId36"), in: path)
+      let focusedCommentId = focusedCommentRange != nil ? String(path[focusedCommentRange!]) : nil
       Post.fetch(name: "t3_\(postId36)") { result in
         switch result {
         case let .success(post):
           self.windowManager.showWindow(withId: post.fullname, title: post.title) {
-            CommentsView(post: post)
+            CommentsView(post: post, focusOn: focusedCommentId)
           }
         case let .failure(error):
           Illithid.shared.logger.errorMessage("Unable to fetch post: \(error)")

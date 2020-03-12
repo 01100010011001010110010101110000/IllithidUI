@@ -96,8 +96,8 @@ class CommentData: ObservableObject {
 
   // MARK: Comment loading
 
-  func loadComments() {
-    cancelToken = illithid.comments(for: post, parameters: listingParameters)
+  func loadComments(focusOn commentId: ID36? = nil, context: Int? = nil) {
+    cancelToken = illithid.comments(for: post, parameters: listingParameters, focusOn: commentId, context: context)
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { value in
         self.illithid.logger.errorMessage("Error fetching comments\(value)")

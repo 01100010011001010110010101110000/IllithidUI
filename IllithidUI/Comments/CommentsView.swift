@@ -18,16 +18,20 @@ struct CommentsView: View, Identifiable {
 
   let post: Post
 
-  init(post: Post) {
+  let focusedComment: ID36?
+
+  init(post: Post, focusOn commentId: ID36? = nil) {
     commentData = CommentData(post: post)
     self.post = post
     id = post.id
+    focusedComment = commentId
   }
 
   fileprivate init(from listing: Listing) {
     post = listing.posts.first!
     id = post.id
     commentData = CommentData(from: listing)
+    focusedComment = nil
   }
 
   var body: some View {
@@ -54,7 +58,7 @@ struct CommentsView: View, Identifiable {
     }
     .frame(minWidth: 600, minHeight: 400, maxHeight: .infinity)
     .onAppear {
-      self.commentData.loadComments()
+      self.commentData.loadComments(focusOn: self.focusedComment, context: self.focusedComment != nil ? 2 : nil)
     }
   }
 
@@ -64,6 +68,7 @@ struct CommentsView: View, Identifiable {
       switch wrapper {
       case let .comment(comment):
         return CommentRowView(comment: comment)
+          .overlay(Rectangle().foregroundColor(.white).opacity(comment.id == focusedComment ? 0.25 : 0.0))
           .onTapGesture {
             DispatchQueue.main.async {
               withAnimation {
