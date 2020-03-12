@@ -45,7 +45,7 @@ struct LinkPreview: View {
 
       LinkBar(icon: browserImage, link: previewData.link)
       .onTapGesture {
-        NSWorkspace.shared.open(self.previewData.link)
+        NSWorkspace.shared.open(self.previewData.link, configuration: .linkConfiguration)
       }
     }
     .frame(width: 512)

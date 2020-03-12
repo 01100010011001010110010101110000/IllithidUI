@@ -37,6 +37,9 @@ struct GeneralPreferences: View {
           Toggle(isOn: $preferences.hideNsfw) {
             Text("Hide NSFW Content")
           }
+          Toggle(isOn: $preferences.openLinksInForeground) {
+            Text("Open links in foreground")
+          }
         }
       }
 
@@ -102,19 +105,24 @@ struct AccountsPreferences: View {
 
 final class PreferencesData: ObservableObject, Codable {
   // TODO: When Swift 5.2 releases, replace this with property wrapper composition
-  @Published fileprivate(set) var  hideNsfw: Bool = false {
+  @Published fileprivate(set) var  hideNsfw: Bool {
     didSet {
       updateDefaults()
     }
   }
 
   // MARK: Playback
-  @Published fileprivate(set) var muteAudio: Bool = true {
+  @Published fileprivate(set) var muteAudio: Bool {
     didSet {
       updateDefaults()
     }
   }
-  @Published fileprivate(set) var autoPlayGifs: Bool = false {
+  @Published fileprivate(set) var autoPlayGifs: Bool {
+    didSet {
+      updateDefaults()
+    }
+  }
+  @Published fileprivate(set) var openLinksInForeground: Bool {
     didSet {
       updateDefaults()
     }
@@ -124,9 +132,15 @@ final class PreferencesData: ObservableObject, Codable {
     case hideNsfw
     case muteAudio
     case autoPlayGifs
+    case openLinksInForeground
   }
 
-  private init() {}
+  private init() {
+    hideNsfw = false
+    muteAudio = true
+    autoPlayGifs = false
+    openLinksInForeground = true
+  }
 
   static let shared: PreferencesData = {
     if let data = UserDefaults.standard.data(forKey: "preferences"),
@@ -140,9 +154,10 @@ final class PreferencesData: ObservableObject, Codable {
   init(from decoder: Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
-    hideNsfw = try container.decode(Bool.self, forKey: .hideNsfw)
-    muteAudio = try container.decode(Bool.self, forKey: .muteAudio)
-    autoPlayGifs = (try? container.decode(Bool.self, forKey: .autoPlayGifs)) ?? false
+    hideNsfw = try (container.decodeIfPresent(Bool.self, forKey: .hideNsfw) ?? false)
+    muteAudio = try (container.decodeIfPresent(Bool.self, forKey: .muteAudio) ?? true)
+    autoPlayGifs = try (container.decodeIfPresent(Bool.self, forKey: .autoPlayGifs) ?? false)
+    openLinksInForeground = try (container.decodeIfPresent(Bool.self, forKey: .openLinksInForeground) ?? true)
   }
 
   func encode(to encoder: Encoder) throws {
@@ -151,6 +166,7 @@ final class PreferencesData: ObservableObject, Codable {
     try container.encode(hideNsfw, forKey: .hideNsfw)
     try container.encode(muteAudio, forKey: .muteAudio)
     try container.encode(autoPlayGifs, forKey: .autoPlayGifs)
+    try container.encode(openLinksInForeground, forKey: .openLinksInForeground)
   }
 
   private func updateDefaults() {
