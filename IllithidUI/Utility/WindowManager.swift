@@ -26,8 +26,10 @@ final class WindowManager {
 
   func showWindow<Content: View>(withId id: ID, title: String = "", @ViewBuilder view: () -> Content) {
     if let controller = windowController(withId: id) {
-      controller.window?.center()
-      controller.window?.makeKeyAndOrderFront(nil)
+      if !(NSApp.mainWindow?.tabGroup?.windows.contains(controller.window!) ?? true) {
+        NSApp.mainWindow?.addTabbedWindow(controller.window!, ordered: .above)
+      }
+      controller.window!.makeKeyAndOrderFront(nil)
     } else {
       let controller = makeWindowController(with: id, title: title, view: view)
       cancelBag.append(NotificationCenter.default.publisher(for: NSWindow.willCloseNotification, object: controller.window)
@@ -37,8 +39,8 @@ final class WindowManager {
             if window == controller.window { self.controllers.removeValue(forKey: id) }
           }
       })
-      controller.window?.center()
-      controller.window?.makeKeyAndOrderFront(nil)
+      NSApp.mainWindow?.addTabbedWindow(controller.window!, ordered: .above)
+      controller.window!.makeKeyAndOrderFront(nil)
     }
   }
 
@@ -54,6 +56,8 @@ final class WindowManager {
                                                        @ViewBuilder view: () -> Content) -> NSWindowController {
     let controller = NSWindowController()
     controller.window = Window(styleMask: styleMask, title: title, rootView: view)
+    controller.window!.tabbingIdentifier = id
+    controller.window!.tab.title = title
     controllers[id] = controller
     return controller
   }

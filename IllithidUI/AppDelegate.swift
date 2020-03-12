@@ -19,7 +19,6 @@ import Willow
 class AppDelegate: NSObject, NSApplicationDelegate {
   var window: NSWindow!
   var toolbar: NSToolbar!
-  let toolbarDelegate = ToolbarDelegate()
   let illithid: Illithid = .shared
 
   let logger: Logger
@@ -87,6 +86,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       backing: .buffered, defer: false
     )
     window.center()
+    window.title = "Reddit: The only newspaper that flays your mind"
     window.setFrameAutosaveName("Main Window")
 
     let rootView = RootView()
@@ -94,12 +94,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     window.contentView = NSHostingView(
       rootView: rootView
     )
-
-    // MARK: Toolbar setup
-
-    toolbar = NSToolbar(identifier: "illithid.toolbar")
-    toolbar.delegate = toolbarDelegate
-    window.toolbar = toolbar
 
     window.makeKeyAndOrderFront(nil)
   }
