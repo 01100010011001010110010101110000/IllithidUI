@@ -45,7 +45,9 @@ struct LinkPreview: View {
 
       LinkBar(icon: browserImage, link: previewData.link)
       .onTapGesture {
-        NSWorkspace.shared.open(self.previewData.link, configuration: .linkConfiguration)
+        WindowManager.shared.showWindow(withId: self.previewData.link.absoluteString) {
+          WebView(url: self.previewData.link)
+        }
       }
     }
     .frame(width: 512)
