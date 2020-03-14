@@ -56,6 +56,10 @@ private struct _VideoPlayer: NSViewRepresentable {
   }
 
   func updateNSView(_ nsView: PlayerView, context: NSViewRepresentableContext<_VideoPlayer>) {}
+
+  static func dismantleNSView(_ nsView: PlayerView, coordinator: ()) {
+    nsView.cancel()
+  }
 }
 
 private final class PlayerView: AVPlayerView, ObservableObject {
@@ -63,37 +67,42 @@ private final class PlayerView: AVPlayerView, ObservableObject {
   @Published var isReady: Bool = false
 
   private var inverseAspectRatio: CGFloat = .zero
-  private var readyToken: AnyCancellable?
-  private var didEndToken: AnyCancellable?
+  fileprivate var cancelBag: [AnyCancellable] = []
 
   convenience init() {
     self.init(frame: .zero)
   }
 
+  convenience init(player: AVPlayer) {
+    self.init(frame: .zero)
+    self.player = player
+  }
+
   convenience init(url: URL) {
     self.init(frame: .zero)
     player = AVPlayer(url: url)
-
-    readyToken = self.publisher(for: \.isReadyForDisplay)
-      .receive(on: RunLoop.main)
-      .sink { ready in
-        self.isReady = ready
-        if ready {
-          let currentItem = self.player!.currentItem!
-          self.inverseAspectRatio = currentItem.presentationSize.height / currentItem.presentationSize.width
-          self.size = self.calculateFrame()
-        }
-      }
-    didEndToken = NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime, object: self.player?.currentItem)
-      .receive(on: RunLoop.main)
-      .sink { _ in
-        self.player?.seek(to: .zero)
-        self.player?.play()
-      }
   }
 
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
+    cancelBag.append(self.publisher(for: \.isReadyForDisplay)
+      .receive(on: RunLoop.main)
+      .sink { [weak self] ready in
+        self?.isReady = ready
+        if ready {
+          guard let self = self else { return }
+          let currentItem = self.player!.currentItem!
+          self.inverseAspectRatio = currentItem.presentationSize.height / currentItem.presentationSize.width
+          self.size = self.calculateFrame()
+        }
+      })
+    cancelBag.append(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime, object: self.player?.currentItem)
+      .receive(on: RunLoop.main)
+      .sink { [weak self] _ in
+        guard let self = self else { return }
+        self.player?.seek(to: .zero)
+        self.player?.play()
+      })
   }
 
   required init?(coder: NSCoder) {
@@ -111,9 +120,10 @@ private final class PlayerView: AVPlayerView, ObservableObject {
     NSSize(width: bounds.size.width, height: (inverseAspectRatio * bounds.size.width))
   }
 
-  deinit {
-    readyToken?.cancel()
-    didEndToken?.cancel()
+  func cancel() {
+    while !cancelBag.isEmpty {
+      cancelBag.popLast()?.cancel()
+    }
   }
 }
 
