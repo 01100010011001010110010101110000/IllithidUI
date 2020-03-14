@@ -17,7 +17,7 @@ import Willow
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
-  var window: NSWindow!
+  let windowManager: WindowManager = .shared
   var toolbar: NSToolbar!
   let illithid: Illithid = .shared
 
@@ -78,24 +78,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     preferencesItem.action = #selector(NSWindow.makeKeyAndOrderFront(_:))
     preferencesItem.target = preferencesWindowController.window!
 
+    // MARK: Open New Tab
+    let newTabItem = menu.item(withTitle: "File")!.submenu!.item(withTitle: "New Tab")!
+    newTabItem.action = #selector(newRootWindow)
+    preferencesItem.target = self
+
     // MARK: Application Root Window
 
-    window = NSWindow(
-      contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
-      styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
-      backing: .buffered, defer: false
-    )
-    window.center()
-    window.title = "Reddit: The only newspaper that flays your mind"
-    window.setFrameAutosaveName("Main Window")
+    showMainWindow()
+  }
 
-    let rootView = RootView()
+  @objc private func newRootWindow() {
+    windowManager.newRootWindow()
+  }
 
-    window.contentView = NSHostingView(
-      rootView: rootView
-    )
+  private func showMainWindow() {
+    let controller = windowManager.showWindow(withId: "mainWindow",
+                             title: "Reddit: The only newspaper that flays your mind") {
+                              RootView()
+    }
+    controller.window?.setFrameAutosaveName("Main Window")
+  }
 
-    window.makeKeyAndOrderFront(nil)
+  func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+    if !flag {
+      showMainWindow()
+    }
+    return true
   }
 
   func application(_: NSApplication, open urls: [URL]) {
@@ -109,6 +118,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   func applicationWillResignActive(_: Notification) {}
 
   func applicationWillTerminate(_: Notification) {}
+
+  func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+    false
+  }
 
   // MARK: - Core Data stack
 

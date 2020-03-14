@@ -21,44 +21,52 @@ final class WindowManager {
     .closable,
   ]
 
-  private var controllers: [String: NSWindowController] = [:]
-  private var cancelBag: [AnyCancellable] = []
+  private var controllers: [String: (controller: WindowController, token: AnyCancellable)] = [:]
 
-  func showWindow<Content: View>(withId id: ID, title: String = "", @ViewBuilder view: () -> Content) {
+  @discardableResult
+  func showWindow<Content: View>(withId id: ID, title: String = "", @ViewBuilder view: () -> Content) -> WindowController {
     if let controller = windowController(withId: id) {
       if !(NSApp.mainWindow?.tabGroup?.windows.contains(controller.window!) ?? true) {
         NSApp.mainWindow?.addTabbedWindow(controller.window!, ordered: .above)
       }
       controller.window!.makeKeyAndOrderFront(nil)
+      return controller
     } else {
       let controller = makeWindowController(with: id, title: title, view: view)
-      cancelBag.append(NotificationCenter.default.publisher(for: NSWindow.willCloseNotification, object: controller.window)
-        .compactMap { $0.object as? NSWindow }
-        .sink { window in
-          self.controllers.forEach { id, controller in
-            if window == controller.window { self.controllers.removeValue(forKey: id) }
-          }
-      })
       NSApp.mainWindow?.addTabbedWindow(controller.window!, ordered: .above)
       controller.window!.makeKeyAndOrderFront(nil)
+      return controller
     }
   }
 
-  deinit {
-    cancelBag.forEach { $0.cancel() }
+  func newRootWindow() {
+    WindowManager.shared.showWindow(withId: UUID().uuidString,
+                                    title: "Reddit: The only newspaper that flays your mind") {
+                                      RootView()
+    }
   }
 
-  fileprivate func windowController(withId id: ID) -> NSWindowController? {
-    controllers[id]
+  fileprivate func windowController(withId id: ID) -> WindowController? {
+    controllers[id]?.controller
   }
 
   fileprivate func makeWindowController<Content: View>(with id: ID, title: String = "",
-                                                       @ViewBuilder view: () -> Content) -> NSWindowController {
-    let controller = NSWindowController()
+                                                       @ViewBuilder view: () -> Content) -> WindowController {
+    let controller = WindowController()
     controller.window = Window(styleMask: styleMask, title: title, rootView: view)
     controller.window!.tabbingIdentifier = id
     controller.window!.tab.title = title
-    controllers[id] = controller
+    let token = NotificationCenter.default.publisher(for: NSWindow.willCloseNotification, object: controller.window)
+      .compactMap { $0.object as? NSWindow }
+      .sink { window in
+        self.controllers.forEach { id, tuple in
+          if window == tuple.controller.window {
+            self.controllers.removeValue(forKey: id)
+            tuple.token.cancel()
+          }
+        }
+    }
+    controllers[id] = (controller: controller, token: token)
     return controller
   }
 }

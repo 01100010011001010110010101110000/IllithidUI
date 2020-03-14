@@ -6,32 +6,14 @@
 
 import SwiftUI
 
-final class WindowController<RootView: View>: NSWindowController {
-  convenience init(styleMask: NSWindow.StyleMask = [], title: String = "", @ViewBuilder rootView: () -> RootView) {
-    let hostingController = NSHostingController(rootView: rootView())
-
-    let window = NSWindow()
-    window.styleMask = styleMask
-    window.contentViewController = hostingController
-    window.title = title
-
-    self.init(window: window)
-  }
-
-  convenience init(rootView: RootView, styleMask: NSWindow.StyleMask = [], title: String = "") {
-    let hostingController = NSHostingController(rootView: rootView)
-
-    let window = NSWindow()
-    window.styleMask = styleMask
-    window.contentViewController = hostingController
-    window.title = title
-
-    self.init(window: window)
+final class WindowController: NSWindowController {
+  @IBAction override func newWindowForTab(_ sender: Any?) {
+    WindowManager.shared.newRootWindow()
   }
 }
 
-final class Window<RootView: View>: NSWindow {
-  convenience init(styleMask: NSWindow.StyleMask = [], title: String = "", @ViewBuilder rootView: () -> RootView) {
+final class Window<Content: View>: NSWindow {
+  convenience init(styleMask: NSWindow.StyleMask = [], title: String = "", @ViewBuilder rootView: () -> Content) {
     self.init()
     self.styleMask = styleMask
     self.title = title
