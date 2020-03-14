@@ -81,7 +81,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: Open New Tab
     let newTabItem = menu.item(withTitle: "File")!.submenu!.item(withTitle: "New Tab")!
     newTabItem.action = #selector(newRootWindow)
-    preferencesItem.target = self
+    newTabItem.target = self
 
     // MARK: Application Root Window
 
