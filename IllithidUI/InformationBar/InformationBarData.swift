@@ -69,8 +69,9 @@ final class InformationBarData: ObservableObject {
     cancelToken = Timer.publish(every: 30.0, on: .main, in: .common)
       .autoconnect()
       .sink { [weak self] _ in
-        self?.loadMultireddits()
-        self?.loadSubscriptions()
+        guard let self = self else { return }
+        self.loadMultireddits()
+        self.loadSubscriptions()
       }
   }
 

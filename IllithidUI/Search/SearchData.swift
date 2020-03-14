@@ -28,7 +28,8 @@ final class SearchData: ObservableObject {
       .filter { $0.count >= 3 }
       .debounce(for: 0.3, scheduler: RunLoop.current)
       .removeDuplicates()
-      .sink { searchFor in
+      .sink { [weak self] searchFor in
+        guard let self = self else { return }
         self.request?.cancel()
         self.request = self.search(for: searchFor)
       }
