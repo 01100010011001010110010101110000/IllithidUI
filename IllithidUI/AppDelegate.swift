@@ -114,6 +114,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       if url.scheme == "illithid", url.host == "oauth2", url.path == "/callback" {
         OAuth2Swift.handle(url: url)
       }
+        
       // MARK: In App Link Handling
       else if url.scheme == "illithid", url.host == "open-url", url.query != nil {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
@@ -123,7 +124,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             logger.warnMessage("Unable to open URL: \(url.absoluteString)")
             return
           }
-        if link.host == "reddit.com" || link.host == "old.reddit.com" {
+        if link.host == "reddit.com" ||
+          link.host == "old.reddit.com" ||
+          link.host == "www.reddit.com" {
           windowManager.openRedditLink(link: link)
         } else {
           windowManager.showWindow(withId: link.absoluteString) {

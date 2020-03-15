@@ -20,6 +20,16 @@ struct CommentsView: View, Identifiable {
 
   let focusedComment: ID36?
 
+  private var authorColor: Color {
+    if post.distinguished == "admin" {
+      return .red
+    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
+      return .green
+    }else {
+      return .blue
+    }
+  }
+
   init(post: Post, focusOn commentId: ID36? = nil) {
     commentData = CommentData(post: post)
     self.post = post
@@ -45,7 +55,7 @@ struct CommentsView: View, Identifiable {
           VStack {
             Text("in \(post.subreddit) by ")
               + Text(post.author)
-                .foregroundColor(moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) ? .green : .blue)
+                .foregroundColor(authorColor)
             Text("\(post.relativePostTime) ago")
           }
         }

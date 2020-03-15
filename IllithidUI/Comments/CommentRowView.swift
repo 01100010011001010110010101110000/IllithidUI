@@ -14,12 +14,13 @@ struct CommentRowView: View {
   let comment: Comment
   private let depth: Int
   private var authorColor: Color {
-    if moderators.isModerator(username: comment.author, ofSubreddit: comment.subreddit) {
+    if comment.distinguished == "admin" {
+      return .red
+    } else if moderators.isModerator(username: comment.author, ofSubreddit: comment.subreddit) {
       return .green
     } else if comment.isSubmitter {
       return .blue
-    }
-    else {
+    } else {
       return .white
     }
   }

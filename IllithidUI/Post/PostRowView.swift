@@ -247,6 +247,16 @@ struct PostMetadataBar: View {
 
   let post: Post
 
+  private var authorColor: Color {
+    if post.distinguished == "admin" {
+      return .red
+    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
+      return .green
+    } else {
+      return .white
+    }
+  }
+
   init(post: Post) {
     self.post = post
   }
@@ -254,7 +264,7 @@ struct PostMetadataBar: View {
   var body: some View {
     HStack {
       Text(post.author)
-        .foregroundColor(moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) ? .green : .white)
+        .foregroundColor(authorColor)
         .onTapGesture {
           self.authorPopover.toggle()
         }
