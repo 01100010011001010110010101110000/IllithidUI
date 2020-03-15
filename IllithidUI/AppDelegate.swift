@@ -79,6 +79,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     preferencesItem.target = preferencesWindowController.window!
 
     // MARK: Open New Tab
+
     let newTabItem = menu.item(withTitle: "File")!.submenu!.item(withTitle: "New Tab")!
     newTabItem.action = #selector(newRootWindow)
     newTabItem.target = self
@@ -109,8 +110,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   func application(_: NSApplication, open urls: [URL]) {
     urls.forEach { url in
+      // MARK: OAuth2 Callback
       if url.scheme == "illithid", url.host == "oauth2", url.path == "/callback" {
         OAuth2Swift.handle(url: url)
+      }
+      // MARK: In App Link Handling
+      else if url.scheme == "illithid", url.host == "open-url", url.query != nil {
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        guard let linkString = components?.queryItems?
+          .filter({ $0.name == "url" }).first?.value,
+          let link = URL(string: linkString) else {
+            logger.warnMessage("Unable to open URL: \(url.absoluteString)")
+            return
+          }
+        if link.host == "reddit.com" || link.host == "old.reddit.com" {
+          windowManager.openRedditLink(link: link)
+        } else {
+          windowManager.showWindow(withId: link.absoluteString) {
+            WebView(url: link)
+          }
+        }
       }
     }
   }

@@ -17,22 +17,9 @@ import SwiftSoup
 
 struct LinkPreview: View {
   @ObservedObject var previewData: LinkPreviewData
-  
-  private let browserImage: NSImage
 
   init(link: URL) {
     self.previewData = .init(link: link)
-    
-    switch DefaultBrowser.atStartup {
-    case .safari:
-      browserImage = NSImage(named: .compass)!
-    case .chrome:
-      browserImage = NSImage(named: .chrome)!
-    case .firefox:
-      browserImage = NSImage(named: .firefox)!
-    default:
-      browserImage = NSImage(named: .compass)!
-    }
   }
 
   var body: some View {
@@ -43,11 +30,9 @@ struct LinkPreview: View {
         ])
       }
 
-      LinkBar(icon: browserImage, link: previewData.link)
+      LinkBar(link: previewData.link)
       .onTapGesture {
-        WindowManager.shared.showWindow(withId: self.previewData.link.absoluteString) {
-          WebView(url: self.previewData.link)
-        }
+        openLink(self.previewData.link)
       }
     }
     .frame(width: 512)
@@ -130,14 +115,26 @@ struct LinkPreview_Previews: PreviewProvider {
 }
 
 struct LinkBar: View {
+  @ObservedObject var preferences: PreferencesData = .shared
   @State private var hover: Bool = false
 
-  let icon: NSImage
   let link: URL
+  let icon: NSImage?
+
+  init(icon: NSImage? = nil, link: URL) {
+    self.icon = icon
+    self.link = link
+  }
+
+  var chosenIcon: NSImage {
+    if icon != nil { return icon! }
+    if preferences.browser.icon() != nil { return preferences.browser.icon()! }
+    return NSImage(named: .safari)!
+  }
 
   var body: some View {
     HStack(alignment: .center) {
-      Image(nsImage: icon)
+      Image(nsImage: chosenIcon)
         .resizable()
         .foregroundColor(.white)
         .frame(width: 24, height: 24)

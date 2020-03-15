@@ -82,12 +82,12 @@ struct PostRowView: View {
       }
       Divider()
       Button(action: {
-        NSWorkspace.shared.open(self.post.postUrl, configuration: .linkConfiguration)
+        openLink(self.post.postUrl)
       }) {
         Text("Open post in browser…")
       }
       Button(action: {
-        NSWorkspace.shared.open(self.post.contentUrl, configuration: .linkConfiguration)
+        openLink(self.post.contentUrl)
       }) {
         Text("Open content in browser…")
       }

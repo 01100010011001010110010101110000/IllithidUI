@@ -37,9 +37,23 @@ struct GeneralPreferences: View {
           Toggle(isOn: $preferences.hideNsfw) {
             Text("Hide NSFW Content")
           }
+          Picker(selection: $preferences.browser, label: Text("Open Links In: ")) {
+            ForEach(Browser.installed.sorted()) { browser in
+              HStack {
+                if browser.icon() != nil {
+                  Image(nsImage: browser.icon()!)
+                    .resizable()
+                    .frame(width: 16, height: 16)
+                }
+                Text(browser.displayName!)
+              }
+              .tag(browser)
+            }
+          }
           Toggle(isOn: $preferences.openLinksInForeground) {
             Text("Open links in foreground")
           }
+          .tooltip("Make the browser active after opening a link. Has no effect if the browser is Illithid")
         }
       }
 
@@ -56,6 +70,16 @@ struct GeneralPreferences: View {
       Spacer()
     }
   }
+}
+
+func openLink(_ link: URL) {
+  let preferences: PreferencesData = .shared
+
+  let toOpen = preferences.browser.bundle == Bundle.main ? URL(string: "illithid://open-url?url=\(link.absoluteString)")! : link
+
+  NSWorkspace.shared.open([toOpen],
+                          withApplicationAt: preferences.browser.bundle.bundleURL,
+                          configuration: .linkConfiguration)
 }
 
 struct AccountsPreferences: View {
@@ -127,11 +151,18 @@ final class PreferencesData: ObservableObject, Codable {
       updateDefaults()
     }
   }
+  @Published fileprivate(set) var browser: Browser {
+    didSet {
+      updateDefaults()
+    }
+  }
 
   enum CodingKeys: CodingKey {
     case hideNsfw
     case muteAudio
     case autoPlayGifs
+    /// Which `Browser` to use for Links
+    case browser
     case openLinksInForeground
   }
 
@@ -140,6 +171,7 @@ final class PreferencesData: ObservableObject, Codable {
     muteAudio = true
     autoPlayGifs = false
     openLinksInForeground = true
+    browser = .inApp
   }
 
   static let shared: PreferencesData = {
@@ -157,6 +189,7 @@ final class PreferencesData: ObservableObject, Codable {
     hideNsfw = try (container.decodeIfPresent(Bool.self, forKey: .hideNsfw) ?? false)
     muteAudio = try (container.decodeIfPresent(Bool.self, forKey: .muteAudio) ?? true)
     autoPlayGifs = try (container.decodeIfPresent(Bool.self, forKey: .autoPlayGifs) ?? false)
+    browser = try (container.decodeIfPresent(Browser.self, forKey: .browser) ?? .inApp)
     openLinksInForeground = try (container.decodeIfPresent(Bool.self, forKey: .openLinksInForeground) ?? true)
   }
 
@@ -166,6 +199,7 @@ final class PreferencesData: ObservableObject, Codable {
     try container.encode(hideNsfw, forKey: .hideNsfw)
     try container.encode(muteAudio, forKey: .muteAudio)
     try container.encode(autoPlayGifs, forKey: .autoPlayGifs)
+    try container.encode(browser, forKey: .browser)
     try container.encode(openLinksInForeground, forKey: .openLinksInForeground)
   }
 
