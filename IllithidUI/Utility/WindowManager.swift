@@ -24,7 +24,9 @@ final class WindowManager {
   private var controllers: [String: (controller: WindowController, token: AnyCancellable)] = [:]
 
   @discardableResult
-  func showWindow<Content: View>(withId id: ID, title: String = "", @ViewBuilder view: () -> Content) -> WindowController {
+  func showWindow<Content: View>(withId id: ID,
+                                 title: String = "Reddit: The only newspaper that flays your mind",
+                                 @ViewBuilder view: () -> Content) -> WindowController {
     if let controller = windowController(withId: id) {
       if !(NSApp.mainWindow?.tabGroup?.windows.contains(controller.window!) ?? true) {
         NSApp.mainWindow?.addTabbedWindow(controller.window!, ordered: .above)

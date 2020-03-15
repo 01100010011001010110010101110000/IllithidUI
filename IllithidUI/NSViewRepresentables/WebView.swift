@@ -56,6 +56,11 @@ final private class _WebView: WKWebView, ObservableObject {
     cancelBag.append(self.publisher(for: \.title)
       .receive(on: RunLoop.main)
       .assign(to: \.pageTitle, on: self))
+    cancelBag.append(self.publisher(for: \.title)
+      .receive(on: RunLoop.main)
+      .sink(receiveValue: { [weak self] title in
+        self?.window?.tab.title = title ?? (self?.window?.title ?? "")
+      }))
     cancelBag.append(self.publisher(for: \.estimatedProgress)
       .receive(on: RunLoop.main)
       .assign(to: \.loadProgress, on: self))
