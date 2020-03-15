@@ -39,6 +39,8 @@ struct PostRowView: View {
               Text("Crossposted by \(self.post.author) \(self.post.relativePostTime) ago")
                 .font(.caption)
             }
+            PostFlairBar(post: self.post)
+              .padding(.top, 2.0)
             Text(self.post.title)
               .font(.title)
               .multilineTextAlignment(.center)
@@ -49,6 +51,8 @@ struct PostRowView: View {
           if crosspostParent != nil {
             GroupBox {
               VStack {
+                PostFlairBar(post: crosspostParent!)
+                  .padding(.top, 2.0)
                 Text(crosspostParent!.title)
                   .font(.title)
                   .multilineTextAlignment(.center)
@@ -240,6 +244,24 @@ struct PostActionBar: View {
   }
 }
 
+struct PostFlairBar: View {
+  let post: Post
+
+  var body: some View {
+    HStack {
+      if post.over18 {
+        FlairTag(flair: "NSFW", rectangleColor: .red, textColor: .white)
+      }
+      post.authorFlairText.map { flair in
+        FlairTag(flair: flair, rectangleColor: .blue, textColor: .white)
+      }
+      post.linkFlairText.map { flair in
+        FlairTag(flair: flair)
+      }
+    }
+  }
+}
+
 struct PostMetadataBar: View {
   @State var authorPopover = false
   @ObservedObject var moderators: ModeratorData = .shared
@@ -305,5 +327,27 @@ struct PostRowView_Previews: PreviewProvider {
     let post = try! decoder.decode(Post.self, from: data)
 
     return PostRowView(post: post)
+  }
+}
+
+struct FlairTag: View {
+  let flair: String
+  let rectangleColor: Color
+  let textColor: Color
+
+  init(flair: String, rectangleColor: Color = .white,
+       textColor: Color = .black) {
+    self.flair = flair
+    self.rectangleColor = rectangleColor
+    self.textColor = textColor
+  }
+
+  var body: some View {
+    Text(flair)
+      .padding(4.0)
+      .foregroundColor(textColor)
+      .background(RoundedRectangle(cornerRadius: 4.0)
+        .foregroundColor(rectangleColor)
+      )
   }
 }
