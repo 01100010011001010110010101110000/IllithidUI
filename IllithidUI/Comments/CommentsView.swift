@@ -51,6 +51,8 @@ struct CommentsView: View, Identifiable {
         HStack {
           Text(post.title)
             .font(.largeTitle)
+            .multilineTextAlignment(.center)
+            .heightResizable()
           Spacer()
           VStack {
             Text("in \(post.subreddit) by ")

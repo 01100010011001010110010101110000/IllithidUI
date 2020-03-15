@@ -67,7 +67,7 @@ final class WindowManager {
             tuple.token.cancel()
           }
         }
-    }
+      }
     controllers[id] = (controller: controller, token: token)
     return controller
   }

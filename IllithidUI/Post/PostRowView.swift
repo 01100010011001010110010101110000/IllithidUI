@@ -44,7 +44,7 @@ struct PostRowView: View {
             Text(self.post.title)
               .font(.title)
               .multilineTextAlignment(.center)
-              .tooltip(post.title)
+              .heightResizable()
               .padding([.leading, .trailing, .bottom])
           }
 
@@ -56,7 +56,7 @@ struct PostRowView: View {
                 Text(crosspostParent!.title)
                   .font(.title)
                   .multilineTextAlignment(.center)
-                  .tooltip(crosspostParent!.title)
+                  .heightResizable()
                   .padding()
 
                 PostContent(post: crosspostParent!)
@@ -314,22 +314,6 @@ struct PostMetadataBar: View {
   }
 }
 
-// MARK: Static Previews
-
-struct PostRowView_Previews: PreviewProvider {
-  static var previews: some View {
-    let decoder = JSONDecoder()
-    decoder.keyDecodingStrategy = .convertFromSnakeCase
-    decoder.dateDecodingStrategy = .secondsSince1970
-
-    let singlePostURL = Bundle.main.url(forResource: "single_post", withExtension: "json")!
-    let data = try! Data(contentsOf: singlePostURL)
-    let post = try! decoder.decode(Post.self, from: data)
-
-    return PostRowView(post: post)
-  }
-}
-
 struct FlairTag: View {
   let flair: String
   let rectangleColor: Color
@@ -349,5 +333,21 @@ struct FlairTag: View {
       .background(RoundedRectangle(cornerRadius: 4.0)
         .foregroundColor(rectangleColor)
       )
+  }
+}
+
+// MARK: Static Previews
+
+struct PostRowView_Previews: PreviewProvider {
+  static var previews: some View {
+    let decoder = JSONDecoder()
+    decoder.keyDecodingStrategy = .convertFromSnakeCase
+    decoder.dateDecodingStrategy = .secondsSince1970
+
+    let singlePostURL = Bundle.main.url(forResource: "single_post", withExtension: "json")!
+    let data = try! Data(contentsOf: singlePostURL)
+    let post = try! decoder.decode(Post.self, from: data)
+
+    return PostRowView(post: post)
   }
 }

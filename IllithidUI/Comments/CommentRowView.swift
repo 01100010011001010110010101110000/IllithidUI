@@ -53,6 +53,7 @@ struct CommentRowView: View {
 
         Text(comment.body)
           .font(.body)
+          .heightResizable()
           .padding()
 
         CommentActionBar(comment: comment)
