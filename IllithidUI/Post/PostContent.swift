@@ -12,59 +12,44 @@ import SDWebImageSwiftUI
 import Ulithari
 
 struct PostContent: View {
-  @State private var isAnimating: Bool = true
   let post: Post
 
-  var body: some View {
-    VStack {
-      if post.previewGuess == .imgur {
-        ImgurView(imageId: String(post.contentUrl.path.dropFirst().split(separator: ".").first!))
-          .draggable()
-          .zoomable()
-          .overlay(MediaStamp(mediaType: "imgur")
-            .padding([.bottom, .trailing], 4),
-                   alignment: .bottomTrailing)
-      } else if post.previewGuess == .gfycat {
-        GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
-          .overlay(MediaStamp(mediaType: "gfycat")
-            .padding([.bottom, .trailing], 4),
-                   alignment: .bottomTrailing)
-      } else if post.previewGuess == .text {
-        if !post.selftext.isEmpty {
-          ScrollView {
-            Text(post.selftext)
-              .padding()
-          }
-        } else {
-          Spacer()
-        }
-      } else if post.previewGuess == .gif {
-        AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)
-          .resizable()
-          .aspectRatio(contentMode: .fit)
-          .overlay(MediaStamp(mediaType: "gfycat")
-            .padding([.bottom, .trailing], 4),
-                   alignment: .bottomTrailing)
-      } else if post.previewGuess == .video {
-        VideoPostPreview(post: self.post)
-      } else if post.previewGuess == .image {
-        if !post.imagePreviews.isEmpty {
-          WebImage(url: post.imagePreviews.last!.url, context: [
-            .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600),
-                                                          scaleMode: .aspectFit)
-          ])
-            .draggable()
-            .zoomable()
-        } else {
-          Image(nsImage: NSImage(imageLiteralResourceName: "NSUser"))
-            .scaledToFit()
-            .frame(width: 96, height: 96)
-        }
-      } else if post.previewGuess == .reddit {
-        RedditLinkView(link: post.contentUrl)
-      } else if post.previewGuess == .link {
-        LinkPreview(link: post.contentUrl)
-      }
+  var body: AnyView {
+    if post.previewGuess == .imgur {
+      return ImgurView(imageId: String(post.contentUrl.path.dropFirst().split(separator: ".").first!))
+        .draggable()
+        .zoomable()
+        .overlay(MediaStamp(mediaType: "imgur")
+          .padding([.bottom, .trailing], 4),
+                 alignment: .bottomTrailing)
+      .eraseToAnyView()
+    } else if post.previewGuess == .gfycat {
+      return GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
+        .overlay(MediaStamp(mediaType: "gfycat")
+          .padding([.bottom, .trailing], 4),
+                 alignment: .bottomTrailing)
+      .eraseToAnyView()
+    } else if post.previewGuess == .text {
+      return TextPostPreview(text: post.selftext)
+        .eraseToAnyView()
+    } else if post.previewGuess == .gif {
+      return GifPostPreview(url: post.gifPreviews.last!.url)
+        .eraseToAnyView()
+    } else if post.previewGuess == .video {
+      return VideoPostPreview(post: self.post)
+        .eraseToAnyView()
+    } else if post.previewGuess == .image {
+      return ImagePostPreview(images: post.imagePreviews)
+        .eraseToAnyView()
+    } else if post.previewGuess == .reddit {
+      return RedditLinkView(link: post.contentUrl)
+        .eraseToAnyView()
+    } else if post.previewGuess == .link {
+      return LinkPreview(link: post.contentUrl)
+        .eraseToAnyView()
+    } else {
+      return Text("No available preview")
+        .eraseToAnyView()
     }
   }
 }
@@ -260,5 +245,43 @@ class ImgurData: ObservableObject {
 struct PostPreview_Previews: PreviewProvider {
   static var previews: some View {
     EmptyView()
+  }
+}
+
+struct GifPostPreview: View {
+  @State private var isAnimating: Bool = true
+
+  let url: URL
+
+  var body: some View {
+    AnimatedImage(url: url, isAnimating: $isAnimating)
+      .resizable()
+      .aspectRatio(contentMode: .fit)
+      .overlay(MediaStamp(mediaType: "gif")
+        .padding([.bottom, .trailing], 4),
+               alignment: .bottomTrailing)
+  }
+}
+
+struct TextPostPreview: View {
+  let text: String
+
+  var body: some View {
+    Text(text)
+      .font(.body)
+      .padding()
+      .heightResizable()
+  }
+}
+
+struct ImagePostPreview: View {
+  let images: [Preview.Source]
+
+  var body: some View {
+    WebImage(url: images.last!.url, context: [
+      .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600), scaleMode: .aspectFit)
+    ])
+      .draggable()
+      .zoomable()
   }
 }
