@@ -47,7 +47,6 @@ struct CommentsView: View, Identifiable {
   var body: some View {
     List {
       VStack(alignment: .leading) {
-        PostContent(post: post)
         HStack {
           Text(post.title)
             .font(.largeTitle)
@@ -61,6 +60,7 @@ struct CommentsView: View, Identifiable {
             Text("\(post.relativePostTime) ago")
           }
         }
+        PostContent(post: post)
       }
       Divider()
         .opacity(1.0)
