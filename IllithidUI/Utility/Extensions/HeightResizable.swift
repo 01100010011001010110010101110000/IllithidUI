@@ -22,12 +22,6 @@ private struct HeightResizingModifier: ViewModifier {
       .fixedSize(horizontal: false, vertical: true)
       .background(SizeReaderRepresentable(view: reader))
       .frame(height: reader.readerSize.height)
-      .onReceive(reader.$readerSize) { size in
-        print("\(size)")
-      }
-      .onAppear {
-        self.reader.updateSize()
-      }
   }
 }
 
@@ -46,6 +40,11 @@ private struct SizeReaderRepresentable: NSViewControllerRepresentable {
 private class SizeReaderController: NSViewController {
   override func viewDidAppear() {
     super.viewDidAppear()
+    (self.view as! SizeReader).updateSize()
+  }
+
+  override func viewDidLayout() {
+    super.viewDidLayout()
     (self.view as! SizeReader).updateSize()
   }
 }
