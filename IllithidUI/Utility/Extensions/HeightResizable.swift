@@ -4,6 +4,7 @@
 // Created by Tyler Gregory (@01100010011001010110010101110000) on 03/15/2020
 //
 
+import Combine
 import SwiftUI
 
 /// Works around `List` row height being fixed by setting the child frame's`height` when its `size` adjusts
@@ -14,19 +15,59 @@ extension View {
 }
 
 private struct HeightResizingModifier: ViewModifier {
-  @State private var height: CGFloat = .zero
+  @ObservedObject var reader = SizeReader()
 
   func body(content: Content) -> some View {
     content
-    .fixedSize(horizontal: false, vertical: true)
-    .background(GeometryReader { proxy -> AnyView in
-      DispatchQueue.main.async {
-        self.height = proxy.size.height
+      .fixedSize(horizontal: false, vertical: true)
+      .background(SizeReaderRepresentable(view: reader))
+      .frame(height: reader.readerSize.height)
+      .onReceive(reader.$readerSize) { size in
+        print("\(size)")
       }
-      return Rectangle()
-        .fill(Color.clear)
-        .eraseToAnyView()
-    })
-    .frame(height: height)
+      .onAppear {
+        self.reader.updateSize()
+      }
+  }
+}
+
+private struct SizeReaderRepresentable: NSViewControllerRepresentable {
+  let view: SizeReader
+
+  func makeNSViewController(context: NSViewControllerRepresentableContext<SizeReaderRepresentable>) -> SizeReaderController {
+    let controller = SizeReaderController()
+    controller.view = view
+    return controller
+  }
+
+  func updateNSViewController(_: SizeReaderController, context _: NSViewControllerRepresentableContext<SizeReaderRepresentable>) {}
+}
+
+private class SizeReaderController: NSViewController {
+  override func viewDidAppear() {
+    super.viewDidAppear()
+    (self.view as! SizeReader).updateSize()
+  }
+}
+
+private class SizeReader: NSView, ObservableObject {
+  @Published var readerSize: CGSize = .zero
+
+  init() {
+    super.init(frame: .zero)
+    self.autoresizingMask = [.height, .width]
+  }
+
+  required init?(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
+  }
+
+  func updateSize() {
+    self.readerSize = self.bounds.size
+  }
+
+  override func viewDidEndLiveResize() {
+    super.viewDidEndLiveResize()
+    self.readerSize = self.bounds.size
   }
 }
