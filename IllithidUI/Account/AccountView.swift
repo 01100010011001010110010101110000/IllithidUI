@@ -25,7 +25,18 @@ struct AccountCommentsView: View {
         CommentRowView(comment: comment)
       }
     }
-    .frame(minWidth: 250, maxWidth: 600, minHeight: 250, maxHeight: 800)
+  }
+}
+
+struct AccountPostsView: View {
+  @ObservedObject var accountData: AccountData
+
+  var body: some View {
+    List {
+      ForEach(accountData.submissions) { post in
+        PostRowView(post: post)
+      }
+    }
   }
 }
 
@@ -36,7 +47,7 @@ struct AccountView: View {
     NavigationView {
       List {
         NavigationLink("Overview", destination: AccountOverview(accountData: accountData))
-        NavigationLink("Posts", destination: EmptyView())
+        NavigationLink("Posts", destination: AccountPostsView(accountData: accountData))
         NavigationLink("Comments", destination: AccountCommentsView(accountData: accountData))
         NavigationLink("Saved Items", destination: EmptyView())
         NavigationLink("Hidden", destination: EmptyView())
