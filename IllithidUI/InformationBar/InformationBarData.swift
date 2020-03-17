@@ -88,8 +88,6 @@ final class InformationBarData: ObservableObject {
     }
   }
 
-  // TODO: Refactor these to use OrderedSet or a new SortedSet for more efficient insert
-
   func loadMultireddits() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Multireddits", signpostID: signpostId)

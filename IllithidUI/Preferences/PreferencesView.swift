@@ -128,7 +128,6 @@ struct AccountsPreferences: View {
 }
 
 final class PreferencesData: ObservableObject, Codable {
-  // TODO: When Swift 5.2 releases, replace this with property wrapper composition
   @Published fileprivate(set) var  hideNsfw: Bool {
     didSet {
       updateDefaults()

@@ -25,7 +25,7 @@ struct CommentsView: View, Identifiable {
       return .red
     } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
       return .green
-    }else {
+    } else {
       return .blue
     }
   }

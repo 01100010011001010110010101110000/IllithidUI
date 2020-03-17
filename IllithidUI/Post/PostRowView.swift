@@ -64,6 +64,7 @@ struct PostRowView: View {
                 PostMetadataBar(post: crosspostParent!)
               }
             }
+            .padding([.leading, .trailing], 4.0)
             .onTapGesture(count: 2) {
               self.showComments(for: self.crosspostParent!)
             }
@@ -124,7 +125,7 @@ struct PostRowView: View {
   }
 
   func showDebugWindow(for post: Post) {
-    windowManager.showWindow(withId: post.id, title: "\(post.title) - Debug View") {
+    windowManager.showWindow(withId: "\(post.id)_debug", title: "\(post.title) - Debug View") {
       PostDebugView(post: post)
     }
   }
@@ -253,10 +254,24 @@ struct PostFlairBar: View {
         FlairTag(flair: "NSFW", rectangleColor: .red, textColor: .white)
       }
       post.authorFlairText.map { flair in
-        FlairTag(flair: flair, rectangleColor: .blue, textColor: .white)
+        Group {
+          if !flair.isEmpty {
+            FlairTag(flair: flair, rectangleColor: .blue, textColor: .white)
+          }
+          else {
+            EmptyView()
+          }
+        }
       }
       post.linkFlairText.map { flair in
-        FlairTag(flair: flair)
+        Group {
+          if !flair.isEmpty {
+            FlairTag(flair: flair, rectangleColor: .blue, textColor: .white)
+          }
+          else {
+            EmptyView()
+          }
+        }
       }
     }
   }

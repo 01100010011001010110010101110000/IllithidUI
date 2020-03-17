@@ -39,7 +39,6 @@ final class SearchData: ObservableObject {
     cancelToken?.cancel()
   }
 
-  // TODO: Cancel inflight searches if another is started
   func search(for searchText: String) -> DataRequest {
     return illithid.search(for: searchText, resultTypes: searchTargets) { result in
       switch result {
