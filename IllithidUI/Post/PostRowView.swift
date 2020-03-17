@@ -278,7 +278,6 @@ struct PostFlairBar: View {
 }
 
 struct PostMetadataBar: View {
-  @State var authorPopover = false
   @ObservedObject var moderators: ModeratorData = .shared
   private let windowManager: WindowManager = .shared
 
@@ -303,10 +302,9 @@ struct PostMetadataBar: View {
       Text(post.author)
         .foregroundColor(authorColor)
         .onTapGesture {
-          self.authorPopover.toggle()
-        }
-        .popover(isPresented: $authorPopover) {
-          AccountView(accountData: .init(name: self.post.author))
+          self.windowManager.showWindow(withId: self.post.author, title: self.post.author) {
+            AccountView(accountData: .init(name: self.post.author))
+          }
         }
       Text("\(post.relativePostTime) ago")
       Spacer()
