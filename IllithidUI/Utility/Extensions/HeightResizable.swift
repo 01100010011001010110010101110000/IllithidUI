@@ -21,7 +21,7 @@ private struct HeightResizingModifier: ViewModifier {
     content
       .fixedSize(horizontal: false, vertical: true)
       .background(SizeReaderRepresentable(view: reader))
-      .frame(height: reader.readerSize.height)
+      .frame(height: reader.readerBounds.height)
   }
 }
 
@@ -47,10 +47,15 @@ private class SizeReaderController: NSViewController {
     super.viewDidLayout()
     (self.view as! SizeReader).updateSize()
   }
+
+  override func preferredContentSizeDidChange(for viewController: NSViewController) {
+    super.preferredContentSizeDidChange(for: viewController)
+    (self.view as! SizeReader).updateSize()
+  }
 }
 
 private class SizeReader: NSView, ObservableObject {
-  @Published var readerSize: CGSize = .zero
+  @Published var readerBounds: NSRect = .zero
 
   init() {
     super.init(frame: .zero)
@@ -62,11 +67,11 @@ private class SizeReader: NSView, ObservableObject {
   }
 
   func updateSize() {
-    self.readerSize = self.bounds.size
+    self.readerBounds = self.bounds
   }
 
   override func viewDidEndLiveResize() {
     super.viewDidEndLiveResize()
-    self.readerSize = self.bounds.size
+    updateSize()
   }
 }
