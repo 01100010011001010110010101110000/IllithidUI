@@ -13,7 +13,6 @@ struct CommentRowView: View {
   @State private var textSize: CGRect = .zero
 
   let comment: Comment
-  private let depth: Int
   private var authorColor: Color {
     if comment.distinguished == "admin" {
       return .red
@@ -26,17 +25,10 @@ struct CommentRowView: View {
     }
   }
 
-  init(comment: Comment) {
-    self.comment = comment
-    depth = comment.depth ?? 0
-  }
-
   var body: some View {
     HStack {
-      if depth > 0 {
-        RoundedRectangle(cornerRadius: 1.5)
-          .foregroundColor(Color(hue: 1.0 / Double(depth), saturation: 1.0, brightness: 1.0))
-          .frame(width: 3)
+      if (comment.depth ?? 0) > 0 {
+        CommentColorBar(depth: comment.depth!)
       }
 
       VStack(alignment: .leading, spacing: 0) {
@@ -64,7 +56,7 @@ struct CommentRowView: View {
           .opacity(1.0)
       }
     }
-    .padding(.leading, 12 * CGFloat(integerLiteral: depth))
+    .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
   }
 }
 
@@ -74,9 +66,7 @@ struct MoreCommentsRowView: View {
   var body: some View {
     HStack {
       if more.depth > 0 {
-        RoundedRectangle(cornerRadius: 1.5)
-          .foregroundColor(Color(hue: 1.0 / Double(more.depth), saturation: 1.0, brightness: 1.0))
-          .frame(width: 3)
+        CommentColorBar(depth: more.depth)
       }
       Text("\(more.count) more \(more.count == 1 ? "reply" : "replies")")
         .font(.footnote)
@@ -183,10 +173,47 @@ struct CommentActionBar: View {
   }
 }
 
-// #if DEBUG
-// struct CommentRowView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CommentRowView()
-//    }
-// }
-// #endif
+struct CollapsedComment: View {
+  let comment: Comment
+
+  var body: some View {
+    HStack {
+      if (comment.depth ?? 0) > 0 {
+        CommentColorBar(depth: comment.depth!)
+      }
+
+      Text(comment.author)
+        .font(.subheadline)
+        .fontWeight(.heavy)
+      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
+        .foregroundColor(.orange)
+
+      Spacer()
+
+      Text("\(comment.relativeCommentTime) ago")
+    }
+    .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
+  }
+}
+
+struct CommentColorBar: View {
+  let depth: Int
+  let width: CGFloat = 3.0
+
+  var body: some View {
+    RoundedRectangle(cornerRadius: 1.5)
+      .foregroundColor(Color(hue: 1.0 / Double(depth), saturation: 1.0, brightness: 1.0))
+      .frame(width: width)
+  }
+}
+
+//struct CommentRowView_Previews: PreviewProvider {
+//  static var previews: some View {
+//    let testCommentsPath = Bundle.main.path(forResource: "comments", ofType: "json")!
+//    let data = try! Data(contentsOf: URL(fileURLWithPath: testCommentsPath))
+//    let decoder = JSONDecoder()
+//    let listing = try! decoder.decode(Listing.self, from: data)
+//
+//    return CommentRowView(comment: listing.comments.first!)
+//  }
+//}

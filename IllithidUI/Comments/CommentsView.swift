@@ -118,18 +118,7 @@ struct CommentsView: View, Identifiable {
     } else if commentData.showComment[wrapper.id] == .collapsed {
       switch wrapper {
       case let .comment(comment):
-        return HStack {
-          if (comment.depth ?? 0) > 0 {
-            RoundedRectangle(cornerRadius: 1.5)
-              .foregroundColor(Color(hue: 1.0 / Double(comment.depth ?? 0), saturation: 1.0, brightness: 1.0))
-              .frame(width: 3)
-          }
-          Text(comment.author)
-            .font(.subheadline)
-            .fontWeight(.heavy)
-          Spacer()
-        }
-        .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
+        return CollapsedComment(comment: comment)
         .onTapGesture {
           DispatchQueue.main.async {
             withAnimation {

@@ -39,7 +39,7 @@ struct PostContent: View {
       return VideoPostPreview(post: self.post)
         .eraseToAnyView()
     } else if post.previewGuess == .image {
-      return ImagePostPreview(images: post.imagePreviews)
+      return ImagePostPreview(url: post.imagePreviews.last!.url)
         .eraseToAnyView()
     } else if post.previewGuess == .reddit {
       return RedditLinkView(link: post.contentUrl)
@@ -216,12 +216,7 @@ struct ImgurView: View {
                       fullSize: .init(width: imgurData.imgurImage!.data.width,
                                       height: imgurData.imgurImage!.data.height))
         } else {
-          WebImage(url: image.data.link)
-            .resizable()
-            .scaledToFit()
-            .heightResizable()
-            .draggable()
-            .zoomable()
+          ImagePostPreview(url: image.data.link)
         }
       }
     }
@@ -277,10 +272,10 @@ struct TextPostPreview: View {
 }
 
 struct ImagePostPreview: View {
-  let images: [Preview.Source]
+  let url: URL
 
   var body: some View {
-    WebImage(url: images.last!.url)
+    WebImage(url: url)
       .resizable()
       .scaledToFit()
       .heightResizable()
