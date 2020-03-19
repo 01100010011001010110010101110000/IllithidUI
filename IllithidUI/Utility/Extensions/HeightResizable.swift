@@ -15,63 +15,36 @@ extension View {
 }
 
 private struct HeightResizingModifier: ViewModifier {
-  @ObservedObject var reader = SizeReader()
+  @State private var frame: CGRect = .zero
 
   func body(content: Content) -> some View {
     content
       .fixedSize(horizontal: false, vertical: true)
-      .background(SizeReaderRepresentable(view: reader))
-      .frame(height: reader.readerBounds.height)
+      .background(BoundsPreferenceViewSetter())
+      .frame(height: frame.height)
+      .onPreferenceChange(BoundsPreferenceKey.self, perform: { newFrame in
+        self.frame = newFrame
+      })
   }
 }
 
-private struct SizeReaderRepresentable: NSViewControllerRepresentable {
-  let view: SizeReader
-
-  func makeNSViewController(context: NSViewControllerRepresentableContext<SizeReaderRepresentable>) -> SizeReaderController {
-    let controller = SizeReaderController()
-    controller.view = view
-    return controller
-  }
-
-  func updateNSViewController(_: SizeReaderController, context _: NSViewControllerRepresentableContext<SizeReaderRepresentable>) {}
+private struct BoundsPreferenceViewSetter: View {
+    var body: some View {
+        GeometryReader { geometry in
+            Rectangle()
+                .fill(Color.clear)
+                .preference(key: BoundsPreferenceKey.self,
+                            value: geometry.frame(in: .local))
+        }
+    }
 }
 
-private class SizeReaderController: NSViewController {
-  override func viewDidAppear() {
-    super.viewDidAppear()
-    (self.view as! SizeReader).updateSize()
-  }
+private struct BoundsPreferenceKey: PreferenceKey {
+    typealias Value = CGRect
 
-  override func viewDidLayout() {
-    super.viewDidLayout()
-    (self.view as! SizeReader).updateSize()
-  }
+    static var defaultValue: CGRect = .zero
 
-  override func preferredContentSizeDidChange(for viewController: NSViewController) {
-    super.preferredContentSizeDidChange(for: viewController)
-    (self.view as! SizeReader).updateSize()
-  }
-}
-
-private class SizeReader: NSView, ObservableObject {
-  @Published var readerBounds: NSRect = .zero
-
-  init() {
-    super.init(frame: .zero)
-    self.autoresizingMask = [.height, .width]
-  }
-
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-
-  func updateSize() {
-    self.readerBounds = self.bounds
-  }
-
-  override func viewDidEndLiveResize() {
-    super.viewDidEndLiveResize()
-    updateSize()
-  }
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
+    }
 }

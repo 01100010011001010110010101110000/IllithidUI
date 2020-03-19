@@ -216,10 +216,12 @@ struct ImgurView: View {
                       fullSize: .init(width: imgurData.imgurImage!.data.width,
                                       height: imgurData.imgurImage!.data.height))
         } else {
-          WebImage(url: image.data.link, context: [
-            .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600),
-                                                          scaleMode: .aspectFill)
-          ])
+          WebImage(url: image.data.link)
+            .resizable()
+            .scaledToFit()
+            .heightResizable()
+            .draggable()
+            .zoomable()
         }
       }
     }
@@ -278,9 +280,10 @@ struct ImagePostPreview: View {
   let images: [Preview.Source]
 
   var body: some View {
-    WebImage(url: images.last!.url, context: [
-      .imageTransformer: SDImageResizingTransformer(size: CGSize(width: 800, height: 600), scaleMode: .aspectFit)
-    ])
+    WebImage(url: images.last!.url)
+      .resizable()
+      .scaledToFit()
+      .heightResizable()
       .draggable()
       .zoomable()
   }

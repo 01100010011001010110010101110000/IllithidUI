@@ -10,6 +10,7 @@ import Illithid
 
 struct CommentRowView: View {
   @ObservedObject var moderators: ModeratorData = .shared
+  @State private var textSize: CGRect = .zero
 
   let comment: Comment
   private let depth: Int
