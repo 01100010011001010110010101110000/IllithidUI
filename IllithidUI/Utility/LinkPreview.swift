@@ -119,22 +119,24 @@ struct LinkBar: View {
   @State private var hover: Bool = false
 
   let link: URL
-  let icon: NSImage?
+  let iconOverride: Image?
 
-  init(icon: NSImage? = nil, link: URL) {
-    self.icon = icon
+  init(icon: Image? = nil, link: URL) {
     self.link = link
+    self.iconOverride = icon
   }
 
-  var chosenIcon: NSImage {
-    if icon != nil { return icon! }
-    if preferences.browser.icon() != nil { return preferences.browser.icon()! }
-    return NSImage(named: .safari)!
+  private var icon: Image {
+    if iconOverride != nil { return iconOverride! }
+    else {
+      return self.preferences.browser.icon() != nil ?
+        Image(nsImage: self.preferences.browser.icon()!) : Image(named: .safari)
+    }
   }
 
   var body: some View {
     HStack(alignment: .center) {
-      Image(nsImage: chosenIcon)
+      icon
         .resizable()
         .foregroundColor(.white)
         .frame(width: 24, height: 24)

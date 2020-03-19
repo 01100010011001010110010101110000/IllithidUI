@@ -10,7 +10,7 @@ import Illithid
 struct RedditLinkView: View {
   let link: URL
 
-  private let icon = NSImage(named: .redditSquare)!
+  private let icon = Image(named: .redditSquare)
   private let windowManager: WindowManager = .shared
 
   var body: some View {

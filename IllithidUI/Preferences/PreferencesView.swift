@@ -91,7 +91,7 @@ struct AccountsPreferences: View {
         ForEach(accountManager.accounts) { account in
           HStack {
             if self.accountManager.currentAccount == account {
-              Image(nsImage: NSImage(named: .checkmark)!)
+              Image(named: .checkmark)
                 .resizable()
                 .frame(width: 24, height: 24)
                 .foregroundColor(.green)
