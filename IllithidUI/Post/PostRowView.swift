@@ -88,14 +88,14 @@ struct PostRowView: View {
       Divider()
       Button(action: {
         openLink(self.post.postUrl)
-      }) {
-        Text("Open post in browser…")
-      }
+      }, label: {
+        Text("Open post…")
+      }) 
       Button(action: {
         openLink(self.post.contentUrl)
-      }) {
-        Text("Open content in browser…")
-      }
+      }, label: {
+        Text("Open post content…")
+      })
       Divider()
       Button(action: {
         NSPasteboard.general.clearContents()
