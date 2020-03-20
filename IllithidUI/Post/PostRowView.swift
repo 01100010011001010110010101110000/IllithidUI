@@ -90,7 +90,7 @@ struct PostRowView: View {
         openLink(self.post.postUrl)
       }, label: {
         Text("Open post…")
-      }) 
+      })
       Button(action: {
         openLink(self.post.contentUrl)
       }, label: {
