@@ -64,7 +64,10 @@ struct CommentsView: View, Identifiable {
       }
       Divider()
         .opacity(1.0)
-      ForEach(self.commentData.comments) { comment in
+      ForEach(self.commentData.comments.filter { comment in
+        commentData.showComment[comment.id] == .collapsed ||
+          commentData.showComment[comment.id] == .expanded
+      }) { comment in
         self.viewBuilder(wrapper: comment)
       }
     }
@@ -80,7 +83,8 @@ struct CommentsView: View, Identifiable {
       switch wrapper {
       case let .comment(comment):
         return CommentRowView(comment: comment)
-          .overlay(Rectangle().foregroundColor(.white).opacity(comment.id == focusedComment ? 0.25 : 0.0))
+          .conditionalModifier(focusedComment == comment.id,
+                               FocusedCommentModifier())
           .onTapGesture {
             DispatchQueue.main.async {
               withAnimation {
@@ -155,6 +159,16 @@ struct CommentsView: View, Identifiable {
       return EmptyView()
         .eraseToAnyView()
     }
+  }
+}
+
+struct FocusedCommentModifier: ViewModifier {
+  func body(content: Content) -> some View {
+    content.overlay(
+      Rectangle()
+        .foregroundColor(.white)
+        .opacity(0.25)
+    )
   }
 }
 
