@@ -298,7 +298,7 @@ struct PostMetadataBar: View {
   var body: some View {
     HStack {
       Text(post.author)
-        .foregroundColor(authorColor)
+        .usernameStyle(color: authorColor)
         .onTapGesture {
           self.windowManager.showWindow(withId: self.post.author, title: self.post.author) {
             AccountView(accountData: .init(name: self.post.author))

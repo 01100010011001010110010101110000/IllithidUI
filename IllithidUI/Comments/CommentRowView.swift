@@ -34,9 +34,7 @@ struct CommentRowView: View {
       VStack(alignment: .leading, spacing: 0) {
         HStack {
           Text(comment.author)
-            .font(.subheadline)
-            .fontWeight(.heavy)
-            .foregroundColor(authorColor)
+            .usernameStyle(color: authorColor)
 
           Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
             .foregroundColor(.orange)
@@ -53,7 +51,6 @@ struct CommentRowView: View {
           .padding(.bottom, 5)
 
         Divider()
-          .opacity(1.0)
       }
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
@@ -174,7 +171,21 @@ struct CommentActionBar: View {
 }
 
 struct CollapsedComment: View {
+  @ObservedObject var moderators: ModeratorData = .shared
+
   let comment: Comment
+
+  private var authorColor: Color {
+    if comment.distinguished == "admin" {
+      return .red
+    } else if moderators.isModerator(username: comment.author, ofSubreddit: comment.subreddit) {
+      return .green
+    } else if comment.isSubmitter {
+      return .blue
+    } else {
+      return .white
+    }
+  }
 
   var body: some View {
     HStack {
@@ -183,8 +194,7 @@ struct CollapsedComment: View {
       }
 
       Text(comment.author)
-        .font(.subheadline)
-        .fontWeight(.heavy)
+        .usernameStyle(color: authorColor)
       Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
         .foregroundColor(.orange)
 
@@ -204,6 +214,14 @@ struct CommentColorBar: View {
     RoundedRectangle(cornerRadius: 1.5)
       .foregroundColor(Color(hue: 1.0 / Double(depth), saturation: 1.0, brightness: 1.0))
       .frame(width: width)
+  }
+}
+
+extension Text {
+  func usernameStyle(color: Color) -> Text {
+    font(.subheadline)
+      .fontWeight(.heavy)
+      .foregroundColor(color)
   }
 }
 

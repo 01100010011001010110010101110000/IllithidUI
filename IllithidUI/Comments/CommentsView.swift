@@ -1,7 +1,7 @@
 //
 // CommentsView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/22/20
 //
 
 import Combine
@@ -56,14 +56,13 @@ struct CommentsView: View, Identifiable {
           VStack {
             Text("in \(post.subreddit) by ")
               + Text(post.author)
-              .foregroundColor(authorColor)
+              .usernameStyle(color: authorColor)
             Text("\(post.relativePostTime) ago")
           }
         }
         PostContent(post: post)
       }
       Divider()
-        .opacity(1.0)
       ForEach(self.commentData.comments.filter { comment in
         commentData.showComment[comment.id] == .collapsed ||
           commentData.showComment[comment.id] == .expanded
