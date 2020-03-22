@@ -1,7 +1,7 @@
 //
 // SearchData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import Combine
@@ -40,7 +40,7 @@ final class SearchData: ObservableObject {
   }
 
   func search(for searchText: String) -> DataRequest {
-    return illithid.search(for: searchText, resultTypes: searchTargets) { result in
+    illithid.search(for: searchText, resultTypes: searchTargets) { result in
       switch result {
       case let .success(listings):
         self.clearData()

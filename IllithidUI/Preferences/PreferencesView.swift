@@ -1,7 +1,7 @@
 //
 // PreferencesView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import SwiftUI
@@ -29,7 +29,7 @@ struct PreferencesView: View {
 
 struct GeneralPreferences: View {
   @ObservedObject var preferences: PreferencesData = .shared
-  
+
   var body: some View {
     VStack(alignment: .leading) {
       GroupBox(label: Text("Content").font(.headline)) {
@@ -128,28 +128,32 @@ struct AccountsPreferences: View {
 }
 
 final class PreferencesData: ObservableObject, Codable {
-  @Published fileprivate(set) var  hideNsfw: Bool {
+  @Published fileprivate(set) var hideNsfw: Bool {
     didSet {
       updateDefaults()
     }
   }
 
   // MARK: Playback
+
   @Published fileprivate(set) var muteAudio: Bool {
     didSet {
       updateDefaults()
     }
   }
+
   @Published fileprivate(set) var autoPlayGifs: Bool {
     didSet {
       updateDefaults()
     }
   }
+
   @Published fileprivate(set) var openLinksInForeground: Bool {
     didSet {
       updateDefaults()
     }
   }
+
   @Published fileprivate(set) var browser: Browser {
     didSet {
       updateDefaults()

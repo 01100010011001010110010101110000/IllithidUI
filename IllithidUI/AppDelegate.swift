@@ -1,7 +1,7 @@
 //
 // AppDelegate.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import Cocoa
@@ -29,9 +29,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   override init() {
     #if DEBUG
-    let logger: Logger = .debugLogger()
+      let logger: Logger = .debugLogger()
     #else
-    let logger: Logger = .releaseLogger(subsystem: "com.flayware.IllithidUI")
+      let logger: Logger = .releaseLogger(subsystem: "com.flayware.IllithidUI")
     #endif
     self.logger = logger
     session = {
@@ -95,13 +95,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   private func showMainWindow() {
     let controller = windowManager.showWindow(withId: "mainWindow",
-                             title: "Reddit: The only newspaper that flays your mind") {
-                              RootView()
+                                              title: "Reddit: The only newspaper that flays your mind") {
+      RootView()
     }
     controller.window?.setFrameAutosaveName("Main Window")
   }
 
-  func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+  func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
     if !flag {
       showMainWindow()
     }
@@ -110,20 +110,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   func application(_: NSApplication, open urls: [URL]) {
     urls.forEach { url in
+
       // MARK: OAuth2 Callback
+
       if url.scheme == "illithid", url.host == "oauth2", url.path == "/callback" {
         OAuth2Swift.handle(url: url)
       }
-        
+
       // MARK: In App Link Handling
+
       else if url.scheme == "illithid", url.host == "open-url", url.query != nil {
         let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
         guard let linkString = components?.queryItems?
           .filter({ $0.name == "url" }).first?.value,
           let link = URL(string: linkString) else {
-            logger.warnMessage("Unable to open URL: \(url.absoluteString)")
-            return
-          }
+          logger.warnMessage("Unable to open URL: \(url.absoluteString)")
+          return
+        }
         if link.host == "reddit.com" ||
           link.host == "old.reddit.com" ||
           link.host == "www.reddit.com" {
@@ -141,7 +144,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationWillTerminate(_: Notification) {}
 
-  func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+  func applicationShouldTerminateAfterLastWindowClosed(_: NSApplication) -> Bool {
     false
   }
 

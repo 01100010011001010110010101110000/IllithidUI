@@ -1,7 +1,7 @@
 //
-// FireLogger
+// FireLogger.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 03/03/2020
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import Foundation
@@ -25,7 +25,7 @@ final class FireLogger: EventMonitor {
     logger.debugMessage("Request to \(request.description) finished")
   }
 
-  func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse) {
+  func urlSession(_: URLSession, dataTask: URLSessionDataTask, willCacheResponse proposedResponse: CachedURLResponse) {
     logger.debugMessage("Request to \(dataTask.originalRequest?.description ?? "Unknown request") is being considered for caching: \(proposedResponse.storagePolicy)")
   }
 }

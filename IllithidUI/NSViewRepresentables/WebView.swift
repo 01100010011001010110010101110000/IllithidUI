@@ -1,7 +1,7 @@
 //
 // WebView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 03/13/2020
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import Combine
@@ -24,26 +24,26 @@ struct WebView: View {
   }
 }
 
-final private class _WebViewRepresentable: NSViewRepresentable {
+private final class _WebViewRepresentable: NSViewRepresentable {
   let view: _WebView
 
   init(view: _WebView) {
     self.view = view
   }
 
-  func makeNSView(context: NSViewRepresentableContext<_WebViewRepresentable>) -> _WebView {
+  func makeNSView(context _: NSViewRepresentableContext<_WebViewRepresentable>) -> _WebView {
     view
   }
 
-  func updateNSView(_ nsView: _WebView, context: NSViewRepresentableContext<_WebViewRepresentable>) {}
+  func updateNSView(_: _WebView, context _: NSViewRepresentableContext<_WebViewRepresentable>) {}
 
-  static func dismantleNSView(_ nsView: _WebView, coordinator: ()) {
-    nsView.load(URLRequest(url: URL(string:"about:blank")!))
+  static func dismantleNSView(_ nsView: _WebView, coordinator _: ()) {
+    nsView.load(URLRequest(url: URL(string: "about:blank")!))
     nsView.cancel()
   }
 }
 
-final private class _WebView: WKWebView, ObservableObject {
+private final class _WebView: WKWebView, ObservableObject {
   @Published var pageTitle: String? = nil
   @Published var loadProgress: Double = .zero
 
@@ -51,20 +51,21 @@ final private class _WebView: WKWebView, ObservableObject {
 
   convenience init(url: URL, configuration: WKWebViewConfiguration) {
     self.init(frame: .zero, configuration: configuration)
-    self.load(URLRequest(url: url))
+    load(URLRequest(url: url))
 
-    cancelBag.append(self.publisher(for: \.title)
+    cancelBag.append(publisher(for: \.title)
       .receive(on: RunLoop.main)
       .assign(to: \.pageTitle, on: self))
-    cancelBag.append(self.publisher(for: \.title)
+    cancelBag.append(publisher(for: \.title)
       .receive(on: RunLoop.main)
       .sink(receiveValue: { [weak self] title in
         self?.window?.tab.title = title ?? (self?.window?.title ?? "")
       }))
-    cancelBag.append(self.publisher(for: \.estimatedProgress)
+    cancelBag.append(publisher(for: \.estimatedProgress)
       .receive(on: RunLoop.main)
       .assign(to: \.loadProgress, on: self))
   }
+
   func cancel() {
     while !cancelBag.isEmpty {
       cancelBag.popLast()?.cancel()
@@ -74,6 +75,6 @@ final private class _WebView: WKWebView, ObservableObject {
 
 struct WebView_Previews: PreviewProvider {
   static var previews: some View {
-    WebView(url: URL(string: "https://reddit.com")! )
+    WebView(url: URL(string: "https://reddit.com")!)
   }
 }

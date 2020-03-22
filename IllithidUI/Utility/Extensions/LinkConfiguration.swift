@@ -1,9 +1,7 @@
 //
-//  LinkConfiguration.swift
-//  IllithidUI
-//
-//  Created by Tyler Gregory on 3/11/20.
-//  Copyright © 2020 Tyler Gregory. All rights reserved.
+// LinkConfiguration.swift
+// Copyright (c) 2020 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import AppKit

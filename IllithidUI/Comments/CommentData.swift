@@ -1,7 +1,7 @@
 //
 // CommentData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import Combine
@@ -220,7 +220,7 @@ class Node<Element> {
 
 extension Node: Equatable where Element: Equatable {
   static func == (lhs: Node<Element>, rhs: Node<Element>) -> Bool {
-    return lhs.children == rhs.children &&
+    lhs.children == rhs.children &&
       lhs.parent == rhs.parent &&
       lhs.value == rhs.value
   }

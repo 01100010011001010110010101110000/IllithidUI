@@ -1,9 +1,7 @@
 //
-//  DefaultBrowser.swift
-//  IllithidUI
-//
-//  Created by Tyler Gregory on 2/26/20.
-//  Copyright © 2020 Tyler Gregory. All rights reserved.
+// Browser.swift
+// Copyright (c) 2020 Flayware
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import Cocoa
@@ -39,7 +37,7 @@ class Browser: Codable, Identifiable, Comparable, Hashable {
   static var `default`: Browser? {
     guard let bundleUrl = NSWorkspace.shared.urlForApplication(toOpen: URL(string: "https://reddit.com")!) else { return nil }
     guard let bundle = Bundle(url: bundleUrl) else { return nil }
-    
+
     return Browser(bundle: bundle)
   }
 
@@ -97,7 +95,7 @@ extension Bundle {
   }
 
   var displayName: String? {
-      return object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ??
-        object(forInfoDictionaryKey: "CFBundleName") as? String
+    object(forInfoDictionaryKey: "CFBundleDisplayName") as? String ??
+      object(forInfoDictionaryKey: "CFBundleName") as? String
   }
 }

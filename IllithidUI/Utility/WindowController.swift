@@ -1,13 +1,13 @@
 //
 // WindowController.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import SwiftUI
 
 final class WindowController: NSWindowController {
-  @IBAction override func newWindowForTab(_ sender: Any?) {
+  @IBAction override func newWindowForTab(_: Any?) {
     WindowManager.shared.newRootWindow()
   }
 }
@@ -17,6 +17,6 @@ final class Window<Content: View>: NSWindow {
     self.init()
     self.styleMask = styleMask
     self.title = title
-    self.contentViewController = NSHostingController(rootView: rootView())
+    contentViewController = NSHostingController(rootView: rootView())
   }
 }

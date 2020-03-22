@@ -1,7 +1,7 @@
 //
 // CommentRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import SwiftUI
@@ -207,7 +207,7 @@ struct CommentColorBar: View {
   }
 }
 
-//struct CommentRowView_Previews: PreviewProvider {
+// struct CommentRowView_Previews: PreviewProvider {
 //  static var previews: some View {
 //    let testCommentsPath = Bundle.main.path(forResource: "comments", ofType: "json")!
 //    let data = try! Data(contentsOf: URL(fileURLWithPath: testCommentsPath))
@@ -216,4 +216,4 @@ struct CommentColorBar: View {
 //
 //    return CommentRowView(comment: listing.comments.first!)
 //  }
-//}
+// }

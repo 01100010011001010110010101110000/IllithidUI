@@ -1,7 +1,7 @@
 //
 // IllithidButton.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 02/23/2020
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import SwiftUI
@@ -14,15 +14,15 @@ struct IllithidButton: View {
 
   var body: some View {
     Text(label)
-    .padding([.leading, .trailing], 12)
+      .padding([.leading, .trailing], 12)
       .padding([.top, .bottom], 2)
-    .background(RoundedRectangle(cornerRadius: 2.0)
-      .foregroundColor(self.pressed ? .accentColor : Color(.controlColor)))
-    .onMouseGesture(mouseDown: {
-      self.pressed = true
-    }, mouseUp: {
-      self.pressed = false
-      self.action()
+      .background(RoundedRectangle(cornerRadius: 2.0)
+        .foregroundColor(self.pressed ? .accentColor : Color(.controlColor)))
+      .onMouseGesture(mouseDown: {
+        self.pressed = true
+      }, mouseUp: {
+        self.pressed = false
+        self.action()
     })
   }
 }
@@ -48,21 +48,22 @@ private struct MouseView: NSViewRepresentable {
       super.init(frame: .zero)
     }
 
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
       fatalError("init(coder:) has not been implemented")
     }
 
-    override func mouseDown(with event: NSEvent) {
+    override func mouseDown(with _: NSEvent) {
       onMouseDown()
     }
-    override func mouseUp(with event: NSEvent) {
+
+    override func mouseUp(with _: NSEvent) {
       onMouseUp()
     }
   }
 
-  func makeNSView(context: NSViewRepresentableContext<MouseView>) -> NSMouseView {
-    return NSMouseView(onMouseDown: onMouseDown, onMouseUp: onMouseUp)
+  func makeNSView(context _: NSViewRepresentableContext<MouseView>) -> NSMouseView {
+    NSMouseView(onMouseDown: onMouseDown, onMouseUp: onMouseUp)
   }
 
-  func updateNSView(_ nsView: NSMouseView, context: NSViewRepresentableContext<MouseView>) {}
+  func updateNSView(_: NSMouseView, context _: NSViewRepresentableContext<MouseView>) {}
 }

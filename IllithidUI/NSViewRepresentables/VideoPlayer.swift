@@ -1,7 +1,7 @@
 //
-// {file}
+// VideoPlayer.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import AVKit
@@ -41,7 +41,7 @@ struct VideoPlayer: View {
       })
       .frame(idealWidth: min(view.size.width, fullSize.width), maxWidth: fullSize.width,
              idealHeight: min(view.size.height, fullSize.height), maxHeight: fullSize.height)
-    }
+  }
 }
 
 private struct _VideoPlayer: NSViewRepresentable {
@@ -51,13 +51,13 @@ private struct _VideoPlayer: NSViewRepresentable {
     self.view = view
   }
 
-  func makeNSView(context: NSViewRepresentableContext<_VideoPlayer>) -> PlayerView {
+  func makeNSView(context _: NSViewRepresentableContext<_VideoPlayer>) -> PlayerView {
     view.self
   }
 
-  func updateNSView(_ nsView: PlayerView, context: NSViewRepresentableContext<_VideoPlayer>) {}
+  func updateNSView(_: PlayerView, context _: NSViewRepresentableContext<_VideoPlayer>) {}
 
-  static func dismantleNSView(_ nsView: PlayerView, coordinator: ()) {
+  static func dismantleNSView(_ nsView: PlayerView, coordinator _: ()) {
     nsView.cancel()
   }
 }
@@ -85,7 +85,7 @@ private final class PlayerView: AVPlayerView, ObservableObject {
 
   override init(frame frameRect: NSRect) {
     super.init(frame: frameRect)
-    cancelBag.append(self.publisher(for: \.isReadyForDisplay)
+    cancelBag.append(publisher(for: \.isReadyForDisplay)
       .receive(on: RunLoop.main)
       .sink { [weak self] ready in
         self?.isReady = ready
@@ -96,7 +96,7 @@ private final class PlayerView: AVPlayerView, ObservableObject {
           self.size = self.calculateFrame()
         }
       })
-    cancelBag.append(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime, object: self.player?.currentItem)
+    cancelBag.append(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
       .receive(on: RunLoop.main)
       .sink { [weak self] _ in
         guard let self = self else { return }
@@ -105,19 +105,19 @@ private final class PlayerView: AVPlayerView, ObservableObject {
       })
   }
 
-  required init?(coder: NSCoder) {
+  required init?(coder _: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
 
   override func viewDidEndLiveResize() {
     super.viewDidEndLiveResize()
-    if self.isReadyForDisplay {
-      self.size = self.calculateFrame()
+    if isReadyForDisplay {
+      size = calculateFrame()
     }
   }
 
   private func calculateFrame() -> NSSize {
-    NSSize(width: bounds.size.width, height: (inverseAspectRatio * bounds.size.width))
+    NSSize(width: bounds.size.width, height: inverseAspectRatio * bounds.size.width)
   }
 
   func cancel() {
@@ -131,8 +131,7 @@ struct VideoPlayer_Previews: PreviewProvider {
   static var previews: some View {
     ForEach(["https://giant.gfycat.com/AbandonedFlatFox.mp4",
              "https://v.redd.it/qaiv863zjwl41/HLSPlaylist.m3u8"], id: \.self) { urlString in
-              VideoPlayer(url: URL(string: urlString)!)
+      VideoPlayer(url: URL(string: urlString)!)
     }
   }
 }
-

@@ -1,7 +1,7 @@
 //
-// PostPreview.swift
+// PostContent.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 12/24/19
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import SwiftUI
@@ -22,13 +22,13 @@ struct PostContent: View {
         .overlay(MediaStamp(mediaType: "imgur")
           .padding([.bottom, .trailing], 4),
                  alignment: .bottomTrailing)
-      .eraseToAnyView()
+        .eraseToAnyView()
     } else if post.previewGuess == .gfycat {
       return GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
         .overlay(MediaStamp(mediaType: "gfycat")
           .padding([.bottom, .trailing], 4),
                  alignment: .bottomTrailing)
-      .eraseToAnyView()
+        .eraseToAnyView()
     } else if post.previewGuess == .text {
       return TextPostPreview(text: post.selftext)
         .eraseToAnyView()
@@ -36,7 +36,7 @@ struct PostContent: View {
       return GifPostPreview(url: post.gifPreviews.last!.url)
         .eraseToAnyView()
     } else if post.previewGuess == .video {
-      return VideoPostPreview(post: self.post)
+      return VideoPostPreview(post: post)
         .eraseToAnyView()
     } else if post.previewGuess == .image {
       return ImagePostPreview(url: post.imagePreviews.last!.url)
@@ -122,7 +122,7 @@ extension Post {
       return .gfycat
     } else if domain == "reddit.com" || domain == "old.reddit.com" {
       return .reddit
-    } else if isSelf || postHint == .`self` {
+    } else if isSelf || postHint == .self {
       return .text
     } else if bestVideoPreview != nil {
       return .video

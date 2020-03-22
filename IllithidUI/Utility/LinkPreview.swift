@@ -1,7 +1,7 @@
 //
-// {file}
+// LinkPreview.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on {created}
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
 //
 
 import Combine
@@ -19,21 +19,20 @@ struct LinkPreview: View {
   @ObservedObject var previewData: LinkPreviewData
 
   init(link: URL) {
-    self.previewData = .init(link: link)
+    previewData = .init(link: link)
   }
 
   var body: some View {
     VStack(spacing: 0.0) {
       previewData.previewImageUrl.map { url in
         WebImage(url: url, context: [.imageTransformer:
-          SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)
-        ])
+            SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
       }
 
       LinkBar(link: previewData.link)
-      .onTapGesture {
-        openLink(self.previewData.link)
-      }
+        .onTapGesture {
+          openLink(self.previewData.link)
+        }
     }
     .frame(width: 512)
     .background(Color(.controlBackgroundColor))
@@ -64,42 +63,42 @@ final class LinkPreviewData: ObservableObject {
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
 
   func loadMetadata() {
-    self.request = session.request(link)
+    request = session.request(link)
       .validate()
       .cacheResponse(using: ResponseCacher.cache)
       .responseString(queue: Self.queue) { response in
-      switch response.result {
-      case let .success(html):
-        // Fetch link's HTML document
-        let documentResult = Result<Document, Error> {
-          return try SwiftSoup.parse(html, self.link.absoluteString)
-        }
-
-        switch documentResult {
-        case let .success(document):
-          // Fetch page's preview image link from meta tags
-          do {
-            let url = try document.select("meta")
-              .first { try $0.attr("property") == "og:image" }
-              .flatMap { try URL(string: $0.attr("content")) }
-            DispatchQueue.main.async {
-              self.previewImageUrl = url
-            }
-          } catch {
-            print("Error parsing link preview image URL: \(error)")
+        switch response.result {
+        case let .success(html):
+          // Fetch link's HTML document
+          let documentResult = Result<Document, Error> {
+            try SwiftSoup.parse(html, self.link.absoluteString)
           }
 
+          switch documentResult {
+          case let .success(document):
+            // Fetch page's preview image link from meta tags
+            do {
+              let url = try document.select("meta")
+                .first { try $0.attr("property") == "og:image" }
+                .flatMap { try URL(string: $0.attr("content")) }
+              DispatchQueue.main.async {
+                self.previewImageUrl = url
+              }
+            } catch {
+              print("Error parsing link preview image URL: \(error)")
+            }
+
+          case let .failure(error):
+            print("Error parsing link DOM: \(error)")
+          }
         case let .failure(error):
-          print("Error parsing link DOM: \(error)")
+          print("Error fetching HTML: \(error)")
         }
-      case let .failure(error):
-        print("Error fetching HTML: \(error)")
       }
-    }
   }
 
   func cancel() {
-    self.request?.cancel()
+    request?.cancel()
   }
 }
 
@@ -123,14 +122,14 @@ struct LinkBar: View {
 
   init(icon: Image? = nil, link: URL) {
     self.link = link
-    self.iconOverride = icon
+    iconOverride = icon
   }
 
   private var icon: Image {
     if iconOverride != nil { return iconOverride! }
     else {
-      return self.preferences.browser.icon() != nil ?
-        Image(nsImage: self.preferences.browser.icon()!) : Image(named: .safari)
+      return preferences.browser.icon() != nil ?
+        Image(nsImage: preferences.browser.icon()!) : Image(named: .safari)
     }
   }
 
@@ -147,7 +146,7 @@ struct LinkBar: View {
         .frame(width: 2, height: 24)
       Text(link.host ?? "")
         + Text(link.path)
-          .foregroundColor(.secondary)
+        .foregroundColor(.secondary)
       Spacer()
     }
     .onHover(perform: { entered in
