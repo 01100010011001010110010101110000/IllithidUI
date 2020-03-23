@@ -63,11 +63,15 @@ struct CommentsView: View, Identifiable {
         PostContent(post: post)
       }
       Divider()
-      ForEach(self.commentData.comments.filter { comment in
-        commentData.showComment[comment.id] == .collapsed ||
-          commentData.showComment[comment.id] == .expanded
-      }) { comment in
-        self.viewBuilder(wrapper: comment)
+      ForEach(self.commentData.comments.filter { wrapper in
+        if case .comment = wrapper {
+          return commentData.commentState[wrapper.id] == .collapsed ||
+            commentData.commentState[wrapper.id] == .expanded
+        } else {
+          return commentData.commentState[wrapper.id] == .expanded
+        }
+      }) { wrapper in
+        self.viewBuilder(wrapper: wrapper)
       }
     }
     .frame(minWidth: 600, minHeight: 400, maxHeight: .infinity)
@@ -77,8 +81,8 @@ struct CommentsView: View, Identifiable {
   }
 
   // TODO: Clean up this abomination
-  func viewBuilder(wrapper: CommentWrapper) -> AnyView {
-    if commentData.showComment[wrapper.id] == .expanded {
+  private func viewBuilder(wrapper: CommentWrapper) -> AnyView {
+    if commentData.commentState[wrapper.id] == .expanded {
       switch wrapper {
       case let .comment(comment):
         return CommentRowView(comment: comment)
@@ -100,7 +104,7 @@ struct CommentsView: View, Identifiable {
           }
           .eraseToAnyView()
       }
-    } else if commentData.showComment[wrapper.id] == .collapsed {
+    } else if commentData.commentState[wrapper.id] == .collapsed {
       switch wrapper {
       case let .comment(comment):
         return CollapsedComment(comment: comment)
@@ -126,15 +130,15 @@ struct CommentsView: View, Identifiable {
   private func collapse(clickedNode: Node<CommentWrapper>) {
     clickedNode.traverse(postOrder: { wrappedNode in
       guard let value = wrappedNode.value else { return }
-      let state = self.commentData.showComment[value.id]
+      let state = self.commentData.commentState[value.id]
       let wasClicked = value.id == clickedNode.value?.id
       switch state {
       case .expanded:
-        self.commentData.showComment[value.id] = wasClicked ? .collapsed : .parentCollapsed
+        self.commentData.commentState[value.id] = wasClicked ? .collapsed : .parentCollapsed
       case .parentCollapsed:
         if wasClicked { assertionFailure("A comment that was collapsed because a parent was collapsed was clicked") }
       case .collapsed:
-        self.commentData.showComment[value.id] = wasClicked ? .expanded : .collapsedParentCollapsed
+        self.commentData.commentState[value.id] = wasClicked ? .expanded : .collapsedParentCollapsed
       case .collapsedParentCollapsed:
         if wasClicked { assertionFailure("A comment that was collapsed because a parent was collapsed was clicked") }
       case .none:
@@ -146,24 +150,24 @@ struct CommentsView: View, Identifiable {
   private func expand(clickedNode: Node<CommentWrapper>) {
     clickedNode.traverse(preOrder: { wrappedNode in
       guard let value = wrappedNode.value else { return }
-      let state = self.commentData.showComment[value.id]
+      let state = self.commentData.commentState[value.id]
       let wasClicked = value.id == clickedNode.value?.id
       switch state {
       case .expanded:
         assertionFailure("We are expanding a collapsed comment, we should not encounter any expanded comments")
       case .parentCollapsed:
-        self.commentData.showComment[value.id] = .expanded
+        self.commentData.commentState[value.id] = .expanded
       case .collapsed:
-        if wasClicked { self.commentData.showComment[value.id] = .expanded }
+        if wasClicked { self.commentData.commentState[value.id] = .expanded }
       case .collapsedParentCollapsed:
-        self.commentData.showComment[value.id] = .collapsed
+        self.commentData.commentState[value.id] = .collapsed
       case .none:
         assertionFailure("A comment without a collapse state was encountered")
       }
     }, visitChildren: { node in
       guard let value = node.value else { return true }
       // If we encounter a comment the user collapsed directly, do not expand it or its children
-      return self.commentData.showComment[value.id] != .collapsed
+      return self.commentData.commentState[value.id] != .collapsed
     })
   }
 }

@@ -1,7 +1,7 @@
 //
 // CommentData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/22/20
 //
 
 import Combine
@@ -18,7 +18,7 @@ class CommentData: ObservableObject {
     case collapsedParentCollapsed
   }
 
-  @Published var showComment: [ID36: CollapseState] = [:]
+  @Published var commentState: [ID36: CollapseState] = [:]
   @Published private(set) var comments: [CommentWrapper] = []
   private var listingParameters = ListingParameters(limit: 100)
   var root = Node<CommentWrapper>()
@@ -42,7 +42,7 @@ class CommentData: ObservableObject {
     unsortedComments.forEach { comment in
       self.preOrder(node: comment) { wrapper in
         self.comments.append(wrapper)
-        self.showComment[comment.id] = .expanded
+        self.commentState[comment.id] = .expanded
       }
     }
   }
@@ -113,7 +113,7 @@ class CommentData: ObservableObject {
             if case let CommentWrapper.comment(comment) = value {
               node.append(contentsOf: comment.replies?.allComments ?? [])
             }
-            self.showComment[value.id] = .expanded
+            self.commentState[value.id] = .expanded
             self.comments.append(value)
           }
         })
@@ -132,7 +132,7 @@ class CommentData: ObservableObject {
         }
         wrappers.forEach { wrapper in
           // Insert fetched comments into the tree
-          self.showComment[wrapper.id] = .expanded
+          self.commentState[wrapper.id] = .expanded
           if wrapper.parentId == self.post.fullname {
             self.root.append(child: wrapper)
           } else {
