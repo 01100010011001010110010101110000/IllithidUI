@@ -1,7 +1,7 @@
 //
 // CommentRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/22/20
 //
 
 import SwiftUI
@@ -31,7 +31,7 @@ struct CommentRowView: View {
         CommentColorBar(depth: comment.depth!)
       }
 
-      VStack(alignment: .leading, spacing: 0) {
+      VStack(alignment: .leading) {
         HStack {
           Text(comment.author)
             .usernameStyle(color: authorColor)

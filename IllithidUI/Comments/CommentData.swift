@@ -20,7 +20,7 @@ class CommentData: ObservableObject {
 
   @Published var showComment: [ID36: CollapseState] = [:]
   @Published private(set) var comments: [CommentWrapper] = []
-  @State private var listingParameters = ListingParameters(limit: 100)
+  private var listingParameters = ListingParameters(limit: 100)
   var root = Node<CommentWrapper>()
 
   let post: Post
