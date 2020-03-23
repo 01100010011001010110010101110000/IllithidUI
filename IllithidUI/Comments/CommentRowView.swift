@@ -14,7 +14,7 @@ struct CommentRowView: View {
 
   let comment: Comment
   private var authorColor: Color {
-    if comment.distinguished == "admin" {
+    if comment.isAdminComment {
       return .red
     } else if moderators.isModerator(username: comment.author, ofSubreddit: comment.subreddit) {
       return .green
@@ -176,7 +176,7 @@ struct CollapsedComment: View {
   let comment: Comment
 
   private var authorColor: Color {
-    if comment.distinguished == "admin" {
+    if comment.isAdminComment {
       return .red
     } else if moderators.isModerator(username: comment.author, ofSubreddit: comment.subreddit) {
       return .green

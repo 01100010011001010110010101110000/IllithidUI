@@ -21,7 +21,7 @@ struct CommentsView: View, Identifiable {
   let focusedComment: ID36?
 
   private var authorColor: Color {
-    if post.distinguished == "admin" {
+    if post.isAdminPost {
       return .red
     } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
       return .green
