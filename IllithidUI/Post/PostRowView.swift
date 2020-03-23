@@ -297,7 +297,7 @@ struct PostMetadataBar: View {
 
   var body: some View {
     HStack {
-      Text(post.author)
+      Text("by \(post.author)")
         .usernameStyle(color: authorColor)
         .onTapGesture {
           self.windowManager.showWindow(withId: self.post.author, title: self.post.author) {

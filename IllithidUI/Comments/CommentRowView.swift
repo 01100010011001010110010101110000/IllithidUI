@@ -219,19 +219,18 @@ struct CommentColorBar: View {
 
 extension Text {
   func usernameStyle(color: Color) -> Text {
-    font(.subheadline)
-      .fontWeight(.heavy)
+    fontWeight(.heavy)
       .foregroundColor(color)
   }
 }
 
-// struct CommentRowView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    let testCommentsPath = Bundle.main.path(forResource: "comments", ofType: "json")!
-//    let data = try! Data(contentsOf: URL(fileURLWithPath: testCommentsPath))
-//    let decoder = JSONDecoder()
-//    let listing = try! decoder.decode(Listing.self, from: data)
-//
-//    return CommentRowView(comment: listing.comments.first!)
-//  }
-// }
+struct CommentRowView_Previews: PreviewProvider {
+  static var previews: some View {
+    let testCommentsPath = Bundle.main.path(forResource: "comments", ofType: "json")!
+    let data = try! Data(contentsOf: URL(fileURLWithPath: testCommentsPath))
+    let decoder = JSONDecoder()
+    let listing = try! decoder.decode(Listing.self, from: data)
+
+    return CommentRowView(comment: listing.comments.first!)
+  }
+}
