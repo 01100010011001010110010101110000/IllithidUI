@@ -21,7 +21,7 @@ private struct HeightResizingModifier: ViewModifier {
     content
       .fixedSize(horizontal: false, vertical: true)
       .background(FramePreferenceViewSetter())
-      .frame(minHeight: frame.height)
+      .frame(height: frame.height)
       .onPreferenceChange(FramePreferenceKey.self, perform: { newFrame in
         self.frame = newFrame
       })
