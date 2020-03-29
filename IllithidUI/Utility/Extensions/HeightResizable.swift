@@ -20,26 +20,26 @@ private struct HeightResizingModifier: ViewModifier {
   func body(content: Content) -> some View {
     content
       .fixedSize(horizontal: false, vertical: true)
-      .background(BoundsPreferenceViewSetter())
-      .frame(height: frame.height)
-      .onPreferenceChange(BoundsPreferenceKey.self, perform: { newFrame in
+      .background(FramePreferenceViewSetter())
+      .frame(minHeight: frame.height)
+      .onPreferenceChange(FramePreferenceKey.self, perform: { newFrame in
         self.frame = newFrame
       })
   }
 }
 
-private struct BoundsPreferenceViewSetter: View {
+private struct FramePreferenceViewSetter: View {
   var body: some View {
     GeometryReader { geometry in
       Rectangle()
         .fill(Color.clear)
-        .preference(key: BoundsPreferenceKey.self,
+        .preference(key: FramePreferenceKey.self,
                     value: geometry.frame(in: .local))
     }
   }
 }
 
-private struct BoundsPreferenceKey: PreferenceKey {
+private struct FramePreferenceKey: PreferenceKey {
   typealias Value = CGRect
 
   static var defaultValue: CGRect = .zero
