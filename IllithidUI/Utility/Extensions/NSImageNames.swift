@@ -8,11 +8,11 @@ import AppKit
 import Foundation
 
 extension NSImage.Name {
-  static let arrowDown = NSImage.Name("arrow-down")
-  static let arrowUp = NSImage.Name("arrow-up")
-  static let bookmark = NSImage.Name("bookmark")
-  static let eyeSlash = NSImage.Name("eye-slash")
-  static let flag = NSImage.Name("flag")
+  static let arrowDown = NSImage.Name("arrow.down")
+  static let arrowUp = NSImage.Name("arrow.up")
+  static let bookmark = NSImage.Name("bookmark.fill")
+  static let eyeSlash = NSImage.Name("eye.slash.fill")
+  static let flag = NSImage.Name("flag.fill")
 
   static let checkmark = NSImage.Name("checkmark")
 
@@ -22,9 +22,9 @@ extension NSImage.Name {
   static let firefox = NSImage.Name("firefox")
   static let safari = NSImage.Name("safari")
 
+  // Website icons
   static let redditSquare = NSImage.Name("reddit-square")
 
-  static let search = NSImage.Name("search")
-  static let compressTwoArrow = NSImage.Name("compress")
-  static let compressFourArrow = NSImage.Name("compress-four")
+  static let search = NSImage.Name("minus.magnifyingglass")
+  static let arrowDownRightUpLeft = NSImage.Name("arrow.down.right.and.arrow.up.left")
 }

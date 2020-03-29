@@ -97,7 +97,7 @@ private struct ZoomResetButton: View {
   var body: some View {
     Image(named: .search)
       .resizable()
-      .frame(width: 16, height: 16)
+      .frame(width: 24, height: 24)
       .padding(4)
       .background(RoundedRectangle(cornerRadius: 4.0, style: .continuous)
         .fill(Color(.darkGray))
@@ -111,9 +111,9 @@ private struct DragResetButton: View {
   let action: () -> Void
 
   var body: some View {
-    Image(named: .compressFourArrow)
+    Image(named: .arrowDownRightUpLeft)
       .resizable()
-      .frame(width: 16, height: 16)
+      .frame(width: 24, height: 24)
       .scaleEffect(scale)
       .animation(.linear(duration: 0.3))
       .padding(4)
