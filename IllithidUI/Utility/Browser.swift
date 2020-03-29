@@ -83,7 +83,7 @@ class Browser: Codable, Identifiable, Comparable, Hashable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     let bundleUrl = try container.decode(URL.self, forKey: .bundleUrl)
-    bundle = Bundle(url: bundleUrl)!
+    bundle = Bundle(url: bundleUrl) ?? Bundle()
   }
 }
 
