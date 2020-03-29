@@ -13,6 +13,9 @@ extension NSImage.Name {
   static let bookmark = NSImage.Name("bookmark.fill")
   static let eyeSlash = NSImage.Name("eye.slash.fill")
   static let flag = NSImage.Name("flag.fill")
+  static let search = NSImage.Name("minus.magnifyingglass")
+  static let arrowDownRightUpLeft = NSImage.Name("arrow.down.right.and.arrow.up.left")
+  static let sidebarRight = NSImage.Name("sidebar.right")
 
   static let checkmark = NSImage.Name("checkmark")
 
@@ -24,7 +27,4 @@ extension NSImage.Name {
 
   // Website icons
   static let redditSquare = NSImage.Name("reddit-square")
-
-  static let search = NSImage.Name("minus.magnifyingglass")
-  static let arrowDownRightUpLeft = NSImage.Name("arrow.down.right.and.arrow.up.left")
 }

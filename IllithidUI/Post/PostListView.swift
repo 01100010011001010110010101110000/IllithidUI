@@ -71,11 +71,16 @@ struct PostListView: View {
           TextField("Search Posts", text: $searchText)
             .textFieldStyle(RoundedBorderTextFieldStyle())
           if postContainer is Subreddit {
-            Button("Sidebar") {
+            Button(action: {
               withAnimation {
                 self.showSidebar.toggle()
               }
-            }
+            }, label: {
+              Image(named: .sidebarRight)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 20, height: 15)
+            })
           }
         }
         .padding([.bottom, .leading, .trailing], 10)
