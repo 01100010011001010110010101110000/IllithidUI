@@ -17,8 +17,6 @@ struct PostContent: View {
   var body: AnyView {
     if post.previewGuess == .imgur {
       return ImgurView(imageId: String(post.contentUrl.path.dropFirst().split(separator: ".").first!))
-        .draggable()
-        .zoomable()
         .overlay(MediaStamp(mediaType: "imgur")
           .padding([.bottom, .trailing], 4),
                  alignment: .bottomTrailing)
@@ -279,7 +277,6 @@ struct ImagePostPreview: View {
       .resizable()
       .scaledToFit()
       .heightResizable()
-      .draggable()
-      .zoomable()
+      .dragAndZoom()
   }
 }

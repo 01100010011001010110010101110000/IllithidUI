@@ -23,4 +23,8 @@ extension NSImage.Name {
   static let safari = NSImage.Name("safari")
 
   static let redditSquare = NSImage.Name("reddit-square")
+
+  static let search = NSImage.Name("search")
+  static let compressTwoArrow = NSImage.Name("compress")
+  static let compressFourArrow = NSImage.Name("compress-four")
 }
