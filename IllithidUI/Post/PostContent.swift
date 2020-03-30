@@ -17,12 +17,14 @@ struct PostContent: View {
   var body: AnyView {
     if post.previewGuess == .imgur {
       return ImgurView(imageId: String(post.contentUrl.path.dropFirst().split(separator: ".").first!))
+        .postContent()
         .overlay(MediaStamp(mediaType: "imgur")
           .padding([.bottom, .trailing], 4),
                  alignment: .bottomTrailing)
         .eraseToAnyView()
     } else if post.previewGuess == .gfycat {
       return GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
+        .postContent()
         .overlay(MediaStamp(mediaType: "gfycat")
           .padding([.bottom, .trailing], 4),
                  alignment: .bottomTrailing)
@@ -32,12 +34,15 @@ struct PostContent: View {
         .eraseToAnyView()
     } else if post.previewGuess == .gif {
       return GifPostPreview(url: post.gifPreviews.last!.url)
+        .postContent()
         .eraseToAnyView()
     } else if post.previewGuess == .video {
       return VideoPostPreview(post: post)
+        .postContent()
         .eraseToAnyView()
     } else if post.previewGuess == .image {
       return ImagePostPreview(url: post.imagePreviews.last!.url)
+        .postContent()
         .eraseToAnyView()
     } else if post.previewGuess == .reddit {
       return RedditLinkView(link: post.contentUrl)
@@ -49,6 +54,32 @@ struct PostContent: View {
       return Text("No available preview")
         .eraseToAnyView()
     }
+  }
+}
+
+private extension View {
+  func postContent() -> some View {
+    modifier(PostContentModifier())
+  }
+}
+
+private struct PostContentModifier: ViewModifier {
+  @ObservedObject var preferences: PreferencesData = .shared
+  @State private var blur: Bool = false
+
+  func body(content: Content) -> some View {
+    content
+      .modifier(ClippedBlurModifier(blur: $blur, shape: Rectangle()))
+      .onTapGesture {
+        withAnimation {
+          self.blur = false
+        }
+      }
+      .onReceive(preferences.$blurNsfw) { shouldBlur in
+        withAnimation {
+          self.blur = shouldBlur
+        }
+      }
   }
 }
 
@@ -210,10 +241,11 @@ struct ImgurView: View {
     imgurData.imgurImage.map { image in
       VStack {
         if image.data.animated {
-          VideoPlayer(url: imgurData.imgurImage!.data.mp4!,
-                      fullSize: .init(width: imgurData.imgurImage!.data.width,
-                                      height: imgurData.imgurImage!.data.height))
+          VideoPlayer(url: image.data.mp4!,
+                      fullSize: .init(width: image.data.width,
+                                      height: image.data.height))
         } else {
+          // TODO: Replace with NSFW status on originating Reddit post
           ImagePostPreview(url: image.data.link)
         }
       }
@@ -273,10 +305,12 @@ struct ImagePostPreview: View {
   let url: URL
 
   var body: some View {
-    WebImage(url: url)
-      .resizable()
-      .scaledToFit()
-      .heightResizable()
-      .dragAndZoom()
+    ZStack {
+      WebImage(url: url)
+        .resizable()
+        .scaledToFit()
+        .heightResizable()
+        .dragAndZoom()
+    }
   }
 }

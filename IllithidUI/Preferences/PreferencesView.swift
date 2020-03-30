@@ -35,9 +35,14 @@ struct GeneralPreferences: View {
       GroupBox(label: Text("Content").font(.headline)) {
         VStack(alignment: .leading) {
           Toggle(isOn: $preferences.hideNsfw) {
-            Text("Hide NSFW Content")
+            Text("Hide NSFW content")
           }
-          Picker(selection: $preferences.browser, label: Text("Open Links In: ")) {
+
+          Toggle(isOn: $preferences.blurNsfw) {
+            Text("Blur NSFW content")
+          }
+
+          Picker(selection: $preferences.browser, label: Text("Open links in: ")) {
             ForEach(Browser.installed.sorted()) { browser in
               HStack {
                 if browser.icon() != nil {
@@ -53,7 +58,6 @@ struct GeneralPreferences: View {
           Toggle(isOn: $preferences.openLinksInForeground) {
             Text("Open links in foreground")
           }
-          .tooltip("Make the browser active after opening a link. Has no effect if the browser is Illithid")
         }
       }
 
@@ -134,6 +138,12 @@ final class PreferencesData: ObservableObject, Codable {
     }
   }
 
+  @Published fileprivate(set) var blurNsfw: Bool {
+    didSet {
+      updateDefaults()
+    }
+  }
+
   // MARK: Playback
 
   @Published fileprivate(set) var muteAudio: Bool {
@@ -162,6 +172,7 @@ final class PreferencesData: ObservableObject, Codable {
 
   enum CodingKeys: CodingKey {
     case hideNsfw
+    case blurNsfw
     case muteAudio
     case autoPlayGifs
     /// Which `Browser` to use for Links
@@ -171,6 +182,7 @@ final class PreferencesData: ObservableObject, Codable {
 
   private init() {
     hideNsfw = false
+    blurNsfw = true
     muteAudio = true
     autoPlayGifs = false
     openLinksInForeground = true
@@ -190,6 +202,7 @@ final class PreferencesData: ObservableObject, Codable {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     hideNsfw = try (container.decodeIfPresent(Bool.self, forKey: .hideNsfw) ?? false)
+    blurNsfw = try (container.decodeIfPresent(Bool.self, forKey: .blurNsfw) ?? true)
     muteAudio = try (container.decodeIfPresent(Bool.self, forKey: .muteAudio) ?? true)
     autoPlayGifs = try (container.decodeIfPresent(Bool.self, forKey: .autoPlayGifs) ?? false)
     browser = try (container.decodeIfPresent(Browser.self, forKey: .browser) ?? .inApp)
@@ -200,6 +213,7 @@ final class PreferencesData: ObservableObject, Codable {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
     try container.encode(hideNsfw, forKey: .hideNsfw)
+    try container.encode(blurNsfw, forKey: .blurNsfw)
     try container.encode(muteAudio, forKey: .muteAudio)
     try container.encode(autoPlayGifs, forKey: .autoPlayGifs)
     try container.encode(browser, forKey: .browser)
