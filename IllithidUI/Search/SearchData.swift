@@ -22,6 +22,8 @@ final class SearchData: ObservableObject {
   private var cancelToken: AnyCancellable?
   private var request: DataRequest?
 
+  var postContainers: [String: PostListData] = [:]
+
   init(for targets: Set<SearchType> = [.subreddit, .post, .user]) {
     searchTargets = targets
     cancelToken = $query
@@ -53,6 +55,15 @@ final class SearchData: ObservableObject {
       case let .failure(error):
         self.illithid.logger.errorMessage("Failed to search: \(error)")
       }
+    }
+  }
+
+  func postContainer(for provider: PostProvider) -> PostListData {
+    if let container = postContainers[provider.id] { return container }
+    else {
+      let container = PostListData(provider: provider)
+      postContainers[provider.id] = container
+      return container
     }
   }
 
