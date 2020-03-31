@@ -1,7 +1,7 @@
 //
 // PostContent.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/29/20
 //
 
 import SwiftUI
@@ -17,14 +17,14 @@ struct PostContent: View {
   var body: AnyView {
     if post.previewGuess == .imgur {
       return ImgurView(imageId: String(post.contentUrl.path.dropFirst().split(separator: ".").first!))
-        .postContent()
+        .conditionalModifier(post.over18, NsfwBlurModifier())
         .overlay(MediaStamp(mediaType: "imgur")
           .padding([.bottom, .trailing], 4),
                  alignment: .bottomTrailing)
         .eraseToAnyView()
     } else if post.previewGuess == .gfycat {
       return GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
-        .postContent()
+        .conditionalModifier(post.over18, NsfwBlurModifier())
         .overlay(MediaStamp(mediaType: "gfycat")
           .padding([.bottom, .trailing], 4),
                  alignment: .bottomTrailing)
@@ -34,52 +34,26 @@ struct PostContent: View {
         .eraseToAnyView()
     } else if post.previewGuess == .gif {
       return GifPostPreview(url: post.gifPreviews.last!.url)
-        .postContent()
+        .conditionalModifier(post.over18, NsfwBlurModifier())
         .eraseToAnyView()
     } else if post.previewGuess == .video {
       return VideoPostPreview(post: post)
-        .postContent()
+        .conditionalModifier(post.over18, NsfwBlurModifier())
         .eraseToAnyView()
     } else if post.previewGuess == .image {
       return ImagePostPreview(url: post.imagePreviews.last!.url)
-        .postContent()
+        .conditionalModifier(post.over18, NsfwBlurModifier())
         .eraseToAnyView()
     } else if post.previewGuess == .reddit {
       return RedditLinkView(link: post.contentUrl)
         .eraseToAnyView()
     } else if post.previewGuess == .link {
-      return LinkPreview(link: post.contentUrl)
+      return LinkPreview(link: post.contentUrl, isNsfw: post.over18)
         .eraseToAnyView()
     } else {
       return Text("No available preview")
         .eraseToAnyView()
     }
-  }
-}
-
-private extension View {
-  func postContent() -> some View {
-    modifier(PostContentModifier())
-  }
-}
-
-private struct PostContentModifier: ViewModifier {
-  @ObservedObject var preferences: PreferencesData = .shared
-  @State private var blur: Bool = false
-
-  func body(content: Content) -> some View {
-    content
-      .modifier(ClippedBlurModifier(blur: $blur, shape: Rectangle()))
-      .onTapGesture {
-        withAnimation {
-          self.blur = false
-        }
-      }
-      .onReceive(preferences.$blurNsfw) { shouldBlur in
-        withAnimation {
-          self.blur = shouldBlur
-        }
-      }
   }
 }
 

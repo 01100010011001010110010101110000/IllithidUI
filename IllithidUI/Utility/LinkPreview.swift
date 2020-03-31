@@ -18,8 +18,11 @@ import SwiftSoup
 struct LinkPreview: View {
   @ObservedObject var previewData: LinkPreviewData
 
-  init(link: URL) {
+  let isNsfw: Bool
+
+  init(link: URL, isNsfw: Bool = false) {
     previewData = .init(link: link)
+    self.isNsfw = isNsfw
   }
 
   var body: some View {
@@ -27,6 +30,7 @@ struct LinkPreview: View {
       previewData.previewImageUrl.map { url in
         WebImage(url: url, context: [.imageTransformer:
             SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
+          .conditionalModifier(isNsfw, NsfwBlurModifier())
       }
 
       LinkBar(link: previewData.link)
