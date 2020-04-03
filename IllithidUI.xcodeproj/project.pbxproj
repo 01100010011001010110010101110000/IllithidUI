@@ -14,7 +14,6 @@
 		6D0A4EFD237A6D2F00626E44 /* LinkPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */; };
 		6D0EF1EC23B2BC8C007B4CCE /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0EF1EB23B2BC8C007B4CCE /* AccountView.swift */; };
 		6D0EF1EE23B3D89D007B4CCE /* AccountData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0EF1ED23B3D89D007B4CCE /* AccountData.swift */; };
-		6D114A8A23E628EB00AC583D /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 6D114A8923E628EB00AC583D /* SwiftSoup */; };
 		6D138DDA23865ACB008E00CF /* InformationBarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D138DD923865ACB008E00CF /* InformationBarData.swift */; };
 		6D16DBCD22BD5D3F00FB891B /* CommentData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D16DBCC22BD5D3F00FB891B /* CommentData.swift */; };
 		6D1780B5240C975F005D7FD6 /* UserDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1780B4240C975F005D7FD6 /* UserDefault.swift */; };
@@ -46,6 +45,7 @@
 		6D5B274F2350D33500C6F52A /* Tooltips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5B274E2350D33500C6F52A /* Tooltips.swift */; };
 		6D639D7F22B2EE4600A24E72 /* IllithidConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */; };
 		6D69371F241ED684004F5CBF /* HeightResizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D69371E241ED684004F5CBF /* HeightResizable.swift */; };
+		6D6D42102437C14E002D4413 /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 6D6D420F2437C14E002D4413 /* Kanna */; };
 		6D731BFF22A826CD0065183B /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
 		6D85952D23AD502700FC90E0 /* PostDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D85952C23AD502700FC90E0 /* PostDebugView.swift */; };
 		6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
@@ -158,7 +158,7 @@
 			files = (
 				6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */,
 				6D731BFF22A826CD0065183B /* Illithid in Frameworks */,
-				6D114A8A23E628EB00AC583D /* SwiftSoup in Frameworks */,
+				6D6D42102437C14E002D4413 /* Kanna in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,7 +411,7 @@
 			packageProductDependencies = (
 				6D731BFE22A826CD0065183B /* Illithid */,
 				6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */,
-				6D114A8923E628EB00AC583D /* SwiftSoup */,
+				6D6D420F2437C14E002D4413 /* Kanna */,
 			);
 			productName = IllithidUI;
 			productReference = 6D2EA59022A7FEE20059B6EA /* IllithidUI.app */;
@@ -487,7 +487,7 @@
 			mainGroup = 6D2EA58722A7FEE20059B6EA;
 			packageReferences = (
 				6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
-				6D114A8823E628EB00AC583D /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+				6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */,
 			);
 			productRefGroup = 6D2EA59122A7FEE20059B6EA /* Products */;
 			projectDirPath = "";
@@ -916,12 +916,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6D114A8823E628EB00AC583D /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+		6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:scinfu/SwiftSoup.git";
+			repositoryURL = "https://github.com/tid-kijyun/Kanna";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.3.0;
+				minimumVersion = 5.2.2;
 			};
 		};
 		6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
@@ -935,10 +935,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6D114A8923E628EB00AC583D /* SwiftSoup */ = {
+		6D6D420F2437C14E002D4413 /* Kanna */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D114A8823E628EB00AC583D /* XCRemoteSwiftPackageReference "SwiftSoup" */;
-			productName = SwiftSoup;
+			package = 6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */;
+			productName = Kanna;
 		};
 		6D731BFE22A826CD0065183B /* Illithid */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -1,7 +1,7 @@
 //
 // LinkPreview.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/1/20
 //
 
 import Combine
@@ -11,9 +11,9 @@ import os.log
 import SwiftUI
 
 import Alamofire
+import Kanna
 import SDWebImage
 import SDWebImageSwiftUI
-import SwiftSoup
 
 struct LinkPreview: View {
   @ObservedObject var previewData: LinkPreviewData
@@ -70,30 +70,23 @@ final class LinkPreviewData: ObservableObject {
     request = session.request(link)
       .validate()
       .cacheResponse(using: ResponseCacher.cache)
-      .responseString(queue: Self.queue) { response in
+      .responseString(queue: Self.queue, encoding: .utf8) { response in
         switch response.result {
         case let .success(html):
           // Fetch link's HTML document
-          let documentResult = Result<Document, Error> {
-            try SwiftSoup.parse(html, self.link.absoluteString)
-          }
+          do {
+            let document = try HTML(html: html, encoding: .utf8)
 
-          switch documentResult {
-          case let .success(document):
             // Fetch page's preview image link from meta tags
-            do {
-              let url = try document.select("meta")
-                .first { try $0.attr("property") == "og:image" }
-                .flatMap { try URL(string: $0.attr("content")) }
-              DispatchQueue.main.async {
-                self.previewImageUrl = url
-              }
-            } catch {
-              print("Error parsing link preview image URL: \(error)")
+            let url = document.css("meta")
+              .first { $0["property"] == "og:image" }
+              .flatMap { $0["content"] }
+              .flatMap { URL(string: $0) }
+            DispatchQueue.main.async {
+              self.previewImageUrl = url
             }
-
-          case let .failure(error):
-            print("Error parsing link DOM: \(error)")
+          } catch {
+            print("Error parsing HTML: \(error)")
           }
         case let .failure(error):
           print("Error fetching HTML: \(error)")
