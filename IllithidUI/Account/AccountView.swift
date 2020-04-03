@@ -8,34 +8,48 @@ import SwiftUI
 
 import Illithid
 
-struct AccountOverview: View {
-  @ObservedObject var accountData: AccountData
+private struct AccountContentView: View {
+  @ObservedObject var data: AccountData
+  let from: KeyPath<AccountData, [Listing.Content]>
 
   var body: some View {
-    Text(accountData.account?.name ?? "No Account")
+    List(data[keyPath: from]) { item in
+      self.contentView(content: item)
+    }
   }
-}
 
-struct AccountCommentsView: View {
-  @ObservedObject var accountData: AccountData
-
-  var body: some View {
-    List {
-      ForEach(accountData.comments) { comment in
-        CommentRowView(comment: comment)
-      }
+  func contentView(content: Listing.Content) -> AnyView {
+    switch content {
+    case let .comment(comment):
+      return CommentRowView(comment: comment)
+        .eraseToAnyView()
+    case let .post(post):
+      return PostRowView(post: post)
+        .eraseToAnyView()
+    default:
+      return EmptyView()
+        .eraseToAnyView()
     }
   }
 }
 
-struct AccountPostsView: View {
-  @ObservedObject var accountData: AccountData
+private struct AccountCommentsView: View {
+  @ObservedObject var data: AccountData
 
   var body: some View {
-    List {
-      ForEach(accountData.submissions) { post in
-        PostRowView(post: post)
-      }
+    List(data.comments) { comment in
+      CommentRowView(comment: comment)
+    }
+  }
+}
+
+private struct AccountPostsView: View {
+  @ObservedObject var data: AccountData
+  let from: KeyPath<AccountData, [Post]>
+
+  var body: some View {
+    List(data[keyPath: from]) { post in
+      PostRowView(post: post)
     }
   }
 }
@@ -46,13 +60,15 @@ struct AccountView: View {
   var body: some View {
     NavigationView {
       List {
-        NavigationLink("Overview", destination: AccountOverview(accountData: accountData))
-        NavigationLink("Posts", destination: AccountPostsView(accountData: accountData))
-        NavigationLink("Comments", destination: AccountCommentsView(accountData: accountData))
-        NavigationLink("Saved Items", destination: EmptyView())
-        NavigationLink("Hidden", destination: EmptyView())
-        NavigationLink("Upvoted", destination: EmptyView())
-        NavigationLink("Downvoted", destination: EmptyView())
+        NavigationLink("Overview", destination: AccountContentView(data: accountData, from: \.overview))
+        NavigationLink("Posts", destination: AccountPostsView(data: accountData, from: \.submissions))
+        NavigationLink("Comments", destination: AccountCommentsView(data: accountData))
+        if accountData.account == Illithid.shared.accountManager.currentAccount {
+          NavigationLink("Saved Items", destination: AccountContentView(data: accountData, from: \.saved))
+          NavigationLink("Hidden", destination: AccountPostsView(data: accountData, from: \.hidden))
+          NavigationLink("Upvoted", destination: AccountPostsView(data: accountData, from: \.upvoted))
+          NavigationLink("Downvoted", destination: AccountPostsView(data: accountData, from: \.downvoted))
+        }
       }
       .listStyle(SidebarListStyle())
     }

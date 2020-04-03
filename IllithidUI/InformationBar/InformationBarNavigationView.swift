@@ -20,8 +20,9 @@ struct InformationBarNavigationView: View {
   var body: some View {
     NavigationView {
       List {
+        NavigationLink("Account", destination: AccountView(accountData: .init(account: Illithid.shared.accountManager.currentAccount)))
+          .padding(.top)
         NavigationLink("Search", destination: SearchView(searchData: .init()))
-          .padding([.top])
         Section(header: Text("Front Page")) {
           NavigationLink("Home", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.home)))
           NavigationLink("Popular", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.popular)))
