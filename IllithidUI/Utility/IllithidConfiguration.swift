@@ -16,7 +16,7 @@ struct IllithidConfiguration: ClientConfiguration {
   /// The version of Illithid
   let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.1"
   /// The author's Reddit username
-  let author = "Tyler1-66" // swiftlint:disable:this identifier_name
+  let author = "Tyler1-66"
 
   let consumerKey = "f7SCggcYGArzHg"
 

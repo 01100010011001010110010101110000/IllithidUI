@@ -1,7 +1,7 @@
 //
 // AccountData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/2/20
 //
 
 import Combine
@@ -109,7 +109,7 @@ class AccountData: ObservableObject {
     }
 
     os_signpost(.begin, log: log, name: "Load Submissions", signpostID: submissionsId, "%{public}s", account.name)
-    account.submittedPosts { result in
+    account.submissions { result in
       switch result {
       case let .success(posts):
         self.submissions.append(contentsOf: posts)
