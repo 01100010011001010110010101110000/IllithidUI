@@ -14,6 +14,7 @@ import SDWebImageSwiftUI
 struct PostListView: View {
   @ObservedObject var preferences: PreferencesData = .shared
   @ObservedObject var postsData: PostListData
+  @ObservedObject private var sorter = SortModel(sort: PostSort.best, topInterval: .day)
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
 
@@ -49,24 +50,13 @@ struct PostListView: View {
   var body: some View {
     VStack(spacing: 0.0) {
       VStack {
-        HStack {
-          Picker(selection: $postsData.sort, label: EmptyView()) {
-            ForEach(PostSort.allCases) { sortMethod in
-              Text(sortMethod.rawValue).tag(sortMethod)
-            }
+        SortController(model: sorter)
+          .onReceive(self.sorter.$sort) { sort in
+            self.postsData.reload(sort: sort, topInterval: self.sorter.topInterval)
           }
-          .frame(maxWidth: 100)
-          if postsData.sort == .top || postsData.sort == .controversial {
-            Picker(selection: $postsData.topInterval, label: EmptyView()) {
-              ForEach(TopInterval.allCases) { interval in
-                Text(interval.rawValue).tag(interval)
-              }
-            }
-            .frame(maxWidth: 100)
+          .onReceive(self.sorter.$topInterval) { interval in
+            self.postsData.reload(sort: self.sorter.sort, topInterval: interval)
           }
-          Spacer()
-        }
-        .padding([.top, .leading, .trailing], 10)
         HStack {
           TextField("Search Posts", text: $searchText)
             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -90,13 +80,15 @@ struct PostListView: View {
         List {
           ForEach(filteredPosts) { post in
             PostRowView(post: post)
-              .conditionalModifier(post == self.filteredPosts.last, OnAppearModifier {
-                self.postsData.loadPosts()
-              })
+              .onAppear {
+                if post == self.filteredPosts.last {
+                  self.postsData.loadPosts(sort: self.sorter.sort, topInterval: self.sorter.topInterval)
+                }
+              }
           }
         }
         .onAppear {
-          self.postsData.loadPosts()
+          self.postsData.loadPosts(sort: self.sorter.sort, topInterval: self.sorter.topInterval)
         }
         .onDisappear {
           self.postsData.cancel()

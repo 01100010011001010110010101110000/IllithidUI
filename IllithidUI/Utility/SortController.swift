@@ -26,26 +26,24 @@ struct SortController<Sort>: View where Sort: RawRepresentable & CaseIterable & 
   }
 
   var body: some View {
-    VStack {
-      HStack {
-        Picker(selection: $sortModel.sort, label: EmptyView()) {
-          ForEach(Sort.allCases) { sortMethod in
-            Text(sortMethod.rawValue).tag(sortMethod)
+    HStack {
+      Picker(selection: $sortModel.sort, label: EmptyView()) {
+        ForEach(Sort.allCases) { sortMethod in
+          Text(sortMethod.rawValue).tag(sortMethod)
+        }
+      }
+      .frame(maxWidth: 100)
+      if sortModel.sort.rawValue == "top" || sortModel.sort.rawValue == "controversial" {
+        Picker(selection: $sortModel.topInterval, label: EmptyView()) {
+          ForEach(TopInterval.allCases) { interval in
+            Text(interval.rawValue).tag(interval)
           }
         }
         .frame(maxWidth: 100)
-        if sortModel.sort.rawValue == "top" || sortModel.sort.rawValue == "controversial" {
-          Picker(selection: $sortModel.topInterval, label: EmptyView()) {
-            ForEach(TopInterval.allCases) { interval in
-              Text(interval.rawValue).tag(interval)
-            }
-          }
-          .frame(maxWidth: 100)
-        }
-        Spacer()
       }
-      .padding([.top, .leading, .trailing], 10)
+      Spacer()
     }
+    .padding([.top, .leading, .trailing], 10)
   }
 }
 

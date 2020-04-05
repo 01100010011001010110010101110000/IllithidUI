@@ -1,7 +1,7 @@
 //
 // AccountView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/2/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/5/20
 //
 
 import SwiftUI
@@ -30,13 +30,13 @@ private struct Content: View {
     .onAppear {
       self.data.loadContent(content: self.content, sort: self.sorter.sort, topInterval: self.sorter.topInterval)
     }
-    .onReceive(sorter.$sort) { _ in
+    .onReceive(sorter.$sort) { sort in
       self.data.clearContent(content: self.content)
-      self.data.loadContent(content: self.content, sort: self.sorter.sort, topInterval: self.sorter.topInterval)
+      self.data.loadContent(content: self.content, sort: sort, topInterval: self.sorter.topInterval)
     }
-    .onReceive(sorter.$topInterval) { _ in
+    .onReceive(sorter.$topInterval) { interval in
       self.data.clearContent(content: self.content)
-      self.data.loadContent(content: self.content, sort: self.sorter.sort, topInterval: self.sorter.topInterval)
+      self.data.loadContent(content: self.content, sort: self.sorter.sort, topInterval: interval)
     }
   }
 

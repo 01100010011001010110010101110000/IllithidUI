@@ -13,21 +13,6 @@ import Illithid
 
 final class PostListData: ObservableObject {
   @Published var posts: [Post] = []
-  @Published var sort: PostSort = .best {
-    didSet {
-      posts.removeAll(keepingCapacity: true)
-      postListingParams = .init()
-      loadPosts()
-    }
-  }
-
-  @Published var topInterval: TopInterval = .day {
-    didSet {
-      posts.removeAll(keepingCapacity: true)
-      postListingParams = .init()
-      loadPosts()
-    }
-  }
 
   let postsProvider: PostProvider
 
@@ -42,7 +27,7 @@ final class PostListData: ObservableObject {
     postsProvider = provider
   }
 
-  func loadPosts() {
+  func loadPosts(sort: PostSort, topInterval: TopInterval) {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
     if !exhausted {
@@ -60,6 +45,14 @@ final class PostListData: ObservableObject {
       }
       requests.append(request)
     }
+  }
+
+  func reload(sort: PostSort, topInterval: TopInterval) {
+    cancel()
+    exhausted = false
+    posts.removeAll(keepingCapacity: true)
+    postListingParams = .init()
+    loadPosts(sort: sort, topInterval: topInterval)
   }
 
   func cancel() {
