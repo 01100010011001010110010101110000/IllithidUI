@@ -1,7 +1,7 @@
 //
 // CommentsView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/22/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/29/20
 //
 
 import Combine
@@ -11,7 +11,7 @@ import Illithid
 
 struct CommentsView: View, Identifiable {
   @ObservedObject var commentData: CommentData
-  @ObservedObject var moderators: ModeratorData = .shared
+  @ObservedObject private var moderators: ModeratorData = .shared
 
   /// The post to which the comments belong
   let id: Fullname

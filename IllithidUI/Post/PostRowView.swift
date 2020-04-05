@@ -275,7 +275,7 @@ struct PostFlairBar: View {
 }
 
 struct PostMetadataBar: View {
-  @ObservedObject var moderators: ModeratorData = .shared
+  @ObservedObject private var moderators: ModeratorData = .shared
   private let windowManager: WindowManager = .shared
 
   let post: Post
