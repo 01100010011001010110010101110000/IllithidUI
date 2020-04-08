@@ -1,7 +1,7 @@
 //
 // CommentRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/22/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/5/20
 //
 
 import SwiftUI
@@ -146,11 +146,6 @@ struct CommentActionBar: View {
             }
           }
         }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(.red)
-        .overlay(Text("Hide"), alignment: .center)
-        .foregroundColor(.white)
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(.red)
