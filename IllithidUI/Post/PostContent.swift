@@ -1,7 +1,7 @@
 //
 // PostContent.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/1/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/2/20
 //
 
 import SwiftUI
@@ -18,22 +18,18 @@ struct PostContent: View {
     if post.previewGuess == .imgur {
       return ImgurView(imageId: String(post.contentUrl.path.dropFirst().split(separator: ".").first!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
-        .overlay(MediaStamp(mediaType: "imgur")
-          .padding([.bottom, .trailing], 4),
-                 alignment: .bottomTrailing)
+        .mediaStamp("imgur")
         .eraseToAnyView()
     } else if post.previewGuess == .gfycat {
       return GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
-        .overlay(MediaStamp(mediaType: "gfycat")
-          .padding([.bottom, .trailing], 4),
-                 alignment: .bottomTrailing)
+        .mediaStamp("gfycat")
         .eraseToAnyView()
     } else if post.previewGuess == .text {
       return TextPostPreview(text: post.selftext)
         .eraseToAnyView()
     } else if post.previewGuess == .gif {
-      return GifPostPreview(url: post.gifPreviews.last!.url)
+      return GifPostPreview(post: post)
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .eraseToAnyView()
     } else if post.previewGuess == .video {
@@ -57,21 +53,6 @@ struct PostContent: View {
   }
 }
 
-struct MediaStamp: View {
-  let mediaType: String
-
-  var body: some View {
-    Text(mediaType)
-      .font(.caption)
-      .foregroundColor(.black)
-      .padding(4)
-      .background(
-        RoundedRectangle(cornerRadius: 4)
-          .foregroundColor(.white)
-      )
-  }
-}
-
 private struct VideoPostPreview: View {
   let post: Post
   private let preview: Preview.Source
@@ -84,20 +65,18 @@ private struct VideoPostPreview: View {
   }
 
   var body: some View {
-    VStack {
-      if self.url != nil {
-        VideoPlayer(url: self.url!, fullSize: .init(width: preview.width, height: preview.height))
-      } else {
-        Rectangle()
-          .opacity(0.0)
-          .onAppear {
-            self.url = self.preview.url
-          }
-      }
+    if self.url != nil {
+      return VideoPlayer(url: self.url!, fullSize: .init(width: preview.width, height: preview.height))
+        .mediaStamp("reddit")
+        .eraseToAnyView()
+    } else {
+      return Rectangle()
+        .opacity(0.0)
+        .onAppear {
+          self.url = self.preview.url
+        }
+        .eraseToAnyView()
     }
-    .overlay(MediaStamp(mediaType: "reddit")
-      .padding([.bottom, .trailing], 4),
-             alignment: .bottomTrailing)
   }
 }
 
@@ -150,13 +129,12 @@ extension Post {
       return Preview.Source(url: redditVideo.hlsUrl, width: redditVideo.width, height: redditVideo.height)
     }
 
-//    // Video previews
-//    guard let postPreview = preview else { return nil }
-//    if let redditPreview = postPreview.redditVideoPreview {
-//      return Preview.Source(url: redditPreview.hlsUrl, width: redditPreview.width, height: redditPreview.height)
-//    } else if let mp4Preview = postPreview.images.first?.variants?.mp4 {
-//      return mp4Preview.resolutions.middle ?? mp4Preview.source
-//    }
+    // Video previews
+    if let redditPreview = preview?.redditVideoPreview {
+      return Preview.Source(url: redditPreview.hlsUrl, width: redditPreview.width, height: redditPreview.height)
+    } else if let mp4Preview = mp4Previews.last {
+      return mp4Preview
+    }
 
     return nil
   }
@@ -252,15 +230,21 @@ struct PostPreview_Previews: PreviewProvider {
 struct GifPostPreview: View {
   @State private var isAnimating: Bool = true
 
-  let url: URL
+  let post: Post
 
+  // Prefer the MP4 preview if available, it is much more efficient than a GIF
   var body: some View {
-    AnimatedImage(url: url, isAnimating: $isAnimating)
-      .resizable()
-      .aspectRatio(contentMode: .fit)
-      .overlay(MediaStamp(mediaType: "gif")
-        .padding([.bottom, .trailing], 4),
-               alignment: .bottomTrailing)
+    if let mp4Preview = post.mp4Previews.last {
+      return VideoPlayer(url: mp4Preview.url, fullSize: .init(width: mp4Preview.width, height: mp4Preview.height))
+        .mediaStamp("gif")
+        .eraseToAnyView()
+    } else {
+      return AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)
+        .resizable()
+        .aspectRatio(contentMode: .fit)
+        .mediaStamp("gif")
+        .eraseToAnyView()
+    }
   }
 }
 
