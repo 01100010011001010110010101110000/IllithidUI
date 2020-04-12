@@ -59,6 +59,7 @@
 		6DDE004222BA8006008E6AF0 /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE004122BA8006008E6AF0 /* WindowManager.swift */; };
 		6DDE004422BA80EA008E6AF0 /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE004322BA80EA008E6AF0 /* CommentsView.swift */; };
 		6DE06ED52423FF0100DCF5F9 /* Image+Named.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE06ED42423FF0100DCF5F9 /* Image+Named.swift */; };
+		6DE4DD9D2443A92D00CB57B1 /* OpenInNewTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE4DD9C2443A92D00CB57B1 /* OpenInNewTab.swift */; };
 		6DE756B822AE16E300A1F87B /* PostListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE756B722AE16E300A1F87B /* PostListData.swift */; };
 		6DE756BC22AE176E00A1F87B /* PostListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE756BB22AE176E00A1F87B /* PostListView.swift */; };
 		6DEDE5CA22B1D5FC0016EAF5 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DEDE5C922B1D5FC0016EAF5 /* PreferencesView.swift */; };
@@ -144,6 +145,7 @@
 		6DDE004122BA8006008E6AF0 /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
 		6DDE004322BA80EA008E6AF0 /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
 		6DE06ED42423FF0100DCF5F9 /* Image+Named.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image+Named.swift"; sourceTree = "<group>"; };
+		6DE4DD9C2443A92D00CB57B1 /* OpenInNewTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInNewTab.swift; sourceTree = "<group>"; };
 		6DE756B722AE16E300A1F87B /* PostListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostListData.swift; sourceTree = "<group>"; };
 		6DE756BB22AE176E00A1F87B /* PostListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostListView.swift; sourceTree = "<group>"; };
 		6DEDE5C922B1D5FC0016EAF5 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
@@ -384,6 +386,7 @@
 				6DE06ED42423FF0100DCF5F9 /* Image+Named.swift */,
 				6D4E68332431267900529CA7 /* PinchAndZoom.swift */,
 				6D2FB7A3243E4C3B008CE0EB /* MediaStamp.swift */,
+				6DE4DD9C2443A92D00CB57B1 /* OpenInNewTab.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -570,6 +573,7 @@
 				6D28395522D3F27300DD08F9 /* SearchData.swift in Sources */,
 				6DDE004422BA80EA008E6AF0 /* CommentsView.swift in Sources */,
 				6D34C68A241C891500CAB469 /* WebView.swift in Sources */,
+				6DE4DD9D2443A92D00CB57B1 /* OpenInNewTab.swift in Sources */,
 				6D558A0C22FF79080092AA88 /* CommentRowView.swift in Sources */,
 				6D1780B7240CD47B005D7FD6 /* NSImageNames.swift in Sources */,
 				6DC19CD122B069B0002F027B /* PostRowView.swift in Sources */,

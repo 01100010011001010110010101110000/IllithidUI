@@ -118,13 +118,13 @@ struct PostRowView: View {
   }
 
   func showComments(for post: Post) {
-    windowManager.showWindow(withId: post.id, title: post.title) {
+    windowManager.showWindow(withId: post.fullname, title: post.title) {
       CommentsView(post: post)
     }
   }
 
   func showDebugWindow(for post: Post) {
-    windowManager.showWindow(withId: "\(post.id)_debug", title: "\(post.title) - Debug View") {
+    windowManager.showWindow(withId: "\(post.fullname)_debug", title: "\(post.title) - Debug View") {
       PostDebugView(post: post)
     }
   }

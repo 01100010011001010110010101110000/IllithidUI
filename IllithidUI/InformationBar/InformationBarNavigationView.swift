@@ -20,14 +20,20 @@ struct InformationBarNavigationView: View {
   var body: some View {
     NavigationView {
       List {
-        NavigationLink("Account", destination: AccountView(accountData: .init(account: Illithid.shared.accountManager.currentAccount)))
-          .padding(.top)
-        NavigationLink("Search", destination: SearchView(searchData: .init()))
+        Section(header: Text("Meta")) {
+          NavigationLink("Account", destination: AccountView(accountData: .init(account: Illithid.shared.accountManager.currentAccount)))
+            .openInNewTab(id: Illithid.shared.accountManager.currentAccount?.id ?? "account",
+                          title: Illithid.shared.accountManager.currentAccount?.name ?? "Account") {
+              AccountView(accountData: .init(account: Illithid.shared.accountManager.currentAccount))
+            }
+          NavigationLink("Search", destination: SearchView(searchData: .init()))
+            .openInNewTab(id: "search", title: "Searcg") { SearchView(searchData: .init()) }
+        }
         Section(header: Text("Front Page")) {
-          NavigationLink("Home", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.home)))
-          NavigationLink("Popular", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.popular)))
-          NavigationLink("All", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.all)))
-          NavigationLink("Random", destination: PostListView(data: informationBarData.postContainer(for: FrontPage.random)))
+          ForEach(FrontPage.allCases) { page in
+            NavigationLink(page.title, destination: PostListView(data: self.informationBarData.postContainer(for: page)))
+              .openInNewTab(id: page.id, title: page.title) { PostListView(postContainer: page) }
+          }
         }
 
         Section(header: Text("Favorites")) {
@@ -43,6 +49,7 @@ struct InformationBarNavigationView: View {
             }
           }) { multireddit in
             NavigationLink(multireddit.name, destination: PostListView(data: self.informationBarData.postContainer(for: multireddit)))
+              .openInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
               .contextMenu {
                 Button(action: {
                   self.isEditingMulti = true
@@ -67,6 +74,7 @@ struct InformationBarNavigationView: View {
                 Text(subreddit.displayName)
                 Spacer()
               }
+              .openInNewTab(id: subreddit.id, title: subreddit.displayName) { PostListView(postContainer: subreddit) }
             }
           }
         }
