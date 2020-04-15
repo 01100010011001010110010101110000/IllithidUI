@@ -1,13 +1,12 @@
 //
 // PostContent.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/2/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/8/20
 //
 
 import SwiftUI
 
 import Illithid
-import SDWebImage
 import SDWebImageSwiftUI
 import Ulithari
 
