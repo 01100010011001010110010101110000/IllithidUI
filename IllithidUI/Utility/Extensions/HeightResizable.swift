@@ -1,7 +1,7 @@
 //
 // HeightResizable.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/1/20
 //
 
 import Combine
@@ -9,16 +9,19 @@ import SwiftUI
 
 /// Works around `List` row height being fixed by setting the child frame's`height` when its `size` adjusts
 extension View {
-  func heightResizable() -> some View {
-    modifier(HeightResizingModifier())
+  func heightResizable(maxHeight: CGFloat = .infinity) -> some View {
+    modifier(HeightResizingModifier(maxHeight: maxHeight))
   }
 }
 
 private struct HeightResizingModifier: ViewModifier {
   @State private var frame: CGRect = .zero
 
+  let maxHeight: CGFloat
+
   func body(content: Content) -> some View {
     content
+      .frame(maxHeight: maxHeight)
       .fixedSize(horizontal: false, vertical: true)
       .background(FramePreferenceViewSetter())
       .frame(height: frame.height)
