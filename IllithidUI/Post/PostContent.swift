@@ -1,7 +1,7 @@
 //
 // PostContent.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/14/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/16/20
 //
 
 import SwiftUI
@@ -15,7 +15,7 @@ struct PostContent: View {
 
   var body: AnyView {
     if post.previewGuess == .imgur {
-      return ImgurView(imageId: String(post.contentUrl.path.dropFirst().split(separator: ".").first!))
+      return ImgurView(link: post.contentUrl)
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .mediaStamp("imgur")
         .eraseToAnyView()
@@ -182,40 +182,81 @@ class GfycatData: ObservableObject {
 // MARK: Imgur
 
 struct ImgurView: View {
+  @State private var viewIndex: Int = 0
   @ObservedObject var imgurData: ImgurData
 
-  init(imageId: String) {
-    imgurData = .init(imageId: imageId)
+  init(link: URL) {
+    imgurData = .init(link)
   }
 
   var body: some View {
-    imgurData.imgurImage.map { image in
-      VStack {
-        if image.data.animated {
-          VideoPlayer(url: image.data.mp4!,
-                      fullSize: .init(width: image.data.width,
-                                      height: image.data.height))
-        } else {
-          // TODO: Replace with NSFW status on originating Reddit post
-          ImagePostPreview(url: image.data.link)
+    Group {
+      if imgurData.images.isEmpty {
+        Rectangle()
+          .opacity(0)
+      } else {
+        ZStack(alignment: .topTrailing) {
+          if self.imgurData.images.count > 1 {
+            MediaStamp(mediaType: "\(self.viewIndex + 1) / \(self.imgurData.images.count)")
+          }
+          renderImageView(image: imgurData.images[viewIndex])
+            .animation(.default)
+            .onTapGesture {
+              self.viewIndex = (self.viewIndex + 1) % self.imgurData.images.count
+            }
         }
       }
+    }
+    .onAppear {
+      self.imgurData.loadContent()
+    }
+  }
+
+  private func renderImageView(image: ImgurImage) -> AnyView {
+    if image.animated {
+      return VideoPlayer(url: image.mp4!,
+                         fullSize: .init(width: image.width,
+                                         height: image.height))
+        .eraseToAnyView()
+    } else {
+      return ImagePostPreview(url: image.link)
+        .eraseToAnyView()
     }
   }
 }
 
-class ImgurData: ObservableObject {
-  @Published var imgurImage: ImgurImage? = nil
-  let ulithari: Ulithari = .shared
+final class ImgurData: ObservableObject {
+  @Published var images: [ImgurImage] = []
 
-  init(imageId: String) {
-    ulithari.fetchImgurImage(id: imageId) { result in
-      switch result {
-      case let .success(imgurImage):
-        self.imgurImage = imgurImage
-      case let .failure(error):
-        Illithid.shared.logger.errorMessage("Failed to fetch \(imageId) data: \(error)")
+  let link: URL
+
+  private let ulithari: Ulithari = .shared
+
+  init(_ link: URL) {
+    self.link = link
+  }
+
+  func loadContent() {
+    switch ulithari.imgurLinkType(link) {
+    case let .album(id):
+      ulithari.fetchImgurAlbum(id: id) { result in
+        switch result {
+        case let .success(album):
+          self.images.append(contentsOf: album.images)
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error fetching imgur album with id \(id): \(error)")
+        }
       }
+    case let .gallery:
+      // TODO: - implement gallery support
+      return
+    case let .image(id):
+      ulithari.fetchImgurImage(id: id) { result in
+        _ = result.map { self.images.append($0) }
+      }
+    case nil:
+      // Invalid link
+      return
     }
   }
 }
