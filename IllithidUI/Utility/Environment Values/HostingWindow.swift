@@ -1,16 +1,21 @@
 //
 // HostingWindow.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/2/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/3/20
 //
 
 import SwiftUI
 
+@dynamicMemberLookup
 final class Weak<Value: AnyObject> {
-  weak var value: Value?
+  private weak var value: Value?
 
   init(_ value: Value?) {
     self.value = value
+  }
+
+  subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T? {
+    value?[keyPath: keyPath]
   }
 }
 
