@@ -55,9 +55,14 @@ final class WindowManager {
   private func makeWindowController<Content: View>(with id: ID, title: String = "",
                                                    @ViewBuilder view: () -> Content) -> WindowController {
     let controller = WindowController()
-    controller.window = Window(styleMask: styleMask, title: title, rootView: view)
+
+    controller.window = NSWindow()
+    controller.window!.title = title
+    controller.window!.styleMask = styleMask
     controller.window!.tabbingIdentifier = id
     controller.window!.tab.title = title
+    controller.window!.contentViewController = NSHostingController(rootView: view().environment(\.hostingWindow, .init(controller.window!)))
+
     let token = NotificationCenter.default.publisher(for: NSWindow.willCloseNotification, object: controller.window)
       .compactMap { $0.object as? NSWindow }
       .sink { window in

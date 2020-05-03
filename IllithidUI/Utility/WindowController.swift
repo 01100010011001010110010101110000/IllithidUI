@@ -13,7 +13,9 @@ final class WindowController: NSWindowController {
 }
 
 final class Window<Content: View>: NSWindow {
-  convenience init(styleMask: NSWindow.StyleMask = [], title: String = "", @ViewBuilder rootView: () -> Content) {
+  convenience init(styleMask: NSWindow.StyleMask = [],
+                   title: String = "",
+                   @ViewBuilder rootView: () -> Content) {
     self.init()
     self.styleMask = styleMask
     self.title = title

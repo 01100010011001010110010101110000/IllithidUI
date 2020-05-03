@@ -1,7 +1,7 @@
 //
 // PostContent.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/16/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/28/20
 //
 
 import SwiftUI
@@ -247,7 +247,7 @@ final class ImgurData: ObservableObject {
           Illithid.shared.logger.errorMessage("Error fetching imgur album with id \(id): \(error)")
         }
       }
-    case let .gallery:
+    case .gallery:
       // TODO: - implement gallery support
       return
     case let .image(id):
