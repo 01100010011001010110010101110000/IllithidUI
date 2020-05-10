@@ -52,6 +52,7 @@
 		6D6D42102437C14E002D4413 /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 6D6D420F2437C14E002D4413 /* Kanna */; };
 		6D731BFF22A826CD0065183B /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
 		6D85952D23AD502700FC90E0 /* PostDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D85952C23AD502700FC90E0 /* PostDebugView.swift */; };
+		6D89F3922468A95E00364E29 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D89F3912468A95E00364E29 /* Illithid */; };
 		6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
 		6DA9A2FC245E6172009444CC /* HostingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A2FB245E6172009444CC /* HostingWindow.swift */; };
 		6DBE9E4E240F73DE004E7375 /* FireLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBE9E4D240F73DE004E7375 /* FireLogger.swift */; };
@@ -171,6 +172,7 @@
 				6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */,
 				6D731BFF22A826CD0065183B /* Illithid in Frameworks */,
 				6D6D42102437C14E002D4413 /* Kanna in Frameworks */,
+				6D89F3922468A95E00364E29 /* Illithid in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,6 +440,7 @@
 				6D731BFE22A826CD0065183B /* Illithid */,
 				6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */,
 				6D6D420F2437C14E002D4413 /* Kanna */,
+				6D89F3912468A95E00364E29 /* Illithid */,
 			);
 			productName = IllithidUI;
 			productReference = 6D2EA59022A7FEE20059B6EA /* IllithidUI.app */;
@@ -514,6 +517,7 @@
 			packageReferences = (
 				6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */,
+				6D89F3902468A95E00364E29 /* XCRemoteSwiftPackageReference "Illithid" */,
 			);
 			productRefGroup = 6D2EA59122A7FEE20059B6EA /* Products */;
 			projectDirPath = "";
@@ -956,6 +960,14 @@
 				minimumVersion = 5.2.2;
 			};
 		};
+		6D89F3902468A95E00364E29 /* XCRemoteSwiftPackageReference "Illithid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:01100010011001010110010101110000/Illithid.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
@@ -974,6 +986,11 @@
 		};
 		6D731BFE22A826CD0065183B /* Illithid */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = Illithid;
+		};
+		6D89F3912468A95E00364E29 /* Illithid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D89F3902468A95E00364E29 /* XCRemoteSwiftPackageReference "Illithid" */;
 			productName = Illithid;
 		};
 		6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */ = {
