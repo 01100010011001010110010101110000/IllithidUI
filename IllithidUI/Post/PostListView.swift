@@ -1,7 +1,7 @@
 //
 // PostListView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/10/20
 //
 
 import Combine
@@ -68,7 +68,7 @@ struct PostListView: View {
                 self.showSidebar.toggle()
               }
             }, label: {
-              Image(named: .sidebarRight)
+              Image(named: .menuBars)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 20, height: 15)

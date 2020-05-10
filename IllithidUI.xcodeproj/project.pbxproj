@@ -38,7 +38,6 @@
 		6D34C68A241C891500CAB469 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D34C689241C891500CAB469 /* WebView.swift */; };
 		6D3ADFB922FB81AC002DA19A /* single_post.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D3ADFB822FB81AC002DA19A /* single_post.json */; };
 		6D4E68342431267900529CA7 /* PinchAndZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4E68332431267900529CA7 /* PinchAndZoom.swift */; };
-		6D4E683624313EFD00529CA7 /* SFSymbolsRegular.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D4E683524313EFC00529CA7 /* SFSymbolsRegular.xcassets */; };
 		6D53D9E922A94E7F0018F19D /* SubredditListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D53D9E822A94E7F0018F19D /* SubredditListData.swift */; };
 		6D53D9EA22A94E7F0018F19D /* SubredditListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D53D9E822A94E7F0018F19D /* SubredditListData.swift */; };
 		6D544EE922FF40C100196C25 /* ConditionalModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D544EE822FF40C100196C25 /* ConditionalModifier.swift */; };
@@ -131,7 +130,6 @@
 		6D34C689241C891500CAB469 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		6D3ADFB822FB81AC002DA19A /* single_post.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = single_post.json; sourceTree = "<group>"; };
 		6D4E68332431267900529CA7 /* PinchAndZoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchAndZoom.swift; sourceTree = "<group>"; };
-		6D4E683524313EFC00529CA7 /* SFSymbolsRegular.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SFSymbolsRegular.xcassets; sourceTree = "<group>"; };
 		6D53D9E822A94E7F0018F19D /* SubredditListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditListData.swift; sourceTree = "<group>"; };
 		6D544EE822FF40C100196C25 /* ConditionalModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalModifier.swift; sourceTree = "<group>"; };
 		6D558A0B22FF79080092AA88 /* CommentRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRowView.swift; sourceTree = "<group>"; };
@@ -269,7 +267,6 @@
 				6D558A0D230080140092AA88 /* RootView.swift */,
 				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
 				6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */,
-				6D4E683524313EFC00529CA7 /* SFSymbolsRegular.xcassets */,
 				6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */,
 				6D2EA59F22A7FEE40059B6EA /* Main.storyboard */,
 				6D2EA5A222A7FEE40059B6EA /* Info.plist */,
@@ -536,7 +533,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D2EA5A122A7FEE40059B6EA /* Main.storyboard in Resources */,
-				6D4E683624313EFD00529CA7 /* SFSymbolsRegular.xcassets in Resources */,
 				6D2EA59E22A7FEE40059B6EA /* Preview Assets.xcassets in Resources */,
 				6DFB42F622CA884500272845 /* README.md in Resources */,
 				6D2EA59B22A7FEE40059B6EA /* Assets.xcassets in Resources */,
