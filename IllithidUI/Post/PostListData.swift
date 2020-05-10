@@ -18,6 +18,7 @@ final class PostListData: ObservableObject {
 
   private var postListingParams: ListingParameters = .init()
   private var exhausted: Bool = false
+  private var loading: Bool = false
   private let illithid: Illithid = .shared
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.posts",
                           category: .pointsOfInterest)
@@ -30,7 +31,8 @@ final class PostListData: ObservableObject {
   func loadPosts(sort: PostSort, topInterval: TopInterval) {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
-    if !exhausted {
+    if !exhausted, !loading {
+      loading = true
       let request = postsProvider.posts(sortBy: sort, location: nil, topInterval: topInterval,
                                         parameters: postListingParams, queue: .main) { result in
         switch result {
@@ -41,6 +43,7 @@ final class PostListData: ObservableObject {
         case let .failure(error):
           self.illithid.logger.errorMessage("Failed to load posts: \(error)")
         }
+        self.loading = false
         os_signpost(.end, log: self.log, name: "Load Posts", signpostID: signpostId)
       }
       requests.append(request)

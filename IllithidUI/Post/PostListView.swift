@@ -52,9 +52,11 @@ struct PostListView: View {
       VStack {
         SortController(model: sorter)
           .onReceive(self.sorter.$sort) { sort in
+            guard !self.postsData.posts.isEmpty else { return }
             self.postsData.reload(sort: sort, topInterval: self.sorter.topInterval)
           }
           .onReceive(self.sorter.$topInterval) { interval in
+            guard !self.postsData.posts.isEmpty else { return }
             self.postsData.reload(sort: self.sorter.sort, topInterval: interval)
           }
         HStack {
@@ -106,6 +108,11 @@ struct SidebarView: View {
   @State private var subscribed: Bool = false
   let subreddit: Subreddit
 
+  init(subreddit: Subreddit) {
+    self.subreddit = subreddit
+    _subscribed = .init(initialValue: subreddit.userIsSubscriber ?? false)
+  }
+
   var body: some View {
     VStack {
       HStack {
@@ -144,9 +151,6 @@ struct SidebarView: View {
       ScrollView {
         Text(subreddit.description ?? "")
       }
-    }
-    .onAppear {
-      self.subscribed = self.subreddit.userIsSubscriber ?? false
     }
   }
 }
