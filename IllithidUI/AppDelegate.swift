@@ -38,7 +38,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       let alamoConfiguration = URLSessionConfiguration.default
 
       // TODO: Make this some function of the system's available disk and memory
-      alamoConfiguration.urlCache = URLCache(memoryCapacity: 10_485_760, diskCapacity: 209_715_200)
+      alamoConfiguration.urlCache = URLCache(memoryCapacity: 10 * 1024 * 1024, diskCapacity: 200 * 1024 * 1024)
 
       let cacher: ResponseCacher = .cache
       let session = Session(configuration: alamoConfiguration,

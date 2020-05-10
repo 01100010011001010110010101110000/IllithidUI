@@ -1,7 +1,7 @@
 //
 // PostRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/29/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/10/20
 //
 
 import SwiftUI
@@ -298,20 +298,39 @@ struct PostMetadataBar: View {
 
   var body: some View {
     HStack {
-      Text("by \(post.author)")
-        .usernameStyle(color: authorColor)
+      (Text("by ") +
+        Text("\(post.author)")
+        .usernameStyle(color: authorColor))
         .onTapGesture {
           self.windowManager.showWindow(withId: self.post.author, title: self.post.author) {
             AccountView(accountData: .init(name: self.post.author))
           }
         }
-      Text("\(post.relativePostTime) ago")
       Spacer()
       HStack {
-        Text("\(post.ups.postAbbreviation())")
-          .foregroundColor(.orange)
-        Text("\(post.numComments.postAbbreviation())")
-          .foregroundColor(.blue)
+        Group {
+          Image(named: .arrowUp)
+            .resizable()
+            .frame(width: 20, height: 20)
+          Text("\(post.ups.postAbbreviation())")
+        }
+        .foregroundColor(.orange)
+
+        Group {
+          Image(named: .textBubble)
+            .resizable()
+            .frame(width: 24, height: 20)
+          Text("\(post.numComments.postAbbreviation())")
+        }
+        .foregroundColor(.blue)
+
+        Group {
+          Image(named: .clock)
+            .resizable()
+            .frame(width: 20, height: 20)
+          Text("\(post.relativePostTime) ago")
+            .tooltip(post.absolutePostTime)
+        }
       }
       Spacer()
       Text(post.subredditNamePrefixed)
