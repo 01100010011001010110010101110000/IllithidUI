@@ -109,11 +109,13 @@ struct PostRowView: View {
         Text("Copy content URL")
       }
       Divider()
-      Button(action: {
-        self.showDebugWindow(for: self.post)
+      #if DEBUG
+        Button(action: {
+          self.showDebugWindow(for: self.post)
       }) {
-        Text("Show debug panel…")
-      }
+          Text("Show debug panel…")
+        }
+      #endif
     }
   }
 
