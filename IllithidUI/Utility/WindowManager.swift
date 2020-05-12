@@ -1,7 +1,7 @@
 //
 // WindowManager.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/11/20
 //
 
 import Combine
@@ -22,7 +22,7 @@ final class WindowManager {
     .closable,
   ]
 
-  private var controllers: [String: (controller: WindowController, token: AnyCancellable)] = [:]
+  private var controllers: [ID: (controller: WindowController, token: AnyCancellable)] = [:]
 
   @discardableResult
   func showMainWindowTab<Content: View>(withId id: ID = UUID().uuidString,
