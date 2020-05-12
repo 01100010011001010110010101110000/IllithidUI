@@ -8,6 +8,7 @@ import SwiftUI
 
 import Alamofire
 import Illithid
+import SDWebImageSwiftUI
 
 // MARK: Main row view
 
@@ -246,36 +247,6 @@ struct PostActionBar: View {
   }
 }
 
-struct PostFlairBar: View {
-  let post: Post
-
-  var body: some View {
-    HStack {
-      if post.over18 {
-        FlairTag(flair: "NSFW", rectangleColor: .red, textColor: .white)
-      }
-      post.authorFlairText.map { flair in
-        Group {
-          if !flair.isEmpty {
-            FlairTag(flair: flair, rectangleColor: .blue, textColor: .white)
-          } else {
-            EmptyView()
-          }
-        }
-      }
-      post.linkFlairText.map { flair in
-        Group {
-          if !flair.isEmpty {
-            FlairTag(flair: flair, rectangleColor: .blue, textColor: .white)
-          } else {
-            EmptyView()
-          }
-        }
-      }
-    }
-  }
-}
-
 struct PostMetadataBar: View {
   @ObservedObject private var moderators: ModeratorData = .shared
   private let windowManager: WindowManager = .shared
@@ -345,22 +316,83 @@ struct PostMetadataBar: View {
   }
 }
 
-struct FlairTag: View {
-  let flair: String
-  let rectangleColor: Color
-  let textColor: Color
+// MARK: Post Flair
 
-  init(flair: String, rectangleColor: Color = .white,
-       textColor: Color = .black) {
-    self.flair = flair
-    self.rectangleColor = rectangleColor
-    self.textColor = textColor
-  }
+struct PostFlairBar: View {
+  let post: Post
 
   var body: some View {
-    Text(flair)
-      .padding(4.0)
-      .foregroundColor(textColor)
+    HStack {
+      if post.over18 {
+        Text("NSFW")
+          .flairTag(rectangleColor: .red)
+      }
+
+      if post.authorFlairType == .text {
+        post.authorFlairText.map { flair in
+          Group {
+            if !flair.isEmpty {
+              Text(flair)
+                .flairTag(rectangleColor: .blue)
+            } else {
+              EmptyView()
+            }
+          }
+        }
+      } else if post.authorFlairType == .richtext {
+        HStack {
+          ForEach(post.authorFlairRichtext!.indices) { idx in
+            self.renderRichtext(self.post.authorFlairRichtext![idx])
+          }
+        }
+        .flairTag(rectangleColor: .blue)
+      }
+
+      if post.linkFlairType == .text {
+        post.linkFlairText.map { flair in
+          Group {
+            if !flair.isEmpty {
+              Text(flair)
+                .flairTag(rectangleColor: .blue)
+            } else {
+              EmptyView()
+            }
+          }
+        }
+      } else if post.linkFlairType == .richtext {
+        HStack {
+          ForEach(post.linkFlairRichtext!.indices) { idx in
+            self.renderRichtext(self.post.linkFlairRichtext![idx])
+          }
+        }
+        .flairTag(rectangleColor: .blue)
+      }
+    }
+  }
+
+  func renderRichtext(_ text: FlairRichtext) -> AnyView {
+    switch text.type {
+    case .emoji:
+      return WebImage(url: text.emojiUrl)
+        .resizable()
+        .frame(width: 24, height: 24)
+        .eraseToAnyView()
+    case .text:
+      if let flairText = text.text {
+        return Text(flairText)
+          .fixedSize(horizontal: true, vertical: false)
+          .eraseToAnyView()
+      } else {
+        return EmptyView()
+          .eraseToAnyView()
+      }
+    }
+  }
+}
+
+extension View {
+  func flairTag(rectangleColor: Color = .white) -> some View {
+    padding(4.0)
       .background(RoundedRectangle(cornerRadius: 4.0)
         .foregroundColor(rectangleColor)
       )
