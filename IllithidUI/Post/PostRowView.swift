@@ -120,13 +120,13 @@ struct PostRowView: View {
   }
 
   func showComments(for post: Post) {
-    windowManager.showWindow(withId: post.fullname, title: post.title) {
+    windowManager.showMainWindowTab(withId: post.fullname, title: post.title) {
       CommentsView(post: post)
     }
   }
 
   func showDebugWindow(for post: Post) {
-    windowManager.showWindow(withId: "\(post.fullname)_debug", title: "\(post.title) - Debug View") {
+    windowManager.showMainWindowTab(withId: "\(post.fullname)_debug", title: "\(post.title) - Debug View") {
       PostDebugView(post: post)
     }
   }
@@ -302,7 +302,7 @@ struct PostMetadataBar: View {
         Text("\(post.author)")
         .usernameStyle(color: authorColor))
         .onTapGesture {
-          self.windowManager.showWindow(withId: self.post.author, title: self.post.author) {
+          self.windowManager.showMainWindowTab(withId: self.post.author, title: self.post.author) {
             AccountView(accountData: .init(name: self.post.author))
           }
         }
@@ -335,7 +335,7 @@ struct PostMetadataBar: View {
       Spacer()
       Text(post.subredditNamePrefixed)
         .onTapGesture {
-          self.windowManager.showWindow(withId: self.post.subredditId, title: self.post.subredditNamePrefixed) {
+          self.windowManager.showMainWindowTab(withId: self.post.subredditId, title: self.post.subredditNamePrefixed) {
             SubredditLoader(fullname: self.post.subredditId)
           }
         }

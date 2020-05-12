@@ -12,10 +12,11 @@ import Illithid
 
 final class WindowManager {
   static let shared = WindowManager()
+  static let defaultTitle = "Reddit: The only newspaper that flays your mind"
 
   typealias ID = String
 
-  private let styleMask: NSWindow.StyleMask = [
+  static let defaultStyleMask: NSWindow.StyleMask = [
     .resizable,
     .titled,
     .closable,
@@ -24,26 +25,31 @@ final class WindowManager {
   private var controllers: [String: (controller: WindowController, token: AnyCancellable)] = [:]
 
   @discardableResult
-  func showWindow<Content: View>(withId id: ID,
-                                 title: String = "Reddit: The only newspaper that flays your mind",
-                                 @ViewBuilder view: () -> Content) -> WindowController {
-    if let controller = windowController(withId: id) {
-      if !(NSApp.mainWindow?.tabGroup?.windows.contains(controller.window!) ?? true) {
-        NSApp.mainWindow?.addTabbedWindow(controller.window!, ordered: .above)
-      }
-      controller.window!.makeKeyAndOrderFront(nil)
-      return controller
-    } else {
-      let controller = makeWindowController(with: id, title: title, view: view)
+  func showMainWindowTab<Content: View>(withId id: ID = UUID().uuidString,
+                                        title: String = WindowManager.defaultTitle,
+                                        @ViewBuilder view: () -> Content) -> WindowController {
+    let controller = windowController(withId: id) ??
+      makeWindowController(with: id, title: title, view: view)
+    if !(NSApp.mainWindow?.tabGroup?.windows.contains(controller.window!) ?? true) {
       NSApp.mainWindow?.addTabbedWindow(controller.window!, ordered: .above)
-      controller.window!.makeKeyAndOrderFront(nil)
-      return controller
     }
+    controller.window!.makeKeyAndOrderFront(nil)
+    return controller
+  }
+
+  @discardableResult
+  func showWindow<Content: View>(withId id: ID = UUID().uuidString,
+                                 title: String = WindowManager.defaultTitle,
+                                 styleMask: NSWindow.StyleMask = WindowManager.defaultStyleMask,
+                                 @ViewBuilder view: () -> Content) -> WindowController {
+    let controller = windowController(withId: id) ??
+      makeWindowController(with: id, title: title, styleMask: styleMask, view: view)
+    controller.window!.makeKeyAndOrderFront(nil)
+    return controller
   }
 
   func newRootWindow() {
-    WindowManager.shared.showWindow(withId: UUID().uuidString,
-                                    title: "Reddit: The only newspaper that flays your mind") {
+    WindowManager.shared.showMainWindowTab(withId: UUID().uuidString) {
       RootView()
     }
   }
@@ -53,6 +59,7 @@ final class WindowManager {
   }
 
   private func makeWindowController<Content: View>(with id: ID, title: String = "",
+                                                   styleMask: NSWindow.StyleMask = WindowManager.defaultStyleMask,
                                                    @ViewBuilder view: () -> Content) -> WindowController {
     let controller = WindowController()
 
@@ -95,7 +102,7 @@ final class WindowManager {
       Multireddit.fetch(user: user, name: multiName) { result in
         switch result {
         case let .success(multi):
-          self.showWindow(withId: multi.id, title: multi.displayName) {
+          self.showMainWindowTab(withId: multi.id, title: multi.displayName) {
             PostListView(postContainer: multi)
           }
         case let .failure(error):
@@ -108,7 +115,7 @@ final class WindowManager {
       Subreddit.fetch(displayName: subreddit) { result in
         switch result {
         case let .success(subreddit):
-          self.showWindow(withId: subreddit.id, title: subreddit.displayName) {
+          self.showMainWindowTab(withId: subreddit.id, title: subreddit.displayName) {
             PostListView(postContainer: subreddit)
           }
         case let .failure(error):
@@ -121,7 +128,7 @@ final class WindowManager {
       Account.fetch(username: username) { result in
         switch result {
         case let .success(account):
-          self.showWindow(withId: account.id, title: account.name) {
+          self.showMainWindowTab(withId: account.id, title: account.name) {
             AccountView(accountData: .init(account: account))
           }
         case let .failure(error):
@@ -136,7 +143,7 @@ final class WindowManager {
       Post.fetch(name: "t3_\(postId36)") { result in
         switch result {
         case let .success(post):
-          self.showWindow(withId: post.fullname, title: post.title) {
+          self.showMainWindowTab(withId: post.fullname, title: post.title) {
             CommentsView(post: post, focusOn: focusedCommentId)
           }
         case let .failure(error):

@@ -94,8 +94,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   private func showMainWindow() {
-    let controller = windowManager.showWindow(withId: "mainWindow",
-                                              title: "Reddit: The only newspaper that flays your mind") {
+    let controller = windowManager.showMainWindowTab(withId: "mainWindow") {
       RootView()
     }
     controller.window?.setFrameAutosaveName("Main Window")
@@ -132,7 +131,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
           link.host == "www.reddit.com" {
           windowManager.openRedditLink(link: link)
         } else {
-          windowManager.showWindow(withId: link.absoluteString) {
+          windowManager.showMainWindowTab(withId: link.absoluteString) {
             WebView(url: link)
           }
         }
