@@ -19,6 +19,8 @@ extension NSImage.Name {
   static let flag = NSImage.Name("flag.fill")
   static let arrowDownRightUpLeft = NSImage.Name("expand.alt")
   static let menuBars = NSImage.Name("bars")
+  static let lock = NSImage.Name("lock")
+  static let mapPin = NSImage.Name("map.pin")
 
   // Browsers
   static let chrome = NSImage.Name("chrome")

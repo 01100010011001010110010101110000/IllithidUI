@@ -39,8 +39,27 @@ struct PostRowView: View {
               Text("Crossposted by \(self.post.author) \(self.post.relativePostTime) ago")
                 .font(.caption)
             }
-            PostFlairBar(post: self.post)
-              .padding(.top, 2.0)
+            HStack {
+              if post.stickied {
+                Image(named: .mapPin)
+                  .resizable()
+                  .frame(width: 16, height: 24)
+                  .foregroundColor(.green)
+                  .padding(.top, 2.0)
+              }
+              if post.locked {
+                Image(named: .lock)
+                  .resizable()
+                  .frame(width: 24, height: 24)
+                  .foregroundColor(.green)
+                  .padding(.top, 2.0)
+                  .tooltip(Post.lockedDescription)
+              }
+              Spacer()
+              PostFlairBar(post: self.post)
+                .padding(.top, 2.0)
+              Spacer()
+            }
             Text(self.post.title)
               .font(.title)
               .multilineTextAlignment(.center)
@@ -131,6 +150,10 @@ struct PostRowView: View {
       PostDebugView(post: post)
     }
   }
+}
+
+extension Post {
+  static let lockedDescription: String = "This post has been locked. New comments are disabled"
 }
 
 // MARK: Post meta views
