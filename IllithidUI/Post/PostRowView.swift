@@ -1,7 +1,7 @@
 //
 // PostRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/10/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/11/20
 //
 
 import SwiftUI
@@ -370,12 +370,13 @@ struct PostFlairBar: View {
     }
   }
 
-  func renderRichtext(_ text: FlairRichtext) -> AnyView {
+  private func renderRichtext(_ text: FlairRichtext) -> AnyView {
     switch text.type {
     case .emoji:
       return WebImage(url: text.emojiUrl)
         .resizable()
         .frame(width: 24, height: 24)
+        .tooltip(text.emojiShortcode)
         .eraseToAnyView()
     case .text:
       if let flairText = text.text {
