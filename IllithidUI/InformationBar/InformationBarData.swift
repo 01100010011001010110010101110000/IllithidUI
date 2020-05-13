@@ -16,7 +16,6 @@ final class InformationBarData: ObservableObject {
   private var defaults: UserDefaults = .standard
   private var decoder = JSONDecoder()
   private var encoder = JSONEncoder()
-  private var cancelToken: AnyCancellable?
 
   private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.InformationBar", qos: .background)
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.InformationBar",
@@ -64,19 +63,6 @@ final class InformationBarData: ObservableObject {
     if subscribedSubreddits.isEmpty {
       loadSubscriptions()
     }
-
-    // Loading the subscriptions takes a few seconds if the user has many, so use a high period
-    cancelToken = Timer.publish(every: 30.0, on: .main, in: .common)
-      .autoconnect()
-      .sink { [weak self] _ in
-        guard let self = self else { return }
-        self.loadMultireddits()
-        self.loadSubscriptions()
-      }
-  }
-
-  deinit {
-    cancelToken?.cancel()
   }
 
   func postContainer(for provider: PostProvider) -> PostListData {

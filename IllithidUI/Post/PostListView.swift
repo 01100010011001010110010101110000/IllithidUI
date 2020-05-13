@@ -12,9 +12,12 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct PostListView: View {
+  @EnvironmentObject var informationBarData: InformationBarData
+
   @ObservedObject var preferences: PreferencesData = .shared
   @ObservedObject var postsData: PostListData
   @ObservedObject private var sorter = SortModel(sort: PostSort.best, topInterval: .day)
+
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
 
@@ -78,6 +81,7 @@ struct PostListView: View {
         .padding([.bottom, .leading, .trailing], 10)
       }
       .background(Color(.controlBackgroundColor))
+
       HSplitView {
         List {
           ForEach(filteredPosts) { post in
@@ -105,7 +109,10 @@ struct PostListView: View {
 }
 
 struct SidebarView: View {
+  @EnvironmentObject var informationBarData: InformationBarData
+
   @State private var subscribed: Bool = false
+
   let subreddit: Subreddit
 
   init(subreddit: Subreddit) {
@@ -133,12 +140,14 @@ struct SidebarView: View {
               self.subreddit.unsubscribe { result in
                 if case Result.success = result {
                   self.subscribed = false
+                  self.informationBarData.loadSubscriptions()
                 }
               }
             } else {
               self.subreddit.subscribe { result in
                 if case Result.success = result {
                   self.subscribed = true
+                  self.informationBarData.loadSubscriptions()
                 }
               }
             }
@@ -191,10 +200,8 @@ struct SubredditLoader: View, Identifiable {
   }
 }
 
-// #if DEBUG
 // struct PostListView_Previews: PreviewProvider {
 //  static var previews: some View {
 //    PostListView(postsData: .init(), subreddit: .init(), reddit: .init())
 //  }
 // }
-// #endif

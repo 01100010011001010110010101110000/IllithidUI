@@ -1,7 +1,7 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/15/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/10/20
 //
 
 import SwiftUI
@@ -81,6 +81,7 @@ struct InformationBarNavigationView: View {
       }
       .listStyle(SidebarListStyle())
     }
+    .environmentObject(informationBarData)
     .sheet(isPresented: self.$isEditingMulti, onDismiss: {
       self.multiredditSearch.clearData()
       self.multiredditSearch.clearQueryText()

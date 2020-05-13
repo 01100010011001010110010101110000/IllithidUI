@@ -248,10 +248,12 @@ struct PostActionBar: View {
 }
 
 struct PostMetadataBar: View {
+  @EnvironmentObject var informationBarData: InformationBarData
+
   @ObservedObject private var moderators: ModeratorData = .shared
-  private let windowManager: WindowManager = .shared
 
   let post: Post
+  private let windowManager: WindowManager = .shared
 
   private var authorColor: Color {
     if post.isAdminPost {
@@ -308,6 +310,7 @@ struct PostMetadataBar: View {
         .onTapGesture {
           self.windowManager.showMainWindowTab(withId: self.post.subredditId, title: self.post.subredditNamePrefixed) {
             SubredditLoader(fullname: self.post.subredditId)
+              .environmentObject(self.informationBarData)
           }
         }
     }
