@@ -1,7 +1,7 @@
 //
 // PostRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/11/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/12/20
 //
 
 import SwiftUI
@@ -165,7 +165,7 @@ struct PostActionBar: View {
             self.vote = .up
             self.post.upvote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error upvoting \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           }
@@ -189,7 +189,7 @@ struct PostActionBar: View {
             self.vote = .down
             self.post.downvote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error downvoting \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           }
@@ -206,13 +206,13 @@ struct PostActionBar: View {
           if self.saved {
             self.post.save { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error saving \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           } else {
             self.post.unsave { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error unsaving \(self.post.title) - \(self.post.fullname): \(error)")
               }
             }
           }

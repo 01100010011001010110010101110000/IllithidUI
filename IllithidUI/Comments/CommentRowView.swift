@@ -1,7 +1,7 @@
 //
 // CommentRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/5/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/8/20
 //
 
 import SwiftUI
@@ -98,7 +98,7 @@ struct CommentActionBar: View {
             self.vote = .up
             self.comment.upvote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error upvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
               }
             }
           }
@@ -120,7 +120,7 @@ struct CommentActionBar: View {
             self.vote = .down
             self.comment.downvote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error downvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
               }
             }
           }
@@ -135,13 +135,13 @@ struct CommentActionBar: View {
           if self.saved {
             self.comment.save { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error saving \(self.comment.author) - \(self.comment.fullname): \(error)")
               }
             }
           } else {
             self.comment.unsave { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error unsaving \(self.comment.author) - \(self.comment.fullname): \(error)")
               }
             }
           }

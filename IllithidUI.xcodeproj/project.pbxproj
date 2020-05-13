@@ -817,6 +817,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flayware.IllithidUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
