@@ -1,7 +1,7 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/10/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/12/20
 //
 
 import SwiftUI
@@ -17,14 +17,19 @@ struct InformationBarNavigationView: View {
   @State private var isEditingMulti: Bool = false
   @State private var editing: Multireddit.ID?
 
+  private var accountView: some View {
+    AccountView(accountData: .init(account: Illithid.shared.accountManager.currentAccount))
+      .environmentObject(self.informationBarData)
+  }
+
   var body: some View {
     NavigationView {
       List {
         Section(header: Text("Meta")) {
-          NavigationLink("Account", destination: AccountView(accountData: .init(account: Illithid.shared.accountManager.currentAccount)))
+          NavigationLink("Account", destination: accountView)
             .openableInNewTab(id: Illithid.shared.accountManager.currentAccount?.id ?? "account",
                               title: Illithid.shared.accountManager.currentAccount?.name ?? "Account") {
-              AccountView(accountData: .init(account: Illithid.shared.accountManager.currentAccount))
+              self.accountView
             }
           NavigationLink("Search", destination: SearchView(searchData: .init()))
             .openableInNewTab(id: "search", title: "Search") { SearchView(searchData: .init()) }
