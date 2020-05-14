@@ -1,7 +1,7 @@
 //
 // AccountView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/5/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/12/20
 //
 
 import SwiftUI
@@ -56,6 +56,8 @@ private struct Content: View {
 }
 
 struct AccountView: View {
+  @EnvironmentObject var informationBarData: InformationBarData
+
   @ObservedObject var accountData: AccountData
 
   var body: some View {
@@ -73,6 +75,7 @@ struct AccountView: View {
       }
       .listStyle(SidebarListStyle())
     }
+    .environmentObject(informationBarData)
   }
 }
 

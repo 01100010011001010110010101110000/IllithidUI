@@ -101,9 +101,9 @@ struct PostRowView: View {
     .contextMenu {
       Button(action: {
         self.showComments(for: self.post)
-      }) {
+      }, label: {
         Text("Show comments…")
-      }
+      })
       Divider()
       Button(action: {
         openLink(self.post.postUrl)
@@ -119,15 +119,15 @@ struct PostRowView: View {
       Button(action: {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(self.post.postUrl.absoluteString, forType: .string)
-      }) {
+      }, label: {
         Text("Copy post URL")
-      }
+      })
       Button(action: {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(self.post.contentUrl.absoluteString, forType: .string)
-      }) {
+      }, label: {
         Text("Copy content URL")
-      }
+      })
       Divider()
       #if DEBUG
         Button(action: {
@@ -300,6 +300,7 @@ struct PostMetadataBar: View {
         .onTapGesture {
           self.windowManager.showMainWindowTab(withId: self.post.author, title: self.post.author) {
             AccountView(accountData: .init(name: self.post.author))
+              .environmentObject(self.informationBarData)
           }
         }
       Spacer()
