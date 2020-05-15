@@ -1,7 +1,7 @@
 //
 // LinkPreview.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/14/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/15/20
 //
 
 import Combine
@@ -15,13 +15,16 @@ import Kanna
 import SDWebImageSwiftUI
 
 struct LinkPreview: View {
+  @Environment(\.hostingWindow) var hostingWindow
   @ObservedObject var previewData: LinkPreviewData
+  @State private var showingPreview: Bool
 
   let isNsfw: Bool
 
   init(link: URL, isNsfw: Bool = false) {
     previewData = .init(link: link)
     self.isNsfw = isNsfw
+    _showingPreview = .init(initialValue: false)
   }
 
   var body: some View {
@@ -36,6 +39,26 @@ struct LinkPreview: View {
         .onTapGesture {
           openLink(self.previewData.link)
         }
+        .popover(isPresented: $showingPreview) {
+          VStack(spacing: 0) {
+            HStack {
+              Button(action: {
+                openLink(self.previewData.link)
+                self.showingPreview = false
+              }, label: {
+                Text("Open link")
+              })
+              Spacer()
+            }
+            .padding(5)
+            WebView(url: self.previewData.link)
+          }
+          .frame(width: (self.hostingWindow.frame?.width ?? 800) / 2,
+                 height: (self.hostingWindow.screen??.frame.height ?? 1200) / 2)
+        }
+    }
+    .onLongPressGesture(minimumDuration: 0.3) {
+      self.showingPreview = true
     }
     .frame(width: 512)
     .background(Color(.controlBackgroundColor))
