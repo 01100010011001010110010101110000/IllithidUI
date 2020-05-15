@@ -1,7 +1,7 @@
 //
 // LinkPreview.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/3/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/14/20
 //
 
 import Combine
@@ -61,7 +61,7 @@ final class LinkPreviewData: ObservableObject {
     self.link = link
   }
 
-  private static let queue = DispatchQueue(label: "com.fayware.IllithidUI.LinkPreview")
+  private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.LinkPreview")
   private let session = (NSApp.delegate! as! AppDelegate).session
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
 
