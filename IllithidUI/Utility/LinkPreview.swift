@@ -184,7 +184,7 @@ private struct WebPreviewPopover: View {
         }, label: {
           Text("Open")
         })
-        SharingButton(items: [link])
+        SharingButton(items: [link], edge: .maxX)
         Spacer()
       }
       .padding(5)

@@ -10,12 +10,18 @@ import SwiftUI
 
 struct SharingButton: View {
   let items: [Any]
+  let preferredEdge: NSRectEdge
   private let view = NSView()
+
+  init(items: [Any], edge: NSRectEdge = .minY) {
+    self.items = items
+    preferredEdge = edge
+  }
 
   var body: some View {
     Button(action: {
       let picker = NSSharingServicePicker(items: self.items)
-      picker.show(relativeTo: .zero, of: self.view, preferredEdge: .minY)
+      picker.show(relativeTo: .zero, of: self.view, preferredEdge: self.preferredEdge)
     }, label: {
       Image(named: NSImage.shareTemplateName)
     })
