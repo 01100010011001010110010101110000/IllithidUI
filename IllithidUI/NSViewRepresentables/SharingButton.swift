@@ -16,7 +16,9 @@ struct SharingButton: View {
     Button(action: {
       let picker = NSSharingServicePicker(items: self.items)
       picker.show(relativeTo: .zero, of: self.view, preferredEdge: .minY)
-    }, label: { Text("Share") })
+    }, label: {
+      Image(named: NSImage.shareTemplateName)
+    })
       .overlay(SharingOverlay(view: view))
   }
 }
@@ -34,4 +36,10 @@ private struct SharingOverlay: NSViewRepresentable {
   }
 
   func updateNSView(_: NSView, context _: Context) {}
+}
+
+struct SharingButton_Preview: PreviewProvider {
+  static var previews: some View {
+    SharingButton(items: [])
+  }
 }
