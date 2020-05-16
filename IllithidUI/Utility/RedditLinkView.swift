@@ -9,6 +9,7 @@ import SwiftUI
 import Illithid
 
 struct RedditLinkView: View {
+  @State private var hover: Bool = false
   let link: URL
 
   private let icon = Image(named: .redditSquare)
@@ -16,13 +17,15 @@ struct RedditLinkView: View {
 
   var body: some View {
     VStack {
-      LinkBar(icon: icon, link: link)
+      LinkBar(iconIsScaled: $hover, icon: icon, link: link)
         .frame(width: 512)
         .background(Color(.controlBackgroundColor))
         .modifier(RoundedBorder(style: Color(.darkGray),
                                 cornerRadius: 8.0, width: 2.0))
-        .onTapGesture {
-          self.openRedditLink(link: self.link)
+        .onHover { entered in
+          withAnimation(.easeInOut(duration: 0.7)) {
+            self.hover = entered
+          }
         }
     }
   }

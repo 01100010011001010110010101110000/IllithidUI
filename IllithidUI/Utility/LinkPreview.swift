@@ -15,9 +15,9 @@ import Kanna
 import SDWebImageSwiftUI
 
 struct LinkPreview: View {
-  @Environment(\.hostingWindow) var hostingWindow
   @ObservedObject var previewData: LinkPreviewData
   @State private var showingPreview: Bool
+  @State private var hover: Bool
 
   let isNsfw: Bool
 
@@ -25,6 +25,7 @@ struct LinkPreview: View {
     previewData = .init(link: link)
     self.isNsfw = isNsfw
     _showingPreview = .init(initialValue: false)
+    _hover = .init(initialValue: false)
   }
 
   var body: some View {
@@ -35,27 +36,19 @@ struct LinkPreview: View {
           .conditionalModifier(isNsfw, NsfwBlurModifier())
       }
 
-      LinkBar(link: previewData.link)
-        .onTapGesture {
-          openLink(self.previewData.link)
-        }
+      LinkBar(iconIsScaled: $hover, link: previewData.link)
         .popover(isPresented: $showingPreview) {
-          VStack(spacing: 0) {
-            HStack {
-              Button(action: {
-                openLink(self.previewData.link)
-                self.showingPreview = false
-              }, label: {
-                Text("Open link")
-              })
-              Spacer()
-            }
-            .padding(5)
-            WebView(url: self.previewData.link)
-          }
-          .frame(width: (self.hostingWindow.frame?.width ?? 800) / 2,
-                 height: (self.hostingWindow.screen??.frame.height ?? 1200) / 2)
+          WebPreviewPopover(showingPreview: self.$showingPreview,
+                            link: self.previewData.link)
         }
+    }
+    .onHover { entered in
+      withAnimation(.easeInOut(duration: 0.7)) {
+        self.hover = entered
+      }
+    }
+    .onTapGesture {
+      openLink(self.previewData.link)
     }
     .onLongPressGesture(minimumDuration: 0.3) {
       self.showingPreview = true
@@ -134,12 +127,13 @@ struct LinkPreview_Previews: PreviewProvider {
 
 struct LinkBar: View {
   @ObservedObject var preferences: PreferencesData = .shared
-  @State private var hover: Bool = false
+  @Binding var scaleIcon: Bool
 
   let link: URL
   let iconOverride: Image?
 
-  init(icon: Image? = nil, link: URL) {
+  init(iconIsScaled: Binding<Bool>, icon: Image? = nil, link: URL) {
+    _scaleIcon = iconIsScaled
     self.link = link
     iconOverride = icon
   }
@@ -159,7 +153,7 @@ struct LinkBar: View {
         .foregroundColor(.white)
         .frame(width: 24, height: 24)
         .padding(.leading, 4.0)
-        .scaleEffect(self.hover ? 1.3 : 1.0)
+        .scaleEffect(self.scaleIcon ? 1.3 : 1.0)
       Rectangle()
         .fill(Color(.darkGray))
         .frame(width: 2, height: 24)
@@ -168,12 +162,34 @@ struct LinkBar: View {
         .foregroundColor(.secondary)
       Spacer()
     }
-    .onHover(perform: { entered in
-      withAnimation(.easeInOut(duration: 0.7)) {
-        self.hover = entered
-      }
-    })
+    .onTapGesture {
+      openLink(self.link)
+    }
     .padding(4)
     .frame(maxHeight: 32, alignment: .leading)
+  }
+}
+
+private struct WebPreviewPopover: View {
+  @Environment(\.hostingWindow) var hostingWindow
+  @Binding var showingPreview: Bool
+  let link: URL
+
+  var body: some View {
+    VStack(spacing: 0) {
+      HStack {
+        Button(action: {
+          openLink(self.link)
+          self.showingPreview = false
+        }, label: {
+          Text("Open")
+        })
+        Spacer()
+      }
+      .padding(5)
+      WebView(url: self.link)
+    }
+    .frame(width: (self.hostingWindow.frame?.width ?? 800) / 1.3333,
+           height: (self.hostingWindow.screen??.frame.height ?? 1200) / 1.3333)
   }
 }
