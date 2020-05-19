@@ -154,6 +154,17 @@ struct SidebarView: View {
           }
           .frame(width: 32, height: 32)
           .padding(.leading, 10)
+        IllithidButton(label: {
+          Image(named: .book)
+            .resizable()
+            .frame(width: 24, height: 24)
+            .tooltip("Show Wiki")
+        }, mouseUp: {
+          WindowManager.shared.showWindow(withId: "\(self.subreddit.name)/wiki",
+                                          title: "\(self.subreddit.displayName) Wiki") {
+            WikiPagesView(wikiData: .init(subreddit: self.subreddit))
+          }
+        })
         Spacer()
       }
       Divider()

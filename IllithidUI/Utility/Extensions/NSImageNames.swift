@@ -21,6 +21,7 @@ extension NSImage.Name {
   static let menuBars = NSImage.Name("bars")
   static let lock = NSImage.Name("lock")
   static let mapPin = NSImage.Name("map.pin")
+  static let book = NSImage.Name("book")
 
   // Browsers
   static let chrome = NSImage.Name("chrome")

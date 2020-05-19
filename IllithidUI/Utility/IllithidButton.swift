@@ -9,20 +9,40 @@ import SwiftUI
 struct IllithidButton: View {
   @State private var pressed: Bool = false
 
-  let action: () -> Void
-  let label: String
+  let mouseDown: () -> Void
+  let mouseUp: () -> Void
+  let label: AnyView
+
+  init<S: StringProtocol>(label: S,
+                          mouseDown: @escaping () -> Void = {},
+                          mouseUp: @escaping () -> Void) {
+    self.mouseUp = mouseUp
+    self.mouseDown = mouseDown
+    self.label = Text(label)
+      .eraseToAnyView()
+  }
+
+  init<V: View>(@ViewBuilder label: () -> V,
+                mouseDown: @escaping () -> Void = {},
+                mouseUp: @escaping () -> Void) {
+    self.mouseUp = mouseUp
+    self.mouseDown = mouseDown
+    self.label = label()
+      .eraseToAnyView()
+  }
 
   var body: some View {
-    Text(label)
+    label
       .padding([.leading, .trailing], 12)
       .padding([.top, .bottom], 2)
       .background(RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(self.pressed ? .accentColor : Color(.controlColor)))
       .onMouseGesture(mouseDown: {
         self.pressed = true
+        self.mouseDown()
       }, mouseUp: {
         self.pressed = false
-        self.action()
+        self.mouseUp()
     })
   }
 }

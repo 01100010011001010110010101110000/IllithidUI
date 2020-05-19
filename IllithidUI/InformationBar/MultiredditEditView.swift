@@ -58,7 +58,7 @@ struct MultiredditEditView: View {
               HStack {
                 Text(subreddit.displayName)
                 Spacer()
-                IllithidButton(action: {
+                IllithidButton(label: "Add to \(editing.displayName)") {
                   editing.addSubreddit(subreddit) { result in
                     switch result {
                     case .success:
@@ -67,7 +67,7 @@ struct MultiredditEditView: View {
                       print("Error adding \(subreddit.displayName) to \(editing.displayName): \(error)")
                     }
                   }
-                }, label: "Add to \(editing.displayName)")
+                }
               }
             }
           }
