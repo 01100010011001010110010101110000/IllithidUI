@@ -6,6 +6,13 @@
 
 import AppKit
 import Foundation
+import SwiftUI
+
+extension Image {
+  init(named: NSImage.Name) {
+    self.init(nsImage: NSImage(named: named)!)
+  }
+}
 
 extension NSImage.Name {
   static let arrowDown = NSImage.Name("arrow.down")
@@ -22,6 +29,7 @@ extension NSImage.Name {
   static let lock = NSImage.Name("lock")
   static let mapPin = NSImage.Name("map.pin")
   static let book = NSImage.Name("book")
+  static let rssFeed = NSImage.Name("rss")
 
   // Browsers
   static let chrome = NSImage.Name("chrome")
