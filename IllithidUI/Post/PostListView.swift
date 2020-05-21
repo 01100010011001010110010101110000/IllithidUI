@@ -1,7 +1,7 @@
 //
 // PostListView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/10/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/18/20
 //
 
 import Combine
@@ -133,7 +133,12 @@ struct SidebarView: View {
       HStack {
         RoundedRectangle(cornerRadius: 2.0)
           .foregroundColor(subscribed ? .blue : Color(.darkGray))
-          .overlay(Text("Subscribe"), alignment: .center)
+          .overlay(
+            Image(named: .rssFeed)
+              .resizable()
+              .frame(width: 24, height: 24),
+            alignment: .center
+          )
           .foregroundColor(.white)
           .onTapGesture {
             if self.subscribed {
