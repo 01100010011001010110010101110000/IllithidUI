@@ -11,12 +11,19 @@ import WebKit
 struct WebView: View {
   @ObservedObject fileprivate var webView: _WebView
 
-  private let configuration: WKWebViewConfiguration = .init()
-
   init(url: URL) {
-    webView = .init(url: url, configuration: .init())
+    webView = .init(url: url, configuration: Self.makeConfiguration())
+  }
+
+  init(html: String, relativeTo baseUrl: URL?) {
+    webView = .init(html: html, relativeTo: baseUrl, configuration: Self.makeConfiguration())
+  }
+
+  private static func makeConfiguration() -> WKWebViewConfiguration {
+    let configuration: WKWebViewConfiguration = .init()
     configuration.mediaTypesRequiringUserActionForPlayback = .all
     configuration.websiteDataStore = .nonPersistent() // Web views are "private"
+    return configuration
   }
 
   var body: some View {
@@ -49,10 +56,19 @@ private final class _WebView: WKWebView, ObservableObject {
 
   private var cancelBag: [AnyCancellable] = []
 
+  convenience init(html: String, relativeTo baseUrl: URL?, configuration: WKWebViewConfiguration) {
+    self.init(frame: .zero, configuration: configuration)
+    loadHTMLString(html, baseURL: baseUrl)
+    observe()
+  }
+
   convenience init(url: URL, configuration: WKWebViewConfiguration) {
     self.init(frame: .zero, configuration: configuration)
     load(URLRequest(url: url))
+    observe()
+  }
 
+  private func observe() {
     cancelBag.append(publisher(for: \.title)
       .receive(on: RunLoop.main)
       .assign(to: \.pageTitle, on: self))
