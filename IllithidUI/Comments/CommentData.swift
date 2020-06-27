@@ -1,7 +1,7 @@
 //
 // CommentData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/22/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/8/20
 //
 
 import Combine
@@ -133,7 +133,7 @@ class CommentData: ObservableObject {
         wrappers.forEach { wrapper in
           // Insert fetched comments into the tree
           self.commentState[wrapper.id] = .expanded
-          if wrapper.parentId == self.post.fullname {
+          if wrapper.parentId == self.post.name {
             self.root.append(child: wrapper)
           } else {
             self.root.insert(wrapper, firstWhere: { node in

@@ -1,7 +1,7 @@
 //
 // PostListView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/18/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/20/20
 //
 
 import Combine
@@ -117,7 +117,7 @@ struct SidebarView: View {
 
   init(subreddit: Subreddit) {
     self.subreddit = subreddit
-    _subscribed = .init(initialValue: subreddit.userIsSubscriber ?? false)
+    _subscribed = .init(initialValue: subreddit.userIsSubscriber)
   }
 
   var body: some View {

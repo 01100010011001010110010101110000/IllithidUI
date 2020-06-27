@@ -140,13 +140,13 @@ struct PostRowView: View {
   }
 
   func showComments(for post: Post) {
-    windowManager.showMainWindowTab(withId: post.fullname, title: post.title) {
+    windowManager.showMainWindowTab(withId: post.name, title: post.title) {
       CommentsView(post: post)
     }
   }
 
   func showDebugWindow(for post: Post) {
-    windowManager.showMainWindowTab(withId: "\(post.fullname)_debug", title: "\(post.title) - Debug View") {
+    windowManager.showMainWindowTab(withId: "\(post.name)_debug", title: "\(post.title) - Debug View") {
       PostDebugView(post: post)
     }
   }
@@ -181,14 +181,14 @@ struct PostActionBar: View {
             self.vote = .clear
             self.post.clearVote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.name): \(error)")
               }
             }
           } else {
             self.vote = .up
             self.post.upvote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error upvoting \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error upvoting \(self.post.title) - \(self.post.name): \(error)")
               }
             }
           }
@@ -205,14 +205,14 @@ struct PostActionBar: View {
             self.vote = .clear
             self.post.clearVote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.name): \(error)")
               }
             }
           } else {
             self.vote = .down
             self.post.downvote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error downvoting \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error downvoting \(self.post.title) - \(self.post.name): \(error)")
               }
             }
           }
@@ -229,13 +229,13 @@ struct PostActionBar: View {
           if self.saved {
             self.post.save { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error saving \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error saving \(self.post.title) - \(self.post.name): \(error)")
               }
             }
           } else {
             self.post.unsave { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error unsaving \(self.post.title) - \(self.post.fullname): \(error)")
+                Illithid.shared.logger.errorMessage("Error unsaving \(self.post.title) - \(self.post.name): \(error)")
               }
             }
           }
@@ -432,7 +432,6 @@ extension View {
 struct PostRowView_Previews: PreviewProvider {
   static var previews: some View {
     let decoder = JSONDecoder()
-    decoder.keyDecodingStrategy = .convertFromSnakeCase
     decoder.dateDecodingStrategy = .secondsSince1970
 
     let singlePostURL = Bundle.main.url(forResource: "single_post", withExtension: "json")!

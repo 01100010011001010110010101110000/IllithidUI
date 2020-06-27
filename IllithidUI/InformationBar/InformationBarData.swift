@@ -39,9 +39,7 @@ final class InformationBarData: ObservableObject {
 
   init() {
     decoder.dateDecodingStrategy = .secondsSince1970
-    decoder.keyDecodingStrategy = .convertFromSnakeCase
     encoder.dateEncodingStrategy = .secondsSince1970
-    encoder.keyEncodingStrategy = .convertToSnakeCase
 
     if let subscribedData = defaults.data(forKey: "subscribedSubreddits"),
       let subreddits = try? decoder.decode([Subreddit].self, from: subscribedData) {

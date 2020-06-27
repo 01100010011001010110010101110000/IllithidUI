@@ -143,7 +143,7 @@ final class WindowManager {
       Post.fetch(name: "t3_\(postId36)") { result in
         switch result {
         case let .success(post):
-          self.showMainWindowTab(withId: post.fullname, title: post.title) {
+          self.showMainWindowTab(withId: post.name, title: post.title) {
             CommentsView(post: post, focusOn: focusedCommentId)
           }
         case let .failure(error):

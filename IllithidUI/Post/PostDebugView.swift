@@ -18,7 +18,6 @@ struct PostDebugView: View, Identifiable {
     self.post = post
     id = post.id
     encoder.dateEncodingStrategy = .secondsSince1970
-    encoder.keyEncodingStrategy = .convertToSnakeCase
     encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
 
     if let data = try? encoder.encode(post) {
