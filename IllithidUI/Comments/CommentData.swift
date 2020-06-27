@@ -1,7 +1,7 @@
 //
 // CommentData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/8/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import Combine
@@ -99,8 +99,13 @@ class CommentData: ObservableObject {
   func loadComments(focusOn commentId: ID36? = nil, context: Int? = nil) {
     cancelToken = illithid.comments(for: post, parameters: listingParameters, focusOn: commentId, context: context)
       .receive(on: RunLoop.main)
-      .sink(receiveCompletion: { value in
-        self.illithid.logger.errorMessage("Error fetching comments\(value)")
+      .sink(receiveCompletion: { completion in
+        switch completion {
+        case .finished:
+          Illithid.shared.logger.debugMessage("Finished fetching comments for \(self.post.name) - \(self.post.title)")
+        case let .failure(error):
+          self.illithid.logger.errorMessage("Error fetching comments \(error)")
+        }
       }) { listing in
         // Append the top level comments
         self.root.append(contentsOf: listing.allComments)
@@ -123,8 +128,13 @@ class CommentData: ObservableObject {
   func loadMoreComments(more: More) {
     moreCancelToken = illithid.moreComments(for: more, in: post)
       .receive(on: RunLoop.main)
-      .sink(receiveCompletion: { value in
-        self.illithid.logger.errorMessage("Error fetching more comments\(value)")
+      .sink(receiveCompletion: { completion in
+        switch completion {
+        case .finished:
+          Illithid.shared.logger.debugMessage("Finished fetching more comments for \(self.post.name) - \(self.post.title)")
+        case let .failure(error):
+          self.illithid.logger.errorMessage("Error fetching more comments \(error)")
+        }
     }) { wrappers in
         // Remove More object from tree
         self.root.removeSubtree { node in
