@@ -1,7 +1,7 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/12/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import SwiftUI
@@ -36,7 +36,7 @@ struct InformationBarNavigationView: View {
         }
         Section(header: Text("Front Page")) {
           ForEach(FrontPage.allCases) { page in
-            NavigationLink(page.title, destination: PostListView(data: self.informationBarData.postContainer(for: page)))
+            NavigationLink(page.title, destination: PostListView(postContainer: page))
               .openableInNewTab(id: page.id, title: page.title) { PostListView(postContainer: page) }
           }
         }
@@ -53,7 +53,7 @@ struct InformationBarNavigationView: View {
               return true
             }
           }) { multireddit in
-            NavigationLink(multireddit.name, destination: PostListView(data: self.informationBarData.postContainer(for: multireddit)))
+            NavigationLink(multireddit.name, destination: PostListView(postContainer: multireddit))
               .openableInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
               .contextMenu {
                 Button(action: {
@@ -74,7 +74,7 @@ struct InformationBarNavigationView: View {
               return true
             }
           }) { subreddit in
-            NavigationLink(destination: PostListView(data: self.informationBarData.postContainer(for: subreddit))) {
+            NavigationLink(destination: PostListView(postContainer: subreddit)) {
               HStack {
                 Text(subreddit.displayName)
                 Spacer()

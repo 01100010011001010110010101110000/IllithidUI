@@ -1,7 +1,7 @@
 //
 // PostListData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import Combine
@@ -14,8 +14,6 @@ import Illithid
 final class PostListData: ObservableObject {
   @Published var posts: [Post] = []
 
-  let postsProvider: PostProvider
-
   private var postListingParams: ListingParameters = .init()
   private var exhausted: Bool = false
   private var loading: Bool = false
@@ -24,17 +22,13 @@ final class PostListData: ObservableObject {
                           category: .pointsOfInterest)
   private var requests: [DataRequest] = []
 
-  init(provider: PostProvider) {
-    postsProvider = provider
-  }
-
-  func loadPosts(sort: PostSort, topInterval: TopInterval) {
+  func loadPosts(for provider: PostProvider, sort: PostSort, topInterval: TopInterval) {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
     if !exhausted, !loading {
       loading = true
-      let request = postsProvider.posts(sortBy: sort, location: nil, topInterval: topInterval,
-                                        parameters: postListingParams, queue: .main) { result in
+      let request = provider.posts(sortBy: sort, location: nil, topInterval: topInterval,
+                                   parameters: postListingParams, queue: .main) { result in
         switch result {
         case let .success(listing):
           if let anchor = listing.after { self.postListingParams.after = anchor }
@@ -50,12 +44,12 @@ final class PostListData: ObservableObject {
     }
   }
 
-  func reload(sort: PostSort, topInterval: TopInterval) {
+  func reload(for provider: PostProvider, sort: PostSort, topInterval: TopInterval) {
     cancel()
     exhausted = false
     posts.removeAll(keepingCapacity: true)
     postListingParams = .init()
-    loadPosts(sort: sort, topInterval: topInterval)
+    loadPosts(for: provider, sort: sort, topInterval: topInterval)
   }
 
   func cancel() {

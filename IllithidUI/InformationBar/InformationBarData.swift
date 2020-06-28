@@ -1,7 +1,7 @@
 //
 // InformationBarData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import Combine
@@ -60,15 +60,6 @@ final class InformationBarData: ObservableObject {
     }
     if subscribedSubreddits.isEmpty {
       loadSubscriptions()
-    }
-  }
-
-  func postContainer(for provider: PostProvider) -> PostListData {
-    if let container = postContainers[provider.id] { return container }
-    else {
-      let container = PostListData(provider: provider)
-      postContainers[provider.id] = container
-      return container
     }
   }
 
