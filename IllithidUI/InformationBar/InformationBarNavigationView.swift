@@ -26,23 +26,19 @@ struct InformationBarNavigationView: View {
     NavigationView {
       List {
         Section(header: Text("Meta")) {
-          NavigationLink("Account", destination: accountView)
+          NavigationLink(destination: accountView, label: { Label("Account", systemImage: "person.crop.circle") })
             .openableInNewTab(id: Illithid.shared.accountManager.currentAccount?.id ?? "account",
                               title: Illithid.shared.accountManager.currentAccount?.name ?? "Account") {
               self.accountView
             }
-          NavigationLink("Search", destination: SearchView(searchData: .init()))
+          NavigationLink(destination: SearchView(searchData: .init()), label: { Label("Search", systemImage: "magnifyingglass") })
             .openableInNewTab(id: "search", title: "Search") { SearchView(searchData: .init()) }
         }
         Section(header: Text("Front Page")) {
           ForEach(FrontPage.allCases) { page in
-            NavigationLink(page.title, destination: PostListView(postContainer: page))
+            NavigationLink(destination: PostListView(postContainer: page), label: { Label(page.title, systemImage: page.systemImageIconName) })
               .openableInNewTab(id: page.id, title: page.title) { PostListView(postContainer: page) }
           }
-        }
-
-        Section(header: Text("Favorites")) {
-          EmptyView()
         }
 
         Section(header: Text("Multireddits")) {
@@ -105,6 +101,21 @@ struct InformationBarNavigationView: View {
         }
       }
     })
+  }
+}
+
+extension FrontPage {
+  var systemImageIconName: String {
+    switch self {
+    case .all:
+      return "asterisk.circle"
+    case .home:
+      return "house"
+    case .popular:
+      return "arrow.up.right.square"
+    case .random:
+      return "shuffle"
+    }
   }
 }
 

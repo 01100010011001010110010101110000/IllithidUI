@@ -1,7 +1,7 @@
 //
 // SharingButton.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/15/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import Cocoa
@@ -23,7 +23,7 @@ struct SharingButton: View {
       let picker = NSSharingServicePicker(items: self.items)
       picker.show(relativeTo: .zero, of: self.view, preferredEdge: self.preferredEdge)
     }, label: {
-      Image(named: NSImage.shareTemplateName)
+      Image(systemName: "square.and.arrow.up")
     })
       .overlay(SharingOverlay(view: view))
   }

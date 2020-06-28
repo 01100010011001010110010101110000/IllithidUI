@@ -67,7 +67,7 @@ struct PostListView: View {
                 self.showSidebar.toggle()
               }
             }, label: {
-              Image(named: .menuBars)
+              Image(systemName: "sidebar.right")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 20, height: 15)
@@ -158,7 +158,7 @@ struct SidebarView: View {
           .frame(width: 32, height: 32)
           .padding(.leading, 10)
         IllithidButton(label: {
-          Image(named: .book)
+          Image(systemName: "a.book.closed")
             .resizable()
             .frame(width: 24, height: 24)
             .tooltip("Show Wiki")

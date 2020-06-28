@@ -41,14 +41,14 @@ struct PostRowView: View {
             }
             HStack {
               if post.stickied {
-                Image(named: .mapPin)
+                Image(systemName: "pin.circle.fill")
                   .resizable()
                   .frame(width: 16, height: 24)
                   .foregroundColor(.green)
                   .padding(.top, 2.0)
               }
               if post.locked {
-                Image(named: .lock)
+                Image(systemName: "lock.circle.fill")
                   .resizable()
                   .frame(width: 24, height: 24)
                   .foregroundColor(.green)
@@ -172,7 +172,7 @@ struct PostActionBar: View {
     VStack {
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(Color(.darkGray))
-        .overlay(Image(named: .arrowUp)
+        .overlay(Image(systemName: "arrow.up")
           .resizable()
           .foregroundColor(vote == .up ? .orange : .white)
           .frame(width: 24, height: 24), alignment: .center)
@@ -196,7 +196,7 @@ struct PostActionBar: View {
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(Color(.darkGray))
-        .overlay(Image(named: .arrowDown)
+        .overlay(Image(systemName: "arrow.down")
           .resizable()
           .foregroundColor(vote == .down ? .purple : .white)
           .frame(width: 24, height: 24), alignment: .center)
@@ -220,7 +220,7 @@ struct PostActionBar: View {
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(Color(.darkGray))
-        .overlay(Image(named: .bookmark)
+        .overlay(Image(systemName: "bookmark")
           .resizable()
           .foregroundColor(saved ? .green : .white)
           .frame(width: 24, height: 24), alignment: .center)
@@ -243,14 +243,14 @@ struct PostActionBar: View {
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(.red)
-        .overlay(Image(named: .eyeSlash)
+        .overlay(Image(systemName: "eye.slash")
           .resizable()
           .foregroundColor(.white)
           .frame(width: 24, height: 24), alignment: .center)
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(.red)
-        .overlay(Image(named: .flag)
+        .overlay(Image(systemName: "flag")
           .resizable()
           .foregroundColor(.white)
           .frame(width: 24, height: 24), alignment: .center)
@@ -306,7 +306,7 @@ struct PostMetadataBar: View {
       Spacer()
       HStack {
         Group {
-          Image(named: .arrowUp)
+          Image(systemName: "arrow.up")
             .resizable()
             .frame(width: 20, height: 20)
           Text("\(post.ups.postAbbreviation())")
@@ -314,7 +314,7 @@ struct PostMetadataBar: View {
         .foregroundColor(.orange)
 
         Group {
-          Image(named: .textBubble)
+          Image(systemName: "text.bubble")
             .resizable()
             .frame(width: 24, height: 20)
           Text("\(post.numComments.postAbbreviation())")
@@ -322,7 +322,7 @@ struct PostMetadataBar: View {
         .foregroundColor(.blue)
 
         Group {
-          Image(named: .clock)
+          Image(systemName: "clock")
             .resizable()
             .frame(width: 20, height: 20)
           Text("\(post.relativePostTime) ago")

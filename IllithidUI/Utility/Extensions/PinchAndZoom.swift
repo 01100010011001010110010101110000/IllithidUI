@@ -1,7 +1,7 @@
 //
 // PinchAndZoom.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/29/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import SwiftUI
@@ -66,10 +66,7 @@ private struct PinchAndZoomModifier: ViewModifier {
         }))
 
       HStack {
-        DragResetButton {
-          self.resetPosition()
-        }
-        ZoomResetButton()
+        ResetButton()
           .onTapGesture {
             self.resetZoom()
             // Altering scale alters the offset, so we reset it to ensure the whole view is visible
@@ -93,39 +90,14 @@ private struct PinchAndZoomModifier: ViewModifier {
   }
 }
 
-private struct ZoomResetButton: View {
+private struct ResetButton: View {
   var body: some View {
-    Image(named: .search)
+    Image(systemName: "arrow.triangle.2.circlepath")
       .resizable()
       .frame(width: 24, height: 24)
       .padding(4)
       .background(RoundedRectangle(cornerRadius: 4.0, style: .continuous)
         .fill(Color(.darkGray))
       )
-  }
-}
-
-private struct DragResetButton: View {
-  @State private var scale: CGFloat = 1.0
-
-  let action: () -> Void
-
-  var body: some View {
-    Image(named: .arrowDownRightUpLeft)
-      .resizable()
-      .frame(width: 24, height: 24)
-      .scaleEffect(scale)
-      .animation(.linear(duration: 0.3))
-      .padding(4)
-      .background(RoundedRectangle(cornerRadius: 4.0, style: .continuous)
-        .fill(Color(.darkGray))
-      )
-      .onTapGesture {
-        self.scale = 0.8
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-          self.scale = 1.0
-        }
-        self.action()
-      }
   }
 }
