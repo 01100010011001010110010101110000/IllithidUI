@@ -18,7 +18,7 @@ struct PostListView: View {
 
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
-  @StateObject var postsData: PostListData = .init()
+  @StateObject var postsData: PostListData
 
   let postContainer: PostProvider
 
@@ -41,6 +41,7 @@ struct PostListView: View {
 
   init(postContainer: PostProvider) {
     self.postContainer = postContainer
+    _postsData = .init(wrappedValue: .init(provider: postContainer))
   }
 
   var body: some View {
@@ -49,12 +50,12 @@ struct PostListView: View {
         SortController(model: sorter)
           .onReceive(self.sorter.$sort) { sort in
             guard !self.postsData.posts.isEmpty else { return }
-            self.postsData.reload(for: postContainer, sort: sort,
+            self.postsData.reload(sort: sort,
                                   topInterval: self.sorter.topInterval)
           }
           .onReceive(self.sorter.$topInterval) { interval in
             guard !self.postsData.posts.isEmpty else { return }
-            self.postsData.reload(for: postContainer, sort: self.sorter.sort,
+            self.postsData.reload(sort: self.sorter.sort,
                                   topInterval: interval)
           }
         HStack {
@@ -83,14 +84,14 @@ struct PostListView: View {
             PostRowView(post: post)
               .onAppear {
                 if post == self.filteredPosts.last {
-                  self.postsData.loadPosts(for: postContainer, sort: self.sorter.sort,
+                  self.postsData.loadPosts(sort: self.sorter.sort,
                                            topInterval: self.sorter.topInterval)
                 }
               }
           }
         }
         .onAppear {
-          self.postsData.loadPosts(for: postContainer, sort: self.sorter.sort,
+          self.postsData.loadPosts(sort: self.sorter.sort,
                                    topInterval: self.sorter.topInterval)
         }
         .onDisappear {

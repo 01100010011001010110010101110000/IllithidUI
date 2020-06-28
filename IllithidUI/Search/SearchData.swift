@@ -25,8 +25,6 @@ final class SearchData: ObservableObject {
   private var request: DataRequest?
   private var autocompleteRequest: DataRequest?
 
-  var postContainers: [String: PostListData] = [:]
-
   init(for targets: Set<SearchType> = [.subreddit, .post, .user]) {
     searchTargets = targets
     let queryPublisher = $query.share()

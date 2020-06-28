@@ -35,8 +35,6 @@ final class InformationBarData: ObservableObject {
     }
   }
 
-  var postContainers: [String: PostListData] = [:]
-
   init() {
     decoder.dateDecodingStrategy = .secondsSince1970
     encoder.dateEncodingStrategy = .secondsSince1970

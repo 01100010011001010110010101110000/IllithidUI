@@ -14,6 +14,12 @@ import Illithid
 final class PostListData: ObservableObject {
   @Published var posts: [Post] = []
 
+  let provider: PostProvider
+
+  init(provider: PostProvider) {
+    self.provider = provider
+  }
+
   private var postListingParams: ListingParameters = .init()
   private var exhausted: Bool = false
   private var loading: Bool = false
@@ -22,7 +28,7 @@ final class PostListData: ObservableObject {
                           category: .pointsOfInterest)
   private var requests: [DataRequest] = []
 
-  func loadPosts(for provider: PostProvider, sort: PostSort, topInterval: TopInterval) {
+  func loadPosts(sort: PostSort, topInterval: TopInterval) {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Posts", signpostID: signpostId)
     if !exhausted, !loading {
@@ -44,12 +50,12 @@ final class PostListData: ObservableObject {
     }
   }
 
-  func reload(for provider: PostProvider, sort: PostSort, topInterval: TopInterval) {
+  func reload(sort: PostSort, topInterval: TopInterval) {
     cancel()
     exhausted = false
     posts.removeAll(keepingCapacity: true)
     postListingParams = .init()
-    loadPosts(for: provider, sort: sort, topInterval: topInterval)
+    loadPosts(sort: sort, topInterval: topInterval)
   }
 
   func cancel() {
