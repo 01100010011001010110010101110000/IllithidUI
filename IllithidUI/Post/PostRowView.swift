@@ -53,7 +53,7 @@ struct PostRowView: View {
                   .frame(width: 24, height: 24)
                   .foregroundColor(.green)
                   .padding(.top, 2.0)
-                  .tooltip(Post.lockedDescription)
+                  .help(Post.lockedDescription)
               }
               Spacer()
               PostFlairBar(post: self.post)
@@ -326,7 +326,7 @@ struct PostMetadataBar: View {
             .resizable()
             .frame(width: 20, height: 20)
           Text("\(post.relativePostTime) ago")
-            .tooltip(post.absolutePostTime)
+            .help(post.absolutePostTime)
         }
       }
       Spacer()
@@ -403,7 +403,7 @@ struct PostFlairBar: View {
       return WebImage(url: text.emojiUrl)
         .resizable()
         .frame(width: 24, height: 24)
-        .tooltip(text.emojiShortcode)
+        .help(text.emojiShortcode ?? "")
         .eraseToAnyView()
     case .text:
       if let flairText = text.text {

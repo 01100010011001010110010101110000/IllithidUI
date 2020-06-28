@@ -161,7 +161,7 @@ struct SidebarView: View {
           Image(systemName: "a.book.closed")
             .resizable()
             .frame(width: 24, height: 24)
-            .tooltip("Show Wiki")
+            .help("Show Wiki")
         }, mouseUp: {
           WindowManager.shared.showWindow(withId: "\(self.subreddit.name)/wiki",
                                           title: "\(self.subreddit.displayName) Wiki") {

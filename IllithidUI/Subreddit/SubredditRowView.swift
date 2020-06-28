@@ -31,7 +31,7 @@ struct SubredditRowView: View {
         .lineLimit(1)
         .fixedSize()
     }
-    .tooltip(subreddit.publicDescription)
+    .help(subreddit.publicDescription)
   }
 }
 
