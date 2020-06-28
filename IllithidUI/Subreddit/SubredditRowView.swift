@@ -1,7 +1,7 @@
 //
 // SubredditRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import SwiftUI
@@ -14,8 +14,8 @@ struct SubredditRowView: View {
 
   var body: some View {
     HStack {
-      if subreddit.headerImg != nil {
-        WebImage(url: subreddit.headerImg!)
+      if let headerImageUrl = subreddit.headerImg {
+        WebImage(url: headerImageUrl)
           .resizable()
           .scaledToFit()
           .frame(width: 96, height: 96)

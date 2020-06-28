@@ -1,7 +1,7 @@
 //
 // PostRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/12/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import SwiftUI
@@ -63,24 +63,24 @@ struct PostRowView: View {
             Text(self.post.title)
               .font(.title)
               .multilineTextAlignment(.center)
-              .heightResizable()
+//              .heightResizable()
               .padding([.leading, .trailing, .bottom])
           }
 
-          if crosspostParent != nil {
+          if let crosspostParent = self.crosspostParent {
             GroupBox {
               VStack {
-                PostFlairBar(post: crosspostParent!)
+                PostFlairBar(post: crosspostParent)
                   .padding(.top, 2.0)
-                Text(crosspostParent!.title)
+                Text(crosspostParent.title)
                   .font(.title)
                   .multilineTextAlignment(.center)
-                  .heightResizable()
+//                  .heightResizable()
                   .padding()
 
-                PostContent(post: crosspostParent!)
+                PostContent(post: crosspostParent)
 
-                PostMetadataBar(post: crosspostParent!)
+                PostMetadataBar(post: crosspostParent)
               }
             }
             .padding([.leading, .trailing], 4.0)

@@ -1,7 +1,7 @@
 //
 // CommentsView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/29/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import Combine
@@ -51,7 +51,7 @@ struct CommentsView: View, Identifiable {
           Text(post.title)
             .font(.largeTitle)
             .multilineTextAlignment(.center)
-            .heightResizable()
+//            .heightResizable()
           Spacer()
           VStack {
             Text("in \(post.subreddit) by ")

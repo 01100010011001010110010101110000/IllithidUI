@@ -1,7 +1,7 @@
 //
 // PostContent.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/3/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import SwiftUI
@@ -14,39 +14,37 @@ struct PostContent: View {
   let post: Post
 
   var body: AnyView {
-    if post.previewGuess == .imgur {
+    switch post.previewGuess {
+    case .imgur:
       return ImgurView(link: post.contentUrl)
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .mediaStamp("imgur")
         .eraseToAnyView()
-    } else if post.previewGuess == .gfycat {
+    case .gfycat:
       return GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .mediaStamp("gfycat")
         .eraseToAnyView()
-    } else if post.previewGuess == .text {
+    case .text:
       return TextPostPreview(text: post.selftext)
         .eraseToAnyView()
-    } else if post.previewGuess == .gif {
+    case .gif:
       return GifPostPreview(post: post)
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .eraseToAnyView()
-    } else if post.previewGuess == .video {
+    case .video:
       return VideoPostPreview(post: post)
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .eraseToAnyView()
-    } else if post.previewGuess == .image {
+    case .image:
       return ImagePostPreview(url: post.imagePreviews.last!.url)
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .eraseToAnyView()
-    } else if post.previewGuess == .reddit {
+    case .reddit:
       return RedditLinkView(link: post.contentUrl)
         .eraseToAnyView()
-    } else if post.previewGuess == .link {
+    case .link:
       return LinkPreview(link: post.contentUrl, isNsfw: post.over18)
-        .eraseToAnyView()
-    } else {
-      return Text("No available preview")
         .eraseToAnyView()
     }
   }
@@ -64,8 +62,8 @@ private struct VideoPostPreview: View {
   }
 
   var body: some View {
-    if self.url != nil {
-      return VideoPlayer(url: self.url!, fullSize: .init(width: preview.width, height: preview.height))
+    if let url = self.url {
+      return VideoPlayer(url: url, fullSize: .init(width: preview.width, height: preview.height))
         .mediaStamp("reddit")
         .eraseToAnyView()
     } else {
@@ -150,12 +148,10 @@ struct GfycatView: View {
 
   var body: some View {
     VStack {
-      if gfyData.item == nil {
-        EmptyView()
+      if let url = gfyData.item?.mp4URL {
+        VideoPlayer(url: url, fullSize: .init(width: gfyData.item!.width, height: gfyData.item!.height))
       } else {
-        VideoPlayer(url: gfyData.item!.mp4URL,
-                    fullSize: .init(width: gfyData.item!.width,
-                                    height: gfyData.item!.height))
+        EmptyView()
       }
     }
   }
@@ -296,7 +292,7 @@ struct TextPostPreview: View {
     Text(text)
       .font(.body)
       .padding()
-      .heightResizable()
+//      .heightResizable()
   }
 }
 
@@ -307,7 +303,7 @@ struct ImagePostPreview: View {
     WebImage(url: url)
       .resizable()
       .scaledToFit()
-      .heightResizable(maxHeight: 800)
+//      .heightResizable(maxHeight: 800)
       .dragAndZoom()
   }
 }

@@ -1,7 +1,7 @@
 //
 // PreferencesView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import SwiftUI
@@ -45,8 +45,8 @@ struct GeneralPreferences: View {
           Picker(selection: $preferences.browser, label: Text("Open links in: ")) {
             ForEach(Browser.installed.sorted()) { browser in
               HStack {
-                if browser.icon() != nil {
-                  Image(nsImage: browser.icon()!)
+                if let icon = browser.icon() {
+                  Image(nsImage: icon)
                     .resizable()
                     .frame(width: 16, height: 16)
                 }

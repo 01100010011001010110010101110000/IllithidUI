@@ -120,8 +120,8 @@ struct SidebarView: View {
   var body: some View {
     VStack {
       HStack {
-        if subreddit.headerImg != nil {
-          WebImage(url: subreddit.headerImg!)
+        if let headerImageUrl = subreddit.headerImg {
+          WebImage(url: headerImageUrl)
         }
         Text(subreddit.displayName)
           .font(.largeTitle)
