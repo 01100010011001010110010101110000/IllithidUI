@@ -1,7 +1,7 @@
 //
 // Browser.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import Cocoa
@@ -90,8 +90,8 @@ class Browser: Codable, Identifiable, Comparable, Hashable {
 extension Bundle {
   func icon() -> NSImage? {
     guard let identifier = bundleIdentifier,
-      let path = NSWorkspace.shared.absolutePathForApplication(withBundleIdentifier: identifier) else { return nil }
-    return NSWorkspace.shared.icon(forFile: path)
+      let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else { return nil }
+    return NSWorkspace.shared.icon(forFile: url.path)
   }
 
   var displayName: String? {
