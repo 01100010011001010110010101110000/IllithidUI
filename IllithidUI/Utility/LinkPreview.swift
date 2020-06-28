@@ -68,6 +68,8 @@ struct LinkPreview: View {
 }
 
 final class LinkPreviewData: ObservableObject {
+  // TODO: Replace this with injection from higher in the view hierarchy
+  static let session = Session()
   @Published var previewImageUrl: URL?
 
   let link: URL
@@ -78,11 +80,10 @@ final class LinkPreviewData: ObservableObject {
   }
 
   private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.LinkPreview")
-  private let session = (NSApp.delegate! as! AppDelegate).session
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
 
   func loadMetadata() {
-    request = session.request(link)
+    request = Self.session.request(link)
       .validate()
       .cacheResponse(using: ResponseCacher.cache)
       .responseString(queue: Self.queue, encoding: .utf8) { response in

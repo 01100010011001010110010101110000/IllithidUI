@@ -1,7 +1,7 @@
 //
 // AppDelegate.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import Cocoa
@@ -15,17 +15,27 @@ import SDWebImage
 import Ulithari
 import Willow
 
-@NSApplicationMain
+@main
+struct IllithidApp: App {
+  private let illithid: Illithid = .shared
+
+  let appDelegate = NSApplicationDelegateAdaptor(AppDelegate.self)
+
+  @SceneBuilder var body: some Scene {
+    WindowGroup {
+      RootView()
+    }
+    Settings {
+      PreferencesView(accountManager: illithid.accountManager)
+    }
+  }
+}
+
 class AppDelegate: NSObject, NSApplicationDelegate {
   let windowManager: WindowManager = .shared
-  var toolbar: NSToolbar!
   let illithid: Illithid = .shared
-
   let logger: Logger
-
   let session: Session
-
-  let preferencesWindowController = NSWindowController()
 
   override init() {
     #if DEBUG
@@ -65,28 +75,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     illithid.configure(configuration: IllithidConfiguration())
     Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
     illithid.logger = logger
-
-    // MARK: Preferences Window
-
-    preferencesWindowController.window = Window(styleMask: [.closable, .titled], title: "Illithid Preferences") {
-      PreferencesView(accountManager: illithid.accountManager)
-    }
-    preferencesWindowController.window!.center()
-
-    let menu = NSApp.mainMenu!
-    let preferencesItem = menu.item(withTitle: "Illithid")!.submenu!.item(withTitle: "Preferences…")!
-    preferencesItem.action = #selector(NSWindow.makeKeyAndOrderFront(_:))
-    preferencesItem.target = preferencesWindowController.window!
-
-    // MARK: Open New Tab
-
-    let newTabItem = menu.item(withTitle: "File")!.submenu!.item(withTitle: "New Tab")!
-    newTabItem.action = #selector(newRootWindow)
-    newTabItem.target = self
-
-    // MARK: Application Root Window
-
-    showMainWindow()
   }
 
   @objc private func newRootWindow() {

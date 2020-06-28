@@ -29,7 +29,6 @@
 		6D2EA59922A7FEE20059B6EA /* IllithidUI.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6D2EA59722A7FEE20059B6EA /* IllithidUI.xcdatamodeld */; };
 		6D2EA59B22A7FEE40059B6EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */; };
 		6D2EA59E22A7FEE40059B6EA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D2EA59D22A7FEE40059B6EA /* Preview Assets.xcassets */; };
-		6D2EA5A122A7FEE40059B6EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D2EA59F22A7FEE40059B6EA /* Main.storyboard */; };
 		6D2EA5AD22A7FEE40059B6EA /* IllithidUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2EA5AC22A7FEE40059B6EA /* IllithidUITests.swift */; };
 		6D2EA5B822A7FEE40059B6EA /* IllithidUIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2EA5B722A7FEE40059B6EA /* IllithidUIUITests.swift */; };
 		6D2FB7A4243E4C3B008CE0EB /* MediaStamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2FB7A3243E4C3B008CE0EB /* MediaStamp.swift */; };
@@ -120,7 +119,6 @@
 		6D2EA59822A7FEE20059B6EA /* IllithidUI.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = IllithidUI.xcdatamodel; sourceTree = "<group>"; };
 		6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6D2EA59D22A7FEE40059B6EA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		6D2EA5A022A7FEE40059B6EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6D2EA5A222A7FEE40059B6EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D2EA5A322A7FEE40059B6EA /* IllithidUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IllithidUI.entitlements; sourceTree = "<group>"; };
 		6D2EA5A822A7FEE40059B6EA /* IllithidUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IllithidUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -280,7 +278,6 @@
 				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
 				6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */,
 				6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */,
-				6D2EA59F22A7FEE40059B6EA /* Main.storyboard */,
 				6D2EA5A222A7FEE40059B6EA /* Info.plist */,
 				6D2EA5A322A7FEE40059B6EA /* IllithidUI.entitlements */,
 				6D2EA59722A7FEE20059B6EA /* IllithidUI.xcdatamodeld */,
@@ -555,7 +552,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D2EA5A122A7FEE40059B6EA /* Main.storyboard in Resources */,
 				6D2EA59E22A7FEE40059B6EA /* Preview Assets.xcassets in Resources */,
 				6DFB42F622CA884500272845 /* README.md in Resources */,
 				6D2EA59B22A7FEE40059B6EA /* Assets.xcassets in Resources */,
@@ -676,17 +672,6 @@
 			targetProxy = 6D2EA5B422A7FEE40059B6EA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		6D2EA59F22A7FEE40059B6EA /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6D2EA5A022A7FEE40059B6EA /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		6D2EA5BA22A7FEE40059B6EA /* Debug */ = {
