@@ -1,7 +1,7 @@
 //
 // PostRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/30/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/1/20
 //
 
 import SwiftUI
@@ -150,6 +150,7 @@ private struct TitleView: View {
 
       Text(self.post.title)
         .font(.title)
+        .heightResizable()
         .multilineTextAlignment(.center)
 
       if post.over18 {
