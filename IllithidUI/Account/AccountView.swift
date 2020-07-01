@@ -9,52 +9,6 @@ import SwiftUI
 import Alamofire
 import Illithid
 
-private struct Content: View {
-  @ObservedObject var data: AccountData
-  @StateObject var sorter: SortModel<AccountContentSort> = .init(sort: .new, topInterval: .day)
-
-  let content: AccountContent
-
-  var body: some View {
-    List {
-      SortController(model: sorter)
-      ForEach(data.content[content]!) { item in
-        self.contentView(content: item)
-          .onAppear {
-            if item == self.data.content[self.content]!.last {
-              self.data.loadContent(content: self.content, sort: self.sorter.sort, topInterval: self.sorter.topInterval)
-            }
-          }
-      }
-    }
-    .onAppear {
-      self.data.loadContent(content: self.content, sort: self.sorter.sort, topInterval: self.sorter.topInterval)
-    }
-    .onReceive(sorter.$sort) { sort in
-      self.data.clearContent(content: self.content)
-      self.data.loadContent(content: self.content, sort: sort, topInterval: self.sorter.topInterval)
-    }
-    .onReceive(sorter.$topInterval) { interval in
-      self.data.clearContent(content: self.content)
-      self.data.loadContent(content: self.content, sort: self.sorter.sort, topInterval: interval)
-    }
-  }
-
-  func contentView(content: Listing.Content) -> AnyView {
-    switch content {
-    case let .comment(comment):
-      return CommentRowView(comment: comment)
-        .eraseToAnyView()
-    case let .post(post):
-      return PostRowView(post: post)
-        .eraseToAnyView()
-    default:
-      return EmptyView()
-        .eraseToAnyView()
-    }
-  }
-}
-
 struct AccountView: View {
   @EnvironmentObject var informationBarData: InformationBarData
 
@@ -71,19 +25,65 @@ struct AccountView: View {
   var body: some View {
     NavigationView {
       List {
-        NavigationLink("Overview", destination: Content(data: self.accountData, content: .overview))
-        NavigationLink("Posts", destination: Content(data: self.accountData, content: .submissions))
-        NavigationLink("Comments", destination: Content(data: self.accountData, content: .comments))
+        NavigationLink("Overview", destination: Content(data: accountData, content: .overview))
+        NavigationLink("Posts", destination: Content(data: accountData, content: .submissions))
+        NavigationLink("Comments", destination: Content(data: accountData, content: .comments))
         if accountData.account == Illithid.shared.accountManager.currentAccount {
-          NavigationLink("Saved Items", destination: Content(data: self.accountData, content: .saved))
-          NavigationLink("Hidden", destination: Content(data: self.accountData, content: .hidden))
-          NavigationLink("Upvoted", destination: Content(data: self.accountData, content: .upvoted))
-          NavigationLink("Downvoted", destination: Content(data: self.accountData, content: .downvoted))
+          NavigationLink("Saved Items", destination: Content(data: accountData, content: .saved))
+          NavigationLink("Hidden", destination: Content(data: accountData, content: .hidden))
+          NavigationLink("Upvoted", destination: Content(data: accountData, content: .upvoted))
+          NavigationLink("Downvoted", destination: Content(data: accountData, content: .downvoted))
         }
       }
       .listStyle(SidebarListStyle())
     }
     .environmentObject(informationBarData)
+  }
+}
+
+private struct Content: View {
+  @ObservedObject var data: AccountData
+  @StateObject var sorter: SortModel<AccountContentSort> = .init(sort: .new, topInterval: .day)
+
+  let content: AccountContent
+
+  var body: some View {
+    List {
+      SortController(model: sorter)
+      ForEach(data.content[content]!) { item in
+        contentView(content: item)
+          .onAppear {
+            if item == data.content[content]!.last {
+              data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
+            }
+          }
+      }
+    }
+    .onAppear {
+      data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
+    }
+    .onReceive(sorter.$sort) { sort in
+      data.clearContent(content: content)
+      data.loadContent(content: content, sort: sort, topInterval: sorter.topInterval)
+    }
+    .onReceive(sorter.$topInterval) { interval in
+      data.clearContent(content: content)
+      data.loadContent(content: content, sort: sorter.sort, topInterval: interval)
+    }
+  }
+
+  func contentView(content: Listing.Content) -> AnyView {
+    switch content {
+    case let .comment(comment):
+      return CommentRowView(comment: comment)
+        .eraseToAnyView()
+    case let .post(post):
+      return PostRowView(post: post)
+        .eraseToAnyView()
+    default:
+      return EmptyView()
+        .eraseToAnyView()
+    }
   }
 }
 
