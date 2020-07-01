@@ -18,7 +18,7 @@ struct PostListView: View {
 
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
-  @StateObject var postsData: PostListData
+  @StateObject private var postsData: PostListData
 
   let postContainer: PostProvider
 

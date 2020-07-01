@@ -48,7 +48,7 @@ struct SortController<Sort>: View where Sort: RawRepresentable & CaseIterable & 
 }
 
 struct SortController_Previews: PreviewProvider {
-  @StateObject static var model: SortModel<PostSort> = .init(sort: .best, topInterval: .day)
+  @StateObject private static var model: SortModel<PostSort> = .init(sort: .best, topInterval: .day)
 
   static var previews: some View {
     SortController(model: model)

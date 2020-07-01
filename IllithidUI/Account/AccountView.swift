@@ -12,7 +12,7 @@ import Illithid
 struct AccountView: View {
   @EnvironmentObject var informationBarData: InformationBarData
 
-  @StateObject var accountData: AccountData
+  @StateObject private var accountData: AccountData
 
   init(account: Account) {
     _accountData = .init(wrappedValue: .init(account: account))
@@ -43,7 +43,7 @@ struct AccountView: View {
 
 private struct Content: View {
   @ObservedObject var data: AccountData
-  @StateObject var sorter: SortModel<AccountContentSort> = .init(sort: .new, topInterval: .day)
+  @StateObject private var sorter: SortModel<AccountContentSort> = .init(sort: .new, topInterval: .day)
 
   let content: AccountContent
 
