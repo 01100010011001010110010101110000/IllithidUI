@@ -68,9 +68,7 @@ struct PostListView: View {
               }
             }, label: {
               Image(systemName: "sidebar.right")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 20, height: 15)
+                .font(.body)
             })
           }
         }
@@ -159,8 +157,7 @@ struct SidebarView: View {
           .padding(.leading, 10)
         IllithidButton(label: {
           Image(systemName: "a.book.closed")
-            .resizable()
-            .frame(width: 24, height: 24)
+            .font(.title)
             .help("Show Wiki")
         }, mouseUp: {
           WindowManager.shared.showWindow(withId: "\(self.subreddit.name)/wiki",

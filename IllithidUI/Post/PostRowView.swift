@@ -42,17 +42,14 @@ struct PostRowView: View {
             HStack {
               if post.stickied {
                 Image(systemName: "pin.circle.fill")
-                  .resizable()
-                  .frame(width: 16, height: 24)
+                  .font(.title)
                   .foregroundColor(.green)
-                  .padding(.top, 2.0)
+                  .help(Post.pinnedDescription)
               }
               if post.locked {
                 Image(systemName: "lock.circle.fill")
-                  .resizable()
-                  .frame(width: 24, height: 24)
+                  .font(.title)
                   .foregroundColor(.green)
-                  .padding(.top, 2.0)
                   .help(Post.lockedDescription)
               }
               Spacer()
@@ -153,6 +150,7 @@ struct PostRowView: View {
 }
 
 extension Post {
+  static let pinnedDescription: String = "This post has been pinned by a moderator"
   static let lockedDescription: String = "This post has been locked. New comments are disabled"
 }
 
@@ -173,9 +171,7 @@ struct PostActionBar: View {
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(Color(.darkGray))
         .overlay(Image(systemName: "arrow.up")
-          .resizable()
-          .foregroundColor(vote == .up ? .orange : .white)
-          .frame(width: 24, height: 24), alignment: .center)
+          .foregroundColor(vote == .up ? .orange : .white))
         .onTapGesture {
           if self.vote == .up {
             self.vote = .clear
@@ -197,9 +193,7 @@ struct PostActionBar: View {
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(Color(.darkGray))
         .overlay(Image(systemName: "arrow.down")
-          .resizable()
-          .foregroundColor(vote == .down ? .purple : .white)
-          .frame(width: 24, height: 24), alignment: .center)
+          .foregroundColor(vote == .down ? .purple : .white))
         .onTapGesture {
           if self.vote == .down {
             self.vote = .clear
@@ -221,9 +215,7 @@ struct PostActionBar: View {
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(Color(.darkGray))
         .overlay(Image(systemName: "bookmark")
-          .resizable()
-          .foregroundColor(saved ? .green : .white)
-          .frame(width: 24, height: 24), alignment: .center)
+          .foregroundColor(saved ? .green : .white))
         .onTapGesture {
           self.saved.toggle()
           if self.saved {
@@ -244,20 +236,17 @@ struct PostActionBar: View {
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(.red)
         .overlay(Image(systemName: "eye.slash")
-          .resizable()
-          .foregroundColor(.white)
-          .frame(width: 24, height: 24), alignment: .center)
+          .foregroundColor(.white))
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(.red)
         .overlay(Image(systemName: "flag")
-          .resizable()
-          .foregroundColor(.white)
-          .frame(width: 24, height: 24), alignment: .center)
+          .foregroundColor(.white))
         .foregroundColor(.white)
         .frame(width: 32, height: 32)
       Spacer()
     }
+    .font(.title)
     .padding(10)
     .onAppear {
       if let likeDirection = self.post.likes {
@@ -307,24 +296,18 @@ struct PostMetadataBar: View {
       HStack {
         Group {
           Image(systemName: "arrow.up")
-            .resizable()
-            .frame(width: 20, height: 20)
           Text("\(post.ups.postAbbreviation())")
         }
         .foregroundColor(.orange)
 
         Group {
           Image(systemName: "text.bubble")
-            .resizable()
-            .frame(width: 24, height: 20)
           Text("\(post.numComments.postAbbreviation())")
         }
         .foregroundColor(.blue)
 
         Group {
           Image(systemName: "clock")
-            .resizable()
-            .frame(width: 20, height: 20)
           Text("\(post.relativePostTime) ago")
             .help(post.absolutePostTime)
         }
@@ -339,7 +322,7 @@ struct PostMetadataBar: View {
         }
     }
     .padding(10)
-    .font(.caption)
+    .font(.body)
   }
 }
 

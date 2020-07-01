@@ -215,7 +215,7 @@ struct CommentColorBar: View {
 
 extension Text {
   func usernameStyle(color: Color) -> Text {
-    fontWeight(.heavy)
+    fontWeight(.bold)
       .foregroundColor(color)
   }
 }

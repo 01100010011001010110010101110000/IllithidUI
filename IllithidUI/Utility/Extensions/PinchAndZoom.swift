@@ -93,8 +93,7 @@ private struct PinchAndZoomModifier: ViewModifier {
 private struct ResetButton: View {
   var body: some View {
     Image(systemName: "arrow.triangle.2.circlepath")
-      .resizable()
-      .frame(width: 24, height: 24)
+      .font(.title)
       .padding(4)
       .background(RoundedRectangle(cornerRadius: 4.0, style: .continuous)
         .fill(Color(.darkGray))
