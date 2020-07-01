@@ -1,7 +1,7 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/1/20
 //
 
 import SwiftUI
@@ -17,9 +17,15 @@ struct InformationBarNavigationView: View {
   @State private var isEditingMulti: Bool = false
   @State private var editing: Multireddit.ID?
 
-  private var accountView: some View {
-    AccountView(accountData: .init(account: Illithid.shared.accountManager.currentAccount))
-      .environmentObject(self.informationBarData)
+  private var accountView: AnyView {
+    if let account = Illithid.shared.accountManager.currentAccount {
+      return AccountView(account: account)
+        .environmentObject(informationBarData)
+        .eraseToAnyView()
+    } else {
+      return EmptyView()
+        .eraseToAnyView()
+    }
   }
 
   var body: some View {

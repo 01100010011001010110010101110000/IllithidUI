@@ -1,7 +1,7 @@
 //
 // AccountView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/12/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/1/20
 //
 
 import SwiftUI
@@ -11,7 +11,7 @@ import Illithid
 
 private struct Content: View {
   @ObservedObject var data: AccountData
-  @ObservedObject var sorter: SortModel<AccountContentSort> = .init(sort: .new, topInterval: .day)
+  @StateObject var sorter: SortModel<AccountContentSort> = .init(sort: .new, topInterval: .day)
 
   let content: AccountContent
 
@@ -58,7 +58,15 @@ private struct Content: View {
 struct AccountView: View {
   @EnvironmentObject var informationBarData: InformationBarData
 
-  @ObservedObject var accountData: AccountData
+  @StateObject var accountData: AccountData
+
+  init(account: Account) {
+    _accountData = .init(wrappedValue: .init(account: account))
+  }
+
+  init(name: String) {
+    _accountData = .init(wrappedValue: .init(name: name))
+  }
 
   var body: some View {
     NavigationView {

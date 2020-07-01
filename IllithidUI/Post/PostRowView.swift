@@ -301,7 +301,7 @@ struct PostMetadataBar: View {
         .usernameStyle(color: authorColor))
         .onTapGesture {
           self.windowManager.showMainWindowTab(withId: self.post.author, title: self.post.author) {
-            AccountView(accountData: .init(name: self.post.author))
+            AccountView(name: self.post.author)
               .environmentObject(self.informationBarData)
           }
         }

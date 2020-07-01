@@ -1,7 +1,7 @@
 //
 // SortController.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/5/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/1/20
 //
 
 import SwiftUI
@@ -48,7 +48,7 @@ struct SortController<Sort>: View where Sort: RawRepresentable & CaseIterable & 
 }
 
 struct SortController_Previews: PreviewProvider {
-  @ObservedObject static var model: SortModel<PostSort> = .init(sort: .best, topInterval: .day)
+  @StateObject static var model: SortModel<PostSort> = .init(sort: .best, topInterval: .day)
 
   static var previews: some View {
     SortController(model: model)

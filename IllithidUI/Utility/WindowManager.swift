@@ -1,7 +1,7 @@
 //
 // WindowManager.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/11/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/1/20
 //
 
 import Combine
@@ -129,7 +129,7 @@ final class WindowManager {
         switch result {
         case let .success(account):
           self.showMainWindowTab(withId: account.id, title: account.name) {
-            AccountView(accountData: .init(account: account))
+            AccountView(account: account)
           }
         case let .failure(error):
           Illithid.shared.logger.errorMessage("Unable to fetch account: \(error)")

@@ -1,7 +1,7 @@
 //
 // AccountData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 4/4/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import Combine
@@ -21,7 +21,7 @@ class AccountData: ObservableObject {
 
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.accounts", category: .pointsOfInterest)
 
-  init(account: Account?) {
+  private init(_ account: Account?) {
     self.account = account
     AccountContent.allCases.forEach { type in
       content[type] = []
@@ -29,8 +29,12 @@ class AccountData: ObservableObject {
     }
   }
 
+  convenience init(account: Account) {
+    self.init(account)
+  }
+
   convenience init(name: String) {
-    self.init(account: nil)
+    self.init(nil)
     Account.fetch(username: name) { result in
       switch result {
       case let .success(account):
