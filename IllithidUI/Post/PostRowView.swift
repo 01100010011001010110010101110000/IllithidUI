@@ -1,7 +1,7 @@
 //
 // PostRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/30/20
 //
 
 import SwiftUI
@@ -53,27 +53,14 @@ struct PostRowView: View {
                   .help(Post.lockedDescription)
               }
               Spacer()
-              PostFlairBar(post: self.post)
-                .padding(.top, 2.0)
-              Spacer()
             }
-            Text(self.post.title)
-              .font(.title)
-              .multilineTextAlignment(.center)
-//              .heightResizable()
-              .padding([.leading, .trailing, .bottom])
+            TitleView(post: post)
           }
 
           if let crosspostParent = self.crosspostParent {
             GroupBox {
               VStack {
-                PostFlairBar(post: crosspostParent)
-                  .padding(.top, 2.0)
-                Text(crosspostParent.title)
-                  .font(.title)
-                  .multilineTextAlignment(.center)
-//                  .heightResizable()
-                  .padding()
+                TitleView(post: crosspostParent)
 
                 PostContent(post: crosspostParent)
 
@@ -146,6 +133,31 @@ struct PostRowView: View {
     windowManager.showMainWindowTab(withId: "\(post.name)_debug", title: "\(post.title) - Debug View") {
       PostDebugView(post: post)
     }
+  }
+}
+
+private struct TitleView: View {
+  let post: Post
+
+  var body: some View {
+    HStack {
+      if let richtext = post.linkFlairRichtext, !richtext.isEmpty {
+        FlairRichtextView(richtext: richtext)
+      } else if let text = post.linkFlairText, !text.isEmpty {
+        Text(text)
+          .flairTag()
+      }
+
+      Text(self.post.title)
+        .font(.title)
+        .multilineTextAlignment(.center)
+
+      if post.over18 {
+        Text("NSFW")
+          .flairTag(rectangleColor: .red)
+      }
+    }
+    .padding([.leading, .trailing, .bottom])
   }
 }
 
@@ -292,6 +304,12 @@ struct PostMetadataBar: View {
               .environmentObject(self.informationBarData)
           }
         }
+      if let richtext = post.authorFlairRichtext, !richtext.isEmpty {
+        FlairRichtextView(richtext: richtext)
+      } else if let text = post.authorFlairText, !text.isEmpty {
+        Text(text)
+          .flairTag()
+      }
       Spacer()
       HStack {
         Group {
@@ -328,59 +346,19 @@ struct PostMetadataBar: View {
 
 // MARK: Post Flair
 
-struct PostFlairBar: View {
-  let post: Post
+struct FlairRichtextView: View {
+  let richtext: [FlairRichtext]
 
   var body: some View {
     HStack {
-      if post.over18 {
-        Text("NSFW")
-          .flairTag(rectangleColor: .red)
-      }
-
-      if post.authorFlairType == .text {
-        post.authorFlairText.map { flair in
-          Group {
-            if !flair.isEmpty {
-              Text(flair)
-                .flairTag(rectangleColor: .blue)
-            } else {
-              EmptyView()
-            }
-          }
-        }
-      } else if post.authorFlairType == .richtext {
-        HStack {
-          ForEach(post.authorFlairRichtext!.indices) { idx in
-            self.renderRichtext(self.post.authorFlairRichtext![idx])
-          }
-        }
-        .flairTag(rectangleColor: .blue)
-      }
-
-      if post.linkFlairType == .text {
-        post.linkFlairText.map { flair in
-          Group {
-            if !flair.isEmpty {
-              Text(flair)
-                .flairTag(rectangleColor: .blue)
-            } else {
-              EmptyView()
-            }
-          }
-        }
-      } else if post.linkFlairType == .richtext {
-        HStack {
-          ForEach(post.linkFlairRichtext!.indices) { idx in
-            self.renderRichtext(self.post.linkFlairRichtext![idx])
-          }
-        }
-        .flairTag(rectangleColor: .blue)
+      ForEach(richtext.indices) { idx in
+        Self.renderRichtext(richtext[idx])
       }
     }
+    .flairTag(rectangleColor: .accentColor)
   }
 
-  private func renderRichtext(_ text: FlairRichtext) -> AnyView {
+  private static func renderRichtext(_ text: FlairRichtext) -> AnyView {
     switch text.type {
     case .emoji:
       return WebImage(url: text.emojiUrl)
@@ -402,11 +380,10 @@ struct PostFlairBar: View {
 }
 
 extension View {
-  func flairTag(rectangleColor: Color = .white) -> some View {
+  func flairTag(rectangleColor: Color = .accentColor) -> some View {
     padding(4.0)
-      .background(RoundedRectangle(cornerRadius: 4.0)
-        .foregroundColor(rectangleColor)
-      )
+      .background(rectangleColor)
+      .clipShape(RoundedRectangle(cornerRadius: 4.0))
   }
 }
 
