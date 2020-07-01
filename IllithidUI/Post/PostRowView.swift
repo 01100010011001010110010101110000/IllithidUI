@@ -164,6 +164,14 @@ struct PostActionBar: View {
 
   init(post: Post) {
     self.post = post
+
+    // Likes is actually ternary, with nil implying no vote
+    if let likeDirection = self.post.likes {
+      _vote = .init(initialValue: likeDirection ? .up : .down)
+    } else {
+      _vote = .init(initialValue: .clear)
+    }
+    _saved = .init(initialValue: post.saved)
   }
 
   var body: some View {
@@ -248,14 +256,6 @@ struct PostActionBar: View {
     }
     .font(.title)
     .padding(10)
-    .onAppear {
-      if let likeDirection = self.post.likes {
-        self.vote = likeDirection ? .up : .down
-      } else {
-        self.vote = .clear
-      }
-      self.saved = self.post.saved
-    }
   }
 }
 
