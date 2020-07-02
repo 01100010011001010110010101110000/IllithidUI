@@ -292,18 +292,19 @@ struct TextPostPreview: View {
     Text(text)
       .font(.body)
       .padding()
-//      .heightResizable()
+      .heightResizable()
   }
 }
 
 struct ImagePostPreview: View {
   let url: URL
 
+  private let context: [SDWebImageContextOption: Any] = [
+    .imageThumbnailPixelSize: CGSize(width: 1536, height: 864),
+  ]
+
   var body: some View {
-    WebImage(url: url)
-      .resizable()
-      .scaledToFit()
-//      .heightResizable(maxHeight: 800)
+    WebImage(url: url, context: context)
       .dragAndZoom()
   }
 }
