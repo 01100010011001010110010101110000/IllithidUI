@@ -100,10 +100,7 @@ struct PostListView: View {
             .frame(minWidth: 200, maxWidth: 400)
         }
       }
-    }.overlay(
-      ProgressView("Loading Posts").opacity(postsData.posts.isEmpty ? 1 : 0)
-        .animation(.easeOut)
-    )
+    }.loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
   }
 }
 
