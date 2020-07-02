@@ -12,7 +12,6 @@ extension View {
     overlay(
       ProgressView(title)
         .opacity(isLoading ? 1 : 0)
-        .animation(.easeOut)
     )
   }
 
@@ -20,7 +19,6 @@ extension View {
     overlay(
       ProgressView(label: label)
         .opacity(isLoading ? 1 : 0)
-        .animation(.easeOut)
     )
   }
 }
