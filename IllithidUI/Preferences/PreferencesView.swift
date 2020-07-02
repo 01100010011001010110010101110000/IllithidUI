@@ -94,7 +94,7 @@ struct AccountsPreferences: View {
       List {
         ForEach(accountManager.accounts) { account in
           HStack {
-            if self.accountManager.currentAccount == account {
+            if let currentAccount = self.accountManager.currentAccount, currentAccount.id == account.id {
               Image(systemName: "checkmark.circle.fill")
                 .font(.largeTitle)
                 .foregroundColor(.green)

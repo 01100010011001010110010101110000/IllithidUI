@@ -53,12 +53,8 @@ final class InformationBarData: ObservableObject {
       multiReddits = []
     }
 
-    if multiReddits.isEmpty {
-      loadMultireddits()
-    }
-    if subscribedSubreddits.isEmpty {
-      loadSubscriptions()
-    }
+    loadMultireddits()
+    loadSubscriptions()
   }
 
   func loadMultireddits() {
