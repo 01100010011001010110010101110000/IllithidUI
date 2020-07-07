@@ -1,7 +1,7 @@
 //
 // AppDelegate.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/28/20
 //
 
 import Cocoa
@@ -19,15 +19,18 @@ import Willow
 struct IllithidApp: App {
   private let illithid: Illithid = .shared
 
-  let appDelegate = NSApplicationDelegateAdaptor(AppDelegate.self)
+  @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
   @SceneBuilder var body: some Scene {
     WindowGroup {
       RootView()
     }
-    Settings {
-      PreferencesView(accountManager: illithid.accountManager)
-    }
+
+    #if os(macOS)
+      Settings {
+        PreferencesView(accountManager: illithid.accountManager)
+      }
+    #endif
   }
 }
 
