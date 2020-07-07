@@ -1,7 +1,7 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/1/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/6/20
 //
 
 import SwiftUI
@@ -37,8 +37,8 @@ struct InformationBarNavigationView: View {
                               title: Illithid.shared.accountManager.currentAccount?.name ?? "Account") {
               self.accountView
             }
-          NavigationLink(destination: SearchView(searchData: .init()), label: { Label("Search", systemImage: "magnifyingglass") })
-            .openableInNewTab(id: "search", title: "Search") { SearchView(searchData: .init()) }
+          NavigationLink(destination: SearchView(), label: { Label("Search", systemImage: "magnifyingglass") })
+            .openableInNewTab(id: "search", title: "Search") { SearchView() }
         }
         Section(header: Text("Front Page")) {
           ForEach(FrontPage.allCases) { page in

@@ -9,7 +9,7 @@ import SwiftUI
 import Illithid
 
 struct SearchView: View {
-  @ObservedObject var searchData: SearchData
+  @StateObject var searchData: SearchData = .init()
 
   var body: some View {
     VStack {
