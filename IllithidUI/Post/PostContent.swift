@@ -1,7 +1,7 @@
 //
 // PostContent.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/2/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/9/20
 //
 
 import SwiftUI
@@ -148,7 +148,7 @@ extension Post {
 // MARK: Gfycat
 
 struct GfycatView: View {
-  @StateObject var gfyData: GfycatData
+  @StateObject private var gfyData: GfycatData
 
   init(gfyId id: String) {
     _gfyData = .init(wrappedValue: GfycatData(gfyId: id))
@@ -186,7 +186,7 @@ class GfycatData: ObservableObject {
 // MARK: RedGifs
 
 struct RedGifView: View {
-  @StateObject var data: RedGifData
+  @StateObject private var data: RedGifData
 
   init(id: String) {
     _data = .init(wrappedValue: RedGifData(id: id))
