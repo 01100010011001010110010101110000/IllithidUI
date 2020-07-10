@@ -1,7 +1,7 @@
 //
 // PostContent.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/2/20
 //
 
 import SwiftUI
@@ -24,6 +24,11 @@ struct PostContent: View {
       return GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .mediaStamp("gfycat")
+        .eraseToAnyView()
+    case .redgifs:
+      return RedGifView(id: String(post.contentUrl.path.split(separator: "/").last!))
+        .conditionalModifier(post.over18, NsfwBlurModifier())
+        .mediaStamp("redgifs")
         .eraseToAnyView()
     case .text:
       return TextPostPreview(text: post.selftext)
@@ -90,6 +95,7 @@ extension Post {
     // Site specific previews
     case imgur
     case gfycat
+    case redgifs
     case reddit
   }
 
@@ -99,6 +105,8 @@ extension Post {
       return .imgur
     } else if domain.contains("gfycat.com") {
       return .gfycat
+    } else if domain.contains("redgifs.com") {
+      return .redgifs
     } else if domain == "reddit.com" || domain == "old.reddit.com" {
       return .reddit
     } else if isSelf || postHint == .self {
@@ -140,10 +148,10 @@ extension Post {
 // MARK: Gfycat
 
 struct GfycatView: View {
-  @ObservedObject var gfyData: GfycatData
+  @StateObject var gfyData: GfycatData
 
   init(gfyId id: String) {
-    gfyData = .init(gfyId: id)
+    _gfyData = .init(wrappedValue: GfycatData(gfyId: id))
   }
 
   var body: some View {
@@ -165,6 +173,44 @@ class GfycatData: ObservableObject {
   init(gfyId id: String) {
     self.id = id
     ulithari.fetchGfycat(id: id) { result in
+      switch result {
+      case let .success(item):
+        self.item = item
+      case let .failure(error):
+        Illithid.shared.logger.errorMessage("Failed to fetch gfyitem \(id): \(error)")
+      }
+    }
+  }
+}
+
+// MARK: RedGifs
+
+struct RedGifView: View {
+  @StateObject var data: RedGifData
+
+  init(id: String) {
+    _data = .init(wrappedValue: RedGifData(id: id))
+  }
+
+  var body: some View {
+    VStack {
+      if let url = data.item?.mp4URL {
+        VideoPlayer(url: url, fullSize: .init(width: data.item!.width, height: data.item!.height))
+      } else {
+        EmptyView()
+      }
+    }
+  }
+}
+
+class RedGifData: ObservableObject {
+  @Published var item: GfyItem? = nil
+  let id: String
+  let ulithari: Ulithari = .shared
+
+  init(id: String) {
+    self.id = id
+    ulithari.fetchRedGif(id: id) { result in
       switch result {
       case let .success(item):
         self.item = item
