@@ -1,7 +1,7 @@
 //
 // VideoPlayer.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import AVKit
@@ -10,13 +10,12 @@ import SwiftUI
 
 struct VideoPlayer: View {
   @ObservedObject var preferences: PreferencesData = .shared
-  @ObservedObject private var view: PlayerView
+  @StateObject private var view: PlayerView
 
   private let fullSize: NSSize
 
-  init(url: URL, fullSize: NSSize = .zero) {
-    self.fullSize = fullSize
-    view = PlayerView(url: url)
+  private static func createPlayerView(url: URL) -> PlayerView {
+    let view = PlayerView(url: url)
     view.allowsPictureInPicturePlayback = true
     view.controlsStyle = .floating
     view.showsFullScreenToggleButton = false
@@ -24,6 +23,13 @@ struct VideoPlayer: View {
     view.updatesNowPlayingInfoCenter = false
     view.videoGravity = .resizeAspect
     view.autoresizingMask = [.height, .width]
+
+    return view
+  }
+
+  init(url: URL, fullSize: NSSize = .zero) {
+    self.fullSize = fullSize
+    _view = .init(wrappedValue: Self.createPlayerView(url: url))
   }
 
   var body: some View {
@@ -32,7 +38,7 @@ struct VideoPlayer: View {
         self.view.player?.pause()
       }
       .onAppear {
-        self.view.player?.volume = self.preferences.muteAudio ? 0.0 : 100.0
+        self.view.player?.isMuted = self.preferences.muteAudio
       }
       .onReceive(view.$isReady, perform: { ready in
         if ready, self.preferences.autoPlayGifs {
@@ -95,14 +101,14 @@ private final class PlayerView: AVPlayerView, ObservableObject {
           self.inverseAspectRatio = currentItem.presentationSize.height / currentItem.presentationSize.width
           self.size = self.calculateFrame()
         }
-      })
+    })
     cancelBag.append(NotificationCenter.default.publisher(for: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
       .receive(on: RunLoop.main)
       .sink { [weak self] _ in
         guard let self = self else { return }
         self.player?.seek(to: .zero)
         self.player?.play()
-      })
+    })
   }
 
   required init?(coder _: NSCoder) {
