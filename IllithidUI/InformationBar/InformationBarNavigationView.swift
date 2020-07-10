@@ -1,7 +1,7 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/6/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/8/20
 //
 
 import SwiftUI
@@ -40,7 +40,7 @@ struct InformationBarNavigationView: View {
                               title: Illithid.shared.accountManager.currentAccount?.name ?? "Account") {
               self.accountView
             }
-          NavigationLink(destination: VStack { Spacer(); Text("asgbvhjdas"); Spacer() }, label: { Label("Search", systemImage: "magnifyingglass") })
+          NavigationLink(destination: SearchView(), label: { Label("Search", systemImage: "magnifyingglass") })
             .tag("__search__")
             .openableInNewTab(id: "search", title: "Search") { SearchView() }
         }
@@ -95,9 +95,7 @@ struct InformationBarNavigationView: View {
       }
       .listStyle(SidebarListStyle())
 
-      Text("Open the front page")
-        .font(.largeTitle)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+      NavigationPrompt(prompt: "Open the front page")
     }
     .environmentObject(informationBarData)
     .sheet(isPresented: self.$isEditingMulti, onDismiss: {

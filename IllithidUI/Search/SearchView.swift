@@ -11,6 +11,12 @@ import Illithid
 struct SearchView: View {
   @StateObject var searchData: SearchData = .init()
 
+  var prompt: String {
+    if searchData.query.isEmpty { return "Make a search" }
+    else if searchData.suggestions.isEmpty { return "No subreddits found" }
+    else { return "Open a subreddit" }
+  }
+
   var body: some View {
     VStack {
       TextField("Search Reddit", text: $searchData.query) {
@@ -61,6 +67,8 @@ struct SearchView: View {
 //            }
 //          }
         }
+
+        NavigationPrompt(prompt: prompt)
       }
     }
   }

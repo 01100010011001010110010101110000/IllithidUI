@@ -36,6 +36,8 @@ struct AccountView: View {
         }
       }
       .listStyle(SidebarListStyle())
+
+      NavigationPrompt(prompt: "Make a selection")
     }
     .environmentObject(informationBarData)
   }

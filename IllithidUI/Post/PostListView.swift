@@ -100,7 +100,9 @@ struct PostListView: View {
             .frame(minWidth: 200, maxWidth: 400)
         }
       }
-    }.loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
+    }
+    .navigationTitle(postContainer.displayName)
+    .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
   }
 }
 
