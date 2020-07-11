@@ -1,7 +1,7 @@
 //
 // IllithidButton.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import SwiftUI
@@ -36,14 +36,14 @@ struct IllithidButton: View {
       .padding([.leading, .trailing], 12)
       .padding([.top, .bottom], 2)
       .background(RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(self.pressed ? .accentColor : Color(.controlColor)))
+        .foregroundColor(pressed ? .accentColor : Color(.controlColor)))
       .onMouseGesture(mouseDown: {
-        self.pressed = true
-        self.mouseDown()
+        pressed = true
+        mouseDown()
       }, mouseUp: {
-        self.pressed = false
-        self.mouseUp()
-    })
+        pressed = false
+        mouseUp()
+      })
   }
 }
 

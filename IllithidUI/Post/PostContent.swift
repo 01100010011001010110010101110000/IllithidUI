@@ -67,7 +67,7 @@ private struct VideoPostPreview: View {
   }
 
   var body: some View {
-    if let url = self.url {
+    if let url = url {
       return VideoPlayer(url: url, fullSize: .init(width: preview.width, height: preview.height))
         .mediaStamp("reddit")
         .eraseToAnyView()
@@ -75,7 +75,7 @@ private struct VideoPostPreview: View {
       return Rectangle()
         .opacity(0.0)
         .onAppear {
-          self.url = self.preview.url
+          url = preview.url
         }
         .eraseToAnyView()
     }
@@ -238,20 +238,20 @@ struct ImgurView: View {
           .opacity(0)
       } else {
         ZStack(alignment: .topTrailing) {
-          if self.imgurData.images.count > 1 {
-            MediaStamp(mediaType: "\(self.viewIndex + 1) / \(self.imgurData.images.count)")
+          if imgurData.images.count > 1 {
+            MediaStamp(mediaType: "\(viewIndex + 1) / \(imgurData.images.count)")
           }
           renderImageView(image: imgurData.images[viewIndex])
             .animation(.default)
             .onTapGesture {
-              self.viewIndex = (self.viewIndex + 1) % self.imgurData.images.count
+              viewIndex = (viewIndex + 1) % imgurData.images.count
             }
         }
       }
     }
     .onAppear {
-      guard self.imgurData.images.isEmpty else { return }
-      self.imgurData.loadContent()
+      guard imgurData.images.isEmpty else { return }
+      imgurData.loadContent()
     }
   }
 

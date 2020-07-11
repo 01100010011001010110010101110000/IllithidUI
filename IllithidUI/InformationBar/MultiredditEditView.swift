@@ -1,7 +1,7 @@
 //
 // MultiredditEditView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 3/21/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import SwiftUI
@@ -39,7 +39,7 @@ struct MultiredditEditView: View {
                 editing.removeSubreddit(editing.subreddits[index]) { result in
                   switch result {
                   case .success:
-                    self.informationBarData.loadMultireddits()
+                    informationBarData.loadMultireddits()
                   case let .failure(error):
                     print("Error removing \(editing.subreddits[index].name) from \(editing.displayName): \(error)")
                   }
@@ -48,7 +48,7 @@ struct MultiredditEditView: View {
             }
           }
           TextField("Search for subreddits to add", text: $searchData.query) {
-            _ = self.searchData.search(for: self.searchData.query)
+            _ = searchData.search(for: searchData.query)
           }
           .padding([.top], 5)
           List {
@@ -62,7 +62,7 @@ struct MultiredditEditView: View {
                   editing.addSubreddit(subreddit) { result in
                     switch result {
                     case .success:
-                      self.informationBarData.loadMultireddits()
+                      informationBarData.loadMultireddits()
                     case let .failure(error):
                       print("Error adding \(subreddit.displayName) to \(editing.displayName): \(error)")
                     }

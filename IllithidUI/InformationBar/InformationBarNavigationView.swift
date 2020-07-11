@@ -1,7 +1,7 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/9/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/10/20
 //
 
 import SwiftUI
@@ -11,12 +11,11 @@ import Illithid
 struct InformationBarNavigationView: View {
   @ObservedObject var preferences: PreferencesData = .shared
 
+  @StateObject private var multiredditSearch = SearchData(for: [.subreddit])
   @StateObject private var informationBarData = InformationBarData()
   @State private var isEditingMulti: Bool = false
   @State private var editing: Multireddit.ID?
   @State private var selection: String? = nil
-
-  let multiredditSearch = SearchData(for: [.subreddit])
 
   private var accountView: AnyView {
     if let account = Illithid.shared.accountManager.currentAccount {
@@ -37,7 +36,7 @@ struct InformationBarNavigationView: View {
             .tag("__account__")
             .openableInNewTab(id: Illithid.shared.accountManager.currentAccount?.id ?? "account",
                               title: Illithid.shared.accountManager.currentAccount?.name ?? "Account") {
-              self.accountView
+              accountView
             }
           NavigationLink(destination: SearchView(), label: { Label("Search", systemImage: "magnifyingglass") })
             .tag("__search__")
@@ -64,8 +63,8 @@ struct InformationBarNavigationView: View {
               .openableInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
               .contextMenu {
                 Button(action: {
-                  self.isEditingMulti = true
-                  self.editing = multireddit.id
+                  isEditingMulti = true
+                  editing = multireddit.id
                 }) {
                   Text("Edit Multireddit")
                 }
@@ -97,17 +96,17 @@ struct InformationBarNavigationView: View {
       NavigationPrompt(prompt: "Open the front page")
     }
     .environmentObject(informationBarData)
-    .sheet(isPresented: self.$isEditingMulti, onDismiss: {
-      self.multiredditSearch.clearData()
-      self.multiredditSearch.clearQueryText()
+    .sheet(isPresented: $isEditingMulti, onDismiss: {
+      multiredditSearch.clearData()
+      multiredditSearch.clearQueryText()
     }, content: {
       VStack {
-        MultiredditEditView(id: self.editing!, searchData: self.multiredditSearch)
-          .environmentObject(self.informationBarData)
+        MultiredditEditView(id: editing!, searchData: multiredditSearch)
+          .environmentObject(informationBarData)
         HStack {
           Spacer()
           Button(action: {
-            self.isEditingMulti = false
+            isEditingMulti = false
           }) {
             Text("Done")
           }

@@ -38,8 +38,8 @@ struct LinkPreview: View {
 
       LinkBar(iconIsScaled: $hover, link: previewData.link)
         .popover(isPresented: $showingPreview) {
-          WebPreviewPopover(showingPreview: self.$showingPreview,
-                            link: self.previewData.link)
+          WebPreviewPopover(showingPreview: $showingPreview,
+                            link: previewData.link)
         }
     }
     .onHover { entered in
@@ -48,7 +48,7 @@ struct LinkPreview: View {
       }
     }
     .onTapGesture {
-      openLink(self.previewData.link)
+      openLink(previewData.link)
     }
     .onLongPressGesture(minimumDuration: 0.3) {
       self.showingPreview = true
@@ -57,12 +57,12 @@ struct LinkPreview: View {
     .background(Color(.controlBackgroundColor))
     .modifier(RoundedBorder(style: Color(.darkGray), cornerRadius: 8.0, width: 2.0))
     .onAppear {
-      if self.previewData.previewImageUrl == nil {
-        self.previewData.loadMetadata()
+      if previewData.previewImageUrl == nil {
+        previewData.loadMetadata()
       }
     }
     .onDisappear {
-      self.previewData.cancel()
+      previewData.cancel()
     }
   }
 }
@@ -120,7 +120,7 @@ struct LinkPreview_Previews: PreviewProvider {
     URL(string: "https://www.theguardian.com/technology/2020/jan/21/amazon-boss-jeff-bezoss-phone-hacked-by-saudi-crown-prince")!,
   ]
   static var previews: some View {
-    ForEach(Self.urls, id: \.absoluteString) { url in
+    ForEach(urls, id: \.absoluteString) { url in
       LinkPreview(link: url)
     }
   }
@@ -154,7 +154,7 @@ struct LinkBar: View {
         .foregroundColor(.white)
         .frame(width: 24, height: 24)
         .padding(.leading, 4.0)
-        .scaleEffect(self.scaleIcon ? 1.3 : 1.0)
+        .scaleEffect(scaleIcon ? 1.3 : 1.0)
       Rectangle()
         .fill(Color(.darkGray))
         .frame(width: 2, height: 24)
@@ -164,7 +164,7 @@ struct LinkBar: View {
       Spacer()
     }
     .onTapGesture {
-      openLink(self.link)
+      openLink(link)
     }
     .padding(4)
     .frame(maxHeight: 32, alignment: .leading)
@@ -180,8 +180,8 @@ private struct WebPreviewPopover: View {
     VStack(spacing: 0) {
       HStack {
         Button(action: {
-          openLink(self.link)
-          self.showingPreview = false
+          openLink(link)
+          showingPreview = false
         }, label: {
           Text("Open")
         })
@@ -189,9 +189,9 @@ private struct WebPreviewPopover: View {
         Spacer()
       }
       .padding(5)
-      WebView(url: self.link)
+      WebView(url: link)
     }
-    .frame(width: (self.hostingWindow.frame?.width ?? 800) / 1.3333,
-           height: (self.hostingWindow.screen??.frame.height ?? 1200) / 1.3333)
+    .frame(width: (hostingWindow.frame?.width ?? 800) / 1.3333,
+           height: (hostingWindow.screen??.frame.height ?? 1200) / 1.3333)
   }
 }

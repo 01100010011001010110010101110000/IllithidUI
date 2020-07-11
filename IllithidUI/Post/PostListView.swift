@@ -49,15 +49,15 @@ struct PostListView: View {
     VStack(spacing: 0.0) {
       VStack {
         SortController(model: sorter)
-          .onReceive(self.sorter.$sort) { sort in
-            guard !self.postsData.posts.isEmpty else { return }
-            self.postsData.reload(sort: sort,
-                                  topInterval: self.sorter.topInterval)
+          .onReceive(sorter.$sort) { sort in
+            guard !postsData.posts.isEmpty else { return }
+            postsData.reload(sort: sort,
+                             topInterval: sorter.topInterval)
           }
-          .onReceive(self.sorter.$topInterval) { interval in
-            guard !self.postsData.posts.isEmpty else { return }
-            self.postsData.reload(sort: self.sorter.sort,
-                                  topInterval: interval)
+          .onReceive(sorter.$topInterval) { interval in
+            guard !postsData.posts.isEmpty else { return }
+            postsData.reload(sort: sorter.sort,
+                             topInterval: interval)
           }
         HStack {
           TextField("Search Posts", text: $searchText)
@@ -65,7 +65,7 @@ struct PostListView: View {
           if postContainer is Subreddit {
             Button(action: {
               withAnimation {
-                self.showSidebar.toggle()
+                showSidebar.toggle()
               }
             }, label: {
               Image(systemName: "sidebar.right")
@@ -84,9 +84,9 @@ struct PostListView: View {
             ForEach(filteredPosts) { post in
               PostClassicRowView(post: post)
                 .onAppear {
-                  if post == self.filteredPosts.last {
-                    postsData.loadPosts(sort: self.sorter.sort,
-                                        topInterval: self.sorter.topInterval)
+                  if post == filteredPosts.last {
+                    postsData.loadPosts(sort: sorter.sort,
+                                        topInterval: sorter.topInterval)
                   }
                 }
             }
@@ -95,8 +95,8 @@ struct PostListView: View {
           .onAppear {
             // Do not load posts on a re-render
             guard postsData.posts.isEmpty else { return }
-            postsData.loadPosts(sort: self.sorter.sort,
-                                topInterval: self.sorter.topInterval)
+            postsData.loadPosts(sort: sorter.sort,
+                                topInterval: sorter.topInterval)
           }
           .onDisappear {
             postsData.cancel()
@@ -106,9 +106,9 @@ struct PostListView: View {
             ForEach(filteredPosts) { post in
               PostRowView(post: post)
                 .onAppear {
-                  if post == self.filteredPosts.last {
-                    postsData.loadPosts(sort: self.sorter.sort,
-                                        topInterval: self.sorter.topInterval)
+                  if post == filteredPosts.last {
+                    postsData.loadPosts(sort: sorter.sort,
+                                        topInterval: sorter.topInterval)
                   }
                 }
             }
@@ -117,8 +117,8 @@ struct PostListView: View {
           .onAppear {
             // Do not load posts on a re-render
             guard postsData.posts.isEmpty else { return }
-            postsData.loadPosts(sort: self.sorter.sort,
-                                topInterval: self.sorter.topInterval)
+            postsData.loadPosts(sort: sorter.sort,
+                                topInterval: sorter.topInterval)
           }
           .onDisappear {
             postsData.cancel()
@@ -223,10 +223,10 @@ struct SubredditLoader: View, Identifiable {
         Rectangle()
           .opacity(0.0)
           .onAppear {
-            Subreddit.fetch(name: self.subredditFullname) { result in
+            Subreddit.fetch(name: subredditFullname) { result in
               switch result {
-              case let .success(subreddit):
-                self.subreddit = subreddit
+              case let .success(sub):
+                subreddit = sub
               case let .failure(error):
                 Illithid.shared.logger.errorMessage("Error loading subreddit: \(error)")
               }

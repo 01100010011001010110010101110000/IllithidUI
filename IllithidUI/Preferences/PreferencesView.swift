@@ -94,35 +94,35 @@ struct AccountsPreferences: View {
       List {
         ForEach(accountManager.accounts) { account in
           HStack {
-            if let currentAccount = self.accountManager.currentAccount, currentAccount.id == account.id {
+            if let currentAccount = accountManager.currentAccount, currentAccount.id == account.id {
               Image(systemName: "checkmark.circle.fill")
                 .font(.largeTitle)
                 .foregroundColor(.green)
             }
-            if self.accountManager.isAuthenticated(account) {
+            if accountManager.isAuthenticated(account) {
               Text(account.name)
-                .onTapGesture { self.accountManager.setAccount(account) }
+                .onTapGesture { accountManager.setAccount(account) }
             } else {
               Text(account.name)
                 .foregroundColor(.red)
               Spacer()
-              Button(action: { self.accountManager.reauthenticate(account: account, anchor: NSApp.keyWindow!) }) {
+              Button(action: { accountManager.reauthenticate(account: account, anchor: NSApp.keyWindow!) }) {
                 Text("Renew Credentials")
               }
             }
           }
           .animation(.spring())
         }
-        .onDelete(perform: { self.accountManager.removeAccounts(indexSet: $0) })
+        .onDelete(perform: { accountManager.removeAccounts(indexSet: $0) })
         .padding()
       }
       HStack {
         Button(action: {
-          self.accountManager.addAccount(anchor: NSApp.keyWindow!)
+          accountManager.addAccount(anchor: NSApp.keyWindow!)
         }) { Text("Add account") }
         Spacer()
         Button(action: {
-          self.accountManager.removeAll()
+          accountManager.removeAll()
         }) { Text("Remove all accounts") }
       }
       .padding()

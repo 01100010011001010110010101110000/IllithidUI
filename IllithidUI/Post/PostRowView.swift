@@ -1,7 +1,7 @@
 //
 // PostRowView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/1/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/11/20
 //
 
 import SwiftUI
@@ -36,7 +36,7 @@ struct PostRowView: View {
         VStack {
           VStack {
             if crosspostParent != nil {
-              Text("Crossposted by \(self.post.author) \(self.post.relativePostTime) ago")
+              Text("Crossposted by \(post.author) \(post.relativePostTime) ago")
                 .font(.caption)
             }
             HStack {
@@ -57,7 +57,7 @@ struct PostRowView: View {
             TitleView(post: post)
           }
 
-          if let crosspostParent = self.crosspostParent {
+          if let crosspostParent = crosspostParent {
             GroupBox {
               VStack {
                 TitleView(post: crosspostParent)
@@ -69,7 +69,7 @@ struct PostRowView: View {
             }
             .padding([.leading, .trailing], 4.0)
             .onTapGesture(count: 2) {
-              self.showComments(for: self.crosspostParent!)
+              showComments(for: crosspostParent)
             }
           } else {
             PostContent(post: post)
@@ -80,42 +80,42 @@ struct PostRowView: View {
       }
     }
     .onTapGesture(count: 2) {
-      self.showComments(for: self.post)
+      showComments(for: post)
     }
     .contextMenu {
       Button(action: {
-        self.showComments(for: self.post)
+        showComments(for: post)
       }, label: {
         Text("Show comments…")
       })
       Divider()
       Button(action: {
-        openLink(self.post.postUrl)
+        openLink(post.postUrl)
       }, label: {
         Text("Open post…")
       })
       Button(action: {
-        openLink(self.post.contentUrl)
+        openLink(post.contentUrl)
       }, label: {
         Text("Open post content…")
       })
       Divider()
       Button(action: {
         NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(self.post.postUrl.absoluteString, forType: .string)
+        NSPasteboard.general.setString(post.postUrl.absoluteString, forType: .string)
       }, label: {
         Text("Copy post URL")
       })
       Button(action: {
         NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(self.post.contentUrl.absoluteString, forType: .string)
+        NSPasteboard.general.setString(post.contentUrl.absoluteString, forType: .string)
       }, label: {
         Text("Copy content URL")
       })
       Divider()
       #if DEBUG
         Button(action: {
-          self.showDebugWindow(for: self.post)
+          showDebugWindow(for: post)
         }) {
           Text("Show debug panel…")
         }
@@ -148,7 +148,7 @@ private struct TitleView: View {
           .flairTag()
       }
 
-      Text(self.post.title)
+      Text(post.title)
         .font(.title)
         .heightResizable()
         .multilineTextAlignment(.center)
@@ -179,7 +179,7 @@ struct PostActionBar: View {
     self.post = post
 
     // Likes is actually ternary, with nil implying no vote
-    if let likeDirection = self.post.likes {
+    if let likeDirection = post.likes {
       _vote = .init(initialValue: likeDirection ? .up : .down)
     } else {
       _vote = .init(initialValue: .clear)
@@ -194,18 +194,18 @@ struct PostActionBar: View {
         .overlay(Image(systemName: "arrow.up")
           .foregroundColor(vote == .up ? .orange : .white))
         .onTapGesture {
-          if self.vote == .up {
-            self.vote = .clear
-            self.post.clearVote { result in
+          if vote == .up {
+            vote = .clear
+            post.clearVote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.name): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
               }
             }
           } else {
-            self.vote = .up
-            self.post.upvote { result in
+            vote = .up
+            post.upvote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error upvoting \(self.post.title) - \(self.post.name): \(error)")
+                Illithid.shared.logger.errorMessage("Error upvoting \(post.title) - \(post.name): \(error)")
               }
             }
           }
@@ -216,18 +216,18 @@ struct PostActionBar: View {
         .overlay(Image(systemName: "arrow.down")
           .foregroundColor(vote == .down ? .purple : .white))
         .onTapGesture {
-          if self.vote == .down {
-            self.vote = .clear
-            self.post.clearVote { result in
+          if vote == .down {
+            vote = .clear
+            post.clearVote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.post.title) - \(self.post.name): \(error)")
+                Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
               }
             }
           } else {
-            self.vote = .down
-            self.post.downvote { result in
+            vote = .down
+            post.downvote { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error downvoting \(self.post.title) - \(self.post.name): \(error)")
+                Illithid.shared.logger.errorMessage("Error downvoting \(post.title) - \(post.name): \(error)")
               }
             }
           }
@@ -238,17 +238,17 @@ struct PostActionBar: View {
         .overlay(Image(systemName: "bookmark")
           .foregroundColor(saved ? .green : .white))
         .onTapGesture {
-          self.saved.toggle()
-          if self.saved {
-            self.post.save { result in
+          saved.toggle()
+          if saved {
+            post.save { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error saving \(self.post.title) - \(self.post.name): \(error)")
+                Illithid.shared.logger.errorMessage("Error saving \(post.title) - \(post.name): \(error)")
               }
             }
           } else {
-            self.post.unsave { result in
+            post.unsave { result in
               if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error unsaving \(self.post.title) - \(self.post.name): \(error)")
+                Illithid.shared.logger.errorMessage("Error unsaving \(post.title) - \(post.name): \(error)")
               }
             }
           }
