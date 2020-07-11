@@ -12,12 +12,13 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct PostListView: View {
+  @Environment(\.navigationLayout) var layout
   @EnvironmentObject var informationBarData: InformationBarData
   @ObservedObject var preferences: PreferencesData = .shared
-  @ObservedObject private var sorter = SortModel(sort: PostSort.best, topInterval: .day)
 
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
+  @StateObject private var sorter = SortModel(sort: PostSort.best, topInterval: .day)
   @StateObject private var postsData: PostListData
 
   let postContainer: PostProvider
@@ -77,23 +78,57 @@ struct PostListView: View {
       .background(Color(.controlBackgroundColor))
 
       HSplitView {
-        List {
-          ForEach(filteredPosts) { post in
-            PostRowView(post: post)
-              .onAppear {
-                if post == self.filteredPosts.last {
-                  self.postsData.loadPosts(sort: self.sorter.sort,
-                                           topInterval: self.sorter.topInterval)
-                }
+        switch layout {
+        case .compact, .classic:
+          NavigationView {
+            List {
+              ForEach(filteredPosts) { post in
+                PostClassicRowView(post: post)
+                  .onAppear {
+                    if post == self.filteredPosts.last {
+                      postsData.loadPosts(sort: self.sorter.sort,
+                                          topInterval: self.sorter.topInterval)
+                    }
+                  }
               }
+            }
+            .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
+            .frame(width: 420)
+            .onAppear {
+              // Do not load posts on a re-render
+              guard postsData.posts.isEmpty else { return }
+              postsData.loadPosts(sort: self.sorter.sort,
+                                  topInterval: self.sorter.topInterval)
+            }
+            .onDisappear {
+              postsData.cancel()
+            }
+
+            Text("Choose a post")
+              .frame(maxWidth: .infinity, maxHeight: .infinity)
           }
-        }
-        .onAppear {
-          self.postsData.loadPosts(sort: self.sorter.sort,
-                                   topInterval: self.sorter.topInterval)
-        }
-        .onDisappear {
-          self.postsData.cancel()
+        case .large:
+          List {
+            ForEach(filteredPosts) { post in
+              PostRowView(post: post)
+                .onAppear {
+                  if post == self.filteredPosts.last {
+                    postsData.loadPosts(sort: self.sorter.sort,
+                                        topInterval: self.sorter.topInterval)
+                  }
+                }
+            }
+          }
+          .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
+          .onAppear {
+            // Do not load posts on a re-render
+            guard postsData.posts.isEmpty else { return }
+            postsData.loadPosts(sort: self.sorter.sort,
+                                topInterval: self.sorter.topInterval)
+          }
+          .onDisappear {
+            postsData.cancel()
+          }
         }
         if postContainer is Subreddit && showSidebar {
           SidebarView(subreddit: postContainer as! Subreddit)
@@ -102,7 +137,6 @@ struct PostListView: View {
       }
     }
     .navigationTitle(postContainer.displayName)
-    .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
   }
 }
 
@@ -139,18 +173,18 @@ struct SidebarView: View {
           )
           .foregroundColor(.white)
           .onTapGesture {
-            if self.subscribed {
-              self.subreddit.unsubscribe { result in
+            if subscribed {
+              subreddit.unsubscribe { result in
                 if case Result.success = result {
-                  self.subscribed = false
-                  self.informationBarData.loadSubscriptions()
+                  subscribed = false
+                  informationBarData.loadSubscriptions()
                 }
               }
             } else {
-              self.subreddit.subscribe { result in
+              subreddit.subscribe { result in
                 if case Result.success = result {
-                  self.subscribed = true
-                  self.informationBarData.loadSubscriptions()
+                  subscribed = true
+                  informationBarData.loadSubscriptions()
                 }
               }
             }
@@ -162,9 +196,9 @@ struct SidebarView: View {
             .font(.title)
             .help("Show Wiki")
         }, mouseUp: {
-          WindowManager.shared.showWindow(withId: "\(self.subreddit.name)/wiki",
-                                          title: "\(self.subreddit.displayName) Wiki") {
-            WikiPagesView(wikiData: .init(subreddit: self.subreddit))
+          WindowManager.shared.showWindow(withId: "\(subreddit.name)/wiki",
+                                          title: "\(subreddit.displayName) Wiki") {
+            WikiPagesView(wikiData: .init(subreddit: subreddit))
           }
         })
         Spacer()

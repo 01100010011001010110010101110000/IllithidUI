@@ -74,7 +74,6 @@ struct CommentsView: View, Identifiable {
         self.viewBuilder(wrapper: wrapper)
       }
     }
-    .navigationTitle(post.title)
     .frame(minWidth: 600, minHeight: 400, maxHeight: .infinity)
     .onAppear {
       self.commentData.loadComments(focusOn: self.focusedComment, context: self.focusedComment != nil ? 2 : nil)

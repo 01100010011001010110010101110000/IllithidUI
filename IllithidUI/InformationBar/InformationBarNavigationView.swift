@@ -1,7 +1,7 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/8/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/9/20
 //
 
 import SwiftUI
@@ -11,13 +11,12 @@ import Illithid
 struct InformationBarNavigationView: View {
   @ObservedObject var preferences: PreferencesData = .shared
 
-  @ObservedObject var informationBarData = InformationBarData()
-  let multiredditSearch = SearchData(for: [.subreddit])
-
+  @StateObject private var informationBarData = InformationBarData()
   @State private var isEditingMulti: Bool = false
   @State private var editing: Multireddit.ID?
-
   @State private var selection: String? = nil
+
+  let multiredditSearch = SearchData(for: [.subreddit])
 
   private var accountView: AnyView {
     if let account = Illithid.shared.accountManager.currentAccount {
@@ -136,6 +135,6 @@ extension FrontPage {
 
 struct InformationBarListView_Previews: PreviewProvider {
   static var previews: some View {
-    InformationBarNavigationView(informationBarData: .init())
+    InformationBarNavigationView()
   }
 }

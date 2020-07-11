@@ -1,7 +1,7 @@
 //
 // NSImageNames.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 5/10/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
 //
 
 import AppKit
@@ -19,8 +19,9 @@ extension NSImage.Name {
   static let arrowUp = NSImage.Name("arrow.up")
   static let bookmark = NSImage.Name("bookmark.fill")
   static let eyeSlash = NSImage.Name("eye.slash")
-  static let search = NSImage.Name("search")
+  static let search = NSImage.Name("magnifyingglass")
   static let textBubble = NSImage.Name("text.bubble")
+  static let textBubbleFilled = NSImage.Name("text.bubble.fill")
   static let checkmark = NSImage.Name("check")
   static let clock = NSImage.Name("clock")
   static let flag = NSImage.Name("flag.fill")
