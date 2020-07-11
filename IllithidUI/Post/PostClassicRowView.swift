@@ -10,7 +10,11 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct PostClassicRowView: View {
+  @ObservedObject private var moderators: ModeratorData = .shared
+  @EnvironmentObject var informationBarData: InformationBarData
+
   let post: Post
+  private let windowManager: WindowManager = .shared
 
   private var previewImage: String {
     switch post.postHint {
@@ -20,6 +24,16 @@ struct PostClassicRowView: View {
       return "video.fill"
     default:
       return "link"
+    }
+  }
+
+  private var authorColor: Color {
+    if post.isAdminPost {
+      return .red
+    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
+      return .green
+    } else {
+      return .white
     }
   }
 
@@ -34,47 +48,54 @@ struct PostClassicRowView: View {
   }
 
   var body: some View {
-    NavigationLink(
-      destination: CommentsView(post: post),
-      label: {
-        HStack {
-          VStack {
-            Image(systemName: "arrow.up")
-            Text(String(post.ups.postAbbreviation()))
-              .foregroundColor(.orange)
-            Image(systemName: "arrow.down")
-          }
-          // Hack to deal with different length upvote count text
-          .frame(minWidth: 36)
-          if let thumbnailUrl = post.thumbnail {
-            WebImage(url: thumbnailUrl)
-              .placeholder {
-                thumbnailPlaceholder
-              }
-              .resizable()
-              .aspectRatio(contentMode: .fill)
-              .frame(width: 90, height: 60)
-              .clipShape(RoundedRectangle(cornerRadius: 8))
-          } else {
+    HStack {
+      VStack {
+        Image(systemName: "arrow.up")
+        Text(String(post.ups.postAbbreviation()))
+          .foregroundColor(.orange)
+        Image(systemName: "arrow.down")
+      }
+      // Hack to deal with different length upvote count text
+      .frame(minWidth: 36)
+      if let thumbnailUrl = post.thumbnail {
+        WebImage(url: thumbnailUrl)
+          .placeholder {
             thumbnailPlaceholder
           }
-          VStack(alignment: .leading, spacing: 4) {
-            Text(post.title)
-              .fontWeight(.bold)
-              .font(.headline)
-            HStack {
-              Text(post.subredditNamePrefixed)
-              Text("Posted by ")
-                + Text(post.author)
-            }
-          }
-          Spacer()
-        }
-        .padding([.top, .bottom], 10)
-        .padding(.trailing, 5)
+          .resizable()
+          .aspectRatio(contentMode: .fill)
+          .frame(width: 90, height: 60)
+          .clipShape(RoundedRectangle(cornerRadius: 8))
+      } else {
+        thumbnailPlaceholder
       }
-    )
-    .frame(width: 400)
+      VStack(alignment: .leading, spacing: 4) {
+        Text(post.title)
+          .fontWeight(.bold)
+          .font(.headline)
+          .heightResizable()
+        HStack {
+          Text(post.subredditNamePrefixed)
+            .onTapGesture {
+              windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
+                SubredditLoader(fullname: post.subredditId)
+                  .environmentObject(informationBarData)
+              }
+            }
+          (Text("by ")
+            + Text(post.author).usernameStyle(color: authorColor))
+            .onTapGesture {
+              windowManager.showMainWindowTab(withId: post.author, title: post.author) {
+                AccountView(name: post.author)
+                  .environmentObject(informationBarData)
+              }
+            }
+        }
+      }
+      Spacer()
+    }
+    .padding([.top, .bottom], 10)
+    .padding(.trailing, 5)
   }
 }
 

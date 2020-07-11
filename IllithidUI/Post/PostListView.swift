@@ -80,31 +80,26 @@ struct PostListView: View {
       HSplitView {
         switch layout {
         case .compact, .classic:
-          NavigationView {
-            List {
-              ForEach(filteredPosts) { post in
-                PostClassicRowView(post: post)
-                  .onAppear {
-                    if post == self.filteredPosts.last {
-                      postsData.loadPosts(sort: self.sorter.sort,
-                                          topInterval: self.sorter.topInterval)
-                    }
+          List {
+            ForEach(filteredPosts) { post in
+              PostClassicRowView(post: post)
+                .onAppear {
+                  if post == self.filteredPosts.last {
+                    postsData.loadPosts(sort: self.sorter.sort,
+                                        topInterval: self.sorter.topInterval)
                   }
-              }
+                }
             }
-            .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
-            .frame(width: 420)
-            .onAppear {
-              // Do not load posts on a re-render
-              guard postsData.posts.isEmpty else { return }
-              postsData.loadPosts(sort: self.sorter.sort,
-                                  topInterval: self.sorter.topInterval)
-            }
-            .onDisappear {
-              postsData.cancel()
-            }
-
-            NavigationPrompt(prompt: "Choose a post")
+          }
+          .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
+          .onAppear {
+            // Do not load posts on a re-render
+            guard postsData.posts.isEmpty else { return }
+            postsData.loadPosts(sort: self.sorter.sort,
+                                topInterval: self.sorter.topInterval)
+          }
+          .onDisappear {
+            postsData.cancel()
           }
         case .large:
           List {

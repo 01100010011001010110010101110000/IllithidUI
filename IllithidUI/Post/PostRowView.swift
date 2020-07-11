@@ -116,7 +116,7 @@ struct PostRowView: View {
       #if DEBUG
         Button(action: {
           self.showDebugWindow(for: self.post)
-      }) {
+        }) {
           Text("Show debug panel…")
         }
       #endif
@@ -300,9 +300,9 @@ struct PostMetadataBar: View {
         Text("\(post.author)")
         .usernameStyle(color: authorColor))
         .onTapGesture {
-          self.windowManager.showMainWindowTab(withId: self.post.author, title: self.post.author) {
-            AccountView(name: self.post.author)
-              .environmentObject(self.informationBarData)
+          windowManager.showMainWindowTab(withId: post.author, title: post.author) {
+            AccountView(name: post.author)
+              .environmentObject(informationBarData)
           }
         }
       if let richtext = post.authorFlairRichtext, !richtext.isEmpty {
@@ -334,9 +334,9 @@ struct PostMetadataBar: View {
       Spacer()
       Text(post.subredditNamePrefixed)
         .onTapGesture {
-          self.windowManager.showMainWindowTab(withId: self.post.subredditId, title: self.post.subredditNamePrefixed) {
-            SubredditLoader(fullname: self.post.subredditId)
-              .environmentObject(self.informationBarData)
+          windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
+            SubredditLoader(fullname: post.subredditId)
+              .environmentObject(informationBarData)
           }
         }
     }
