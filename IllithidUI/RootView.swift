@@ -1,7 +1,7 @@
 //
 // RootView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/9/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/10/20
 //
 
 import SwiftUI
@@ -16,13 +16,13 @@ enum NavigationLayout: String, CaseIterable, Identifiable {
   var toolbarIcon: some View {
     switch self {
     case .compact:
-      return Image(systemName: "squares.below.rectangle")
+      return Image(systemName: "list.dash")
         .font(.caption)
     case .classic:
       return Image(systemName: "rectangle.split.3x1")
         .font(.caption)
     case .large:
-      return Image(systemName: "square")
+      return Image(systemName: "squares.below.rectangle")
         .font(.caption)
     }
   }
