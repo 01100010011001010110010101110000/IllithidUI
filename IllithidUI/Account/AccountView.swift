@@ -35,7 +35,6 @@ struct AccountView: View {
           NavigationLink("Downvoted", destination: Content(data: accountData, content: .downvoted))
         }
       }
-      .listStyle(SidebarListStyle())
 
       NavigationPrompt(prompt: "Make a selection")
     }
@@ -53,38 +52,39 @@ private struct Content: View {
     List {
       SortController(model: sorter)
       ForEach(data.content[content]!) { item in
-        contentView(content: item)
-          .onAppear {
-            if item == data.content[content]!.last {
-              data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
+        switch item {
+        case let .comment(comment):
+          CommentRowView(comment: comment)
+            .onAppear {
+              if item == data.content[content]!.last {
+                data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
+              }
             }
-          }
+        case let .post(post):
+          PostRowView(post: post)
+            .onAppear {
+              if item == data.content[content]!.last {
+                data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
+              }
+            }
+        default:
+          EmptyView()
+        }
       }
     }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
     .onAppear {
       data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
     }
     .onReceive(sorter.$sort) { sort in
+      guard !data.content[content]!.isEmpty else { return }
       data.clearContent(content: content)
       data.loadContent(content: content, sort: sort, topInterval: sorter.topInterval)
     }
     .onReceive(sorter.$topInterval) { interval in
+      guard !data.content[content]!.isEmpty else { return }
       data.clearContent(content: content)
       data.loadContent(content: content, sort: sorter.sort, topInterval: interval)
-    }
-  }
-
-  func contentView(content: Listing.Content) -> AnyView {
-    switch content {
-    case let .comment(comment):
-      return CommentRowView(comment: comment)
-        .eraseToAnyView()
-    case let .post(post):
-      return PostRowView(post: post)
-        .eraseToAnyView()
-    default:
-      return EmptyView()
-        .eraseToAnyView()
     }
   }
 }

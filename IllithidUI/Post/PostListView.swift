@@ -1,7 +1,7 @@
 //
 // PostListView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/10/20
 //
 
 import Combine
@@ -104,8 +104,7 @@ struct PostListView: View {
               postsData.cancel()
             }
 
-            Text("Choose a post")
-              .frame(maxWidth: .infinity, maxHeight: .infinity)
+            NavigationPrompt(prompt: "Choose a post")
           }
         case .large:
           List {
