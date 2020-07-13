@@ -30,7 +30,7 @@ struct LinkPreview: View {
 
   var body: some View {
     VStack(spacing: 0.0) {
-      previewData.previewImageUrl.map { url in
+      if let url = previewData.previewImageUrl {
         WebImage(url: url, context: [.imageTransformer:
             SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
           .conditionalModifier(isNsfw, NsfwBlurModifier())

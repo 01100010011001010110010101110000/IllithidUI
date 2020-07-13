@@ -1,7 +1,7 @@
 //
 // PostListView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/10/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/11/20
 //
 
 import Combine
@@ -80,27 +80,20 @@ struct PostListView: View {
       HSplitView {
         switch layout {
         case .compact, .classic:
-          List {
-            ForEach(filteredPosts) { post in
-              PostClassicRowView(post: post)
-                .onAppear {
-                  if post == filteredPosts.last {
-                    postsData.loadPosts(sort: sorter.sort,
-                                        topInterval: sorter.topInterval)
-                  }
-                }
-            }
-          }
-          .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
-          .onAppear {
-            // Do not load posts on a re-render
-            guard postsData.posts.isEmpty else { return }
+          ClassicListBody(posts: filteredPosts, onLastPost: {
             postsData.loadPosts(sort: sorter.sort,
                                 topInterval: sorter.topInterval)
-          }
-          .onDisappear {
-            postsData.cancel()
-          }
+          })
+            .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
+            .onAppear {
+              // Do not load posts on a re-render
+              guard postsData.posts.isEmpty else { return }
+              postsData.loadPosts(sort: sorter.sort,
+                                  topInterval: sorter.topInterval)
+            }
+            .onDisappear {
+              postsData.cancel()
+            }
         case .large:
           List {
             ForEach(filteredPosts) { post in
