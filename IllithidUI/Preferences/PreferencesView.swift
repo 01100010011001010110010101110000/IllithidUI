@@ -11,19 +11,83 @@ import Illithid
 struct PreferencesView: View {
   @ObservedObject var accountManager: AccountManager
 
+  @State private var preferencePage: PreferencePage = .general
+
   var body: some View {
-    TabView {
-      GeneralPreferences()
-        .tabItem {
-          Text("General")
-        }
-      AccountsPreferences(accountManager: accountManager)
-        .tabItem {
-          Text("Accounts")
-        }
+    VStack {
+      switch preferencePage {
+      case .general:
+        GeneralPreferences()
+          .navigationTitle("General")
+      case .accounts:
+        AccountsPreferences(accountManager: accountManager)
+          .navigationTitle("Accounts")
+      }
     }
-    .padding()
-    .frame(minWidth: 300, minHeight: 500)
+    .padding(.top, 20)
+    .frame(minWidth: 550, maxWidth: 550, maxHeight: 800)
+    .toolbar {
+      ToolbarItem(placement: .navigation) {
+        PreferencesToolbarItemView(selection: $preferencePage, page: .general)
+      }
+
+      ToolbarItem(placement: .navigation) {
+        PreferencesToolbarItemView(selection: $preferencePage, page: .accounts)
+      }
+    }
+  }
+}
+
+private struct PreferencesToolbarItemView: View {
+  @Binding var selection: PreferencesView.PreferencePage
+  @State private var hovering: Bool = false
+
+  let page: PreferencesView.PreferencePage
+
+  var iconColor: Color {
+    if selection == page, hovering { return Color(.cyan) }
+    if selection == page { return .blue }
+    if hovering { return .white }
+    return .gray
+  }
+
+  var body: some View {
+    VStack(spacing: 1) {
+      Image(systemName: page.iconName)
+        .foregroundColor(iconColor)
+        .font(.title2)
+        .onHover { hovering in
+          self.hovering = hovering
+        }
+
+      Text(page.rawValue.capitalized)
+        .font(.body)
+    }
+    .padding(4)
+    .onTapGesture {
+      selection = page
+    }
+    .overlay(RoundedRectangle(cornerRadius: 8).foregroundColor(page == selection ? .white : .clear).opacity(0.2))
+  }
+}
+
+extension PreferencesView {
+  enum PreferencePage: String, Identifiable, CaseIterable {
+    var id: String {
+      rawValue
+    }
+
+    var iconName: String {
+      switch self {
+      case .general:
+        return "gearshape"
+      case .accounts:
+        return "person.crop.circle"
+      }
+    }
+
+    case general
+    case accounts
   }
 }
 
@@ -42,7 +106,7 @@ struct GeneralPreferences: View {
             Text("Blur NSFW content")
           }
 
-          Picker(selection: $preferences.browser, label: Text("Open links in: ")) {
+          Picker(selection: $preferences.browser, label: Text("Open links with:")) {
             ForEach(Browser.installed.sorted()) { browser in
               HStack {
                 if let icon = browser.icon() {
@@ -55,6 +119,8 @@ struct GeneralPreferences: View {
               .tag(browser)
             }
           }
+          .frame(width: 400)
+
           Toggle(isOn: $preferences.openLinksInForeground) {
             Text("Open links in foreground")
           }
@@ -220,15 +286,17 @@ final class PreferencesData: ObservableObject, Codable {
   }
 
   private func updateDefaults() {
-    let data = try? JSONEncoder().encode(self)
+    guard let data = try? JSONEncoder().encode(self) else {
+      // TODO: Error logging
+      return
+    }
+
     UserDefaults.standard.set(data, forKey: "preferences")
   }
 }
 
-// #if DEBUG
 // struct PreferencesView_Previews: PreviewProvider {
 //  static var previews: some View {
 //    PreferencesView()
 //  }
 // }
-// #endif
