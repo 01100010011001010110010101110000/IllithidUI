@@ -60,6 +60,7 @@ struct ClassicListBody: View {
           .zIndex(2)
 
         PostModalView(post: post)
+          .zIndex(3)
       }
     }
   }

@@ -8,22 +8,24 @@ import SwiftUI
 
 import Illithid
 
-enum NavigationLayout: String, CaseIterable, Identifiable {
+enum NavigationLayout: String, CaseIterable, Identifiable, Codable {
   var id: String {
     rawValue
   }
 
   var toolbarIcon: some View {
+    Image(systemName: iconName)
+      .font(.caption)
+  }
+
+  var iconName: String {
     switch self {
     case .compact:
-      return Image(systemName: "list.dash")
-        .font(.caption)
+      return "list.dash"
     case .classic:
-      return Image(systemName: "rectangle.split.3x1")
-        .font(.caption)
+      return "rectangle.split.3x1"
     case .large:
-      return Image(systemName: "squares.below.rectangle")
-        .font(.caption)
+      return "squares.below.rectangle"
     }
   }
 
@@ -48,22 +50,22 @@ extension EnvironmentValues {
 }
 
 struct RootView: View {
-  @State private var layout: NavigationLayout = NavigationLayoutKey.defaultValue
+  @AppStorage("navigationLayout") var layout: NavigationLayout = NavigationLayoutKey.defaultValue
 
   var body: some View {
     InformationBarNavigationView()
       .environment(\.navigationLayout, layout)
       .toolbar {
         ToolbarItem(placement: .principal) {
-          Picker(selection: $layout, label: EmptyView(), content: {
+          Picker(selection: $layout, label: EmptyView()) {
             ForEach(NavigationLayout.allCases.reversed()) { layoutCase in
               layoutCase.toolbarIcon
                 .foregroundColor(.white)
                 .tag(layoutCase).padding(5)
             }
-          })
-            .help("Different layout styles for the main navigation page")
-            .pickerStyle(SegmentedPickerStyle())
+          }
+          .help("Different layout styles for the main navigation page")
+          .pickerStyle(SegmentedPickerStyle())
         }
       }
       .navigationTitle("Illithid")

@@ -14,7 +14,6 @@ struct PostModalView: View {
   var body: some View {
     PostContent(post: post)
       .shadow(radius: 10)
-      .zIndex(3)
   }
 }
 
