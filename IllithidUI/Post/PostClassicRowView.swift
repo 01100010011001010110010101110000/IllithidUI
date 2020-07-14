@@ -48,54 +48,57 @@ struct PostClassicRowView: View {
   }
 
   var body: some View {
-    HStack {
-      VStack {
-        Image(systemName: "arrow.up")
-        Text(String(post.ups.postAbbreviation()))
-          .foregroundColor(.orange)
-        Image(systemName: "arrow.down")
-      }
-      // Hack to deal with different length upvote count text
-      .frame(minWidth: 36)
-      if let thumbnailUrl = post.thumbnail {
-        WebImage(url: thumbnailUrl)
-          .placeholder {
-            thumbnailPlaceholder
-          }
-          .resizable()
-          .aspectRatio(contentMode: .fill)
-          .frame(width: 90, height: 60)
-          .clipShape(RoundedRectangle(cornerRadius: 8))
-      } else {
-        thumbnailPlaceholder
-      }
-      VStack(alignment: .leading, spacing: 4) {
-        Text(post.title)
-          .fontWeight(.bold)
-          .font(.headline)
-          .heightResizable()
-        HStack {
-          Text(post.subredditNamePrefixed)
-            .onTapGesture {
-              windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
-                SubredditLoader(fullname: post.subredditId)
-                  .environmentObject(informationBarData)
-              }
-            }
-          (Text("by ")
-            + Text(post.author).usernameStyle(color: authorColor))
-            .onTapGesture {
-              windowManager.showMainWindowTab(withId: post.author, title: post.author) {
-                AccountView(name: post.author)
-                  .environmentObject(informationBarData)
-              }
-            }
+    GroupBox {
+      HStack {
+        VStack {
+          Image(systemName: "arrow.up")
+          Text(String(post.ups.postAbbreviation()))
+            .foregroundColor(.orange)
+          Image(systemName: "arrow.down")
         }
+        // Hack to deal with different length upvote count text
+        .frame(minWidth: 36)
+        if let thumbnailUrl = post.thumbnail {
+          WebImage(url: thumbnailUrl)
+            .placeholder {
+              thumbnailPlaceholder
+            }
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: 90, height: 60)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        } else {
+          thumbnailPlaceholder
+        }
+        VStack(alignment: .leading, spacing: 4) {
+          Text(post.title)
+            .fontWeight(.bold)
+            .font(.headline)
+            .heightResizable()
+          HStack {
+            Text(post.subredditNamePrefixed)
+              .onTapGesture {
+                windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
+                  SubredditLoader(fullname: post.subredditId)
+                    .environmentObject(informationBarData)
+                }
+              }
+            (Text("by ")
+              + Text(post.author).usernameStyle(color: authorColor))
+              .onTapGesture {
+                windowManager.showMainWindowTab(withId: post.author, title: post.author) {
+                  AccountView(name: post.author)
+                    .environmentObject(informationBarData)
+                }
+              }
+          }
+        }
+        Spacer()
       }
-      Spacer()
+      .padding([.top, .bottom], 10)
+      .padding(.trailing, 5)
     }
-    .padding([.top, .bottom], 10)
-    .padding(.trailing, 5)
+    .frame(maxWidth: .infinity)
   }
 }
 

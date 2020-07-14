@@ -86,7 +86,9 @@ final class LinkPreviewData: ObservableObject {
     request = Self.session.request(link)
       .validate()
       .cacheResponse(using: ResponseCacher.cache)
-      .responseString(queue: Self.queue, encoding: .utf8) { response in
+      .responseString(queue: Self.queue, encoding: .utf8) { [weak self] response in
+        guard let self = self else { return }
+
         switch response.result {
         case let .success(html):
           // Fetch link's HTML document
@@ -102,10 +104,10 @@ final class LinkPreviewData: ObservableObject {
               self.previewImageUrl = url
             }
           } catch {
-            print("Error parsing HTML: \(error)")
+            print("Error parsing HTML from \(self.link): \(error)")
           }
         case let .failure(error):
-          print("Error fetching HTML: \(error)")
+          print("Error fetching HTML from \(self.link): \(error)")
         }
       }
   }
