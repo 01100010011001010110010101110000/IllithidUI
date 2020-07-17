@@ -359,22 +359,19 @@ struct FlairRichtextView: View {
     .flairTag(rectangleColor: .accentColor)
   }
 
-  private static func renderRichtext(_ text: FlairRichtext) -> AnyView {
+  @ViewBuilder private static func renderRichtext(_ text: FlairRichtext) -> some View {
     switch text.type {
     case .emoji:
-      return WebImage(url: text.emojiUrl)
+      WebImage(url: text.emojiUrl)
         .resizable()
         .frame(width: 24, height: 24)
         .help(text.emojiShortcode ?? "")
-        .eraseToAnyView()
     case .text:
       if let flairText = text.text {
-        return Text(flairText)
+        Text(flairText)
           .fixedSize(horizontal: true, vertical: false)
-          .eraseToAnyView()
       } else {
-        return EmptyView()
-          .eraseToAnyView()
+        EmptyView()
       }
     }
   }

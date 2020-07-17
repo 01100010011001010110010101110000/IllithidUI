@@ -59,18 +59,16 @@ private struct VideoPostPreview: View {
     preview = post.bestVideoPreview!
   }
 
-  var body: some View {
+  @ViewBuilder var body: some View {
     if let url = url {
-      return VideoPlayer(url: url, fullSize: .init(width: preview.width, height: preview.height))
+      VideoPlayer(url: url, fullSize: .init(width: preview.width, height: preview.height))
         .mediaStamp("reddit")
-        .eraseToAnyView()
     } else {
-      return Rectangle()
+      Rectangle()
         .opacity(0.0)
         .onAppear {
           url = preview.url
         }
-        .eraseToAnyView()
     }
   }
 }
@@ -237,29 +235,25 @@ struct ImgurView: View {
           if imgurData.images.count > 1 {
             MediaStamp(mediaType: "\(viewIndex + 1) / \(imgurData.images.count)")
           }
-          renderImageView(image: imgurData.images[viewIndex])
-            .animation(.default)
-            .onTapGesture {
-              viewIndex = (viewIndex + 1) % imgurData.images.count
+          Group {
+            if imgurData.images[viewIndex].animated {
+              VideoPlayer(url: imgurData.images[viewIndex].mp4!,
+                          fullSize: .init(width: imgurData.images[viewIndex].width,
+                                          height: imgurData.images[viewIndex].height))
+            } else {
+              ImagePostPreview(url: imgurData.images[viewIndex].link)
             }
+          }
+          .animation(.default)
+          .onTapGesture {
+            viewIndex = (viewIndex + 1) % imgurData.images.count
+          }
         }
       }
     }
     .onAppear {
       guard imgurData.images.isEmpty else { return }
       imgurData.loadContent()
-    }
-  }
-
-  private func renderImageView(image: ImgurImage) -> AnyView {
-    if image.animated {
-      return VideoPlayer(url: image.mp4!,
-                         fullSize: .init(width: image.width,
-                                         height: image.height))
-        .eraseToAnyView()
-    } else {
-      return ImagePostPreview(url: image.link)
-        .eraseToAnyView()
     }
   }
 }
@@ -332,17 +326,15 @@ struct GifPostPreview: View {
   let post: Post
 
   // Prefer the MP4 preview if available, it is much more efficient than a GIF
-  var body: some View {
+  @ViewBuilder var body: some View {
     if let mp4Preview = post.mp4Previews.last {
-      return VideoPlayer(url: mp4Preview.url, fullSize: .init(width: mp4Preview.width, height: mp4Preview.height))
+      VideoPlayer(url: mp4Preview.url, fullSize: .init(width: mp4Preview.width, height: mp4Preview.height))
         .mediaStamp("gif")
-        .eraseToAnyView()
     } else {
-      return AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)
+      AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)
         .resizable()
         .aspectRatio(contentMode: .fit)
         .mediaStamp("gif")
-        .eraseToAnyView()
     }
   }
 }

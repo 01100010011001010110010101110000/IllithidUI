@@ -80,11 +80,11 @@ struct CommentsView: View, Identifiable {
   }
 
   // TODO: Clean up this abomination
-  private func viewBuilder(wrapper: CommentWrapper) -> AnyView {
+  @ViewBuilder private func viewBuilder(wrapper: CommentWrapper) -> some View {
     if commentData.commentState[wrapper.id] == .expanded {
       switch wrapper {
       case let .comment(comment):
-        return CommentRowView(comment: comment)
+        CommentRowView(comment: comment)
           .conditionalModifier(focusedComment == comment.id,
                                FocusedCommentModifier())
           .onTapGesture {
@@ -95,18 +95,16 @@ struct CommentsView: View, Identifiable {
               }
             }
           }
-          .eraseToAnyView()
       case let .more(more):
-        return MoreCommentsRowView(more: more)
+        MoreCommentsRowView(more: more)
           .onTapGesture {
             self.commentData.loadMoreComments(more: more)
           }
-          .eraseToAnyView()
       }
     } else if commentData.commentState[wrapper.id] == .collapsed {
       switch wrapper {
       case let .comment(comment):
-        return CollapsedComment(comment: comment)
+        CollapsedComment(comment: comment)
           .onTapGesture {
             DispatchQueue.main.async {
               withAnimation {
@@ -115,14 +113,11 @@ struct CommentsView: View, Identifiable {
               }
             }
           }
-          .eraseToAnyView()
       case .more:
-        return EmptyView()
-          .eraseToAnyView()
+        EmptyView()
       }
     } else {
-      return EmptyView()
-        .eraseToAnyView()
+      EmptyView()
     }
   }
 
