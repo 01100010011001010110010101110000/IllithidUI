@@ -13,44 +13,37 @@ import Ulithari
 struct PostContent: View {
   let post: Post
 
-  var body: AnyView {
+  @ViewBuilder var body: some View {
     switch post.previewGuess {
     case .imgur:
-      return ImgurView(link: post.contentUrl)
+      ImgurView(link: post.contentUrl)
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .mediaStamp("imgur")
-        .eraseToAnyView()
     case .gfycat:
-      return GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
+      GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .mediaStamp("gfycat")
-        .eraseToAnyView()
     case .redgifs:
-      return RedGifView(id: String(post.contentUrl.path.split(separator: "/").last!))
+      RedGifView(id: String(post.contentUrl.path.split(separator: "/").last!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .mediaStamp("redgifs")
-        .eraseToAnyView()
+    case .gallery:
+      GalleryPost(metaData: post.mediaMetadata!, galleryData: post.galleryData!)
     case .text:
-      return TextPostPreview(text: post.selftext)
-        .eraseToAnyView()
+      TextPostPreview(text: post.selftext)
     case .gif:
-      return GifPostPreview(post: post)
+      GifPostPreview(post: post)
         .conditionalModifier(post.over18, NsfwBlurModifier())
-        .eraseToAnyView()
     case .video:
-      return VideoPostPreview(post: post)
+      VideoPostPreview(post: post)
         .conditionalModifier(post.over18, NsfwBlurModifier())
-        .eraseToAnyView()
     case .image:
-      return ImagePostPreview(url: post.imagePreviews.last!.url)
+      ImagePostPreview(url: post.imagePreviews.last!.url)
         .conditionalModifier(post.over18, NsfwBlurModifier())
-        .eraseToAnyView()
     case .reddit:
-      return RedditLinkView(link: post.contentUrl)
-        .eraseToAnyView()
+      RedditLinkView(link: post.contentUrl)
     case .link:
-      return LinkPreview(link: post.contentUrl, isNsfw: post.over18)
-        .eraseToAnyView()
+      LinkPreview(link: post.contentUrl, isNsfw: post.over18)
     }
   }
 }
@@ -91,6 +84,7 @@ extension Post {
     case text
     case video
     case gif
+    case gallery
 
     // Site specific previews
     case imgur
@@ -107,6 +101,8 @@ extension Post {
       return .gfycat
     } else if domain.contains("redgifs.com") {
       return .redgifs
+    } else if isGallery ?? false {
+      return .gallery
     } else if domain == "reddit.com" || domain == "old.reddit.com" {
       return .reddit
     } else if isSelf || postHint == .self {
@@ -300,6 +296,26 @@ final class ImgurData: ObservableObject {
     case nil:
       // Invalid link
       return
+    }
+  }
+}
+
+// MARK: Gallery
+
+struct GalleryPost: View {
+  let metaData: [String: MediaMetadata]
+  let galleryData: GalleryData
+
+  @ViewBuilder var body: some View {
+    if let first = metaData.first?.value {
+      switch first.type {
+      case .image:
+        ImagePostPreview(url: first.source.url!)
+      case .animatedImage:
+        AnimatedImage(url: first.source.mp4!)
+      }
+    } else {
+      Text("This gallery is empty")
     }
   }
 }
