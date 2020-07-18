@@ -231,22 +231,11 @@ struct ImgurView: View {
         Rectangle()
           .opacity(0)
       } else {
-        ZStack(alignment: .topTrailing) {
-          if imgurData.images.count > 1 {
-            MediaStamp(mediaType: "\(viewIndex + 1) / \(imgurData.images.count)")
-          }
-          Group {
-            if imgurData.images[viewIndex].animated {
-              VideoPlayer(url: imgurData.images[viewIndex].mp4!,
-                          fullSize: .init(width: imgurData.images[viewIndex].width,
-                                          height: imgurData.images[viewIndex].height))
-            } else {
-              ImagePostPreview(url: imgurData.images[viewIndex].link)
-            }
-          }
-          .animation(.default)
-          .onTapGesture {
-            viewIndex = (viewIndex + 1) % imgurData.images.count
+        PagedView(data: imgurData.images) { image in
+          if image.animated {
+            VideoPlayer(url: image.mp4!, fullSize: .init(width: image.width, height: image.height))
+          } else {
+            ImagePostPreview(url: image.link)
           }
         }
       }
@@ -262,7 +251,6 @@ final class ImgurData: ObservableObject {
   @Published var images: [ImgurImage] = []
 
   let link: URL
-
   private let ulithari: Ulithari = .shared
 
   init(_ link: URL) {
@@ -300,16 +288,68 @@ struct GalleryPost: View {
   let metaData: [String: MediaMetadata]
   let galleryData: GalleryData
 
-  @ViewBuilder var body: some View {
-    if let first = metaData.first?.value {
-      switch first.type {
-      case .image:
-        ImagePostPreview(url: first.source.url!)
-      case .animatedImage:
-        AnimatedImage(url: first.source.mp4!)
+  private struct CaptionRectangle<Content: View>: View {
+    let opacity: Double
+    let height: CGFloat
+    let label: () -> Content
+
+    init(opacity: Double = 0.8, height: CGFloat = 30, @ViewBuilder label: @escaping () -> Content) {
+      self.opacity = opacity
+      self.height = height
+      self.label = label
+    }
+
+    var body: some View {
+      Rectangle()
+        .foregroundColor(.black)
+        .opacity(opacity)
+        .overlay(label())
+        .frame(height: height)
+    }
+  }
+
+  @ViewBuilder private func captionView(item: GalleryDataItem) -> some View {
+    if let caption = item.caption {
+      CaptionRectangle {
+        HStack {
+          if let url = item.outboundUrl {
+            Link(caption, destination: url)
+          } else {
+            Text(caption)
+          }
+          Spacer()
+        }
+        .padding(.horizontal, 10)
+      }
+    } else if let url = item.outboundUrl {
+      CaptionRectangle {
+        HStack {
+          Link(url.host ?? url.absoluteString, destination: url)
+          Spacer()
+        }
+        .padding(.horizontal, 10)
       }
     } else {
-      Text("This gallery is empty")
+      EmptyView()
+    }
+  }
+
+  var body: some View {
+    PagedView(data: galleryData.items) { item in
+      if let metadata = metaData[item.mediaId] {
+        Group {
+          switch metadata.type {
+          case .image:
+            ImagePostPreview(url: metadata.source.url!)
+          case .animatedImage:
+            AnimatedImage(url: metadata.source.mp4!)
+          }
+        }
+        .overlay(
+          captionView(item: item),
+          alignment: .bottomLeading
+        )
+      }
     }
   }
 }
