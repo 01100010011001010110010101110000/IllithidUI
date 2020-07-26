@@ -41,7 +41,6 @@ private struct PinchAndZoomModifier: ViewModifier {
   func body(content: Content) -> some View {
     ZStack(alignment: .topLeading) {
       content
-
         .offset(currentPosition)
         .clipShape(Rectangle())
         .gesture(DragGesture()
@@ -50,28 +49,29 @@ private struct PinchAndZoomModifier: ViewModifier {
               self.currentPosition = CGSize(width: value.translation.width + self.previousPosition.width,
                                             height: value.translation.height + self.previousPosition.height)
             }
-        })
+          })
           .onEnded({ _ in
             self.previousPosition = self.currentPosition
-        }))
+          }))
 
         .scaleEffect(currentScale)
         .clipShape(Rectangle())
         .gesture(MagnificationGesture()
           .onChanged({ value in
             self.currentScale = self.pinNewScale(newScale: value.magnitude * self.previousScale)
-        })
+          })
           .onEnded({ _ in
             self.previousScale = self.currentScale
-        }))
+          }))
 
       HStack {
-        ResetButton()
-          .onTapGesture {
-            self.resetZoom()
-            // Altering scale alters the offset, so we reset it to ensure the whole view is visible
-            self.resetPosition()
-          }
+        Button(action: {
+          self.resetZoom()
+          // Altering scale alters the offset, so we reset it to ensure the whole view is visible
+          self.resetPosition()
+        }, label: {
+          Image(systemName: "arrow.triangle.2.circlepath")
+        })
       }
       .padding([.top, .leading], 4)
       .opacity(self.resetVisibility)
@@ -87,16 +87,5 @@ private struct PinchAndZoomModifier: ViewModifier {
         }
       }
     })
-  }
-}
-
-private struct ResetButton: View {
-  var body: some View {
-    Image(systemName: "arrow.triangle.2.circlepath")
-      .font(.title)
-      .padding(4)
-      .background(RoundedRectangle(cornerRadius: 4.0, style: .continuous)
-        .fill(Color(.darkGray))
-      )
   }
 }

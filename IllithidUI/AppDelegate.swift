@@ -1,7 +1,7 @@
 //
 // AppDelegate.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/28/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/6/20
 //
 
 import Cocoa
@@ -21,9 +21,38 @@ struct IllithidApp: App {
 
   @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
-  @SceneBuilder var body: some Scene {
+  var body: some Scene {
     WindowGroup {
       RootView()
+        .onOpenURL { url in
+
+          // MARK: OAuth2 Callback
+
+          if url.scheme == "illithid", url.host == "oauth2", url.path == "/callback" {
+            OAuth2Swift.handle(url: url)
+          }
+
+          // MARK: In App Link Handling
+
+          else if url.scheme == "illithid", url.host == "open-url", url.query != nil {
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            guard let linkString = components?.queryItems?
+              .filter({ $0.name == "url" }).first?.value,
+              let link = URL(string: linkString) else {
+              delegate.logger.warnMessage("Unable to open URL: \(url.absoluteString)")
+              return
+            }
+            if link.host == "reddit.com" ||
+              link.host == "old.reddit.com" ||
+              link.host == "www.reddit.com" {
+              delegate.windowManager.openRedditLink(link: link)
+            } else {
+              delegate.windowManager.showMainWindowTab(withId: link.absoluteString) {
+                WebView(url: link)
+              }
+            }
+          }
+        }
     }
 
     #if os(macOS)
@@ -96,38 +125,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       showMainWindow()
     }
     return true
-  }
-
-  func application(_: NSApplication, open urls: [URL]) {
-    urls.forEach { url in
-
-      // MARK: OAuth2 Callback
-
-      if url.scheme == "illithid", url.host == "oauth2", url.path == "/callback" {
-        OAuth2Swift.handle(url: url)
-      }
-
-      // MARK: In App Link Handling
-
-      else if url.scheme == "illithid", url.host == "open-url", url.query != nil {
-        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        guard let linkString = components?.queryItems?
-          .filter({ $0.name == "url" }).first?.value,
-          let link = URL(string: linkString) else {
-          logger.warnMessage("Unable to open URL: \(url.absoluteString)")
-          return
-        }
-        if link.host == "reddit.com" ||
-          link.host == "old.reddit.com" ||
-          link.host == "www.reddit.com" {
-          windowManager.openRedditLink(link: link)
-        } else {
-          windowManager.showMainWindowTab(withId: link.absoluteString) {
-            WebView(url: link)
-          }
-        }
-      }
-    }
   }
 
   func applicationWillResignActive(_: Notification) {}
