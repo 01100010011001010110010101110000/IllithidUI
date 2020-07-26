@@ -37,7 +37,9 @@ final class SearchData: ObservableObject {
 //        self.request?.cancel()
 //        self.request = self.search(for: searchFor)
 //      }
+//    cancelBag.append(searchToken)
     let autocompleteToken = queryPublisher
+      .filter { $0.count >= 3 }
       .debounce(for: 0.2, scheduler: RunLoop.main)
       .removeDuplicates()
       .sink { [weak self] toComplete in
@@ -53,7 +55,6 @@ final class SearchData: ObservableObject {
         }
       }
     cancelBag.append(autocompleteToken)
-//    cancelBag.append(searchToken)
   }
 
   deinit {
@@ -63,7 +64,8 @@ final class SearchData: ObservableObject {
   }
 
   func search(for searchText: String) -> DataRequest {
-    illithid.search(for: searchText, resultTypes: searchTargets) { result in
+    illithid.search(for: searchText, resultTypes: searchTargets) { [weak self] result in
+      guard let self = self else { return }
       switch result {
       case let .success(listings):
         self.clearData()
