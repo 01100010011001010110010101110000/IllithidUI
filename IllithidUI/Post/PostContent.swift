@@ -230,6 +230,12 @@ struct ImgurView: View {
       if imgurData.images.isEmpty {
         Rectangle()
           .opacity(0)
+      } else if imgurData.images.count == 1, let image = imgurData.images.first {
+        if image.animated {
+          VideoPlayer(url: image.mp4!, fullSize: .init(width: image.width, height: image.height))
+        } else {
+          ImagePostPreview(url: image.link)
+        }
       } else {
         PagedView(data: imgurData.images) { image in
           if image.animated {
@@ -349,6 +355,9 @@ struct GalleryPost: View {
           captionView(item: item),
           alignment: .bottomLeading
         )
+        // Prevent row from collapsing by enforcing the frame size
+        .frame(width: min(CGFloat(metadata.source.width), ImagePostPreview.thumbnailFrame.width),
+               height: min(CGFloat(metadata.source.height), ImagePostPreview.thumbnailFrame.height))
       }
     }
   }
@@ -391,10 +400,13 @@ struct TextPostPreview: View {
 }
 
 struct ImagePostPreview: View {
+  fileprivate static let thumbnailFrame: CGSize = .init(width: 1536, height: 864)
+
   let url: URL
 
   private let context: [SDWebImageContextOption: Any] = [
-    .imageThumbnailPixelSize: CGSize(width: 1536, height: 864),
+    .imageThumbnailPixelSize: CGSize(width: thumbnailFrame.width,
+                                     height: thumbnailFrame.height),
   ]
 
   var body: some View {
