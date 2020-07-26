@@ -1,7 +1,7 @@
 //
 // PagedView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/18/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/25/20
 //
 
 import SwiftUI
@@ -29,10 +29,13 @@ struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: Vie
               .offset(x: 10)
           }
           Spacer()
-          if index < data.index(before: data.endIndex) {
-            Button(action: { next() }, label: { Image(systemName: "chevron.right") })
-              .offset(x: -10)
-          }
+          Button(action: { next() }, label: {
+            Image(systemName: index == data.index(before: data.endIndex) ?
+              "arrow.uturn.backward" :
+              "chevron.right"
+            )
+          })
+            .offset(x: -10)
         })
         .tag(data[index][keyPath: id])
     }
