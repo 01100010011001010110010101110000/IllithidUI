@@ -13,7 +13,7 @@ import Ulithari
 struct PostContent: View {
   let post: Post
 
-  @ViewBuilder var body: some View {
+  var body: some View {
     switch post.previewGuess {
     case .imgur:
       ImgurView(link: post.contentUrl)
@@ -59,7 +59,7 @@ private struct VideoPostPreview: View {
     preview = post.bestVideoPreview!
   }
 
-  @ViewBuilder var body: some View {
+  var body: some View {
     if let url = url {
       VideoPlayer(url: url, fullSize: .init(width: preview.width, height: preview.height))
         .mediaStamp("reddit")
@@ -366,7 +366,7 @@ struct GifPostPreview: View {
   let post: Post
 
   // Prefer the MP4 preview if available, it is much more efficient than a GIF
-  @ViewBuilder var body: some View {
+  var body: some View {
     if let mp4Preview = post.mp4Previews.last {
       VideoPlayer(url: mp4Preview.url, fullSize: .init(width: mp4Preview.width, height: mp4Preview.height))
         .mediaStamp("gif")

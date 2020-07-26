@@ -1,7 +1,7 @@
 //
 // PagedView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/17/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/18/20
 //
 
 import SwiftUI
@@ -20,7 +20,7 @@ struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: Vie
     _index = .init(initialValue: data.startIndex)
   }
 
-  @ViewBuilder var body: some View {
+  var body: some View {
     ZStack(alignment: .center) {
       content(data[index])
         .overlay(HStack {
