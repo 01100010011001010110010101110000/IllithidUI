@@ -111,8 +111,8 @@ class CommentData: ObservableObject {
         self.root.append(contentsOf: listing.allComments)
 
         // Recursively insert replies into the tree by fetching them from the initial nodes
-        // Each layer of nodes populated into the tree adds more nodes to traverse, fetching additional replies until
-        //   we are at leaf comments
+        // Each layer of nodes populated into the tree adds more nodes to traverse,
+        // fetching additional replies until we are at leaf comments
         self.root.traverse(preOrder: { node in
           if let value = node.value {
             if case let CommentWrapper.comment(comment) = value {
@@ -135,7 +135,7 @@ class CommentData: ObservableObject {
         case let .failure(error):
           self.illithid.logger.errorMessage("Error fetching more comments \(error)")
         }
-    }) { wrappers in
+      }) { wrappers in
         // Remove More object from tree
         self.root.removeSubtree { node in
           node.value?.id == more.id
@@ -152,7 +152,7 @@ class CommentData: ObservableObject {
                 return wrapper.parentId == parent.fullname
               }
               return false
-          })
+            })
           }
         }
 
@@ -161,7 +161,7 @@ class CommentData: ObservableObject {
         self.root.traverse(preOrder: { node in
           guard let value = node.value else { return }
           newComments.append(value)
-      })
+        })
         self.comments = newComments
       }
   }

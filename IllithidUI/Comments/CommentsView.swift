@@ -60,7 +60,11 @@ struct CommentsView: View, Identifiable {
             Text("\(post.relativePostTime) ago")
           }
         }
-        PostContent(post: post)
+        HStack {
+          Spacer()
+          PostContent(post: post)
+          Spacer()
+        }
       }
       Divider()
       ForEach(self.commentData.comments.filter { wrapper in
