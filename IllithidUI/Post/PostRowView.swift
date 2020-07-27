@@ -142,10 +142,13 @@ private struct TitleView: View {
   var body: some View {
     HStack {
       if let richtext = post.linkFlairRichtext, !richtext.isEmpty {
-        FlairRichtextView(richtext: richtext)
+        FlairRichtextView(richtext: richtext,
+                          backgroundColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor,
+                          textColor: post.authorFlairTextSwiftUiColor)
       } else if let text = post.linkFlairText, !text.isEmpty {
         Text(text)
-          .flairTag()
+          .foregroundColor(post.linkFlairTextSwiftUiColor)
+          .flairTag(rectangleColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor)
       }
 
       Text(post.title)
@@ -306,10 +309,13 @@ struct PostMetadataBar: View {
           }
         }
       if let richtext = post.authorFlairRichtext, !richtext.isEmpty {
-        FlairRichtextView(richtext: richtext)
+        FlairRichtextView(richtext: richtext,
+                          backgroundColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor,
+                          textColor: post.authorFlairTextSwiftUiColor)
       } else if let text = post.authorFlairText, !text.isEmpty {
         Text(text)
-          .flairTag()
+          .foregroundColor(post.authorFlairTextSwiftUiColor)
+          .flairTag(rectangleColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor)
       }
       Spacer()
       HStack {
@@ -349,6 +355,8 @@ struct PostMetadataBar: View {
 
 struct FlairRichtextView: View {
   let richtext: [FlairRichtext]
+  let backgroundColor: Color
+  let textColor: Color
 
   var body: some View {
     HStack {
@@ -397,5 +405,29 @@ struct PostRowView_Previews: PreviewProvider {
     let post = try! decoder.decode(Post.self, from: data)
 
     return PostRowView(post: post)
+  }
+}
+
+extension Post {
+  var authorFlairTextSwiftUiColor: Color {
+    switch authorFlairTextColor {
+    case .light:
+      return .white
+    case .dark:
+      return .black
+    default:
+      return .white
+    }
+  }
+
+  var linkFlairTextSwiftUiColor: Color {
+    switch linkFlairTextColor {
+    case .light:
+      return .white
+    case .dark:
+      return .black
+    default:
+      return .white
+    }
   }
 }
