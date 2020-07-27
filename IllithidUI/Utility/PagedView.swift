@@ -21,23 +21,30 @@ struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: Vie
   }
 
   var body: some View {
-    ZStack(alignment: .center) {
+    ZStack(alignment: .topTrailing) {
       content(data[index])
-        .overlay(HStack {
-          if index != data.startIndex {
-            Button(action: { previous() }, label: { Image(systemName: "chevron.left") })
-              .offset(x: 10)
-          }
-          Spacer()
-          Button(action: { next() }, label: {
-            Image(systemName: index == data.index(before: data.endIndex) ?
-              "arrow.uturn.backward" :
-              "chevron.right"
-            )
+        .overlay(
+          HStack {
+            if index != data.startIndex {
+              Button(action: { previous() }, label: { Image(systemName: "chevron.left") })
+                .offset(x: 10)
+            }
+            Spacer()
+            Button(action: { next() }, label: {
+              Image(systemName: index == data.index(before: data.endIndex) ?
+                "arrow.uturn.backward" :
+                "chevron.right"
+              )
+            })
+              .offset(x: -10)
           })
-            .offset(x: -10)
-        })
         .tag(data[index][keyPath: id])
+      Text("\(data.distance(from: data.startIndex, to: index) + 1) / \(data.count)")
+        .foregroundColor(.black)
+        .padding(4)
+        .background(RoundedRectangle(cornerRadius: 8).foregroundColor(.white))
+        .padding([.top, .trailing], 4)
+        .shadow(radius: 10)
     }
   }
 
