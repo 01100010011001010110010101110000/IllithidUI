@@ -5,7 +5,7 @@
 --conflictmarkers reject
 --decimalgrouping 3,6
 --elseposition same-line
---empty void
+--voidtype void
 --exponentcase lowercase
 --exponentgrouping disabled
 --fractiongrouping disabled
@@ -31,5 +31,7 @@
 --wraparguments preserve
 --wrapcollections preserve
 --xcodeindentation disabled
---disable trailingClosures
+--disable trailingClosures,wrapMultilineStatementBraces
 --enable isEmpty
+--funcattributes same-line
+--typeattributes prev-line
