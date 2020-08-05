@@ -11,6 +11,10 @@ import Illithid
 struct SearchView: View {
   @StateObject var searchData: SearchData = .init()
 
+  let columns: [GridItem] = [
+    GridItem(.adaptive(minimum: 320)),
+  ]
+
   var prompt: String {
     if searchData.query.isEmpty { return "Make a search" }
     else if searchData.suggestions.isEmpty { return "No subreddits found" }
@@ -26,49 +30,12 @@ struct SearchView: View {
       .textFieldStyle(RoundedBorderTextFieldStyle())
       .padding()
 
-      NavigationView {
-        List {
-          if !searchData.suggestions.isEmpty {
-            ForEach(searchData.suggestions) { suggestion in
-              NavigationLink(
-                destination: PostListView(postContainer: suggestion),
-                label: {
-                  SubredditSuggestionLabel(suggestion: suggestion)
-                }
-              )
-            }
+      ScrollView {
+        LazyVGrid(columns: columns) {
+          ForEach(searchData.suggestions) { suggestion in
+            SubredditSuggestionLabel(suggestion: suggestion)
           }
-          // TODO: Move these into dedicated search areas
-//          if !searchData.subreddits.isEmpty {
-//            Section(header: Text("Subreddits").font(.headline)) {
-//              ForEach(searchData.subreddits) { subreddit in
-//                NavigationLink(destination: PostListView(data: self.searchData.postContainer(for: subreddit))) {
-//                  Text(subreddit.displayName)
-//                }
-//              }
-//            }
-//          }
-//
-//          if !searchData.accounts.isEmpty {
-//            Section(header: Text("Users").font(.headline)) {
-//              ForEach(searchData.accounts) { account in
-//                Text(account.name)
-//              }
-//            }
-//          }
-//
-//          if !searchData.posts.isEmpty {
-//            Section(header: Text("Posts").font(.headline)) {
-//              ForEach(searchData.posts) { post in
-//                NavigationLink(destination: CommentsView(post: post)) {
-//                  Text(post.title)
-//                }
-//              }
-//            }
-//          }
         }
-
-        NavigationPrompt(prompt: prompt)
       }
     }
   }

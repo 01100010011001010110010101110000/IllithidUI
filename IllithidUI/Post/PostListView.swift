@@ -1,7 +1,7 @@
 //
 // PostListView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/12/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/1/20
 //
 
 import Combine
@@ -192,7 +192,11 @@ struct SidebarView: View {
       }
       Divider()
       ScrollView {
-        Text(subreddit.description ?? "")
+        if let description = subreddit.description {
+          Text(description)
+        } else {
+          Text("No sidebar text found")
+        }
       }
     }
   }
