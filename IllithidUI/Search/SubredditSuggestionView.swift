@@ -1,7 +1,7 @@
 //
 // SubredditSuggestionView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/1/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/4/20
 //
 
 import SwiftUI
@@ -11,6 +11,13 @@ import SDWebImageSwiftUI
 
 struct SubredditSuggestionLabel: View {
   let suggestion: Subreddit
+
+  static let CreatedFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .medium
+    formatter.timeStyle = .none
+    return formatter
+  }()
 
   var body: some View {
     GroupBox {
@@ -28,9 +35,19 @@ struct SubredditSuggestionLabel: View {
         }
         .shadow(radius: 10)
         .frame(width: 256, height: 256)
-        Text(suggestion.displayNamePrefixed)
-          .bold()
-          .padding(.vertical, 5)
+
+        HStack {
+          Label("\(suggestion.subscribers?.postAbbreviation() ?? "???")", systemImage: "newspaper.fill")
+            .help("\(suggestion.subscribers?.description ?? "???") subscribers")
+          Spacer()
+          Text(suggestion.displayNamePrefixed)
+            .bold()
+          Spacer()
+          Label("\(suggestion.created, formatter: Self.CreatedFormatter)", systemImage: "calendar.badge.clock")
+            .help("Created on \(suggestion.created, formatter: Self.CreatedFormatter)")
+        }
+        .padding(.vertical, 5)
+
         HStack {
           Spacer()
           if !suggestion.publicDescription.isEmpty {

@@ -1,7 +1,7 @@
 //
 // SearchView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/4/20
 //
 
 import SwiftUI
@@ -36,6 +36,7 @@ struct SearchView: View {
             SubredditSuggestionLabel(suggestion: suggestion)
           }
         }
+        .padding(10)
       }
     }
   }
