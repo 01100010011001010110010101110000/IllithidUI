@@ -56,6 +56,13 @@ struct RootView: View {
     InformationBarNavigationView()
       .environment(\.navigationLayout, layout)
       .toolbar {
+        ToolbarItem(placement: .navigation) {
+          Button(action: {
+            NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+          }, label: {
+            Image(systemName: "sidebar.left")
+          })
+        }
         ToolbarItem(placement: .principal) {
           Picker(selection: $layout, label: EmptyView()) {
             ForEach(NavigationLayout.allCases.reversed()) { layoutCase in
