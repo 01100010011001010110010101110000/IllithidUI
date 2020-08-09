@@ -1,7 +1,7 @@
 //
 // SubredditSuggestionView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/5/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/8/20
 //
 
 import SwiftUI
@@ -22,20 +22,10 @@ struct SubredditSuggestionLabel: View {
   var body: some View {
     GroupBox {
       VStack(alignment: .center) {
-        Group {
-          if let imageUrl = suggestion.communityIcon {
-            WebImage(url: imageUrl)
-              .placeholder(Image(systemName: "photo.fill"))
-              .clipShape(Circle())
-              .overlay(Circle().stroke(Color.white, lineWidth: 4))
-          } else {
-            // TODO: Better placeholder image
-            Image(systemName: "photo.fill")
-              .font(.system(size: 48))
-          }
-        }
-        .shadow(radius: 10)
-        .frame(width: 256, height: 256)
+        SubredditIcon(subreddit: suggestion)
+          .overlay(Circle().stroke(Color.white, lineWidth: 4))
+          .shadow(radius: 10)
+          .frame(width: 256, height: 256)
 
         HStack {
           Label("\(suggestion.subscribers?.postAbbreviation() ?? "???")", systemImage: "newspaper.fill")

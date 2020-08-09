@@ -1,12 +1,13 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 7/16/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/1/20
 //
 
 import SwiftUI
 
 import Illithid
+import SDWebImageSwiftUI
 
 struct InformationBarNavigationView: View {
   @ObservedObject var preferences: PreferencesData = .shared
@@ -80,8 +81,9 @@ struct InformationBarNavigationView: View {
           }) { subreddit in
             NavigationLink(destination: PostListView(postContainer: subreddit)) {
               HStack {
+                SubredditIcon(subreddit: subreddit)
+                  .frame(width: 16, height: 16)
                 Text(subreddit.displayName)
-                Spacer()
               }
               .openableInNewTab(id: subreddit.id, title: subreddit.displayName) { PostListView(postContainer: subreddit) }
             }

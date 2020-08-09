@@ -1,7 +1,7 @@
 //
 // PostListView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/4/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/9/20
 //
 
 import Combine
@@ -99,6 +99,7 @@ struct PostListView: View {
           List(selection: $selection) {
             ForEach(filteredPosts) { post in
               PostRowView(post: post)
+                .tag(post.id)
                 .onAppear {
                   if post == filteredPosts.last {
                     postsData.loadPosts(sort: sorter.sort,
