@@ -1,7 +1,7 @@
 //
 // SubredditSuggestionView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/4/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/5/20
 //
 
 import SwiftUI
@@ -14,7 +14,7 @@ struct SubredditSuggestionLabel: View {
 
   static let CreatedFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateStyle = .medium
+    formatter.dateStyle = .short
     formatter.timeStyle = .none
     return formatter
   }()
@@ -29,6 +29,7 @@ struct SubredditSuggestionLabel: View {
               .clipShape(Circle())
               .overlay(Circle().stroke(Color.white, lineWidth: 4))
           } else {
+            // TODO: Better placeholder image
             Image(systemName: "photo.fill")
               .font(.system(size: 48))
           }
