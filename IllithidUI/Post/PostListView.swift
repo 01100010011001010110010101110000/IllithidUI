@@ -1,7 +1,7 @@
 //
 // PostListView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/1/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/4/20
 //
 
 import Combine
@@ -16,6 +16,7 @@ struct PostListView: View {
   @EnvironmentObject var informationBarData: InformationBarData
   @ObservedObject var preferences: PreferencesData = .shared
 
+  @State private var selection: Subreddit? = nil
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
   @StateObject private var sorter = SortModel(sort: PostSort.best, topInterval: .day)
@@ -95,7 +96,7 @@ struct PostListView: View {
               postsData.cancel()
             }
         case .large:
-          List {
+          List(selection: $selection) {
             ForEach(filteredPosts) { post in
               PostRowView(post: post)
                 .onAppear {
@@ -199,6 +200,7 @@ struct SidebarView: View {
         }
       }
     }
+    .background(Color(.controlBackgroundColor))
   }
 }
 
