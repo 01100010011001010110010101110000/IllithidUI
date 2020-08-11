@@ -10,10 +10,26 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct SubredditIcon: View {
-  let subreddit: Subreddit
+  private let imageUrl: URL?
+  private let displayName: String
+  private let displayLetter: String
+
+  private static let defaultIconPrefix = "custom_feed_default"
+
+  init(subreddit: Subreddit) {
+    imageUrl = subreddit.communityIcon ?? subreddit.iconImg
+    displayName = subreddit.displayName
+    displayLetter = String(subreddit.displayName.first!.uppercased())
+  }
+
+  init(multireddit: Multireddit) {
+    imageUrl = multireddit.iconUrl
+    displayName = multireddit.displayName
+    displayLetter = String(multireddit.displayName.first!.uppercased())
+  }
 
   var body: some View {
-    if let imageUrl = subreddit.communityIcon {
+    if let imageUrl = imageUrl {
       WebImage(url: imageUrl)
         .renderingMode(.original)
         .resizable()
@@ -21,15 +37,40 @@ struct SubredditIcon: View {
         .clipShape(Circle())
     } else {
       Circle()
-        .foregroundColor(circleColor())
+        .foregroundColor(displayName.toColor())
         // TODO: Resize text depending on the size of the circle
-        .overlay(Text("\(String(subreddit.displayName.first!.uppercased()))"))
+        .overlay(Text(displayLetter))
     }
   }
+}
 
-  private func circleColor() -> Color {
-    // TODO: This should generate a variety, ideally sticking to a theme
-    Color(hue: 1.0 / Double(subreddit.displayName.hashValue.magnitude % 360), saturation: 1.0, brightness: 1.0)
+private extension String {
+  /// Generates a deterministic color from a given string
+  /// - Note: Taken from the [string-to-color](https://github.com/Gustu/string-to-color) JS package with slight modifications
+  func toColor() -> Color {
+    let seed: UInt = 16_777_215
+    let factor: UInt = 49_979_693
+
+    guard !isEmpty else { return Color.gray }
+    var b: UInt = 1
+    var d: UInt = 0
+    var f: UInt = 1
+
+    for character in utf8 {
+      let codePoint = UInt(character)
+      if codePoint > d {
+        d = codePoint
+      }
+      f = UInt(seed / d)
+      b = (b + codePoint * f * factor) % seed
+    }
+    let hex = (b * UInt(count)) % seed
+    var red, green, blue: UInt
+    (red, green, blue) = (hex >> 16, hex >> 8 & 0xFF, hex & 0xFF)
+    return Color(.sRGB,
+                 red: Double(red) / 255,
+                 green: Double(green) / 255,
+                 blue: Double(blue) / 255)
   }
 }
 

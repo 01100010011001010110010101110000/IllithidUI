@@ -1,7 +1,7 @@
 //
 // InformationBarNavigationView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/1/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/9/20
 //
 
 import SwiftUI
@@ -57,17 +57,23 @@ struct InformationBarNavigationView: View {
               return true
             }
           }) { multireddit in
-            NavigationLink(multireddit.name, destination: PostListView(postContainer: multireddit))
-              .tag("m/\(multireddit.id)")
-              .openableInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
-              .contextMenu {
-                Button(action: {
-                  isEditingMulti = true
-                  editing = multireddit.id
-                }) {
-                  Text("Edit Multireddit")
-                }
+            NavigationLink(destination: PostListView(postContainer: multireddit)) {
+              HStack {
+                SubredditIcon(multireddit: multireddit)
+                  .frame(width: 24, height: 24)
+                Text(multireddit.displayName)
               }
+            }
+            .tag("m/\(multireddit.id)")
+            .openableInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
+            .contextMenu {
+              Button(action: {
+                isEditingMulti = true
+                editing = multireddit.id
+              }) {
+                Text("Edit Multireddit")
+              }
+            }
           }
         }
 
@@ -82,7 +88,7 @@ struct InformationBarNavigationView: View {
             NavigationLink(destination: PostListView(postContainer: subreddit)) {
               HStack {
                 SubredditIcon(subreddit: subreddit)
-                  .frame(width: 16, height: 16)
+                  .frame(width: 24, height: 24)
                 Text(subreddit.displayName)
               }
               .openableInNewTab(id: subreddit.id, title: subreddit.displayName) { PostListView(postContainer: subreddit) }
