@@ -275,18 +275,12 @@
 		6D2EA59222A7FEE20059B6EA /* IllithidUI */ = {
 			isa = PBXGroup;
 			children = (
-				6DBCFBDA2473730B00174442 /* Wiki */,
-				6D0EF1EA23B2BC6E007B4CCE /* Account */,
-				6D138DD623865779008E00CF /* InformationBar */,
-				6D0A1E4123839967006CDB86 /* Toolbar */,
-				6D28395122D3EB8B00DD08F9 /* Search */,
-				6DF5DDD122B98B2D00C41786 /* Comments */,
-				6DCD003922B0B8A2002FBE9A /* Preferences */,
-				6D34C688241C886C00CAB469 /* NSViewRepresentables */,
+				6D90CAA324E896C200A6892A /* Illithid Components */,
+				6D90CAA124E894B100A6892A /* View Components */,
+				6D90CAA024E893A000A6892A /* Reddit Components */,
+				6DE918722418B6C000C19F5E /* Extensions */,
+				6DA9A2FA245E6150009444CC /* Environment Values */,
 				6DDF418422AFFA110081A09D /* Utility */,
-				6DE756B322AE15A400A1F87B /* Subreddit */,
-				6DE756B422AE15AD00A1F87B /* Post */,
-				6D558A0D230080140092AA88 /* RootView.swift */,
 				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
 				6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */,
 				6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */,
@@ -329,7 +323,6 @@
 		6D34C688241C886C00CAB469 /* NSViewRepresentables */ = {
 			isa = PBXGroup;
 			children = (
-				6D581E3D240AD2EE00B84606 /* VideoPlayer.swift */,
 				6D34C689241C891500CAB469 /* WebView.swift */,
 				6DB1549C246F932400D19100 /* SharingButton.swift */,
 			);
@@ -341,6 +334,55 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6D90CAA024E893A000A6892A /* Reddit Components */ = {
+			isa = PBXGroup;
+			children = (
+				6DF5DDD122B98B2D00C41786 /* Comments */,
+				6DE756B322AE15A400A1F87B /* Subreddit */,
+				6DE756B422AE15AD00A1F87B /* Post */,
+				6DBCFBDA2473730B00174442 /* Wiki */,
+				6D0EF1EA23B2BC6E007B4CCE /* Account */,
+				6D28395122D3EB8B00DD08F9 /* Search */,
+			);
+			path = "Reddit Components";
+			sourceTree = "<group>";
+		};
+		6D90CAA124E894B100A6892A /* View Components */ = {
+			isa = PBXGroup;
+			children = (
+				6DE918712418B66F00C19F5E /* Modifiers */,
+				6D90CAA224E8953D00A6892A /* Common */,
+				6D34C688241C886C00CAB469 /* NSViewRepresentables */,
+			);
+			path = "View Components";
+			sourceTree = "<group>";
+		};
+		6D90CAA224E8953D00A6892A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				6D340DCB243A330900058F4D /* SortController.swift */,
+				6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */,
+				6D581E3D240AD2EE00B84606 /* VideoPlayer.swift */,
+				6DE40A5324DFD3C600AEB1D5 /* SubredditIcon.swift */,
+				6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */,
+				6D5E61DE24C2A4B900C40154 /* PagedView.swift */,
+				6D651F16247DE5F500A8BC7A /* SearchBar.swift */,
+				6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		6D90CAA324E896C200A6892A /* Illithid Components */ = {
+			isa = PBXGroup;
+			children = (
+				6DCD003922B0B8A2002FBE9A /* Preferences */,
+				6D138DD623865779008E00CF /* InformationBar */,
+				6D0A1E4123839967006CDB86 /* Toolbar */,
+				6D558A0D230080140092AA88 /* RootView.swift */,
+			);
+			path = "Illithid Components";
 			sourceTree = "<group>";
 		};
 		6DA9A2FA245E6150009444CC /* Environment Values */ = {
@@ -371,23 +413,12 @@
 		6DDF418422AFFA110081A09D /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				6DA9A2FA245E6150009444CC /* Environment Values */,
-				6DE918722418B6C000C19F5E /* Extensions */,
-				6DE918712418B66F00C19F5E /* Modifiers */,
 				6D1DAF6A24073BA80020A9D6 /* Browser.swift */,
 				6DBE9E4D240F73DE004E7375 /* FireLogger.swift */,
-				6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */,
 				6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */,
-				6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */,
-				6D3062372418943700D9E47B /* RedditLinkView.swift */,
-				6D340DCB243A330900058F4D /* SortController.swift */,
 				6D1780B4240C975F005D7FD6 /* UserDefault.swift */,
 				6DF5DDCF22B95C1900C41786 /* WindowController.swift */,
 				6DDE004122BA8006008E6AF0 /* WindowManager.swift */,
-				6D651F16247DE5F500A8BC7A /* SearchBar.swift */,
-				6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */,
-				6D5E61DE24C2A4B900C40154 /* PagedView.swift */,
-				6DE40A5324DFD3C600AEB1D5 /* SubredditIcon.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -413,6 +444,7 @@
 				6DAA94EA24BBE663001A07E5 /* PostModalView.swift */,
 				6D0A1E462383B06C006CDB86 /* PostContent.swift */,
 				6D85952C23AD502700FC90E0 /* PostDebugView.swift */,
+				6D3062372418943700D9E47B /* RedditLinkView.swift */,
 			);
 			path = Post;
 			sourceTree = "<group>";

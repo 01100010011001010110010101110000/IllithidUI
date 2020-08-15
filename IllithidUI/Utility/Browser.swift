@@ -1,12 +1,13 @@
 //
 // Browser.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/1/20
 //
 
 import Cocoa
 import Foundation
 
+/// Represents an installed browser
 class Browser: Codable, Identifiable, Comparable, Hashable {
   static func == (lhs: Browser, rhs: Browser) -> Bool {
     lhs.bundle == rhs.bundle
@@ -31,6 +32,7 @@ class Browser: Codable, Identifiable, Comparable, Hashable {
 
   let bundle: Bundle
 
+  /// Represents the in app browser
   static let inApp: Browser = .init(bundle: Bundle.main)
 
   /// The default browser at application startup
@@ -41,6 +43,8 @@ class Browser: Codable, Identifiable, Comparable, Hashable {
     return Browser(bundle: bundle)
   }
 
+  /// The set of installed browsers
+  /// - Note: This attempts to filter installed apps to only actual browsers by taking the difference of applications that handle https links, and those which handle html files
   static var installed: Set<Browser> {
     // Get all application Bundle URLs that can handle https:// URL schemes
     let array = LSCopyApplicationURLsForURL(NSURL(string: "https://")!, .all)!.takeRetainedValue()
