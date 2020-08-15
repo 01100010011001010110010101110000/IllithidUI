@@ -45,7 +45,7 @@ struct CommentsView: View, Identifiable {
   }
 
   var body: some View {
-    List {
+    ScrollView {
       VStack(alignment: .leading) {
         HStack {
           Text(post.title)
@@ -67,15 +67,17 @@ struct CommentsView: View, Identifiable {
         }
       }
       Divider()
-      ForEach(self.commentData.comments.filter { wrapper in
-        if case .comment = wrapper {
-          return commentData.commentState[wrapper.id] == .collapsed ||
-            commentData.commentState[wrapper.id] == .expanded
-        } else {
-          return commentData.commentState[wrapper.id] == .expanded
+      LazyVStack {
+        ForEach(self.commentData.comments.filter { wrapper in
+          if case .comment = wrapper {
+            return commentData.commentState[wrapper.id] == .collapsed ||
+              commentData.commentState[wrapper.id] == .expanded
+          } else {
+            return commentData.commentState[wrapper.id] == .expanded
+          }
+        }) { wrapper in
+          self.viewBuilder(wrapper: wrapper)
         }
-      }) { wrapper in
-        self.viewBuilder(wrapper: wrapper)
       }
     }
     .onAppear {
