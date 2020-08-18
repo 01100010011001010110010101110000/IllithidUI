@@ -52,6 +52,7 @@
 		6D731BFF22A826CD0065183B /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
 		6D85952D23AD502700FC90E0 /* PostDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D85952C23AD502700FC90E0 /* PostDebugView.swift */; };
 		6D89F3922468A95E00364E29 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D89F3912468A95E00364E29 /* Illithid */; };
+		6D90CAA524E8995B00A6892A /* RecursiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D90CAA424E8995B00A6892A /* RecursiveView.swift */; };
 		6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
 		6D9AC83024AD506B0076686B /* View+LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */; };
 		6D9F75E524B91551006D4F72 /* PostClassicRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9F75E424B91551006D4F72 /* PostClassicRowView.swift */; };
@@ -151,6 +152,7 @@
 		6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPrompt.swift; sourceTree = "<group>"; };
 		6D85952C23AD502700FC90E0 /* PostDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDebugView.swift; sourceTree = "<group>"; };
 		6D8CD57922B5628B00E35BA8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		6D90CAA424E8995B00A6892A /* RecursiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecursiveView.swift; sourceTree = "<group>"; };
 		6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+LoadingScreen.swift"; sourceTree = "<group>"; };
 		6D9F75E424B91551006D4F72 /* PostClassicRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostClassicRowView.swift; sourceTree = "<group>"; };
 		6DA7C41D24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+postAbbreviation.swift"; sourceTree = "<group>"; };
@@ -276,12 +278,11 @@
 			isa = PBXGroup;
 			children = (
 				6D90CAA324E896C200A6892A /* Illithid Components */,
-				6D90CAA124E894B100A6892A /* View Components */,
 				6D90CAA024E893A000A6892A /* Reddit Components */,
+				6D90CAA124E894B100A6892A /* View Components */,
 				6DE918722418B6C000C19F5E /* Extensions */,
 				6DA9A2FA245E6150009444CC /* Environment Values */,
 				6DDF418422AFFA110081A09D /* Utility */,
-				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
 				6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */,
 				6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */,
 				6D2EA5A222A7FEE40059B6EA /* Info.plist */,
@@ -368,6 +369,7 @@
 				6DE40A5324DFD3C600AEB1D5 /* SubredditIcon.swift */,
 				6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */,
 				6D5E61DE24C2A4B900C40154 /* PagedView.swift */,
+				6D90CAA424E8995B00A6892A /* RecursiveView.swift */,
 				6D651F16247DE5F500A8BC7A /* SearchBar.swift */,
 				6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */,
 			);
@@ -413,6 +415,7 @@
 		6DDF418422AFFA110081A09D /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
 				6D1DAF6A24073BA80020A9D6 /* Browser.swift */,
 				6DBE9E4D240F73DE004E7375 /* FireLogger.swift */,
 				6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */,
@@ -686,6 +689,7 @@
 				6D651F17247DE5F500A8BC7A /* SearchBar.swift in Sources */,
 				6D0EF1EC23B2BC8C007B4CCE /* AccountView.swift in Sources */,
 				6D28395322D3EBA400DD08F9 /* SearchView.swift in Sources */,
+				6D90CAA524E8995B00A6892A /* RecursiveView.swift in Sources */,
 				6DD5534E22A8901700A00033 /* SubredditListView.swift in Sources */,
 				6DBCFBDE2473737800174442 /* WikiPagesView.swift in Sources */,
 				6D3062382418943700D9E47B /* RedditLinkView.swift in Sources */,

@@ -68,111 +68,34 @@ struct CommentsView: View, Identifiable {
       }
       Divider()
       LazyVStack {
-        ForEach(self.commentData.comments.filter { wrapper in
-          if case .comment = wrapper {
-            return commentData.commentState[wrapper.id] == .collapsed ||
-              commentData.commentState[wrapper.id] == .expanded
-          } else {
-            return commentData.commentState[wrapper.id] == .expanded
+        RecursiveView(data: commentData.comments, children: \.replies) { comment in
+          CommentRowView(comment: comment)
+        } footer: { comment in
+          if let more = comment.more {
+            MoreCommentsRowView(more: more)
+              .onLongPressGesture {
+                commentData.expandMore(more: more)
+              }
           }
-        }) { wrapper in
-          self.viewBuilder(wrapper: wrapper)
+        }
+
+        if let more = commentData.rootMore {
+          MoreCommentsRowView(more: more)
+            .onLongPressGesture {
+              commentData.expandMore(more: more)
+            }
         }
       }
+      .padding([.bottom, .horizontal])
     }
     .onAppear {
-      self.commentData.loadComments(focusOn: self.focusedComment, context: self.focusedComment != nil ? 2 : nil)
+      self.commentData.loadComments(focusOn: self.focusedComment,
+                                    context: self.focusedComment != nil ? 2 : nil)
     }
-  }
-
-  // TODO: Clean up this abomination
-  @ViewBuilder private func viewBuilder(wrapper: CommentWrapper) -> some View {
-    if commentData.commentState[wrapper.id] == .expanded {
-      switch wrapper {
-      case let .comment(comment):
-        CommentRowView(comment: comment)
-          .conditionalModifier(focusedComment == comment.id,
-                               FocusedCommentModifier())
-          .onTapGesture {
-            DispatchQueue.main.async {
-              withAnimation {
-                guard let node = self.commentData.root.first(where: { $0.value?.id == comment.id }) else { return }
-                self.collapse(clickedNode: node)
-              }
-            }
-          }
-      case let .more(more):
-        MoreCommentsRowView(more: more)
-          .onTapGesture {
-            self.commentData.loadMoreComments(more: more)
-          }
-      }
-    } else if commentData.commentState[wrapper.id] == .collapsed {
-      switch wrapper {
-      case let .comment(comment):
-        CollapsedComment(comment: comment)
-          .onTapGesture {
-            DispatchQueue.main.async {
-              withAnimation {
-                guard let node = self.commentData.root.first(where: { $0.value?.id == comment.id }) else { return }
-                self.expand(clickedNode: node)
-              }
-            }
-          }
-      case .more:
-        EmptyView()
-      }
-    } else {
-      EmptyView()
-    }
-  }
-
-  private func collapse(clickedNode: Node<CommentWrapper>) {
-    clickedNode.traverse(postOrder: { wrappedNode in
-      guard let value = wrappedNode.value else { return }
-      let state = self.commentData.commentState[value.id]
-      let wasClicked = value.id == clickedNode.value?.id
-      switch state {
-      case .expanded:
-        self.commentData.commentState[value.id] = wasClicked ? .collapsed : .parentCollapsed
-      case .parentCollapsed:
-        if wasClicked { assertionFailure("A comment that was collapsed because a parent was collapsed was clicked") }
-      case .collapsed:
-        self.commentData.commentState[value.id] = wasClicked ? .expanded : .collapsedParentCollapsed
-      case .collapsedParentCollapsed:
-        if wasClicked { assertionFailure("A comment that was collapsed because a parent was collapsed was clicked") }
-      case .none:
-        assertionFailure("A comment without a collapse state was encountered")
-      }
-    })
-  }
-
-  private func expand(clickedNode: Node<CommentWrapper>) {
-    clickedNode.traverse(preOrder: { wrappedNode in
-      guard let value = wrappedNode.value else { return }
-      let state = self.commentData.commentState[value.id]
-      let wasClicked = value.id == clickedNode.value?.id
-      switch state {
-      case .expanded:
-        assertionFailure("We are expanding a collapsed comment, we should not encounter any expanded comments")
-      case .parentCollapsed:
-        self.commentData.commentState[value.id] = .expanded
-      case .collapsed:
-        if wasClicked { self.commentData.commentState[value.id] = .expanded }
-      case .collapsedParentCollapsed:
-        self.commentData.commentState[value.id] = .collapsed
-      case .none:
-        assertionFailure("A comment without a collapse state was encountered")
-      }
-    }, visitChildren: { node in
-      guard let value = node.value else { return true }
-      // If we encounter a comment the user collapsed directly, do not expand it or its children
-      return self.commentData.commentState[value.id] != .collapsed
-    })
   }
 }
 
-struct FocusedCommentModifier: ViewModifier {
+private struct FocusedCommentModifier: ViewModifier {
   func body(content: Content) -> some View {
     content.overlay(
       Rectangle()

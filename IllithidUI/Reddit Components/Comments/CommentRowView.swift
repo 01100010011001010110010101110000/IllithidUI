@@ -67,7 +67,6 @@ struct MoreCommentsRowView: View {
         CommentColorBar(depth: more.depth)
       }
       Text("\(more.count) more \(more.count == 1 ? "reply" : "replies")")
-        .font(.footnote)
       Spacer()
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: more.depth))
