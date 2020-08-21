@@ -10,27 +10,9 @@ import Illithid
 
 struct CommentRowView: View {
   @State private var textSize: CGRect = .zero
-  @Environment(\.collapsed) var isCollapsed: Bool
+  @Binding var isCollapsed: Bool
 
   let comment: Comment
-
-  var collapsedBody: some View {
-    AuthorBar(comment: comment)
-  }
-
-  var expandedBody: some View {
-    VStack(alignment: .leading) {
-      AuthorBar(comment: comment)
-
-      Text(comment.body)
-        .font(.body)
-        .fixedSize(horizontal: false, vertical: true)
-        .padding()
-
-      CommentActionBar(comment: comment)
-        .padding(.bottom, 5)
-    }
-  }
 
   var body: some View {
     VStack {
@@ -38,10 +20,19 @@ struct CommentRowView: View {
         if (comment.depth ?? 0) > 0 {
           CommentColorBar(depth: comment.depth!)
         }
-        if isCollapsed {
-          collapsedBody
-        } else {
-          expandedBody
+
+        VStack(alignment: .leading) {
+          AuthorBar(isCollapsed: $isCollapsed, comment: comment)
+
+          if !isCollapsed {
+            Text(comment.body)
+              .font(.body)
+              .fixedSize(horizontal: false, vertical: true)
+              .padding()
+
+            CommentActionBar(comment: comment)
+              .padding(.bottom, 5)
+          }
         }
       }
       Divider()
@@ -52,6 +43,7 @@ struct CommentRowView: View {
 
 private struct AuthorBar: View {
   @ObservedObject private var moderators: ModeratorData = .shared
+  @Binding var isCollapsed: Bool
 
   let comment: Comment
 
@@ -76,6 +68,13 @@ private struct AuthorBar: View {
       Spacer()
       Text("\(comment.relativeCommentTime) ago")
       Image(systemName: "chevron.down")
+        .animation(.easeIn)
+        .rotationEffect(.degrees(isCollapsed ? -90 : 0))
+        .onTapGesture {
+          withAnimation {
+            isCollapsed.toggle()
+          }
+        }
     }
   }
 }
@@ -187,42 +186,6 @@ struct CommentActionBar: View {
   }
 }
 
-struct CollapsedComment: View {
-  @ObservedObject private var moderators: ModeratorData = .shared
-
-  let comment: Comment
-
-  private var authorColor: Color {
-    if comment.isAdminComment {
-      return .red
-    } else if moderators.isModerator(username: comment.author, ofSubreddit: comment.subreddit) {
-      return .green
-    } else if comment.isSubmitter {
-      return .blue
-    } else {
-      return .white
-    }
-  }
-
-  var body: some View {
-    HStack {
-      if (comment.depth ?? 0) > 0 {
-        CommentColorBar(depth: comment.depth!)
-      }
-
-      Text(comment.author)
-        .usernameStyle(color: authorColor)
-      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
-        .foregroundColor(.orange)
-
-      Spacer()
-
-      Text("\(comment.relativeCommentTime) ago")
-    }
-    .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
-  }
-}
-
 struct CommentColorBar: View {
   let depth: Int
   let width: CGFloat = 3.0
@@ -248,6 +211,6 @@ struct CommentRowView_Previews: PreviewProvider {
     let decoder = JSONDecoder()
     let listing = try! decoder.decode(Listing.self, from: data)
 
-    return CommentRowView(comment: listing.comments.first!)
+    return CommentRowView(isCollapsed: .constant(false), comment: listing.comments.first!)
   }
 }

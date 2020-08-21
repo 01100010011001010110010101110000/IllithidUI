@@ -1,7 +1,7 @@
 //
 // CommentsView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 6/27/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/17/20
 //
 
 import Combine
@@ -68,12 +68,12 @@ struct CommentsView: View, Identifiable {
       }
       Divider()
       LazyVStack {
-        RecursiveView(data: commentData.comments, children: \.replies) { comment in
-          CommentRowView(comment: comment)
+        RecursiveView(data: commentData.comments, children: \.replies) { comment, isCollapsed in
+          CommentRowView(isCollapsed: isCollapsed, comment: comment)
         } footer: { comment in
           if let more = comment.more {
             MoreCommentsRowView(more: more)
-              .onLongPressGesture {
+              .onTapGesture {
                 commentData.expandMore(more: more)
               }
           }
@@ -81,7 +81,7 @@ struct CommentsView: View, Identifiable {
 
         if let more = commentData.rootMore {
           MoreCommentsRowView(more: more)
-            .onLongPressGesture {
+            .onTapGesture {
               commentData.expandMore(more: more)
             }
         }

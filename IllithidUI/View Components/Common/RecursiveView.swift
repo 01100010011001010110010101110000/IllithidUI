@@ -10,14 +10,14 @@ struct RecursiveView<Data: RandomAccessCollection, ID: Hashable, Parent: View, L
   let data: Data
   let idKey: KeyPath<Data.Element, ID>
   let childrenKey: KeyPath<Data.Element, Data?>
-  let parentView: (Data.Element) -> Parent
-  let leafView: (Data.Element) -> Leaf
+  let parentView: (Data.Element, Binding<Bool>) -> Parent
+  let leafView: (Data.Element, Binding<Bool>) -> Leaf
   let footerView: (Data.Element) -> Footer
 
   init(data: Data, id: KeyPath<Data.Element, ID>,
        children: KeyPath<Data.Element, Data?>,
-       @ViewBuilder parent: @escaping (Data.Element) -> Parent,
-       @ViewBuilder leaf: @escaping (Data.Element) -> Leaf,
+       @ViewBuilder parent: @escaping (Data.Element, Binding<Bool>) -> Parent,
+       @ViewBuilder leaf: @escaping (Data.Element, Binding<Bool>) -> Leaf,
        @ViewBuilder footer: @escaping (Data.Element) -> Footer) {
     self.data = data
     idKey = id
@@ -30,8 +30,8 @@ struct RecursiveView<Data: RandomAccessCollection, ID: Hashable, Parent: View, L
   var body: some View {
     ForEach(data, id: idKey) { element in
       if let children = element[keyPath: childrenKey], !children.isEmpty {
-        FlexibleDisclosureGroup(label: {
-          parentView(element)
+        FlexibleDisclosureGroup(label: { isCollapsed in
+          parentView(element, isCollapsed)
         }, content: {
           VStack {
             RecursiveView(data: children, id: idKey, children: childrenKey,
@@ -40,7 +40,9 @@ struct RecursiveView<Data: RandomAccessCollection, ID: Hashable, Parent: View, L
           }
         })
       } else {
-        leafView(element)
+        FlexibleDisclosureGroup(label: { isCollapsed in
+          leafView(element, isCollapsed)
+        }, content: { EmptyView() })
       }
     }
   }
@@ -48,7 +50,7 @@ struct RecursiveView<Data: RandomAccessCollection, ID: Hashable, Parent: View, L
 
 extension RecursiveView where Parent == Leaf, Data.Element: Identifiable, ID == Data.Element.ID {
   init(data: Data, children: KeyPath<Data.Element, Data?>,
-       @ViewBuilder content: @escaping (Data.Element) -> Parent,
+       @ViewBuilder content: @escaping (Data.Element, Binding<Bool>) -> Parent,
        @ViewBuilder footer: @escaping (Data.Element) -> Footer) {
     self.data = data
     idKey = \.id
@@ -59,34 +61,14 @@ extension RecursiveView where Parent == Leaf, Data.Element: Identifiable, ID == 
   }
 }
 
-struct CollapsedKey: EnvironmentKey {
-  static let defaultValue: Bool = false
-}
-
-extension EnvironmentValues {
-  var collapsed: Bool {
-    get {
-      self[CollapsedKey.self]
-    } set {
-      self[CollapsedKey.self] = newValue
-    }
-  }
-}
-
 struct FlexibleDisclosureGroup<Label: View, Content: View>: View {
   @State var collapsed: Bool = false
-  let label: () -> Label
+  let label: (Binding<Bool>) -> Label
   let content: () -> Content
 
   var body: some View {
     VStack {
-      label()
-        .environment(\.collapsed, collapsed)
-        .onTapGesture {
-          withAnimation {
-            collapsed.toggle()
-          }
-        }
+      label($collapsed)
       if !collapsed {
         content()
       }
