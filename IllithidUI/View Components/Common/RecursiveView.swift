@@ -1,7 +1,7 @@
 //
 // RecursiveView.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/15/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/20/20
 //
 
 import SwiftUI
@@ -59,20 +59,37 @@ extension RecursiveView where Parent == Leaf, Data.Element: Identifiable, ID == 
   }
 }
 
+struct CollapsedKey: EnvironmentKey {
+  static let defaultValue: Bool = false
+}
+
+extension EnvironmentValues {
+  var collapsed: Bool {
+    get {
+      self[CollapsedKey.self]
+    } set {
+      self[CollapsedKey.self] = newValue
+    }
+  }
+}
+
 struct FlexibleDisclosureGroup<Label: View, Content: View>: View {
   @State var collapsed: Bool = false
   let label: () -> Label
   let content: () -> Content
 
   var body: some View {
-    label()
-      .onTapGesture {
-        withAnimation {
-          collapsed.toggle()
+    VStack {
+      label()
+        .environment(\.collapsed, collapsed)
+        .onTapGesture {
+          withAnimation {
+            collapsed.toggle()
+          }
         }
+      if !collapsed {
+        content()
       }
-    if !collapsed {
-      content()
     }
   }
 }

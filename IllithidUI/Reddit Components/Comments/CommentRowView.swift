@@ -9,8 +9,49 @@ import SwiftUI
 import Illithid
 
 struct CommentRowView: View {
-  @ObservedObject private var moderators: ModeratorData = .shared
   @State private var textSize: CGRect = .zero
+  @Environment(\.collapsed) var isCollapsed: Bool
+
+  let comment: Comment
+
+  var collapsedBody: some View {
+    AuthorBar(comment: comment)
+  }
+
+  var expandedBody: some View {
+    VStack(alignment: .leading) {
+      AuthorBar(comment: comment)
+
+      Text(comment.body)
+        .font(.body)
+        .fixedSize(horizontal: false, vertical: true)
+        .padding()
+
+      CommentActionBar(comment: comment)
+        .padding(.bottom, 5)
+    }
+  }
+
+  var body: some View {
+    VStack {
+      HStack {
+        if (comment.depth ?? 0) > 0 {
+          CommentColorBar(depth: comment.depth!)
+        }
+        if isCollapsed {
+          collapsedBody
+        } else {
+          expandedBody
+        }
+      }
+      Divider()
+    }
+    .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
+  }
+}
+
+private struct AuthorBar: View {
+  @ObservedObject private var moderators: ModeratorData = .shared
 
   let comment: Comment
 
@@ -28,33 +69,14 @@ struct CommentRowView: View {
 
   var body: some View {
     HStack {
-      if (comment.depth ?? 0) > 0 {
-        CommentColorBar(depth: comment.depth!)
-      }
-
-      VStack(alignment: .leading) {
-        HStack {
-          Text(comment.author)
-            .usernameStyle(color: authorColor)
-
-          Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
-            .foregroundColor(.orange)
-          Spacer()
-          Text("\(comment.relativeCommentTime) ago")
-        }
-
-        Text(comment.body)
-          .font(.body)
-//          .heightResizable()
-          .padding()
-
-        CommentActionBar(comment: comment)
-          .padding(.bottom, 5)
-
-        Divider()
-      }
+      Text(comment.author)
+        .usernameStyle(color: authorColor)
+      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
+        .foregroundColor(.orange)
+      Spacer()
+      Text("\(comment.relativeCommentTime) ago")
+      Image(systemName: "chevron.down")
     }
-    .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
   }
 }
 

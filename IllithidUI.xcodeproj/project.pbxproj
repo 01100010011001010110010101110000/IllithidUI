@@ -283,7 +283,6 @@
 				6DE918722418B6C000C19F5E /* Extensions */,
 				6DA9A2FA245E6150009444CC /* Environment Values */,
 				6DDF418422AFFA110081A09D /* Utility */,
-				6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */,
 				6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */,
 				6D2EA5A222A7FEE40059B6EA /* Info.plist */,
 				6D2EA5A322A7FEE40059B6EA /* IllithidUI.entitlements */,
@@ -383,6 +382,7 @@
 				6D138DD623865779008E00CF /* InformationBar */,
 				6D0A1E4123839967006CDB86 /* Toolbar */,
 				6D558A0D230080140092AA88 /* RootView.swift */,
+				6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */,
 			);
 			path = "Illithid Components";
 			sourceTree = "<group>";
