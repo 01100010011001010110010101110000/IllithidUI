@@ -25,17 +25,16 @@ struct AccountView: View {
   var body: some View {
     NavigationView {
       List {
-        NavigationLink("Overview", destination: Content(data: accountData, content: .overview))
-        NavigationLink("Posts", destination: Content(data: accountData, content: .submissions))
-        NavigationLink("Comments", destination: Content(data: accountData, content: .comments))
+        NavigationLink(destination: Content(data: accountData, content: .overview), label: { Label("Overview", systemImage: "newspaper") })
+        NavigationLink(destination: Content(data: accountData, content: .submissions), label: { Label("Posts", systemImage: "paperplane") })
+        NavigationLink(destination: Content(data: accountData, content: .comments), label: { Label("Comments", systemImage: "text.bubble") })
         if accountData.account == Illithid.shared.accountManager.currentAccount {
-          NavigationLink("Saved Items", destination: Content(data: accountData, content: .saved))
-          NavigationLink("Hidden", destination: Content(data: accountData, content: .hidden))
-          NavigationLink("Upvoted", destination: Content(data: accountData, content: .upvoted))
-          NavigationLink("Downvoted", destination: Content(data: accountData, content: .downvoted))
+          NavigationLink(destination: Content(data: accountData, content: .saved), label: { Label("Saved", systemImage: "bookmark") })
+          NavigationLink(destination: Content(data: accountData, content: .hidden), label: { Label("Hidden", systemImage: "eye.slash") })
+          NavigationLink(destination: Content(data: accountData, content: .upvoted), label: { Label("Upvoted", systemImage: "arrow.up") })
+          NavigationLink(destination: Content(data: accountData, content: .downvoted), label: { Label("Downvoted", systemImage: "arrow.down") })
         }
       }
-
       NavigationPrompt(prompt: "Make a selection")
     }
     .environmentObject(informationBarData)
