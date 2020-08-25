@@ -1,7 +1,7 @@
 //
 // CommentData.swift
 // Copyright (c) 2020 Flayware
-// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/15/20
+// Created by Tyler Gregory (@01100010011001010110010101110000) on 8/17/20
 //
 
 import Combine
@@ -61,6 +61,27 @@ class CommentData: ObservableObject {
     cancelToken?.cancel()
   }
 
+  // For a flat array of comments, assemble all child comments
+  // TODO: This can probably be optimized if the More reply is sorted.
+  private func graftReplies(_ comments: [Comment]) -> [Comment] {
+    var results: [Comment] = []
+    var replies: Set<Fullname> = []
+
+    for entry in comments {
+      if replies.contains(entry.name) { continue }
+      var comment = entry
+      for nested in comments {
+        if nested.parentId == comment.name {
+          if comment.replies == nil { comment.replies = [nested] }
+          else { comment.replies!.append(nested) }
+          replies.insert(nested.name)
+        }
+      }
+      results.append(comment)
+    }
+    return results
+  }
+
   func expandMore(more: More) {
     moreCancelToken = illithid.moreComments(for: more, in: post)
       .sink(receiveCompletion: { [weak self] completion in
@@ -72,18 +93,18 @@ class CommentData: ObservableObject {
           self.illithid.logger.errorMessage("Error fetching more comments \(error)")
         }
       }, receiveValue: { tuple in
+        let replies = self.graftReplies(tuple.comments)
         if self.rootMore == more {
-          self.comments.append(contentsOf: tuple.comments)
+          self.comments.append(contentsOf: replies)
           self.rootMore = tuple.more
         }
 
         for idx in self.comments.indices {
-          self.replace(starting: &self.comments[idx], commentId: more.parentId, with: tuple)
+          self.replace(starting: &self.comments[idx], commentId: more.parentId, with: (replies, tuple.more))
         }
       })
   }
 
-  // TODO: Make this self-contained
   private func replace(starting: inout Comment, commentId: Fullname,
                        with tuple: (comments: [Comment], more: More?)) {
     if starting.fullname == commentId {
