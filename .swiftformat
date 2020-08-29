@@ -10,7 +10,7 @@
 --exponentgrouping disabled
 --fractiongrouping disabled
 --fragment false
---header "\n{file}\nCopyright (c) {year} Flayware\nCreated by Tyler Gregory (@01100010011001010110010101110000) on {created}\n"
+--header "Copyright (C) 2020 Tyler Gregory (@01100010011001010110010101110000)\n\nThis program is free software: you can redistribute it and/or modify it under\nthe terms of the GNU General Public License as published by the Free Software\nFoundation, either version 3 of the License, or (at your option) any later\nversion.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY\nWARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR\nA PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with\nthis program.  If not, see <http://www.gnu.org/licenses/>."
 --hexgrouping 4,8
 --hexliteralcase uppercase
 --ifdef indent
@@ -31,7 +31,8 @@
 --wraparguments preserve
 --wrapcollections preserve
 --xcodeindentation disabled
---disable trailingClosures,wrapMultilineStatementBraces
+--disable trailingClosures,wrapMultilineStatementBraces,wrapSwitchCases
 --enable isEmpty
---funcattributes same-line
+--funcattributes prev-line
 --typeattributes prev-line
+--varattributes preserve
