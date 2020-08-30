@@ -95,7 +95,14 @@ struct MoreCommentsRowView: View {
       if more.depth > 0 {
         CommentColorBar(depth: more.depth)
       }
-      Text("\(more.count) more \(more.count == 1 ? "reply" : "replies")")
+
+      // This represents a thread continuation
+      if more.id == More.continueThreadId {
+        Text("Continue this thread")
+      } else {
+        Text("\(more.count) more \(more.count == 1 ? "reply" : "replies")")
+      }
+
       Spacer()
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: more.depth))

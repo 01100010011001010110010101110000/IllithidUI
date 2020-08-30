@@ -91,7 +91,7 @@ class CommentData: ObservableObject {
   }
 
   func expandMore(more: More) {
-    moreCancelToken = illithid.moreComments(for: more, in: post)
+    moreCancelToken = illithid.moreComments(for: more, on: post)
       .sink(receiveCompletion: { [weak self] completion in
         guard let self = self else { return }
         switch completion {
@@ -108,13 +108,13 @@ class CommentData: ObservableObject {
         }
 
         for idx in self.comments.indices {
-          self.replace(starting: &self.comments[idx], commentId: more.parentId, with: (replies, tuple.more))
+          self.insertMoreReplies(starting: &self.comments[idx], commentId: more.parentId, with: (replies, tuple.more))
         }
       })
   }
 
-  private func replace(starting: inout Comment, commentId: Fullname,
-                       with tuple: (comments: [Comment], more: More?)) {
+  private func insertMoreReplies(starting: inout Comment, commentId: Fullname,
+                                 with tuple: (comments: [Comment], more: More?)) {
     if starting.fullname == commentId {
       starting.update(tuple: tuple)
     }
@@ -125,7 +125,7 @@ class CommentData: ObservableObject {
       if starting.replies![idx].fullname == commentId {
         starting.replies![idx].update(tuple: tuple)
       } else {
-        replace(starting: &starting.replies![idx], commentId: commentId, with: tuple)
+        insertMoreReplies(starting: &starting.replies![idx], commentId: commentId, with: tuple)
       }
     }
   }
@@ -141,11 +141,23 @@ private extension Comment {
   }
 
   mutating func update(tuple: (comments: [Comment], more: More?)) {
-    if replies != nil {
-      replies?.append(contentsOf: tuple.comments)
+    var moreComments = tuple.comments
+
+    if let more = tuple.more {
+      if more.parentId == fullname {
+        self.more = more
+      } else if let idx = moreComments.firstIndex(where: { $0.fullname == more.parentId }) {
+        moreComments[idx].more = more
+        self.more = nil
+      }
     } else {
-      replies = tuple.comments
+      more = nil
     }
-    more = tuple.more
+
+    if replies != nil {
+      replies?.append(contentsOf: moreComments)
+    } else {
+      replies = moreComments
+    }
   }
 }

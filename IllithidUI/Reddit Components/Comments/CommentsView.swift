@@ -78,8 +78,14 @@ struct CommentsView: View, Identifiable {
       LazyVStack {
         RecursiveView(data: commentData.comments, children: \.replies) { comment, isCollapsed in
           CommentRowView(isCollapsed: isCollapsed, comment: comment)
+          if let more = comment.more, more.id == More.continueThreadId {
+            MoreCommentsRowView(more: more)
+              .onTapGesture {
+                commentData.expandMore(more: more)
+              }
+          }
         } footer: { comment in
-          if let more = comment.more {
+          if let more = comment.more, more.id != More.continueThreadId {
             MoreCommentsRowView(more: more)
               .onTapGesture {
                 commentData.expandMore(more: more)
