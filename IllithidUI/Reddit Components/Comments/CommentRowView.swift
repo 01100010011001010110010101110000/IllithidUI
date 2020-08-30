@@ -29,17 +29,40 @@ struct CommentRowView: View {
           CommentColorBar(depth: comment.depth!)
         }
 
-        VStack(alignment: .leading) {
-          AuthorBar(isCollapsed: $isCollapsed, comment: comment)
+        if comment.isRemoved {
+          HStack {
+            Text("Removed by moderator")
+            Spacer()
+            Text("\(comment.relativeCommentTime) ago")
+            Image(systemName: "chevron.down")
+              .animation(.easeIn)
+              .rotationEffect(.degrees(isCollapsed ? -90 : 0))
+              .onTapGesture {
+                withAnimation {
+                  isCollapsed.toggle()
+                }
+              }
+          }
+        } else if comment.isDeleted {
+          VStack {
+            AuthorBar(isCollapsed: $isCollapsed, comment: comment)
+            if !isCollapsed {
+              Text("Deleted by author")
+            }
+          }
+        } else {
+          VStack(alignment: .leading) {
+            AuthorBar(isCollapsed: $isCollapsed, comment: comment)
 
-          if !isCollapsed {
-            Text(comment.body)
-              .font(.body)
-              .fixedSize(horizontal: false, vertical: true)
-              .padding()
+            if !isCollapsed {
+              Text(comment.body)
+                .font(.body)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding()
 
-            CommentActionBar(comment: comment)
-              .padding(.bottom, 5)
+              CommentActionBar(comment: comment)
+                .padding(.bottom, 5)
+            }
           }
         }
       }
@@ -71,7 +94,7 @@ private struct AuthorBar: View {
     HStack {
       Text(comment.author)
         .usernameStyle(color: authorColor)
-      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
+      Text(comment.scoreHidden ? "\u{2205}" : String(comment.ups.postAbbreviation(1)))
         .foregroundColor(.orange)
       Spacer()
       Text("\(comment.relativeCommentTime) ago")
@@ -98,7 +121,7 @@ struct MoreCommentsRowView: View {
 
       // This represents a thread continuation
       if more.isThreadContinuation {
-        Text("Continue this thread")
+        Text("Continue this thread\u{2026}")
       } else {
         Text("\(more.count) more \(more.count == 1 ? "reply" : "replies")")
       }
