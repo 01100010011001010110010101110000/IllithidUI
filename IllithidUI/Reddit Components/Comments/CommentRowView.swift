@@ -30,26 +30,9 @@ struct CommentRowView: View {
         }
 
         if comment.isRemoved {
-          HStack {
-            Text("Removed by moderator")
-            Spacer()
-            Text("\(comment.relativeCommentTime) ago")
-            Image(systemName: "chevron.down")
-              .animation(.easeIn)
-              .rotationEffect(.degrees(isCollapsed ? -90 : 0))
-              .onTapGesture {
-                withAnimation {
-                  isCollapsed.toggle()
-                }
-              }
-          }
+          RemovedComment(isCollapsed: $isCollapsed, comment: comment)
         } else if comment.isDeleted {
-          VStack {
-            AuthorBar(isCollapsed: $isCollapsed, comment: comment)
-            if !isCollapsed {
-              Text("Deleted by author")
-            }
-          }
+          DeletedComment(isCollapsed: $isCollapsed, comment: comment)
         } else {
           VStack(alignment: .leading) {
             AuthorBar(isCollapsed: $isCollapsed, comment: comment)
@@ -69,6 +52,43 @@ struct CommentRowView: View {
       Divider()
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
+  }
+}
+
+private struct RemovedComment: View {
+  @Binding var isCollapsed: Bool
+
+  let comment: Comment
+
+  var body: some View {
+    HStack {
+      Text("Removed by moderator")
+      Spacer()
+      Text("\(comment.relativeCommentTime) ago")
+      Image(systemName: "chevron.down")
+        .animation(.easeIn)
+        .rotationEffect(.degrees(isCollapsed ? -90 : 0))
+        .onTapGesture {
+          withAnimation {
+            isCollapsed.toggle()
+          }
+        }
+    }
+  }
+}
+
+private struct DeletedComment: View {
+  @Binding var isCollapsed: Bool
+
+  let comment: Comment
+
+  var body: some View {
+    VStack {
+      AuthorBar(isCollapsed: $isCollapsed, comment: comment)
+      if !isCollapsed {
+        Text("Deleted by author")
+      }
+    }
   }
 }
 
