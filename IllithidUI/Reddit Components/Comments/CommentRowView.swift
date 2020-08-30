@@ -97,7 +97,7 @@ struct MoreCommentsRowView: View {
       }
 
       // This represents a thread continuation
-      if more.id == More.continueThreadId {
+      if more.isThreadContinuation {
         Text("Continue this thread")
       } else {
         Text("\(more.count) more \(more.count == 1 ? "reply" : "replies")")
