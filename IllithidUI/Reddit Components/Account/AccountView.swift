@@ -58,27 +58,25 @@ private struct Content: View {
   var body: some View {
     VStack {
       SortController(model: sorter)
-      ScrollView {
-        LazyVStack {
-          ForEach(data.content[content]!) { item in
-            switch item {
-            case let .comment(comment):
-              CommentRowView(isCollapsed: .constant(false), comment: comment)
-                .onAppear {
-                  if item == data.content[content]!.last {
-                    data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
-                  }
+      List {
+        ForEach(data.content[content]!) { item in
+          switch item {
+          case let .comment(comment):
+            CommentRowView(isCollapsed: .constant(false), comment: comment)
+              .onAppear {
+                if item == data.content[content]!.last {
+                  data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
                 }
-            case let .post(post):
-              PostRowView(post: post)
-                .onAppear {
-                  if item == data.content[content]!.last {
-                    data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
-                  }
+              }
+          case let .post(post):
+            PostRowView(post: post)
+              .onAppear {
+                if item == data.content[content]!.last {
+                  data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
                 }
-            default:
-              EmptyView()
-            }
+              }
+          default:
+            EmptyView()
           }
         }
       }
