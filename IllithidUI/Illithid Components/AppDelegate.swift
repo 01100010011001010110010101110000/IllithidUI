@@ -28,10 +28,24 @@ struct IllithidApp: App {
   private let illithid: Illithid = .shared
 
   @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
+  @Environment(\.scenePhase) var phase
 
   var body: some Scene {
     WindowGroup {
       RootView()
+        .onChange(of: phase, perform: { phase in
+          // TODO: Move pasteboard URL checking down here or also here
+          switch phase {
+          case .active:
+            break
+          case .inactive:
+            break
+          case .background:
+            break
+          @unknown default:
+            fatalError("A new application phase has been added: \(phase)")
+          }
+        })
         .onOpenURL { url in
 
           // MARK: OAuth2 Callback
@@ -114,6 +128,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     super.init()
   }
+
+  func applicationDidBecomeActive(_: Notification) {}
 
   func applicationDidFinishLaunching(_: Notification) {
     illithid.configure(configuration: IllithidConfiguration())

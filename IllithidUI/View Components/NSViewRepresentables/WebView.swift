@@ -23,7 +23,7 @@ struct WebView: View {
     webView = .init(url: url, configuration: Self.makeConfiguration())
   }
 
-  init(html: String, relativeTo baseUrl: URL?) {
+  init(html: String, relativeTo baseUrl: URL? = nil) {
     webView = .init(html: html, relativeTo: baseUrl, configuration: Self.makeConfiguration())
   }
 

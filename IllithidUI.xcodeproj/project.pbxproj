@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		6D062E4F2402F6C500A3BDD0 /* IllithidButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */; };
+		6D068AE1251D868A0012A909 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
+		6D068AE2251D868A0012A909 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
+		6D068AE3251D868A0012A909 /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 6D6D420F2437C14E002D4413 /* Kanna */; };
+		6D068AE4251D868A0012A909 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D89F3912468A95E00364E29 /* Illithid */; };
 		6D0A1E45238399B9006CDB86 /* ToolbarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */; };
 		6D0A1E472383B06C006CDB86 /* PostContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A1E462383B06C006CDB86 /* PostContent.swift */; };
 		6D0A4EFA237A5CC700626E44 /* EraseToAnyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */; };
@@ -47,13 +51,9 @@
 		6D639D7F22B2EE4600A24E72 /* IllithidConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */; };
 		6D651F17247DE5F500A8BC7A /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D651F16247DE5F500A8BC7A /* SearchBar.swift */; };
 		6D69371F241ED684004F5CBF /* HeightResizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D69371E241ED684004F5CBF /* HeightResizable.swift */; };
-		6D6D42102437C14E002D4413 /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 6D6D420F2437C14E002D4413 /* Kanna */; };
 		6D72F29A24B810FC00B686D8 /* NavigationPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */; };
-		6D731BFF22A826CD0065183B /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
 		6D85952D23AD502700FC90E0 /* PostDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D85952C23AD502700FC90E0 /* PostDebugView.swift */; };
-		6D89F3922468A95E00364E29 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D89F3912468A95E00364E29 /* Illithid */; };
 		6D90CAA524E8995B00A6892A /* RecursiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D90CAA424E8995B00A6892A /* RecursiveView.swift */; };
-		6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
 		6D9AC83024AD506B0076686B /* View+LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */; };
 		6D9F75E524B91551006D4F72 /* PostClassicRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9F75E424B91551006D4F72 /* PostClassicRowView.swift */; };
 		6DA7C41E24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA7C41D24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift */; };
@@ -189,10 +189,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */,
-				6D731BFF22A826CD0065183B /* Illithid in Frameworks */,
-				6D6D42102437C14E002D4413 /* Kanna in Frameworks */,
-				6D89F3922468A95E00364E29 /* Illithid in Frameworks */,
+				6D068AE3251D868A0012A909 /* Kanna in Frameworks */,
+				6D068AE2251D868A0012A909 /* SDWebImageSwiftUI in Frameworks */,
+				6D068AE1251D868A0012A909 /* Illithid in Frameworks */,
+				6D068AE4251D868A0012A909 /* Illithid in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -870,7 +870,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flayware.IllithidUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -895,7 +895,7 @@
 					"@executable_path/../Frameworks",
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.16;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flayware.IllithidUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
