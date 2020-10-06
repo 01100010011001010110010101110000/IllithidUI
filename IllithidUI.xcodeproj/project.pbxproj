@@ -39,6 +39,8 @@
 		6D340DCC243A330900058F4D /* SortController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D340DCB243A330900058F4D /* SortController.swift */; };
 		6D34C68A241C891500CAB469 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D34C689241C891500CAB469 /* WebView.swift */; };
 		6D3ADFB922FB81AC002DA19A /* single_post.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D3ADFB822FB81AC002DA19A /* single_post.json */; };
+		6D43AC3F252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D43AC3E252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift */; };
+		6D43AC45252C3018000787A3 /* AboutCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D43AC44252C3018000787A3 /* AboutCommands.swift */; };
 		6D4E68342431267900529CA7 /* PinchAndZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4E68332431267900529CA7 /* PinchAndZoom.swift */; };
 		6D53D9E922A94E7F0018F19D /* SubredditListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D53D9E822A94E7F0018F19D /* SubredditListData.swift */; };
 		6D53D9EA22A94E7F0018F19D /* SubredditListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D53D9E822A94E7F0018F19D /* SubredditListData.swift */; };
@@ -138,6 +140,8 @@
 		6D340DCB243A330900058F4D /* SortController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortController.swift; sourceTree = "<group>"; };
 		6D34C689241C891500CAB469 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		6D3ADFB822FB81AC002DA19A /* single_post.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = single_post.json; sourceTree = "<group>"; };
+		6D43AC3E252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AboutPanelOptionKey+Copyright.swift"; sourceTree = "<group>"; };
+		6D43AC44252C3018000787A3 /* AboutCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutCommands.swift; sourceTree = "<group>"; };
 		6D4E68332431267900529CA7 /* PinchAndZoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchAndZoom.swift; sourceTree = "<group>"; };
 		6D53D9E822A94E7F0018F19D /* SubredditListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditListData.swift; sourceTree = "<group>"; };
 		6D544EE822FF40C100196C25 /* ConditionalModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalModifier.swift; sourceTree = "<group>"; };
@@ -329,6 +333,14 @@
 			path = NSViewRepresentables;
 			sourceTree = "<group>";
 		};
+		6D43AC43252C3003000787A3 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				6D43AC44252C3018000787A3 /* AboutCommands.swift */,
+			);
+			path = Commands;
+			sourceTree = "<group>";
+		};
 		6D731BFD22A826CD0065183B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -378,6 +390,7 @@
 		6D90CAA324E896C200A6892A /* Illithid Components */ = {
 			isa = PBXGroup;
 			children = (
+				6D43AC43252C3003000787A3 /* Commands */,
 				6DCD003922B0B8A2002FBE9A /* Preferences */,
 				6D138DD623865779008E00CF /* InformationBar */,
 				6D0A1E4123839967006CDB86 /* Toolbar */,
@@ -476,6 +489,7 @@
 				6D63953E2468A53300169C1D /* Post+Comment+DateFormatter.swift */,
 				6DAEDDEE24A1B45D00B0FF06 /* Array+Cancel.swift */,
 				6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */,
+				6D43AC3E252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -652,6 +666,7 @@
 				6D1DAF6B24073BA80020A9D6 /* Browser.swift in Sources */,
 				6D9F75E524B91551006D4F72 /* PostClassicRowView.swift in Sources */,
 				6D72F29A24B810FC00B686D8 /* NavigationPrompt.swift in Sources */,
+				6D43AC45252C3018000787A3 /* AboutCommands.swift in Sources */,
 				6D639D7F22B2EE4600A24E72 /* IllithidConfiguration.swift in Sources */,
 				6D340DCC243A330900058F4D /* SortController.swift in Sources */,
 				6DB1549D246F932400D19100 /* SharingButton.swift in Sources */,
@@ -674,6 +689,7 @@
 				6D1780B7240CD47B005D7FD6 /* NSImageNames.swift in Sources */,
 				6DA9A2FC245E6172009444CC /* HostingWindow.swift in Sources */,
 				6DC19CD122B069B0002F027B /* PostRowView.swift in Sources */,
+				6D43AC3F252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift in Sources */,
 				6DF5DDD022B95C1900C41786 /* WindowController.swift in Sources */,
 				6DAEDDEF24A1B45D00B0FF06 /* Array+Cancel.swift in Sources */,
 				6DD6D92424BBCD2D004AC12D /* ClassicListBody.swift in Sources */,
@@ -790,6 +806,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = Illithid;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -846,6 +863,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = Illithid;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -871,6 +889,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flayware.IllithidUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -896,6 +915,7 @@
 				);
 				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flayware.IllithidUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

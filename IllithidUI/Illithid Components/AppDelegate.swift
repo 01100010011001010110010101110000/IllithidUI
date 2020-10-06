@@ -77,6 +77,7 @@ struct IllithidApp: App {
         }
     }
     .commands {
+      AboutCommands()
       SidebarCommands()
       ToolbarCommands()
     }
