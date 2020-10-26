@@ -129,7 +129,7 @@ struct PostListView: View {
         }
         if postContainer is Subreddit && showSidebar {
           SidebarView(subreddit: postContainer as! Subreddit)
-            .frame(minWidth: 200, maxWidth: 400)
+            .frame(minWidth: 300)
         }
       }
     }
@@ -203,9 +203,11 @@ struct SidebarView: View {
       Divider()
       ScrollView {
         if let description = subreddit.description {
-          Text(description)
+          Markdown(mdString: description)
+            .padding()
         } else {
           Text("No sidebar text found")
+            .padding()
         }
       }
     }
