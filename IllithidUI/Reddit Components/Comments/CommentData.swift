@@ -18,7 +18,22 @@ import SwiftUI
 
 import Illithid
 
+// MARK: - CommentData
+
 class CommentData: ObservableObject {
+  // MARK: Lifecycle
+
+  init(post: Post) {
+    self.post = post
+  }
+
+  init(from listing: Listing) {
+    post = listing.posts.first!
+    comments = listing.comments
+  }
+
+  // MARK: Internal
+
   enum CollapseState {
     case expanded
     case parentCollapsed
@@ -31,21 +46,6 @@ class CommentData: ObservableObject {
   @Published private(set) var rootMore: More? = nil
 
   let post: Post
-  private let illithid: Illithid = .shared
-  private var cancelToken: AnyCancellable?
-  private var moreCancelToken: AnyCancellable?
-  private var listingParameters = ListingParameters(limit: 100)
-  private let log = OSLog(subsystem: "com.flayware.IllithidUI.comments",
-                          category: .pointsOfInterest)
-
-  init(post: Post) {
-    self.post = post
-  }
-
-  init(from listing: Listing) {
-    post = listing.posts.first!
-    comments = listing.comments
-  }
 
   // MARK: Comment loading
 
@@ -69,27 +69,6 @@ class CommentData: ObservableObject {
     cancelToken?.cancel()
   }
 
-  // For a flat array of comments, assemble all child comments
-  // TODO: This can probably be optimized if the More reply is sorted.
-  private func graftReplies(_ comments: [Comment]) -> [Comment] {
-    var results: [Comment] = []
-    var replies: Set<Fullname> = []
-
-    for entry in comments {
-      if replies.contains(entry.name) { continue }
-      var comment = entry
-      for nested in comments {
-        if nested.parentId == comment.name {
-          if comment.replies == nil { comment.replies = [nested] }
-          else { comment.replies!.append(nested) }
-          replies.insert(nested.name)
-        }
-      }
-      results.append(comment)
-    }
-    return results
-  }
-
   func expandMore(more: More) {
     moreCancelToken = illithid.moreComments(for: more, on: post)
       .sink(receiveCompletion: { [weak self] completion in
@@ -111,6 +90,37 @@ class CommentData: ObservableObject {
           self.insertMoreReplies(starting: &self.comments[idx], commentId: more.parentId, with: (replies, tuple.more))
         }
       })
+  }
+
+  // MARK: Private
+
+  private let illithid: Illithid = .shared
+  private var cancelToken: AnyCancellable?
+  private var moreCancelToken: AnyCancellable?
+  private var listingParameters = ListingParameters(limit: 100)
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.comments",
+                          category: .pointsOfInterest)
+
+  // For a flat array of comments, assemble all child comments
+  // TODO: This can probably be optimized if the More reply is sorted.
+  private func graftReplies(_ comments: [Comment])
+    -> [Comment] {
+    var results: [Comment] = []
+    var replies: Set<Fullname> = []
+
+    for entry in comments {
+      if replies.contains(entry.name) { continue }
+      var comment = entry
+      for nested in comments {
+        if nested.parentId == comment.name {
+          if comment.replies == nil { comment.replies = [nested] }
+          else { comment.replies!.append(nested) }
+          replies.insert(nested.name)
+        }
+      }
+      results.append(comment)
+    }
+    return results
   }
 
   private func insertMoreReplies(starting: inout Comment, commentId: Fullname,

@@ -32,7 +32,11 @@
 --wrapcollections preserve
 --xcodeindentation disabled
 --disable trailingClosures,wrapMultilineStatementBraces,wrapSwitchCases
---enable isEmpty
+--enable isEmpty,sortedSwitchCases,organizeDeclarations,markTypes
 --funcattributes prev-line
 --typeattributes prev-line
 --varattributes preserve
+--extensionacl on-extension
+--marktypes always
+--markextensions always
+--wrapreturntype if-multiline

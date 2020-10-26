@@ -22,12 +22,10 @@ import Alamofire
 import Kanna
 import SDWebImageSwiftUI
 
-struct LinkPreview: View {
-  @ObservedObject var previewData: LinkPreviewData
-  @State private var showingPreview: Bool
-  @State private var hover: Bool
+// MARK: - LinkPreview
 
-  let isNsfw: Bool
+struct LinkPreview: View {
+  // MARK: Lifecycle
 
   init(link: URL, isNsfw: Bool = false) {
     previewData = .init(link: link)
@@ -35,6 +33,11 @@ struct LinkPreview: View {
     _showingPreview = .init(initialValue: false)
     _hover = .init(initialValue: false)
   }
+
+  // MARK: Internal
+
+  @ObservedObject var previewData: LinkPreviewData
+  let isNsfw: Bool
 
   var body: some View {
     VStack(spacing: 0.0) {
@@ -73,22 +76,30 @@ struct LinkPreview: View {
       previewData.cancel()
     }
   }
+
+  // MARK: Private
+
+  @State private var showingPreview: Bool
+  @State private var hover: Bool
 }
 
-final class LinkPreviewData: ObservableObject {
-  // TODO: Replace this with injection from higher in the view hierarchy
-  static let session = Session()
-  @Published var previewImageUrl: URL?
+// MARK: - LinkPreviewData
 
-  let link: URL
-  private var request: DataRequest?
+final class LinkPreviewData: ObservableObject {
+  // MARK: Lifecycle
 
   init(link: URL) {
     self.link = link
   }
 
-  private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.LinkPreview")
-  private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
+  // MARK: Internal
+
+  // TODO: Replace this with injection from higher in the view hierarchy
+  static let session = Session()
+
+  @Published var previewImageUrl: URL?
+
+  let link: URL
 
   func loadMetadata() {
     request = Self.session.request(link)
@@ -123,12 +134,23 @@ final class LinkPreviewData: ObservableObject {
   func cancel() {
     request?.cancel()
   }
+
+  // MARK: Private
+
+  private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.LinkPreview")
+
+  private var request: DataRequest?
+
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
 }
+
+// MARK: - LinkPreview_Previews
 
 struct LinkPreview_Previews: PreviewProvider {
   static let urls: [URL] = [
     URL(string: "https://www.theguardian.com/technology/2020/jan/21/amazon-boss-jeff-bezoss-phone-hacked-by-saudi-crown-prince")!,
   ]
+
   static var previews: some View {
     ForEach(urls, id: \.absoluteString) { url in
       LinkPreview(link: url)
@@ -136,12 +158,10 @@ struct LinkPreview_Previews: PreviewProvider {
   }
 }
 
-struct LinkBar: View {
-  @ObservedObject var preferences: PreferencesData = .shared
-  @Binding var scaleIcon: Bool
+// MARK: - LinkBar
 
-  let link: URL
-  let iconOverride: Image?
+struct LinkBar: View {
+  // MARK: Lifecycle
 
   init(iconIsScaled: Binding<Bool>, icon: Image? = nil, link: URL) {
     _scaleIcon = iconIsScaled
@@ -149,13 +169,13 @@ struct LinkBar: View {
     iconOverride = icon
   }
 
-  private var icon: Image {
-    if iconOverride != nil { return iconOverride! }
-    else {
-      return preferences.browser.icon() != nil ?
-        Image(nsImage: preferences.browser.icon()!) : Image(systemName: "safari")
-    }
-  }
+  // MARK: Internal
+
+  @ObservedObject var preferences: PreferencesData = .shared
+  @Binding var scaleIcon: Bool
+
+  let link: URL
+  let iconOverride: Image?
 
   var body: some View {
     HStack(alignment: .center) {
@@ -179,7 +199,19 @@ struct LinkBar: View {
     .padding(4)
     .frame(maxHeight: 32, alignment: .leading)
   }
+
+  // MARK: Private
+
+  private var icon: Image {
+    if iconOverride != nil { return iconOverride! }
+    else {
+      return preferences.browser.icon() != nil ?
+        Image(nsImage: preferences.browser.icon()!) : Image(systemName: "safari")
+    }
+  }
 }
+
+// MARK: - WebPreviewPopover
 
 private struct WebPreviewPopover: View {
   @Environment(\.hostingWindow) var hostingWindow

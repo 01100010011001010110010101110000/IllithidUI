@@ -47,6 +47,8 @@ public extension View {
   }
 }
 
+// MARK: - OnAppearModifier
+
 /// Thin wrapper around the `onAppear` view extension to make it usable as a `ViewModifier`
 /// - Parameter closure: The closure to execute when the view appears
 struct OnAppearModifier: ViewModifier {

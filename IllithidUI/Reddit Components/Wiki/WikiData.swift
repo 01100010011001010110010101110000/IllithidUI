@@ -18,14 +18,22 @@ import Foundation
 import Illithid
 
 final class WikiData: ObservableObject {
-  @Published var pages: [URL] = []
-
-  let subreddit: Subreddit
-  var cancelTokens: [AnyCancellable] = []
+  // MARK: Lifecycle
 
   init(subreddit: Subreddit) {
     self.subreddit = subreddit
   }
+
+  deinit {
+    cancelTokens.forEach { $0.cancel() }
+  }
+
+  // MARK: Internal
+
+  @Published var pages: [URL] = []
+
+  let subreddit: Subreddit
+  var cancelTokens: [AnyCancellable] = []
 
   func fetchWikiPages() {
     let token = subreddit.wikiPages()
@@ -42,9 +50,5 @@ final class WikiData: ObservableObject {
         self.pages = value
       })
     cancelTokens.append(token)
-  }
-
-  deinit {
-    cancelTokens.forEach { $0.cancel() }
   }
 }

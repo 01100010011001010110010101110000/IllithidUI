@@ -22,6 +22,8 @@ extension View {
   }
 }
 
+// MARK: - HeightResizingModifier
+
 private struct HeightResizingModifier: ViewModifier {
   @State private var frame: CGRect = .zero
 
@@ -39,6 +41,8 @@ private struct HeightResizingModifier: ViewModifier {
   }
 }
 
+// MARK: - FramePreferenceViewSetter
+
 private struct FramePreferenceViewSetter: View {
   var body: some View {
     GeometryReader { geometry in
@@ -49,6 +53,8 @@ private struct FramePreferenceViewSetter: View {
     }
   }
 }
+
+// MARK: - FramePreferenceKey
 
 private struct FramePreferenceKey: PreferenceKey {
   typealias Value = CGRect

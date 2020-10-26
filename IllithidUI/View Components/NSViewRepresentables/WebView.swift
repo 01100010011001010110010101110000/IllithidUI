@@ -16,8 +16,10 @@ import Combine
 import SwiftUI
 import WebKit
 
+// MARK: - WebView
+
 struct WebView: View {
-  @ObservedObject fileprivate var webView: _WebView
+  // MARK: Lifecycle
 
   init(url: URL) {
     webView = .init(url: url, configuration: Self.makeConfiguration())
@@ -27,23 +29,42 @@ struct WebView: View {
     webView = .init(html: html, relativeTo: baseUrl, configuration: Self.makeConfiguration())
   }
 
+  // MARK: Internal
+
+  var body: some View {
+    _WebViewRepresentable(view: webView)
+  }
+
+  // MARK: Fileprivate
+
+  @ObservedObject fileprivate var webView: _WebView
+
+  // MARK: Private
+
   private static func makeConfiguration() -> WKWebViewConfiguration {
     let configuration: WKWebViewConfiguration = .init()
     configuration.mediaTypesRequiringUserActionForPlayback = .all
     configuration.websiteDataStore = .nonPersistent() // Web views are "private"
     return configuration
   }
-
-  var body: some View {
-    _WebViewRepresentable(view: webView)
-  }
 }
 
+// MARK: - _WebViewRepresentable
+
 private final class _WebViewRepresentable: NSViewRepresentable {
-  let view: _WebView
+  // MARK: Lifecycle
 
   init(view: _WebView) {
     self.view = view
+  }
+
+  // MARK: Internal
+
+  let view: _WebView
+
+  static func dismantleNSView(_ nsView: _WebView, coordinator _: ()) {
+    nsView.load(URLRequest(url: URL(string: "about:blank")!))
+    nsView.cancel()
   }
 
   func makeNSView(context _: NSViewRepresentableContext<_WebViewRepresentable>) -> _WebView {
@@ -51,18 +72,12 @@ private final class _WebViewRepresentable: NSViewRepresentable {
   }
 
   func updateNSView(_: _WebView, context _: NSViewRepresentableContext<_WebViewRepresentable>) {}
-
-  static func dismantleNSView(_ nsView: _WebView, coordinator _: ()) {
-    nsView.load(URLRequest(url: URL(string: "about:blank")!))
-    nsView.cancel()
-  }
 }
 
-private final class _WebView: WKWebView, ObservableObject {
-  @Published var pageTitle: String? = nil
-  @Published var loadProgress: Double = .zero
+// MARK: - _WebView
 
-  private var cancelBag: [AnyCancellable] = []
+private final class _WebView: WKWebView, ObservableObject {
+  // MARK: Lifecycle
 
   convenience init(html: String, relativeTo baseUrl: URL?, configuration: WKWebViewConfiguration) {
     self.init(frame: .zero, configuration: configuration)
@@ -75,6 +90,21 @@ private final class _WebView: WKWebView, ObservableObject {
     load(URLRequest(url: url))
     observe()
   }
+
+  // MARK: Internal
+
+  @Published var pageTitle: String? = nil
+  @Published var loadProgress: Double = .zero
+
+  func cancel() {
+    while !cancelBag.isEmpty {
+      cancelBag.popLast()?.cancel()
+    }
+  }
+
+  // MARK: Private
+
+  private var cancelBag: [AnyCancellable] = []
 
   private func observe() {
     cancelBag.append(publisher(for: \.title)
@@ -89,13 +119,9 @@ private final class _WebView: WKWebView, ObservableObject {
       .receive(on: RunLoop.main)
       .assign(to: \.loadProgress, on: self))
   }
-
-  func cancel() {
-    while !cancelBag.isEmpty {
-      cancelBag.popLast()?.cancel()
-    }
-  }
 }
+
+// MARK: - WebView_Previews
 
 struct WebView_Previews: PreviewProvider {
   static var previews: some View {

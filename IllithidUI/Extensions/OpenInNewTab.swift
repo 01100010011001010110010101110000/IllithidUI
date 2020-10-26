@@ -16,7 +16,8 @@ import SwiftUI
 
 extension View {
   func openableInNewTab<Content: View>(id: WindowManager.ID, title: String = "",
-                                       @ViewBuilder view: @escaping () -> Content) -> some View {
+                                       @ViewBuilder view: @escaping () -> Content)
+    -> some View {
     gesture(TapGesture().modifiers(.command).onEnded {
       WindowManager.shared.showMainWindowTab(withId: id, title: title) {
         view()

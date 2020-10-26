@@ -14,18 +14,28 @@
 
 import SwiftUI
 
+// MARK: - Weak
+
 @dynamicMemberLookup
 final class Weak<Value: AnyObject> {
-  private weak var value: Value?
+  // MARK: Lifecycle
 
   init(_ value: Value?) {
     self.value = value
   }
 
+  // MARK: Internal
+
   subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T? {
     value?[keyPath: keyPath]
   }
+
+  // MARK: Private
+
+  private weak var value: Value?
 }
+
+// MARK: - HostingWindowKey
 
 struct HostingWindowKey: EnvironmentKey {
   #if canImport(UIKit)

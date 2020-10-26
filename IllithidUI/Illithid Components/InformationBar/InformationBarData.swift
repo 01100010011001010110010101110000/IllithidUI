@@ -20,14 +20,31 @@ import SwiftUI
 import Illithid
 
 final class InformationBarData: ObservableObject {
-  private var illithid: Illithid = .shared
-  private var defaults: UserDefaults = .standard
-  private var decoder = JSONDecoder()
-  private var encoder = JSONEncoder()
+  // MARK: Lifecycle
 
-  private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.InformationBar", qos: .background)
-  private let log = OSLog(subsystem: "com.flayware.IllithidUI.InformationBar",
-                          category: .pointsOfInterest)
+  init() {
+    decoder.dateDecodingStrategy = .secondsSince1970
+    encoder.dateEncodingStrategy = .secondsSince1970
+
+    if let subscribedData = defaults.data(forKey: "subscribedSubreddits"),
+       let subreddits = try? decoder.decode([Subreddit].self, from: subscribedData) {
+      subscribedSubreddits = subreddits
+    } else {
+      subscribedSubreddits = []
+    }
+
+    if let multiData = defaults.data(forKey: "multireddits"),
+       let multis = try? decoder.decode([Multireddit].self, from: multiData) {
+      multiReddits = multis
+    } else {
+      multiReddits = []
+    }
+
+    loadMultireddits()
+    loadSubscriptions()
+  }
+
+  // MARK: Internal
 
   @Published var subscribedSubreddits: [Subreddit] {
     didSet {
@@ -41,28 +58,6 @@ final class InformationBarData: ObservableObject {
       guard let data = try? encoder.encode(multiReddits) else { return }
       defaults.set(data, forKey: "multireddits")
     }
-  }
-
-  init() {
-    decoder.dateDecodingStrategy = .secondsSince1970
-    encoder.dateEncodingStrategy = .secondsSince1970
-
-    if let subscribedData = defaults.data(forKey: "subscribedSubreddits"),
-      let subreddits = try? decoder.decode([Subreddit].self, from: subscribedData) {
-      subscribedSubreddits = subreddits
-    } else {
-      subscribedSubreddits = []
-    }
-
-    if let multiData = defaults.data(forKey: "multireddits"),
-      let multis = try? decoder.decode([Multireddit].self, from: multiData) {
-      multiReddits = multis
-    } else {
-      multiReddits = []
-    }
-
-    loadMultireddits()
-    loadSubscriptions()
   }
 
   func loadMultireddits() {
@@ -106,4 +101,16 @@ final class InformationBarData: ObservableObject {
       }
     }
   }
+
+  // MARK: Private
+
+  private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.InformationBar", qos: .background)
+
+  private var illithid: Illithid = .shared
+  private var defaults: UserDefaults = .standard
+  private var decoder = JSONDecoder()
+  private var encoder = JSONEncoder()
+
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.InformationBar",
+                          category: .pointsOfInterest)
 }

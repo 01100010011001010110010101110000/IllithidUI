@@ -16,15 +16,20 @@ import Cocoa
 import Foundation
 import SwiftUI
 
+// MARK: - SharingButton
+
 struct SharingButton: View {
-  let items: [Any]
-  let preferredEdge: NSRectEdge
-  private let view = NSView()
+  // MARK: Lifecycle
 
   init(items: [Any], edge: NSRectEdge = .minY) {
     self.items = items
     preferredEdge = edge
   }
+
+  // MARK: Internal
+
+  let items: [Any]
+  let preferredEdge: NSRectEdge
 
   var body: some View {
     Button(action: {
@@ -35,15 +40,26 @@ struct SharingButton: View {
     })
       .overlay(SharingOverlay(view: view))
   }
+
+  // MARK: Private
+
+  private let view = NSView()
 }
 
+// MARK: - SharingOverlay
+
 private struct SharingOverlay: NSViewRepresentable {
-  typealias NSViewType = NSView
-  let view: NSView
+  // MARK: Lifecycle
 
   init(view: NSView) {
     self.view = view
   }
+
+  // MARK: Internal
+
+  typealias NSViewType = NSView
+
+  let view: NSView
 
   func makeNSView(context _: Context) -> NSView {
     view
@@ -51,6 +67,8 @@ private struct SharingOverlay: NSViewRepresentable {
 
   func updateNSView(_: NSView, context _: Context) {}
 }
+
+// MARK: - SharingButton_Preview
 
 struct SharingButton_Preview: PreviewProvider {
   static var previews: some View {

@@ -17,16 +17,18 @@ import SwiftUI
 import Illithid
 
 struct MultiredditEditView: View {
-  @EnvironmentObject var informationBarData: InformationBarData
-  @ObservedObject var searchData: SearchData
-  @State private var tapped: Bool = false
-
-  let editingId: Multireddit.ID
+  // MARK: Lifecycle
 
   init(id: Multireddit.ID, searchData: SearchData) {
     editingId = id
     self.searchData = searchData
   }
+
+  // MARK: Internal
+
+  @EnvironmentObject var informationBarData: InformationBarData
+  @ObservedObject var searchData: SearchData
+  let editingId: Multireddit.ID
 
   var body: some View {
     let editing = informationBarData.multiReddits.first { $0.id == editingId }!
@@ -84,4 +86,8 @@ struct MultiredditEditView: View {
     }
     .frame(minWidth: 600, minHeight: 500)
   }
+
+  // MARK: Private
+
+  @State private var tapped: Bool = false
 }

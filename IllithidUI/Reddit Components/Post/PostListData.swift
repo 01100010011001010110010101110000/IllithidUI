@@ -20,21 +20,17 @@ import Alamofire
 import Illithid
 
 final class PostListData: ObservableObject {
-  @Published var posts: [Post] = []
-
-  let provider: PostProvider
+  // MARK: Lifecycle
 
   init(provider: PostProvider) {
     self.provider = provider
   }
 
-  private var postListingParams: ListingParameters = .init()
-  private var exhausted: Bool = false
-  private var loading: Bool = false
-  private let illithid: Illithid = .shared
-  private let log = OSLog(subsystem: "com.flayware.IllithidUI.posts",
-                          category: .pointsOfInterest)
-  private var requests: [DataRequest] = []
+  // MARK: Internal
+
+  @Published var posts: [Post] = []
+
+  let provider: PostProvider
 
   func loadPosts(sort: PostSort, topInterval: TopInterval) {
     let signpostId = OSSignpostID(log: log)
@@ -71,4 +67,14 @@ final class PostListData: ObservableObject {
       requests.popLast()?.cancel()
     }
   }
+
+  // MARK: Private
+
+  private var postListingParams: ListingParameters = .init()
+  private var exhausted: Bool = false
+  private var loading: Bool = false
+  private let illithid: Illithid = .shared
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.posts",
+                          category: .pointsOfInterest)
+  private var requests: [DataRequest] = []
 }

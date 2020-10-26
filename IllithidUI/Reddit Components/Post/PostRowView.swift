@@ -18,13 +18,10 @@ import Alamofire
 import Illithid
 import SDWebImageSwiftUI
 
-// MARK: Main row view
+// MARK: - PostRowView
 
 struct PostRowView: View {
-  let post: Post
-  let crosspostParent: Post?
-
-  let windowManager: WindowManager = .shared
+  // MARK: Lifecycle
 
   init(post: Post) {
     self.post = post
@@ -35,6 +32,13 @@ struct PostRowView: View {
       crosspostParent = nil
     }
   }
+
+  // MARK: Internal
+
+  let post: Post
+  let crosspostParent: Post?
+
+  let windowManager: WindowManager = .shared
 
   var body: some View {
     GroupBox {
@@ -144,6 +148,8 @@ struct PostRowView: View {
   }
 }
 
+// MARK: - TitleView
+
 private struct TitleView: View {
   let post: Post
 
@@ -178,13 +184,11 @@ extension Post {
   static let lockedDescription: String = "This post has been locked. New comments are disabled"
 }
 
-// MARK: Post meta views
+// MARK: - PostActionBar
 
 // TODO: Sync saved and voted state with model
 struct PostActionBar: View {
-  @State private var vote: VoteDirection = .clear
-  @State private var saved: Bool = false
-  let post: Post
+  // MARK: Lifecycle
 
   init(post: Post) {
     self.post = post
@@ -197,6 +201,10 @@ struct PostActionBar: View {
     }
     _saved = .init(initialValue: post.saved)
   }
+
+  // MARK: Internal
+
+  let post: Post
 
   var body: some View {
     VStack {
@@ -281,29 +289,27 @@ struct PostActionBar: View {
     .font(.title)
     .padding(10)
   }
+
+  // MARK: Private
+
+  @State private var vote: VoteDirection = .clear
+  @State private var saved: Bool = false
 }
 
+// MARK: - PostMetadataBar
+
 struct PostMetadataBar: View {
-  @EnvironmentObject var informationBarData: InformationBarData
-
-  @ObservedObject private var moderators: ModeratorData = .shared
-
-  let post: Post
-  private let windowManager: WindowManager = .shared
-
-  private var authorColor: Color {
-    if post.isAdminPost {
-      return .red
-    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
-      return .green
-    } else {
-      return .white
-    }
-  }
+  // MARK: Lifecycle
 
   init(post: Post) {
     self.post = post
   }
+
+  // MARK: Internal
+
+  @EnvironmentObject var informationBarData: InformationBarData
+
+  let post: Post
 
   var body: some View {
     HStack {
@@ -357,11 +363,29 @@ struct PostMetadataBar: View {
     .padding(10)
     .font(.body)
   }
+
+  // MARK: Private
+
+  @ObservedObject private var moderators: ModeratorData = .shared
+
+  private let windowManager: WindowManager = .shared
+
+  private var authorColor: Color {
+    if post.isAdminPost {
+      return .red
+    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
+      return .green
+    } else {
+      return .white
+    }
+  }
 }
 
-// MARK: Post Flair
+// MARK: - FlairRichtextView
 
 struct FlairRichtextView: View {
+  // MARK: Internal
+
   let richtext: [FlairRichtext]
   let backgroundColor: Color
   let textColor: Color
@@ -374,6 +398,8 @@ struct FlairRichtextView: View {
     }
     .flairTag(rectangleColor: .accentColor)
   }
+
+  // MARK: Private
 
   @ViewBuilder
   private static func renderRichtext(_ text: FlairRichtext) -> some View {
@@ -402,7 +428,7 @@ extension View {
   }
 }
 
-// MARK: Static Previews
+// MARK: - PostRowView_Previews
 
 struct PostRowView_Previews: PreviewProvider {
   static var previews: some View {

@@ -18,13 +18,10 @@ import SwiftUI
 import Alamofire
 import Illithid
 
-struct SearchBar<S: StringProtocol>: View {
-  let title: S
-  @Binding var text: String
-  let onEditingChanged: (Bool) -> Void
-  let onCommit: () -> Void
+// MARK: - SearchBar
 
-  let disableAutocorrect: Bool
+struct SearchBar<S: StringProtocol>: View {
+  // MARK: Lifecycle
 
   init(title: S, text: Binding<String>,
        onEditingChanged: @escaping (Bool) -> Void = { _ in },
@@ -37,6 +34,15 @@ struct SearchBar<S: StringProtocol>: View {
 
     self.disableAutocorrect = disableAutocorrect
   }
+
+  // MARK: Internal
+
+  let title: S
+  @Binding var text: String
+  let onEditingChanged: (Bool) -> Void
+  let onCommit: () -> Void
+
+  let disableAutocorrect: Bool
 
   var body: some View {
     VStack(alignment: .leading) {
@@ -52,13 +58,19 @@ struct SearchBar<S: StringProtocol>: View {
   }
 }
 
+// MARK: - Titled
+
 protocol Titled {
   var title: String { get }
 }
 
+// MARK: - DetailedDescription
+
 protocol DetailedDescription {
   var detailedDescription: String { get }
 }
+
+// MARK: - Subreddit + Titled, DetailedDescription
 
 extension Subreddit: Titled, DetailedDescription {
   var title: String {
@@ -70,12 +82,10 @@ extension Subreddit: Titled, DetailedDescription {
   }
 }
 
-class SearchBarAutocomplete<T: Titled & DetailedDescription>: ObservableObject {
-  @Published var toComplete: String = ""
-  @Published var suggestions: [T] = []
-  let complete: (String, ([T]) -> Void) -> DataRequest
+// MARK: - SearchBarAutocomplete
 
-  var cancelTokens: [AnyCancellable] = []
+class SearchBarAutocomplete<T: Titled & DetailedDescription>: ObservableObject {
+  // MARK: Lifecycle
 
   init(complete: @escaping (String, ([T]) -> Void) -> DataRequest) {
     self.complete = complete
@@ -92,12 +102,26 @@ class SearchBarAutocomplete<T: Titled & DetailedDescription>: ObservableObject {
       }
     cancelTokens.append(cancelToken)
   }
+
+  // MARK: Internal
+
+  @Published var toComplete: String = ""
+  @Published var suggestions: [T] = []
+  let complete: (String, ([T]) -> Void) -> DataRequest
+
+  var cancelTokens: [AnyCancellable] = []
 }
 
+// MARK: - SearchBar_Previews
+
 struct SearchBar_Previews: PreviewProvider {
-  @State private static var text: String = ""
+  // MARK: Internal
 
   static var previews: some View {
     SearchBar(title: "", text: $text)
   }
+
+  // MARK: Private
+
+  @State private static var text: String = ""
 }

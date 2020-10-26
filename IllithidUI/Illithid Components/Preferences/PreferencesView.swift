@@ -16,10 +16,12 @@ import SwiftUI
 
 import Illithid
 
-struct PreferencesView: View {
-  @ObservedObject var accountManager: AccountManager
+// MARK: - PreferencesView
 
-  @State private var preferencePage: PreferencePage = .general
+struct PreferencesView: View {
+  // MARK: Internal
+
+  @ObservedObject var accountManager: AccountManager
 
   var body: some View {
     VStack {
@@ -44,7 +46,13 @@ struct PreferencesView: View {
       }
     }
   }
+
+  // MARK: Private
+
+  @State private var preferencePage: PreferencePage = .general
 }
+
+// MARK: - PreferencesToolbarItemView
 
 private struct PreferencesToolbarItemView: View {
   @Binding var selection: PreferencesView.PreferencePage
@@ -81,6 +89,11 @@ private struct PreferencesToolbarItemView: View {
 
 extension PreferencesView {
   enum PreferencePage: String, Identifiable, CaseIterable {
+    case general
+    case accounts
+
+    // MARK: Internal
+
     var id: String {
       rawValue
     }
@@ -93,11 +106,10 @@ extension PreferencesView {
         return "person.crop.circle"
       }
     }
-
-    case general
-    case accounts
   }
 }
+
+// MARK: - GeneralPreferences
 
 struct GeneralPreferences: View {
   @ObservedObject var preferences: PreferencesData = .shared
@@ -160,6 +172,8 @@ func openLink(_ link: URL) {
                           configuration: .linkConfiguration)
 }
 
+// MARK: - AccountsPreferences
+
 struct AccountsPreferences: View {
   @ObservedObject var accountManager: AccountManager
 
@@ -204,7 +218,52 @@ struct AccountsPreferences: View {
   }
 }
 
+// MARK: - PreferencesData
+
 final class PreferencesData: ObservableObject, Codable {
+  // MARK: Lifecycle
+
+  private init() {
+    hideNsfw = false
+    blurNsfw = true
+    muteAudio = true
+    autoPlayGifs = false
+    openLinksInForeground = true
+    browser = .inApp
+  }
+
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    hideNsfw = try (container.decodeIfPresent(Bool.self, forKey: .hideNsfw) ?? false)
+    blurNsfw = try (container.decodeIfPresent(Bool.self, forKey: .blurNsfw) ?? true)
+    muteAudio = try (container.decodeIfPresent(Bool.self, forKey: .muteAudio) ?? true)
+    autoPlayGifs = try (container.decodeIfPresent(Bool.self, forKey: .autoPlayGifs) ?? false)
+    browser = try (container.decodeIfPresent(Browser.self, forKey: .browser) ?? .inApp)
+    openLinksInForeground = try (container.decodeIfPresent(Bool.self, forKey: .openLinksInForeground) ?? true)
+  }
+
+  // MARK: Internal
+
+  enum CodingKeys: CodingKey {
+    case hideNsfw
+    case blurNsfw
+    case muteAudio
+    case autoPlayGifs
+    /// Which `Browser` to use for Links
+    case browser
+    case openLinksInForeground
+  }
+
+  static let shared: PreferencesData = {
+    if let data = UserDefaults.standard.data(forKey: "preferences"),
+       let value = try? JSONDecoder().decode(PreferencesData.self, from: data) {
+      return value
+    } else {
+      return .init()
+    }
+  }()
+
   @Published fileprivate(set) var hideNsfw: Bool {
     didSet {
       updateDefaults()
@@ -243,45 +302,6 @@ final class PreferencesData: ObservableObject, Codable {
     }
   }
 
-  enum CodingKeys: CodingKey {
-    case hideNsfw
-    case blurNsfw
-    case muteAudio
-    case autoPlayGifs
-    /// Which `Browser` to use for Links
-    case browser
-    case openLinksInForeground
-  }
-
-  private init() {
-    hideNsfw = false
-    blurNsfw = true
-    muteAudio = true
-    autoPlayGifs = false
-    openLinksInForeground = true
-    browser = .inApp
-  }
-
-  static let shared: PreferencesData = {
-    if let data = UserDefaults.standard.data(forKey: "preferences"),
-      let value = try? JSONDecoder().decode(PreferencesData.self, from: data) {
-      return value
-    } else {
-      return .init()
-    }
-  }()
-
-  init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    hideNsfw = try (container.decodeIfPresent(Bool.self, forKey: .hideNsfw) ?? false)
-    blurNsfw = try (container.decodeIfPresent(Bool.self, forKey: .blurNsfw) ?? true)
-    muteAudio = try (container.decodeIfPresent(Bool.self, forKey: .muteAudio) ?? true)
-    autoPlayGifs = try (container.decodeIfPresent(Bool.self, forKey: .autoPlayGifs) ?? false)
-    browser = try (container.decodeIfPresent(Browser.self, forKey: .browser) ?? .inApp)
-    openLinksInForeground = try (container.decodeIfPresent(Bool.self, forKey: .openLinksInForeground) ?? true)
-  }
-
   func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
@@ -292,6 +312,8 @@ final class PreferencesData: ObservableObject, Codable {
     try container.encode(browser, forKey: .browser)
     try container.encode(openLinksInForeground, forKey: .openLinksInForeground)
   }
+
+  // MARK: Private
 
   private func updateDefaults() {
     guard let data = try? JSONEncoder().encode(self) else {

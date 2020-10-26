@@ -17,10 +17,10 @@ import SwiftUI
 import Alamofire
 import Illithid
 
-struct AccountView: View {
-  @EnvironmentObject var informationBarData: InformationBarData
+// MARK: - AccountView
 
-  @StateObject private var accountData: AccountData
+struct AccountView: View {
+  // MARK: Lifecycle
 
   init(account: Account) {
     _accountData = .init(wrappedValue: .init(account: account))
@@ -29,6 +29,10 @@ struct AccountView: View {
   init(name: String) {
     _accountData = .init(wrappedValue: .init(name: name))
   }
+
+  // MARK: Internal
+
+  @EnvironmentObject var informationBarData: InformationBarData
 
   var body: some View {
     NavigationView {
@@ -47,7 +51,13 @@ struct AccountView: View {
     }
     .environmentObject(informationBarData)
   }
+
+  // MARK: Private
+
+  @StateObject private var accountData: AccountData
 }
+
+// MARK: - Content
 
 private struct Content: View {
   @ObservedObject var data: AccountData

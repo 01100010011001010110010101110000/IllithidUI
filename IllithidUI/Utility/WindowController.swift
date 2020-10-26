@@ -14,12 +14,16 @@
 
 import SwiftUI
 
+// MARK: - WindowController
+
 final class WindowController: NSWindowController {
   @IBAction
   override func newWindowForTab(_: Any?) {
     WindowManager.shared.newRootWindow()
   }
 }
+
+// MARK: - Window
 
 final class Window<Content: View>: NSWindow {
   convenience init(styleMask: NSWindow.StyleMask = [],

@@ -16,13 +16,14 @@ import Foundation
 
 @propertyWrapper
 struct UserDefault<T: Codable> {
-  private let key: String
-  private let `default`: T
+  // MARK: Lifecycle
 
   init(key: String, default: T) {
     self.key = key
     self.default = `default`
   }
+
+  // MARK: Internal
 
   var wrappedValue: T {
     get {
@@ -35,4 +36,9 @@ struct UserDefault<T: Codable> {
       UserDefaults.standard.set(data, forKey: key)
     }
   }
+
+  // MARK: Private
+
+  private let key: String
+  private let `default`: T
 }

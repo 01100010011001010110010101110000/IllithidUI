@@ -17,23 +17,12 @@ import SwiftUI
 import Illithid
 import SDWebImageSwiftUI
 
+// MARK: - InformationBarNavigationView
+
 struct InformationBarNavigationView: View {
+  // MARK: Internal
+
   @ObservedObject var preferences: PreferencesData = .shared
-
-  @StateObject private var multiredditSearch = SearchData(for: [.subreddit])
-  @StateObject private var informationBarData = InformationBarData()
-  @State private var isEditingMulti: Bool = false
-  @State private var editing: Multireddit.ID?
-  @State private var selection: String? = nil
-
-  @ViewBuilder private var accountView: some View {
-    if let account = Illithid.shared.accountManager.currentAccount {
-      AccountView(account: account)
-        .environmentObject(informationBarData)
-    } else {
-      Text("There is no logged in account")
-    }
-  }
 
   var body: some View {
     NavigationView {
@@ -129,6 +118,23 @@ struct InformationBarNavigationView: View {
       }
     })
   }
+
+  // MARK: Private
+
+  @StateObject private var multiredditSearch = SearchData(for: [.subreddit])
+  @StateObject private var informationBarData = InformationBarData()
+  @State private var isEditingMulti: Bool = false
+  @State private var editing: Multireddit.ID?
+  @State private var selection: String? = nil
+
+  @ViewBuilder private var accountView: some View {
+    if let account = Illithid.shared.accountManager.currentAccount {
+      AccountView(account: account)
+        .environmentObject(informationBarData)
+    } else {
+      Text("There is no logged in account")
+    }
+  }
 }
 
 extension FrontPage {
@@ -145,6 +151,8 @@ extension FrontPage {
     }
   }
 }
+
+// MARK: - InformationBarListView_Previews
 
 struct InformationBarListView_Previews: PreviewProvider {
   static var previews: some View {

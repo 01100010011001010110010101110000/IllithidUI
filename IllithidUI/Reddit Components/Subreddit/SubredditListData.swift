@@ -19,12 +19,11 @@ import os.log
 import Illithid
 
 final class SubredditListData: ObservableObject {
+  // MARK: Internal
+
   @Published var subreddits: [Subreddit] = []
 
   let illithid: Illithid = .shared
-  private var listingParams: ListingParameters = .init()
-  private let log = OSLog(subsystem: "com.flayware.IllithidUI.subreddits",
-                          category: .pointsOfInterest)
 
   func loadSubreddits() {
     let signpostId = OSSignpostID(log: log)
@@ -40,4 +39,10 @@ final class SubredditListData: ObservableObject {
       }
     }
   }
+
+  // MARK: Private
+
+  private var listingParams: ListingParameters = .init()
+  private let log = OSLog(subsystem: "com.flayware.IllithidUI.subreddits",
+                          category: .pointsOfInterest)
 }

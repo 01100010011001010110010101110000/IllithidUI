@@ -20,18 +20,7 @@ import Alamofire
 import Illithid
 
 final class SearchData: ObservableObject {
-  @Published var query: String = ""
-  @Published var accounts: [Account] = []
-  @Published var subreddits: [Subreddit] = []
-  @Published var posts: [Post] = []
-  @Published var suggestions: [Subreddit] = []
-
-  let illithid: Illithid = .shared
-  let searchTargets: Set<SearchType>
-
-  private var cancelBag: [AnyCancellable] = []
-  private var request: DataRequest?
-  private var autocompleteRequest: DataRequest?
+  // MARK: Lifecycle
 
   init(for targets: Set<SearchType> = [.subreddit, .post, .user]) {
     searchTargets = targets
@@ -71,6 +60,17 @@ final class SearchData: ObservableObject {
     cancelBag.cancel()
   }
 
+  // MARK: Internal
+
+  @Published var query: String = ""
+  @Published var accounts: [Account] = []
+  @Published var subreddits: [Subreddit] = []
+  @Published var posts: [Post] = []
+  @Published var suggestions: [Subreddit] = []
+
+  let illithid: Illithid = .shared
+  let searchTargets: Set<SearchType>
+
   func search(for searchText: String) -> DataRequest {
     illithid.search(for: searchText, resultTypes: searchTargets) { [weak self] result in
       guard let self = self else { return }
@@ -98,4 +98,10 @@ final class SearchData: ObservableObject {
   func clearQueryText() {
     query.removeAll()
   }
+
+  // MARK: Private
+
+  private var cancelBag: [AnyCancellable] = []
+  private var request: DataRequest?
+  private var autocompleteRequest: DataRequest?
 }

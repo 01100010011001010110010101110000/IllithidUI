@@ -20,31 +20,10 @@ extension View {
   }
 }
 
+// MARK: - PinchAndZoomModifier
+
 private struct PinchAndZoomModifier: ViewModifier {
-  @State private var currentScale: CGFloat = 1.0
-  @State private var previousScale: CGFloat = 1.0
-
-  @State private var currentPosition: CGSize = .zero
-  @State private var previousPosition: CGSize = .zero
-  @State private var resetVisibility: Double = .zero
-
-  private func pinNewScale(newScale: CGFloat) -> CGFloat {
-    if newScale < 5.0, newScale > 1.0 {
-      return newScale
-    } else {
-      return currentScale
-    }
-  }
-
-  private func resetPosition() {
-    previousPosition = .zero
-    currentPosition = .zero
-  }
-
-  private func resetZoom() {
-    previousScale = 1.0
-    currentScale = 1.0
-  }
+  // MARK: Internal
 
   func body(content: Content) -> some View {
     ZStack(alignment: .topLeading) {
@@ -95,5 +74,32 @@ private struct PinchAndZoomModifier: ViewModifier {
         }
       }
     })
+  }
+
+  // MARK: Private
+
+  @State private var currentScale: CGFloat = 1.0
+  @State private var previousScale: CGFloat = 1.0
+
+  @State private var currentPosition: CGSize = .zero
+  @State private var previousPosition: CGSize = .zero
+  @State private var resetVisibility: Double = .zero
+
+  private func pinNewScale(newScale: CGFloat) -> CGFloat {
+    if newScale < 5.0, newScale > 1.0 {
+      return newScale
+    } else {
+      return currentScale
+    }
+  }
+
+  private func resetPosition() {
+    previousPosition = .zero
+    currentPosition = .zero
+  }
+
+  private func resetZoom() {
+    previousScale = 1.0
+    currentScale = 1.0
   }
 }

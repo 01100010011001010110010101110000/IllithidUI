@@ -16,22 +16,34 @@ import SwiftUI
 
 import Illithid
 
+// MARK: - SortModel
+
 final class SortModel<Sort>: ObservableObject where Sort: RawRepresentable & CaseIterable & Identifiable & Hashable, Sort.RawValue == String, Sort.AllCases: RandomAccessCollection {
-  @Published var sort: Sort
-  @Published var topInterval: TopInterval
+  // MARK: Lifecycle
 
   init(sort: Sort, topInterval: TopInterval) {
     self.sort = sort
     self.topInterval = topInterval
   }
+
+  // MARK: Internal
+
+  @Published var sort: Sort
+  @Published var topInterval: TopInterval
 }
 
+// MARK: - SortController
+
 struct SortController<Sort>: View where Sort: RawRepresentable & CaseIterable & Identifiable & Hashable, Sort.RawValue == String, Sort.AllCases: RandomAccessCollection {
-  @ObservedObject var sortModel: SortModel<Sort>
+  // MARK: Lifecycle
 
   init(model: SortModel<Sort>) {
     sortModel = model
   }
+
+  // MARK: Internal
+
+  @ObservedObject var sortModel: SortModel<Sort>
 
   var body: some View {
     HStack {
@@ -55,10 +67,16 @@ struct SortController<Sort>: View where Sort: RawRepresentable & CaseIterable & 
   }
 }
 
+// MARK: - SortController_Previews
+
 struct SortController_Previews: PreviewProvider {
-  @StateObject private static var model: SortModel<PostSort> = .init(sort: .best, topInterval: .day)
+  // MARK: Internal
 
   static var previews: some View {
     SortController(model: model)
   }
+
+  // MARK: Private
+
+  @StateObject private static var model: SortModel<PostSort> = .init(sort: .best, topInterval: .day)
 }

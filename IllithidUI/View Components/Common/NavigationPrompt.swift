@@ -14,14 +14,19 @@
 
 import SwiftUI
 
+// MARK: - NavigationPrompt
+
 struct NavigationPrompt: View {
   let prompt: String
+
   var body: some View {
     Text(prompt)
       .font(.largeTitle)
       .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
 }
+
+// MARK: - NavigationPrompt_Previews
 
 struct NavigationPrompt_Previews: PreviewProvider {
   static var previews: some View {

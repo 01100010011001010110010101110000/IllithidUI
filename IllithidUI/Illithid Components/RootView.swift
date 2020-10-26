@@ -16,7 +16,15 @@ import SwiftUI
 
 import Illithid
 
+// MARK: - NavigationLayout
+
 enum NavigationLayout: String, CaseIterable, Identifiable, Codable {
+  case compact
+  case classic
+  case large
+
+  // MARK: Internal
+
   var id: String {
     rawValue
   }
@@ -36,11 +44,9 @@ enum NavigationLayout: String, CaseIterable, Identifiable, Codable {
       return "squares.below.rectangle"
     }
   }
-
-  case compact
-  case classic
-  case large
 }
+
+// MARK: - NavigationLayoutKey
 
 struct NavigationLayoutKey: EnvironmentKey {
   static var defaultValue: NavigationLayout = .large
@@ -56,6 +62,8 @@ extension EnvironmentValues {
     }
   }
 }
+
+// MARK: - RootView
 
 struct RootView: View {
   @AppStorage("navigationLayout") var layout: NavigationLayout = NavigationLayoutKey.defaultValue
@@ -93,4 +101,4 @@ struct RootView: View {
 //        RootView()
 //    }
 // }
-// #endif 
+// #endif

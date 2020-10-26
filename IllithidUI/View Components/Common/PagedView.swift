@@ -14,12 +14,10 @@
 
 import SwiftUI
 
-struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: View {
-  @State private var index: Data.Index
+// MARK: - PagedView
 
-  let data: Data
-  let id: KeyPath<Data.Element, ID>
-  let content: (Data.Element) -> Content
+struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: View {
+  // MARK: Lifecycle
 
   init(data: Data, id: KeyPath<Data.Element, ID>, @ViewBuilder content: @escaping (Data.Element) -> Content) {
     self.data = data
@@ -27,6 +25,12 @@ struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: Vie
     self.id = id
     _index = .init(initialValue: data.startIndex)
   }
+
+  // MARK: Internal
+
+  let data: Data
+  let id: KeyPath<Data.Element, ID>
+  let content: (Data.Element) -> Content
 
   var body: some View {
     ZStack(alignment: .topTrailing) {
@@ -56,6 +60,10 @@ struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: Vie
     }
   }
 
+  // MARK: Private
+
+  @State private var index: Data.Index
+
   private func next() {
     if index >= data.index(before: data.endIndex) {
       index = data.startIndex
@@ -81,6 +89,8 @@ extension PagedView where Data.Element: Identifiable, ID == Data.Element.ID {
     _index = .init(initialValue: data.startIndex)
   }
 }
+
+// MARK: - PagedView_Previews
 
 struct PagedView_Previews: PreviewProvider {
   static let data: [Int] = [1, 2, 3, 4, 5]

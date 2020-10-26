@@ -17,26 +17,10 @@ import SwiftUI
 
 import Illithid
 
+// MARK: - CommentsView
+
 struct CommentsView: View, Identifiable {
-  @ObservedObject var commentData: CommentData
-  @ObservedObject private var moderators: ModeratorData = .shared
-
-  /// The post to which the comments belong
-  let id: Fullname
-
-  let post: Post
-
-  let focusedComment: ID36?
-
-  private var authorColor: Color {
-    if post.isAdminPost {
-      return .red
-    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
-      return .green
-    } else {
-      return .blue
-    }
-  }
+  // MARK: Lifecycle
 
   init(post: Post, focusOn commentId: ID36? = nil) {
     commentData = CommentData(post: post)
@@ -51,6 +35,16 @@ struct CommentsView: View, Identifiable {
     commentData = CommentData(from: listing)
     focusedComment = nil
   }
+
+  // MARK: Internal
+
+  @ObservedObject var commentData: CommentData
+  /// The post to which the comments belong
+  let id: Fullname
+
+  let post: Post
+
+  let focusedComment: ID36?
 
   var body: some View {
     ScrollView {
@@ -107,7 +101,23 @@ struct CommentsView: View, Identifiable {
                                     context: self.focusedComment != nil ? 2 : nil)
     }
   }
+
+  // MARK: Private
+
+  @ObservedObject private var moderators: ModeratorData = .shared
+
+  private var authorColor: Color {
+    if post.isAdminPost {
+      return .red
+    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
+      return .green
+    } else {
+      return .blue
+    }
+  }
 }
+
+// MARK: - FocusedCommentModifier
 
 private struct FocusedCommentModifier: ViewModifier {
   func body(content: Content) -> some View {
@@ -118,6 +128,8 @@ private struct FocusedCommentModifier: ViewModifier {
     )
   }
 }
+
+// MARK: - CommentsView_Previews
 
 struct CommentsView_Previews: PreviewProvider {
   static var previews: some View {

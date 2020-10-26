@@ -14,9 +14,12 @@
 
 import SwiftUI
 
+// MARK: - NsfwBlurModifier
+
 struct NsfwBlurModifier: ViewModifier {
+  // MARK: Internal
+
   @ObservedObject var preferences: PreferencesData = .shared
-  @State private var blur: Bool = false
 
   func body(content: Content) -> some View {
     content
@@ -32,14 +35,16 @@ struct NsfwBlurModifier: ViewModifier {
         }
       }
   }
+
+  // MARK: Private
+
+  @State private var blur: Bool = false
 }
 
-struct ClippedBlurModifier<S: Shape>: ViewModifier {
-  @Binding var isBlurred: Bool
+// MARK: - ClippedBlurModifier
 
-  let shape: S
-  let radius: CGFloat
-  let opaque: Bool
+struct ClippedBlurModifier<S: Shape>: ViewModifier {
+  // MARK: Lifecycle
 
   init(blur: Binding<Bool>, shape: S, radius: CGFloat = 100, opaque: Bool = false) {
     _isBlurred = blur
@@ -47,6 +52,14 @@ struct ClippedBlurModifier<S: Shape>: ViewModifier {
     self.radius = radius
     self.opaque = opaque
   }
+
+  // MARK: Internal
+
+  @Binding var isBlurred: Bool
+
+  let shape: S
+  let radius: CGFloat
+  let opaque: Bool
 
   func body(content: Content) -> some View {
     content

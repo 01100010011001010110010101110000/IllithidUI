@@ -17,10 +17,7 @@ import SwiftUI
 import Illithid
 
 struct PostDebugView: View, Identifiable {
-  let post: Post
-  let id: String
-  private var encoder = JSONEncoder()
-  let prettyJson: String?
+  // MARK: Lifecycle
 
   init(post: Post) {
     self.post = post
@@ -34,6 +31,12 @@ struct PostDebugView: View, Identifiable {
       prettyJson = nil
     }
   }
+
+  // MARK: Internal
+
+  let post: Post
+  let id: String
+  let prettyJson: String?
 
   var body: some View {
     VStack {
@@ -49,6 +52,10 @@ struct PostDebugView: View, Identifiable {
     }
     .frame(alignment: .leading)
   }
+
+  // MARK: Private
+
+  private var encoder = JSONEncoder()
 }
 
 // struct PostDebugView_Previews: PreviewProvider {

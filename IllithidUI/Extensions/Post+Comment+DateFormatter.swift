@@ -16,18 +16,18 @@ import Foundation
 
 import Illithid
 
-extension Post {
-  public var relativePostTime: String {
+public extension Post {
+  var relativePostTime: String {
     DateComponentsFormatter.ShortFormatter.string(from: createdUtc, to: Date()) ?? "UNKNOWN"
   }
 
-  public var absolutePostTime: String {
+  var absolutePostTime: String {
     DateFormatter.LongFormatter.string(from: createdUtc)
   }
 }
 
-extension Comment {
-  public var relativeCommentTime: String {
+public extension Comment {
+  var relativeCommentTime: String {
     DateComponentsFormatter.ShortFormatter.string(from: createdUtc, to: Date()) ?? "UNKNOWN"
   }
 }

@@ -17,12 +17,15 @@ import SwiftUI
 import Illithid
 
 final class ModeratorData: ObservableObject {
-  @Published private(set) var moderators: [String: [Moderator]] = [:]
-  private var loading: Set<String> = []
+  // MARK: Lifecycle
 
   private init() {}
 
+  // MARK: Internal
+
   static let shared: ModeratorData = .init()
+
+  @Published private(set) var moderators: [String: [Moderator]] = [:]
 
   func isModerator(username: String, ofSubreddit subredditName: String) -> Bool {
     guard let mods = moderators[subredditName] else {
@@ -31,6 +34,10 @@ final class ModeratorData: ObservableObject {
     }
     return mods.contains { $0.name == username }
   }
+
+  // MARK: Private
+
+  private var loading: Set<String> = []
 
   private func loadModerators(for subredditName: String) {
     if moderators.index(forKey: subredditName) == nil, !loading.contains(subredditName) {

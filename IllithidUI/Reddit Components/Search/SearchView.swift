@@ -16,6 +16,8 @@ import SwiftUI
 
 import Illithid
 
+// MARK: - SearchView
+
 struct SearchView: View {
   @StateObject var searchData: SearchData = .init()
 

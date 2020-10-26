@@ -21,13 +21,19 @@ import class Down.Link
 import class Down.List
 import class Down.Text
 
+// MARK: - ListTypeKey
+
 struct ListTypeKey: EnvironmentKey {
   typealias Value = List.ListType
+
   static var defaultValue: Value = .bullet
 }
 
+// MARK: - ListDistanceKey
+
 struct ListDistanceKey: EnvironmentKey {
   typealias Value = Int
+
   static var defaultValue: Value = 0
 }
 

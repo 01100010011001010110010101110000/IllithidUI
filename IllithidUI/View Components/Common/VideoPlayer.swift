@@ -16,19 +16,36 @@ import AVKit
 import Combine
 import SwiftUI
 
+// MARK: - AVPlayer + ObservableObject
+
 extension AVPlayer: ObservableObject {}
 
+// MARK: - VideoPlayer
+
 struct VideoPlayer: View {
-  @StateObject private var avPlayer: AVPlayer
+  // MARK: Lifecycle
+
+  init(url: URL, fullSize: NSSize = .zero) {
+    self.fullSize = fullSize
+    _avPlayer = .init(wrappedValue: Self.createPlayer(url: url))
+  }
+
+  // MARK: Internal
+
   @ObservedObject var preferences: PreferencesData = .shared
 
-  private let fullSize: NSSize
-
-  private static func createPlayer(url: URL) -> AVPlayer {
-    let player: AVPlayer = .init(url: url)
-    player.isMuted = true
-    return player
+  var body: some View {
+    AVKit.VideoPlayer(player: avPlayer)
+      .frame(width: calculateSize.width, height: calculateSize.height)
+      .onDisappear {
+        avPlayer.pause()
+      }
   }
+
+  // MARK: Private
+
+  @StateObject private var avPlayer: AVPlayer
+  private let fullSize: NSSize
 
   private var calculateSize: NSSize {
     if fullSize.height > 864 {
@@ -39,16 +56,9 @@ struct VideoPlayer: View {
     }
   }
 
-  init(url: URL, fullSize: NSSize = .zero) {
-    self.fullSize = fullSize
-    _avPlayer = .init(wrappedValue: Self.createPlayer(url: url))
-  }
-
-  var body: some View {
-    AVKit.VideoPlayer(player: avPlayer)
-      .frame(width: calculateSize.width, height: calculateSize.height)
-      .onDisappear {
-        avPlayer.pause()
-      }
+  private static func createPlayer(url: URL) -> AVPlayer {
+    let player: AVPlayer = .init(url: url)
+    player.isMuted = true
+    return player
   }
 }

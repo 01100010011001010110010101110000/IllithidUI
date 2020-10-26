@@ -22,14 +22,10 @@ import class Down.Link
 import class Down.List
 import class Down.Text
 
+// MARK: - Markdown
+
 struct Markdown: View {
-  @Environment(\.textModifiers) var textModifiers
-  @Environment(\.downListType) var downListType
-  @Environment(\.downListDistance) var downListDistance
-
-  // TODO: Fix text nodes and adjacent links being rendered as separate views
-
-  let node: Node
+  // MARK: Lifecycle
 
   init(mdString: String) {
     // TODO: This is a memory leak. Need to construct a class to hold the pointer and deallocate it during deinit
@@ -38,6 +34,43 @@ struct Markdown: View {
 
   init(node: Node) {
     self.node = node
+  }
+
+  // MARK: Internal
+
+  @Environment(\.textModifiers) var textModifiers
+  @Environment(\.downListType) var downListType
+  @Environment(\.downListDistance) var downListDistance
+
+  // TODO: Fix text nodes and adjacent links being rendered as separate views
+
+  let node: Node
+
+  @ViewBuilder var body: some View {
+    switch node {
+    case let node as Document: visit(document: node)
+    case let node as BlockQuote: visit(blockQuote: node)
+    case let node as List: visit(list: node)
+    case let node as Item: visit(item: node)
+    case let node as CodeBlock: visit(codeBlock: node)
+    case let node as HtmlBlock: visit(htmlBlock: node)
+    case let node as CustomBlock: visit(customBlock: node)
+    case let node as Paragraph: visit(paragraph: node)
+    case let node as Heading: visit(heading: node)
+    case let node as ThematicBreak: visit(thematicBreak: node)
+    case let node as Text: visit(text: node)
+    case let node as SoftBreak: visit(softBreak: node)
+    case let node as LineBreak: visit(lineBreak: node)
+    case let node as Code: visit(code: node)
+    case let node as HtmlInline: visit(htmlInline: node)
+    case let node as CustomInline: visit(customInline: node)
+    case let node as Emphasis: visit(emphasis: node)
+    case let node as Strong: visit(strong: node)
+    case let node as Link: visit(link: node)
+    case let node as Image: visit(image: node)
+    default:
+      EmptyView()
+    }
   }
 
   func visit(document: Document) -> some View {
@@ -177,33 +210,6 @@ struct Markdown: View {
       WebImage(url: url)
         .help(image.title ?? "")
     } else {
-      EmptyView()
-    }
-  }
-
-  @ViewBuilder var body: some View {
-    switch node {
-    case let node as Document: visit(document: node)
-    case let node as BlockQuote: visit(blockQuote: node)
-    case let node as List: visit(list: node)
-    case let node as Item: visit(item: node)
-    case let node as CodeBlock: visit(codeBlock: node)
-    case let node as HtmlBlock: visit(htmlBlock: node)
-    case let node as CustomBlock: visit(customBlock: node)
-    case let node as Paragraph: visit(paragraph: node)
-    case let node as Heading: visit(heading: node)
-    case let node as ThematicBreak: visit(thematicBreak: node)
-    case let node as Text: visit(text: node)
-    case let node as SoftBreak: visit(softBreak: node)
-    case let node as LineBreak: visit(lineBreak: node)
-    case let node as Code: visit(code: node)
-    case let node as HtmlInline: visit(htmlInline: node)
-    case let node as CustomInline: visit(customInline: node)
-    case let node as Emphasis: visit(emphasis: node)
-    case let node as Strong: visit(strong: node)
-    case let node as Link: visit(link: node)
-    case let node as Image: visit(image: node)
-    default:
       EmptyView()
     }
   }

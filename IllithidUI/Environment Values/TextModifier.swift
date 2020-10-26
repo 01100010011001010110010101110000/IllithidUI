@@ -14,6 +14,8 @@
 
 import SwiftUI
 
+// MARK: - DownTextModifier
+
 enum DownTextModifier: Hashable {
   case code
   case codeBlock
@@ -21,6 +23,8 @@ enum DownTextModifier: Hashable {
   case emphasis
   case heading(Int)
 }
+
+// MARK: - TextModifierKey
 
 struct TextModifierKey: EnvironmentKey {
   static var defaultValue: Set<DownTextModifier> = []

@@ -19,40 +19,23 @@ import SwiftUI
 import Illithid
 import SDWebImageSwiftUI
 
+// MARK: - PostListView
+
 struct PostListView: View {
-  @Environment(\.navigationLayout) var layout
-  @EnvironmentObject var informationBarData: InformationBarData
-  @ObservedObject var preferences: PreferencesData = .shared
-
-  @State private var selection: Subreddit? = nil
-  @State private var searchText: String = ""
-  @State private var showSidebar: Bool = false
-  @StateObject private var sorter = SortModel(sort: PostSort.best, topInterval: .day)
-  @StateObject private var postsData: PostListData
-
-  let postContainer: PostProvider
-
-  private let cancelToken: AnyCancellable? = nil
-
-  private var filteredPosts: [Post] {
-    postsData.posts.filter { post in
-      if preferences.hideNsfw, post.over18 {
-        return false
-      }
-      if !searchText.isEmpty {
-        return post.author.range(of: searchText, options: .caseInsensitive) != nil ||
-          post.title.range(of: searchText, options: .caseInsensitive) != nil ||
-          post.subreddit.range(of: searchText, options: .caseInsensitive) != nil ||
-          post.selftext.range(of: searchText, options: .caseInsensitive) != nil
-      }
-      return true
-    }
-  }
+  // MARK: Lifecycle
 
   init(postContainer: PostProvider) {
     self.postContainer = postContainer
     _postsData = .init(wrappedValue: .init(provider: postContainer))
   }
+
+  // MARK: Internal
+
+  @Environment(\.navigationLayout) var layout
+  @EnvironmentObject var informationBarData: InformationBarData
+  @ObservedObject var preferences: PreferencesData = .shared
+
+  let postContainer: PostProvider
 
   var body: some View {
     VStack(spacing: 0.0) {
@@ -88,7 +71,7 @@ struct PostListView: View {
 
       HSplitView {
         switch layout {
-        case .compact, .classic:
+        case .classic, .compact:
           ClassicListBody(posts: filteredPosts, onLastPost: {
             postsData.loadPosts(sort: sorter.sort,
                                 topInterval: sorter.topInterval)
@@ -135,19 +118,48 @@ struct PostListView: View {
     }
     .navigationTitle(postContainer.displayName)
   }
+
+  // MARK: Private
+
+  @State private var selection: Subreddit? = nil
+  @State private var searchText: String = ""
+  @State private var showSidebar: Bool = false
+  @StateObject private var sorter = SortModel(sort: PostSort.best, topInterval: .day)
+  @StateObject private var postsData: PostListData
+
+  private let cancelToken: AnyCancellable? = nil
+
+  private var filteredPosts: [Post] {
+    postsData.posts.filter { post in
+      if preferences.hideNsfw, post.over18 {
+        return false
+      }
+      if !searchText.isEmpty {
+        return post.author.range(of: searchText, options: .caseInsensitive) != nil ||
+          post.title.range(of: searchText, options: .caseInsensitive) != nil ||
+          post.subreddit.range(of: searchText, options: .caseInsensitive) != nil ||
+          post.selftext.range(of: searchText, options: .caseInsensitive) != nil
+      }
+      return true
+    }
+  }
 }
 
+// MARK: - SidebarView
+
 struct SidebarView: View {
-  @EnvironmentObject var informationBarData: InformationBarData
-
-  @State private var subscribed: Bool = false
-
-  let subreddit: Subreddit
+  // MARK: Lifecycle
 
   init(subreddit: Subreddit) {
     self.subreddit = subreddit
     _subscribed = .init(initialValue: subreddit.userIsSubscriber ?? false)
   }
+
+  // MARK: Internal
+
+  @EnvironmentObject var informationBarData: InformationBarData
+
+  let subreddit: Subreddit
 
   var body: some View {
     VStack {
@@ -213,19 +225,27 @@ struct SidebarView: View {
     }
     .background(Color(.controlBackgroundColor))
   }
+
+  // MARK: Private
+
+  @State private var subscribed: Bool = false
 }
+
+// MARK: - SubredditLoader
 
 /// Loads a PostListView when we have only a subreddit name
 struct SubredditLoader: View, Identifiable {
-  @State private var subreddit: Subreddit?
-
-  let subredditFullname: Fullname
-
-  var id: String { subredditFullname }
+  // MARK: Lifecycle
 
   init(fullname subredditFullname: Fullname) {
     self.subredditFullname = subredditFullname
   }
+
+  // MARK: Internal
+
+  let subredditFullname: Fullname
+
+  var id: String { subredditFullname }
 
   var body: some View {
     Group {
@@ -249,6 +269,10 @@ struct SubredditLoader: View, Identifiable {
       }
     }
   }
+
+  // MARK: Private
+
+  @State private var subreddit: Subreddit?
 }
 
 // struct PostListView_Previews: PreviewProvider {

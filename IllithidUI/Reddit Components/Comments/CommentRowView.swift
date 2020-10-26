@@ -16,6 +16,8 @@ import SwiftUI
 
 import Illithid
 
+// MARK: - CommentRowView
+
 struct CommentRowView: View {
   @State private var textSize: CGRect = .zero
   @Binding var isCollapsed: Bool
@@ -55,6 +57,8 @@ struct CommentRowView: View {
   }
 }
 
+// MARK: - RemovedComment
+
 private struct RemovedComment: View {
   @Binding var isCollapsed: Bool
 
@@ -77,6 +81,8 @@ private struct RemovedComment: View {
   }
 }
 
+// MARK: - DeletedComment
+
 private struct DeletedComment: View {
   @Binding var isCollapsed: Bool
 
@@ -91,6 +97,8 @@ private struct DeletedComment: View {
     }
   }
 }
+
+// MARK: - AuthorBar
 
 private struct AuthorBar: View {
   @ObservedObject private var moderators: ModeratorData = .shared
@@ -130,6 +138,8 @@ private struct AuthorBar: View {
   }
 }
 
+// MARK: - MoreCommentsRowView
+
 struct MoreCommentsRowView: View {
   let more: More
 
@@ -151,6 +161,8 @@ struct MoreCommentsRowView: View {
     .padding(.leading, 12 * CGFloat(integerLiteral: more.depth))
   }
 }
+
+// MARK: - CommentActionBar
 
 // TODO: Sync saved and voted state with model
 struct CommentActionBar: View {
@@ -244,6 +256,8 @@ struct CommentActionBar: View {
   }
 }
 
+// MARK: - CommentColorBar
+
 struct CommentColorBar: View {
   let depth: Int
   let width: CGFloat = 3.0
@@ -261,6 +275,8 @@ extension Text {
       .foregroundColor(color)
   }
 }
+
+// MARK: - CommentRowView_Previews
 
 struct CommentRowView_Previews: PreviewProvider {
   static var previews: some View {

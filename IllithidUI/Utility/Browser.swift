@@ -15,19 +15,11 @@
 import Cocoa
 import Foundation
 
+// MARK: - Browser
+
 /// Represents an installed browser
 class Browser: Codable, Identifiable, Comparable, Hashable {
-  static func == (lhs: Browser, rhs: Browser) -> Bool {
-    lhs.bundle == rhs.bundle
-  }
-
-  static func < (lhs: Browser, rhs: Browser) -> Bool {
-    lhs.bundle.bundleURL.absoluteString < rhs.bundle.bundleURL.absoluteString
-  }
-
-  public func hash(into hasher: inout Hasher) {
-    hasher.combine(bundle.bundleURL)
-  }
+  // MARK: Lifecycle
 
   init?(bundleId: String) {
     guard let bundle = Bundle(identifier: bundleId) else { return nil }
@@ -38,7 +30,24 @@ class Browser: Codable, Identifiable, Comparable, Hashable {
     self.bundle = bundle
   }
 
-  let bundle: Bundle
+  required init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+
+    let bundleUrl = try container.decode(URL.self, forKey: .bundleUrl)
+    bundle = Bundle(url: bundleUrl) ?? Bundle()
+  }
+
+  // MARK: Public
+
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(bundle.bundleURL)
+  }
+
+  // MARK: Internal
+
+  enum CodingKeys: CodingKey {
+    case bundleUrl
+  }
 
   /// Represents the in app browser
   static let inApp: Browser = .init(bundle: Bundle.main)
@@ -69,9 +78,7 @@ class Browser: Codable, Identifiable, Comparable, Hashable {
     return Set(result)
   }
 
-  func icon() -> NSImage? {
-    bundle.icon()
-  }
+  let bundle: Bundle
 
   var id: String {
     bundle.bundleURL.absoluteString
@@ -81,8 +88,16 @@ class Browser: Codable, Identifiable, Comparable, Hashable {
     bundle.displayName
   }
 
-  enum CodingKeys: CodingKey {
-    case bundleUrl
+  static func == (lhs: Browser, rhs: Browser) -> Bool {
+    lhs.bundle == rhs.bundle
+  }
+
+  static func < (lhs: Browser, rhs: Browser) -> Bool {
+    lhs.bundle.bundleURL.absoluteString < rhs.bundle.bundleURL.absoluteString
+  }
+
+  func icon() -> NSImage? {
+    bundle.icon()
   }
 
   func encode(to encoder: Encoder) throws {
@@ -90,19 +105,12 @@ class Browser: Codable, Identifiable, Comparable, Hashable {
 
     try container.encode(bundle.bundleURL, forKey: .bundleUrl)
   }
-
-  required init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-
-    let bundleUrl = try container.decode(URL.self, forKey: .bundleUrl)
-    bundle = Bundle(url: bundleUrl) ?? Bundle()
-  }
 }
 
 extension Bundle {
   func icon() -> NSImage? {
     guard let identifier = bundleIdentifier,
-      let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else { return nil }
+          let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: identifier) else { return nil }
     return NSWorkspace.shared.icon(forFile: url.path)
   }
 

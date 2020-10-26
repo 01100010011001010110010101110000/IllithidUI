@@ -18,6 +18,8 @@ extension NSToolbarItem.Identifier {
   static let illithidSearchBar = Self("illithid.reddit.search.bar")
 }
 
+// MARK: - ToolbarDelegate
+
 class ToolbarDelegate: NSObject, NSToolbarDelegate {
   func toolbar(_: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar _: Bool) -> NSToolbarItem? {
     let newItem = NSToolbarItemGroup(itemIdentifier: itemIdentifier)

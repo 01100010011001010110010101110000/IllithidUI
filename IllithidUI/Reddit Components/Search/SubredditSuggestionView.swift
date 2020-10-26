@@ -18,14 +18,14 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct SubredditSuggestionLabel: View {
-  let suggestion: Subreddit
-
   static let CreatedFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateStyle = .short
     formatter.timeStyle = .none
     return formatter
   }()
+
+  let suggestion: Subreddit
 
   var body: some View {
     GroupBox {

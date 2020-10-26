@@ -17,12 +17,10 @@ import SwiftUI
 import Illithid
 import SDWebImageSwiftUI
 
-struct SubredditIcon: View {
-  private let imageUrl: URL?
-  private let displayName: String
-  private let displayLetter: String
+// MARK: - SubredditIcon
 
-  private static let defaultIconPrefix = "custom_feed_default"
+struct SubredditIcon: View {
+  // MARK: Lifecycle
 
   init(subreddit: Subreddit) {
     imageUrl = subreddit.communityIcon ?? subreddit.iconImg
@@ -35,6 +33,8 @@ struct SubredditIcon: View {
     displayName = multireddit.displayName
     displayLetter = String(multireddit.displayName.first!.uppercased())
   }
+
+  // MARK: Internal
 
   var body: some View {
     if let imageUrl = imageUrl {
@@ -50,6 +50,14 @@ struct SubredditIcon: View {
         .overlay(Text(displayLetter))
     }
   }
+
+  // MARK: Private
+
+  private static let defaultIconPrefix = "custom_feed_default"
+
+  private let imageUrl: URL?
+  private let displayName: String
+  private let displayLetter: String
 }
 
 private extension String {

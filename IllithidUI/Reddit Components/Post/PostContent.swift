@@ -18,6 +18,8 @@ import Illithid
 import SDWebImageSwiftUI
 import Ulithari
 
+// MARK: - PostContent
+
 struct PostContent: View {
   let post: Post
 
@@ -56,16 +58,19 @@ struct PostContent: View {
   }
 }
 
-private struct VideoPostPreview: View {
-  let post: Post
-  private let preview: Preview.Source
+// MARK: - VideoPostPreview
 
-  @State private var url: URL? = nil
+private struct VideoPostPreview: View {
+  // MARK: Lifecycle
 
   init(post: Post) {
     self.post = post
     preview = post.bestVideoPreview!
   }
+
+  // MARK: Internal
+
+  let post: Post
 
   var body: some View {
     if let url = url {
@@ -79,6 +84,12 @@ private struct VideoPostPreview: View {
         }
     }
   }
+
+  // MARK: Private
+
+  private let preview: Preview.Source
+
+  @State private var url: URL? = nil
 }
 
 // MARK: Preview guessing
@@ -147,14 +158,16 @@ extension Post {
   }
 }
 
-// MARK: Gfycat
+// MARK: - GfycatView
 
 struct GfycatView: View {
-  @StateObject private var gfyData: GfycatData
+  // MARK: Lifecycle
 
   init(gfyId id: String) {
     _gfyData = .init(wrappedValue: GfycatData(gfyId: id))
   }
+
+  // MARK: Internal
 
   var body: some View {
     VStack {
@@ -165,12 +178,16 @@ struct GfycatView: View {
       }
     }
   }
+
+  // MARK: Private
+
+  @StateObject private var gfyData: GfycatData
 }
 
+// MARK: - GfycatData
+
 class GfycatData: ObservableObject {
-  @Published var item: GfyItem? = nil
-  let id: String
-  let ulithari: Ulithari = .shared
+  // MARK: Lifecycle
 
   init(gfyId id: String) {
     self.id = id
@@ -183,16 +200,24 @@ class GfycatData: ObservableObject {
       }
     }
   }
+
+  // MARK: Internal
+
+  @Published var item: GfyItem? = nil
+  let id: String
+  let ulithari: Ulithari = .shared
 }
 
-// MARK: RedGifs
+// MARK: - RedGifView
 
 struct RedGifView: View {
-  @StateObject private var data: RedGifData
+  // MARK: Lifecycle
 
   init(id: String) {
     _data = .init(wrappedValue: RedGifData(id: id))
   }
+
+  // MARK: Internal
 
   var body: some View {
     VStack {
@@ -203,12 +228,16 @@ struct RedGifView: View {
       }
     }
   }
+
+  // MARK: Private
+
+  @StateObject private var data: RedGifData
 }
 
+// MARK: - RedGifData
+
 class RedGifData: ObservableObject {
-  @Published var item: GfyItem? = nil
-  let id: String
-  let ulithari: Ulithari = .shared
+  // MARK: Lifecycle
 
   init(id: String) {
     self.id = id
@@ -221,17 +250,26 @@ class RedGifData: ObservableObject {
       }
     }
   }
+
+  // MARK: Internal
+
+  @Published var item: GfyItem? = nil
+  let id: String
+  let ulithari: Ulithari = .shared
 }
 
-// MARK: Imgur
+// MARK: - ImgurView
 
 struct ImgurView: View {
-  @State private var viewIndex: Int = 0
-  @ObservedObject var imgurData: ImgurData
+  // MARK: Lifecycle
 
   init(link: URL) {
     imgurData = .init(link)
   }
+
+  // MARK: Internal
+
+  @ObservedObject var imgurData: ImgurData
 
   var body: some View {
     Group {
@@ -259,17 +297,26 @@ struct ImgurView: View {
       imgurData.loadContent()
     }
   }
+
+  // MARK: Private
+
+  @State private var viewIndex: Int = 0
 }
 
-final class ImgurData: ObservableObject {
-  @Published var images: [ImgurImage] = []
+// MARK: - ImgurData
 
-  let link: URL
-  private let ulithari: Ulithari = .shared
+final class ImgurData: ObservableObject {
+  // MARK: Lifecycle
 
   init(_ link: URL) {
     self.link = link
   }
+
+  // MARK: Internal
+
+  @Published var images: [ImgurImage] = []
+
+  let link: URL
 
   func loadContent() {
     switch ulithari.imgurLinkType(link) {
@@ -294,24 +341,58 @@ final class ImgurData: ObservableObject {
       return
     }
   }
+
+  // MARK: Private
+
+  private let ulithari: Ulithari = .shared
 }
 
-// MARK: Gallery
+// MARK: - GalleryPost
 
 struct GalleryPost: View {
+  // MARK: Internal
+
   let metaData: [String: MediaMetadata]
   let galleryData: GalleryData
 
+  var body: some View {
+    PagedView(data: galleryData.items) { item in
+      if let metadata = metaData[item.mediaId] {
+        Group {
+          switch metadata.type {
+          case .image:
+            ImagePostPreview(url: metadata.source.url!)
+          case .animatedImage:
+            AnimatedImage(url: metadata.source.mp4!)
+          }
+        }
+        .overlay(
+          captionView(item: item),
+          alignment: .bottomLeading
+        )
+        // Prevent row from collapsing by enforcing the frame size
+        .frame(width: min(CGFloat(metadata.source.width), ImagePostPreview.thumbnailFrame.width),
+               height: min(CGFloat(metadata.source.height), ImagePostPreview.thumbnailFrame.height))
+      }
+    }
+  }
+
+  // MARK: Private
+
   private struct CaptionRectangle<Content: View>: View {
-    let opacity: Double
-    let height: CGFloat
-    let label: () -> Content
+    // MARK: Lifecycle
 
     init(opacity: Double = 0.8, height: CGFloat = 30, @ViewBuilder label: @escaping () -> Content) {
       self.opacity = opacity
       self.height = height
       self.label = label
     }
+
+    // MARK: Internal
+
+    let opacity: Double
+    let height: CGFloat
+    let label: () -> Content
 
     var body: some View {
       Rectangle()
@@ -348,35 +429,17 @@ struct GalleryPost: View {
       EmptyView()
     }
   }
-
-  var body: some View {
-    PagedView(data: galleryData.items) { item in
-      if let metadata = metaData[item.mediaId] {
-        Group {
-          switch metadata.type {
-          case .image:
-            ImagePostPreview(url: metadata.source.url!)
-          case .animatedImage:
-            AnimatedImage(url: metadata.source.mp4!)
-          }
-        }
-        .overlay(
-          captionView(item: item),
-          alignment: .bottomLeading
-        )
-        // Prevent row from collapsing by enforcing the frame size
-        .frame(width: min(CGFloat(metadata.source.width), ImagePostPreview.thumbnailFrame.width),
-               height: min(CGFloat(metadata.source.height), ImagePostPreview.thumbnailFrame.height))
-      }
-    }
-  }
 }
+
+// MARK: - PostPreview_Previews
 
 struct PostPreview_Previews: PreviewProvider {
   static var previews: some View {
     EmptyView()
   }
 }
+
+// MARK: - GifPostPreview
 
 struct GifPostPreview: View {
   @State private var isAnimating: Bool = true
@@ -397,6 +460,8 @@ struct GifPostPreview: View {
   }
 }
 
+// MARK: - TextPostPreview
+
 struct TextPostPreview: View {
   let text: String
 
@@ -408,18 +473,26 @@ struct TextPostPreview: View {
   }
 }
 
+// MARK: - ImagePostPreview
+
 struct ImagePostPreview: View {
-  fileprivate static let thumbnailFrame: CGSize = .init(width: 1536, height: 864)
+  // MARK: Internal
 
   let url: URL
-
-  private let context: [SDWebImageContextOption: Any] = [
-    .imageThumbnailPixelSize: CGSize(width: thumbnailFrame.width,
-                                     height: thumbnailFrame.height),
-  ]
 
   var body: some View {
     WebImage(url: url, context: context)
       .dragAndZoom()
   }
+
+  // MARK: Fileprivate
+
+  fileprivate static let thumbnailFrame: CGSize = .init(width: 1536, height: 864)
+
+  // MARK: Private
+
+  private let context: [SDWebImageContextOption: Any] = [
+    .imageThumbnailPixelSize: CGSize(width: thumbnailFrame.width,
+                                     height: thumbnailFrame.height),
+  ]
 }

@@ -14,13 +14,10 @@
 
 import SwiftUI
 
+// MARK: - RecursiveView
+
 struct RecursiveView<Data: RandomAccessCollection, ID: Hashable, Parent: View, Leaf: View, Footer: View>: View {
-  let data: Data
-  let idKey: KeyPath<Data.Element, ID>
-  let childrenKey: KeyPath<Data.Element, Data?>
-  let parentView: (Data.Element, Binding<Bool>) -> Parent
-  let leafView: (Data.Element, Binding<Bool>) -> Leaf
-  let footerView: (Data.Element) -> Footer
+  // MARK: Lifecycle
 
   init(data: Data, id: KeyPath<Data.Element, ID>,
        children: KeyPath<Data.Element, Data?>,
@@ -34,6 +31,15 @@ struct RecursiveView<Data: RandomAccessCollection, ID: Hashable, Parent: View, L
     leafView = leaf
     footerView = footer
   }
+
+  // MARK: Internal
+
+  let data: Data
+  let idKey: KeyPath<Data.Element, ID>
+  let childrenKey: KeyPath<Data.Element, Data?>
+  let parentView: (Data.Element, Binding<Bool>) -> Parent
+  let leafView: (Data.Element, Binding<Bool>) -> Leaf
+  let footerView: (Data.Element) -> Footer
 
   var body: some View {
     ForEach(data, id: idKey) { element in
@@ -68,6 +74,8 @@ extension RecursiveView where Parent == Leaf, Data.Element: Identifiable, ID == 
     footerView = footer
   }
 }
+
+// MARK: - FlexibleDisclosureGroup
 
 struct FlexibleDisclosureGroup<Label: View, Content: View>: View {
   @State var collapsed: Bool = false

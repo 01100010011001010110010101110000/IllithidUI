@@ -14,12 +14,10 @@
 
 import SwiftUI
 
-struct IllithidButton: View {
-  @State private var pressed: Bool = false
+// MARK: - IllithidButton
 
-  let mouseDown: () -> Void
-  let mouseUp: () -> Void
-  let label: AnyView
+struct IllithidButton: View {
+  // MARK: Lifecycle
 
   init<S: StringProtocol>(label: S,
                           mouseDown: @escaping () -> Void = {},
@@ -39,6 +37,12 @@ struct IllithidButton: View {
       .eraseToAnyView()
   }
 
+  // MARK: Internal
+
+  let mouseDown: () -> Void
+  let mouseUp: () -> Void
+  let label: AnyView
+
   var body: some View {
     label
       .padding([.leading, .trailing], 12)
@@ -53,6 +57,10 @@ struct IllithidButton: View {
         mouseUp()
       })
   }
+
+  // MARK: Private
+
+  @State private var pressed: Bool = false
 }
 
 extension View {
@@ -61,13 +69,11 @@ extension View {
   }
 }
 
-private struct MouseView: NSViewRepresentable {
-  let onMouseDown: () -> Void
-  let onMouseUp: () -> Void
+// MARK: - MouseView
 
+private struct MouseView: NSViewRepresentable {
   class NSMouseView: NSView {
-    let onMouseDown: () -> Void
-    let onMouseUp: () -> Void
+    // MARK: Lifecycle
 
     init(onMouseDown: @escaping () -> Void, onMouseUp: @escaping () -> Void) {
       self.onMouseDown = onMouseDown
@@ -81,6 +87,11 @@ private struct MouseView: NSViewRepresentable {
       fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: Internal
+
+    let onMouseDown: () -> Void
+    let onMouseUp: () -> Void
+
     override func mouseDown(with _: NSEvent) {
       onMouseDown()
     }
@@ -89,6 +100,9 @@ private struct MouseView: NSViewRepresentable {
       onMouseUp()
     }
   }
+
+  let onMouseDown: () -> Void
+  let onMouseUp: () -> Void
 
   func makeNSView(context _: NSViewRepresentableContext<MouseView>) -> NSMouseView {
     NSMouseView(onMouseDown: onMouseDown, onMouseUp: onMouseUp)

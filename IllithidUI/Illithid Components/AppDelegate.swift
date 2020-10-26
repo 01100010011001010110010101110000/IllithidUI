@@ -23,6 +23,8 @@ import SDWebImage
 import Ulithari
 import Willow
 
+// MARK: - IllithidApp
+
 @main
 struct IllithidApp: App {
   private let illithid: Illithid = .shared
@@ -90,11 +92,10 @@ struct IllithidApp: App {
   }
 }
 
+// MARK: - AppDelegate
+
 class AppDelegate: NSObject, NSApplicationDelegate {
-  let windowManager: WindowManager = .shared
-  let illithid: Illithid = .shared
-  let logger: Logger
-  let session: Session
+  // MARK: Lifecycle
 
   override init() {
     #if DEBUG
@@ -130,40 +131,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     super.init()
   }
 
-  func applicationDidBecomeActive(_: Notification) {}
+  // MARK: Internal
 
-  func applicationDidFinishLaunching(_: Notification) {
-    illithid.configure(configuration: IllithidConfiguration())
-    Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
-    illithid.logger = logger
-  }
-
-  @objc
-  private func newRootWindow() {
-    windowManager.newRootWindow()
-  }
-
-  private func showMainWindow() {
-    let controller = windowManager.showMainWindowTab(withId: "mainWindow") {
-      RootView()
-    }
-    controller.window?.setFrameAutosaveName("Main Window")
-  }
-
-  func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-    if !flag {
-      showMainWindow()
-    }
-    return true
-  }
-
-  func applicationWillResignActive(_: Notification) {}
-
-  func applicationWillTerminate(_: Notification) {}
-
-  func applicationShouldTerminateAfterLastWindowClosed(_: NSApplication) -> Bool {
-    false
-  }
+  let windowManager: WindowManager = .shared
+  let illithid: Illithid = .shared
+  let logger: Logger
+  let session: Session
 
   // MARK: - Core Data stack
 
@@ -193,6 +166,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     })
     return container
   }()
+
+  func applicationDidBecomeActive(_: Notification) {}
+
+  func applicationDidFinishLaunching(_: Notification) {
+    illithid.configure(configuration: IllithidConfiguration())
+    Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
+    illithid.logger = logger
+  }
+
+  func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+    if !flag {
+      showMainWindow()
+    }
+    return true
+  }
+
+  func applicationWillResignActive(_: Notification) {}
+
+  func applicationWillTerminate(_: Notification) {}
+
+  func applicationShouldTerminateAfterLastWindowClosed(_: NSApplication) -> Bool {
+    false
+  }
 
   // MARK: - Core Data Saving and Undo support
 
@@ -261,5 +257,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     // If we got here, it is time to quit.
     return .terminateNow
+  }
+
+  // MARK: Private
+
+  @objc
+  private func newRootWindow() {
+    windowManager.newRootWindow()
+  }
+
+  private func showMainWindow() {
+    let controller = windowManager.showMainWindowTab(withId: "mainWindow") {
+      RootView()
+    }
+    controller.window?.setFrameAutosaveName("Main Window")
   }
 }

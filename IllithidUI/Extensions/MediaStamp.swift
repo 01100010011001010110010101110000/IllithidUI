@@ -16,7 +16,8 @@ import SwiftUI
 
 extension View {
   func mediaStamp(_ mediaType: String, alignment: Alignment = .bottomTrailing,
-                  edges: Edge.Set = [.bottom, .trailing], inset: CGFloat = 4.0) -> some View {
+                  edges: Edge.Set = [.bottom, .trailing], inset: CGFloat = 4.0)
+    -> some View {
     overlay(
       MediaStamp(mediaType: mediaType)
         .padding(edges, inset),
@@ -24,6 +25,8 @@ extension View {
     )
   }
 }
+
+// MARK: - MediaStamp
 
 struct MediaStamp: View {
   let mediaType: String
@@ -39,6 +42,8 @@ struct MediaStamp: View {
       )
   }
 }
+
+// MARK: - MediaStamp_Previews
 
 struct MediaStamp_Previews: PreviewProvider {
   static var previews: some View {

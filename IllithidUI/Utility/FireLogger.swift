@@ -18,12 +18,16 @@ import Alamofire
 import Willow
 
 final class FireLogger: EventMonitor {
-  let queue = DispatchQueue(label: "com.flayware.IllithidUI.FireLogger", qos: .background)
-  let logger: Logger
+  // MARK: Lifecycle
 
   init(logger: Logger) {
     self.logger = logger
   }
+
+  // MARK: Internal
+
+  let queue = DispatchQueue(label: "com.flayware.IllithidUI.FireLogger", qos: .background)
+  let logger: Logger
 
   func requestDidResume(_ request: Request) {
     logger.debugMessage("Request \(request.description) was resumed")

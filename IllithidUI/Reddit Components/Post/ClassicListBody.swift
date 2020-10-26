@@ -16,27 +16,14 @@ import SwiftUI
 
 import Illithid
 
+// MARK: - ClassicListBody
+
 struct ClassicListBody: View {
+  // MARK: Internal
+
   @Namespace var ns
   let posts: [Post]
   let onLastPost: () -> Void
-
-  @State private var blur: Bool = false
-  @State private var selection: Post? = nil
-
-  func openModal(for post: Post) {
-    withAnimation(.modal) { selection = post }
-    DispatchQueue.main.async {
-      withAnimation(.blur) { blur = true }
-    }
-  }
-
-  func closeModal() {
-    withAnimation(.modal) { selection = nil }
-    DispatchQueue.main.async {
-      withAnimation(.blur) { blur = false }
-    }
-  }
 
   var body: some View {
     ZStack {
@@ -72,6 +59,25 @@ struct ClassicListBody: View {
       }
     }
   }
+
+  func openModal(for post: Post) {
+    withAnimation(.modal) { selection = post }
+    DispatchQueue.main.async {
+      withAnimation(.blur) { blur = true }
+    }
+  }
+
+  func closeModal() {
+    withAnimation(.modal) { selection = nil }
+    DispatchQueue.main.async {
+      withAnimation(.blur) { blur = false }
+    }
+  }
+
+  // MARK: Private
+
+  @State private var blur: Bool = false
+  @State private var selection: Post? = nil
 }
 
 private extension Animation {
