@@ -14,19 +14,21 @@
 
 import SwiftUI
 
-import Down
+import Maaku
 
-import class Down.Image
-import class Down.Link
-import class Down.List
-import class Down.Text
+// MARK: - ListType
+
+enum ListType: Hashable {
+  case ordered
+  case unordered
+}
 
 // MARK: - ListTypeKey
 
 struct ListTypeKey: EnvironmentKey {
-  typealias Value = List.ListType
+  typealias Value = ListType
 
-  static var defaultValue: Value = .bullet
+  static var defaultValue: Value = .unordered
 }
 
 // MARK: - ListDistanceKey
@@ -37,6 +39,14 @@ struct ListDistanceKey: EnvironmentKey {
   static var defaultValue: Value = 0
 }
 
+// MARK: - ListNestLevel
+
+struct ListNestLevel: EnvironmentKey {
+  typealias Value = Int
+
+  static var defaultValue: Value = -1
+}
+
 extension EnvironmentValues {
   var downListType: ListTypeKey.Value {
     get {
@@ -44,6 +54,15 @@ extension EnvironmentValues {
     }
     set {
       self[ListTypeKey.self] = newValue
+    }
+  }
+
+  var downListNestLevel: ListNestLevel.Value {
+    get {
+      self[ListNestLevel.self]
+    }
+    set {
+      self[ListNestLevel.self] = newValue
     }
   }
 

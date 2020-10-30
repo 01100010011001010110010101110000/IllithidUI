@@ -215,8 +215,10 @@ struct SidebarView: View {
       Divider()
       ScrollView {
         if let description = subreddit.description {
-          Markdown(mdString: description)
-            .padding()
+          VStack(alignment: .leading) {
+            Markdown(mdString: description)
+          }
+          .padding()
         } else {
           Text("No sidebar text found")
             .padding()

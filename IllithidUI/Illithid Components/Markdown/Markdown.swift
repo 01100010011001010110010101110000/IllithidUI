@@ -12,276 +12,236 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import Maaku
 import SwiftUI
-
-import Down
-import SDWebImageSwiftUI
-
-import class Down.Image
-import class Down.Link
-import class Down.List
-import class Down.Text
-
-// MARK: - Markdown
 
 struct Markdown: View {
   // MARK: Lifecycle
 
   init(mdString: String) {
-    // TODO: This is a memory leak. Need to construct a class to hold the pointer and deallocate it during deinit
-    node = try! Down(markdownString: mdString).toAST([.normalize, .safe]).wrap()!
-  }
-
-  init(node: Node) {
-    self.node = node
+    self.mdString = mdString
+    _document = .init(initialValue: try! Document(text: mdString, options: [.normalize, .noBreaks]))
   }
 
   // MARK: Internal
 
-  @Environment(\.textModifiers) var textModifiers
-  @Environment(\.downListType) var downListType
-  @Environment(\.downListDistance) var downListDistance
-
-  // TODO: Fix text nodes and adjacent links being rendered as separate views
-
-  let node: Node
+  let mdString: String
 
   @ViewBuilder var body: some View {
-    switch node {
-    case let node as Document: visit(document: node)
-    case let node as BlockQuote: visit(blockQuote: node)
-    case let node as List: visit(list: node)
-    case let node as Item: visit(item: node)
-    case let node as CodeBlock: visit(codeBlock: node)
-    case let node as HtmlBlock: visit(htmlBlock: node)
-    case let node as CustomBlock: visit(customBlock: node)
-    case let node as Paragraph: visit(paragraph: node)
-    case let node as Heading: visit(heading: node)
-    case let node as ThematicBreak: visit(thematicBreak: node)
-    case let node as Text: visit(text: node)
-    case let node as SoftBreak: visit(softBreak: node)
-    case let node as LineBreak: visit(lineBreak: node)
-    case let node as Code: visit(code: node)
-    case let node as HtmlInline: visit(htmlInline: node)
-    case let node as CustomInline: visit(customInline: node)
-    case let node as Emphasis: visit(emphasis: node)
-    case let node as Strong: visit(strong: node)
-    case let node as Link: visit(link: node)
-    case let node as Image: visit(image: node)
-    default:
-      EmptyView()
+    ForEach(0 ..< document.count) { idx in
+      MarkdownNode(node: document.items[idx])
     }
   }
 
-  func visit(document: Document) -> some View {
-    VStack(alignment: .leading, spacing: 0) {
-      eachChildView(node: document)
+  // MARK: Private
+
+  private struct MarkdownNode: View {
+    @Environment(\.downListType) private var downListType
+    @Environment(\.downListDistance) private var downListDistance
+    @Environment(\.downListNestLevel) private var downListNestLevel
+
+    let node: Node
+
+    func visit(blockQuote: BlockQuote) -> some View {
+      renderChildren(blockQuote.items)
     }
-  }
 
-  func visit(blockQuote: BlockQuote) -> some View {
-    eachChildView(node: blockQuote)
-  }
-
-  func visit(list: List) -> some View {
-    let children = list.children
-    return VStack(alignment: .leading, spacing: list.isTight ? 5 : 15) {
-      ForEach(0 ..< children.count) { idx in
-        Markdown(node: children[idx])
-          .environment(\.downListDistance, idx)
+    func visit(codeBlock: CodeBlock) -> some View {
+      GroupBox {
+        SwiftUI.Text(codeBlock.code)
       }
-    }.environment(\.downListType, list.listType)
-  }
+    }
 
-  @ViewBuilder
-  func visit(item: Item) -> some View {
-    let children = item.children
-    ForEach(0 ..< children.count) { idx in
-      let child = children[idx]
-      switch child {
-      case let child as Paragraph:
-        HStack(spacing: 0) {
-          switch downListType {
-          case .bullet:
-            SwiftUI.Text("\(item.indentation)• ")
-          case let .ordered(start):
-            SwiftUI.Text("\(item.indentation)\(start + downListDistance). ")
-          }
-          eachChildView(node: child)
-        }
+    func visit(htmlBlock: HtmlBlock) -> SwiftUI.Text {
+      SwiftUI.Text(htmlBlock.html)
+    }
+
+    func visit(paragraph: Paragraph) -> some View {
+      HStack(spacing: 0) {
+        renderInline(inline: paragraph.items)
+        SwiftUI.Text("\n")
+      }
+    }
+
+    func visit(heading: Heading) -> some View {
+      var text = renderInline(inline: heading.items).fontWeight(.semibold)
+      switch heading.level {
+      case .h1:
+        text = text.font(.system(size: .init(32)))
+      case .h2:
+        text = text.font(.system(size: .init(24)))
+      case .h3:
+        text = text.font(.system(size: .init(18.72)))
+      case .h4:
+        text = text.font(.system(size: .init(16)))
+      case .h5:
+        text = text.font(.system(size: .init(13.28)))
+      case .h6:
+        text = text.font(.system(size: .init(10.72)))
       default:
-        eachChildView(node: child)
+        break
       }
+      return text
     }
-  }
 
-  func visit(codeBlock: CodeBlock) -> some View {
-    GroupBox {
-      SwiftUI.Text(codeBlock.literal ?? "")
-    }.environment(\.textModifiers, textModifiers.union([.codeBlock]))
-  }
+    func visit(emphasis: Emphasis) -> SwiftUI.Text {
+      renderInline(inline: emphasis.items)
+        .italic()
+    }
 
-  func visit(htmlBlock: HtmlBlock) -> some View {
-    eachChildView(node: htmlBlock)
-  }
+    func visit(strong: Strong) -> SwiftUI.Text {
+      renderInline(inline: strong.items)
+        .bold()
+    }
 
-  func visit(customBlock: CustomBlock) -> some View {
-    eachChildView(node: customBlock)
-  }
+    func visit(strikethrough: Strikethrough) -> SwiftUI.Text {
+      renderInline(inline: strikethrough.items)
+        .strikethrough()
+    }
 
-  func visit(paragraph: Paragraph) -> some View {
-    HStack(spacing: 0) {
-      eachChildView(node: paragraph)
+    func visit(rule _: HorizontalRule) -> some View {
+      Divider()
+        .padding(.vertical)
+    }
+
+    func visit(text: Maaku.Text) -> SwiftUI.Text {
+      SwiftUI.Text(text.text)
+    }
+
+    func visit(link: Maaku.Link) -> SwiftUI.Text {
+      renderInline(inline: link.text)
+        .foregroundColor(.blue)
+    }
+
+    func visit(image _: Maaku.Image) -> some View {
+      SwiftUI.Text("I'm an image!")
+    }
+
+    func visit(lineBreak _: LineBreak) -> SwiftUI.Text {
       SwiftUI.Text("\n")
     }
-  }
 
-  func visit(heading: Heading) -> some View {
-    HStack(spacing: 0) {
-      eachChildView(node: heading)
-        .environment(\.textModifiers,
-                     textModifiers.union([.heading(heading.headingLevel)]))
-    }
-  }
-
-  func visit(thematicBreak _: ThematicBreak) -> some View {
-    Divider()
-      .padding(.vertical)
-  }
-
-  func visit(text: Text) -> some View {
-    SwiftUI.Text(text.literal ?? "")
-      .rationalizeTextModifiers(modifiers: textModifiers)
-  }
-
-  func visit(softBreak _: SoftBreak) -> some View {
-    SwiftUI.Text(" ")
-  }
-
-  func visit(lineBreak _: LineBreak) -> some View {
-    SwiftUI.Text("\n")
-  }
-
-  func visit(code: Code) -> some View {
-    GroupBox {
-      SwiftUI.Text(code.literal ?? "")
+    func visit(code: InlineCode) -> SwiftUI.Text {
+      SwiftUI.Text(code.code)
         .foregroundColor(.orange)
-    }.environment(\.textModifiers, textModifiers.union([.code]))
-  }
-
-  func visit(htmlInline: HtmlInline) -> some View {
-    eachChildView(node: htmlInline)
-  }
-
-  func visit(customInline: CustomInline) -> some View {
-    eachChildView(node: customInline)
-  }
-
-  func visit(emphasis: Emphasis) -> some View {
-    HStack(spacing: 0) {
-      eachChildView(node: emphasis)
-        .environment(\.textModifiers, textModifiers.union([.emphasis]))
     }
-  }
 
-  func visit(strong: Strong) -> some View {
-    HStack(spacing: 0) {
-      eachChildView(node: strong)
-        .environment(\.textModifiers, textModifiers.union([.strong]))
+    func visit(htmlInline: InlineHtml) -> SwiftUI.Text {
+      SwiftUI.Text(htmlInline.html)
     }
-  }
 
-  @ViewBuilder
-  func visit(link: Link) -> some View {
-    SwiftUI.Text(link.literal ?? "")
-      .rationalizeTextModifiers(modifiers: textModifiers)
-      .foregroundColor(.blue)
-      .onTapGesture {
-        if let destination = URL(string: link.url ?? "") {
-          openLink(destination)
+    @ViewBuilder
+    func visit(item: ListItem) -> some View {
+      let children = item.items
+      ForEach(0 ..< children.count) { idx in
+        let child = children[idx]
+        switch child {
+        case let child as Paragraph:
+          HStack(spacing: 0) {
+            switch downListType {
+            case .unordered:
+              SwiftUI.Text("\(String(repeating: " ", count: 4 * downListNestLevel))• ")
+            case .ordered:
+              SwiftUI.Text("\(String(repeating: " ", count: 4 * downListNestLevel))\(downListDistance + 1). ")
+            }
+            renderNode(node: child)
+          }
+        default:
+          renderNode(node: child)
         }
       }
-      .help("\(link.url ?? "")\(link.title != nil ? " -- \(link.title!)" : "")")
-  }
-
-  @ViewBuilder
-  func visit(image: Image) -> some View {
-    if image.url != nil, let url = URL(string: image.url!) {
-      WebImage(url: url)
-        .help(image.title ?? "")
-    } else {
-      EmptyView()
     }
-  }
 
-  func eachChildView(node: Node) -> some View {
-    let children = node.children
-    return ForEach(0 ..< children.count) { idx in
-      Markdown(node: children[idx])
+    func visit(orderedList: OrderedList) -> some View {
+      let children = orderedList.items
+      return VStack(alignment: .leading) {
+        ForEach(0 ..< children.count) { idx in
+          MarkdownNode(node: children[idx])
+            .environment(\.downListDistance, idx)
+        }
+      }
+      .environment(\.downListType, .ordered)
+      .environment(\.downListNestLevel, downListNestLevel + 1)
     }
-  }
-}
 
-private extension SwiftUI.Text {
-  func rationalizeTextModifiers(modifiers: Set<DownTextModifier>) -> SwiftUI.Text {
-    var result = self
-    modifiers.forEach { modifier in
-      switch modifier {
-      case .code:
-        break
-      case .codeBlock:
-        break
-      case .emphasis:
-        result = result.italic()
-      case .strong:
-        result = result.bold()
-      case let .heading(level):
-        result = result.bold()
-        switch level {
-        case 1:
-          result = result.font(.system(size: .init(32)))
-        case 2:
-          result = result.font(.system(size: .init(24)))
-        case 3:
-          result = result.font(.system(size: .init(18.72)))
-        case 4:
-          result = result.font(.system(size: .init(16)))
-        case 5:
-          result = result.font(.system(size: .init(13.28)))
-        case 6:
-          result = result.font(.system(size: .init(10.72)))
+    func visit(unorderedList: UnorderedList) -> some View {
+      let children = unorderedList.items
+      return VStack(alignment: .leading) {
+        ForEach(0 ..< children.count) { idx in
+          MarkdownNode(node: children[idx])
+            .environment(\.downListDistance, idx)
+        }
+      }
+      .environment(\.downListType, .unordered)
+      .environment(\.downListNestLevel, downListNestLevel + 1)
+    }
+
+    private func renderChildren(_ items: [Node]) -> some View {
+      ForEach(0 ..< items.count) { idx in
+        MarkdownNode(node: items[idx])
+      }
+    }
+
+    private func renderInline(inline: [Inline]) -> SwiftUI.Text {
+      var results: [SwiftUI.Text] = []
+      for node in inline {
+        switch node {
+        case let node as Maaku.Link:
+          results.append(visit(link: node))
+        case let node as Maaku.Text:
+          results.append(visit(text: node))
+        case let node as LineBreak:
+          results.append(visit(lineBreak: node))
+        case let node as InlineCode:
+          results.append(visit(code: node))
+        case let node as InlineHtml:
+          results.append(visit(htmlInline: node))
+        case let node as Emphasis:
+          results.append(visit(emphasis: node))
+        case let node as Strong:
+          results.append(visit(strong: node))
+        case let node as Strikethrough:
+          results.append(visit(strikethrough: node))
         default:
           break
         }
       }
+      return results.reduce(Text(""), { $0 + $1 })
     }
-    return result
-  }
-}
 
-private extension Link {
-  var literal: String? {
-    guard let child = children.first else { return nil }
-    switch child {
-    case let child as Code:
-      return child.literal
-    case let child as Text:
-      return child.literal
-    case let child as CodeBlock:
-      return child.literal
-    default:
-      return nil
+    private func renderNode(node: Node) -> some View {
+      switch node {
+      case let node as Inline:
+        return renderInline(inline: [node]).eraseToAnyView()
+      case let node as BlockQuote:
+        return visit(blockQuote: node).eraseToAnyView()
+      case let node as OrderedList:
+        return visit(orderedList: node).eraseToAnyView()
+      case let node as UnorderedList:
+        return visit(unorderedList: node).eraseToAnyView()
+      case let node as ListItem:
+        return visit(item: node).eraseToAnyView()
+      case let node as CodeBlock:
+        return visit(codeBlock: node).eraseToAnyView()
+      case let node as HtmlBlock:
+        return visit(htmlBlock: node).eraseToAnyView()
+      case let node as Paragraph:
+        return visit(paragraph: node).eraseToAnyView()
+      case let node as Heading:
+        return visit(heading: node).eraseToAnyView()
+      case let node as HorizontalRule:
+        return visit(rule: node).eraseToAnyView()
+      case let node as Maaku.Image:
+        return visit(image: node).eraseToAnyView()
+      default:
+        return EmptyView().eraseToAnyView()
+      }
+    }
+
+    @ViewBuilder var body: some View {
+      renderNode(node: node)
     }
   }
-}
 
-private extension Item {
-  var indentation: String {
-    .init(repeating: " ", count: 4 * nestDepth)
-  }
-
-  var text: AnyView {
-    guard let paragraph = children.first(where: { $0 is Paragraph }) else { return EmptyView().eraseToAnyView() }
-    return Markdown(node: paragraph).eraseToAnyView()
-  }
+  @State private var document: Document
 }
