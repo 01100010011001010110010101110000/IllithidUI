@@ -40,8 +40,7 @@ struct CommentRowView: View {
             AuthorBar(isCollapsed: $isCollapsed, comment: comment)
 
             if !isCollapsed {
-              Text(comment.body)
-                .font(.body)
+              Markdown(mdString: comment.body)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding()
 

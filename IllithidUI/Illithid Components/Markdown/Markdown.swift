@@ -21,7 +21,7 @@ struct Markdown: View {
 
   init(mdString: String) {
     self.mdString = mdString
-    _document = .init(initialValue: try! Document(text: mdString, options: [.normalize, .noBreaks]))
+    document = try! Document(text: mdString, options: [.normalize, .noBreaks])
   }
 
   // MARK: Internal
@@ -29,7 +29,7 @@ struct Markdown: View {
   let mdString: String
 
   @ViewBuilder var body: some View {
-    ForEach(0 ..< document.count) { idx in
+    ForEach(document.items.indices, id: \.self) { idx in
       MarkdownNode(node: document.items[idx])
     }
   }
@@ -60,7 +60,6 @@ struct Markdown: View {
     func visit(paragraph: Paragraph) -> some View {
       HStack(spacing: 0) {
         renderInline(inline: paragraph.items)
-        SwiftUI.Text("\n")
       }
     }
 
@@ -135,7 +134,7 @@ struct Markdown: View {
     @ViewBuilder
     func visit(item: ListItem) -> some View {
       let children = item.items
-      ForEach(0 ..< children.count) { idx in
+      ForEach(children.indices, id: \.self) { idx in
         let child = children[idx]
         switch child {
         case let child as Paragraph:
@@ -157,7 +156,7 @@ struct Markdown: View {
     func visit(orderedList: OrderedList) -> some View {
       let children = orderedList.items
       return VStack(alignment: .leading) {
-        ForEach(0 ..< children.count) { idx in
+        ForEach(children.indices, id: \.self) { idx in
           MarkdownNode(node: children[idx])
             .environment(\.downListDistance, idx)
         }
@@ -169,7 +168,7 @@ struct Markdown: View {
     func visit(unorderedList: UnorderedList) -> some View {
       let children = unorderedList.items
       return VStack(alignment: .leading) {
-        ForEach(0 ..< children.count) { idx in
+        ForEach(children.indices, id: \.self) { idx in
           MarkdownNode(node: children[idx])
             .environment(\.downListDistance, idx)
         }
@@ -185,7 +184,7 @@ struct Markdown: View {
       ScrollView {
         LazyHGrid(rows: rows, content: {
           renderTableCells(table.header.cells)
-          ForEach(0 ..< table.rows.count) { idx in
+          ForEach(table.rows.indices, id: \.self) { idx in
             renderTableCells(table.rows[idx].cells)
           }
         })
@@ -193,13 +192,13 @@ struct Markdown: View {
     }
 
     private func renderTableCells(_ items: [TableCell]) -> some View {
-      ForEach(0 ..< items.count) { idx in
+      ForEach(items.indices, id: \.self) { idx in
         renderInline(inline: items[idx].items)
       }
     }
 
     private func renderChildren(_ items: [Node]) -> some View {
-      ForEach(0 ..< items.count) { idx in
+      ForEach(items.indices, id: \.self) { idx in
         MarkdownNode(node: items[idx])
       }
     }
@@ -267,5 +266,5 @@ struct Markdown: View {
     }
   }
 
-  @State private var document: Document
+  private var document: Document
 }
