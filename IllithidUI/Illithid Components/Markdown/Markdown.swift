@@ -13,6 +13,7 @@
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import Maaku
+import SDWebImageSwiftUI
 import SwiftUI
 
 struct Markdown: View {
@@ -113,8 +114,9 @@ struct Markdown: View {
         .foregroundColor(.blue)
     }
 
-    func visit(image _: Maaku.Image) -> some View {
-      SwiftUI.Text("I'm an image!")
+    func visit(image: Maaku.Image) -> some View {
+      WebImage(url: image.url)
+        .help(image.title ?? "")
     }
 
     func visit(lineBreak _: LineBreak) -> SwiftUI.Text {
@@ -176,6 +178,26 @@ struct Markdown: View {
       .environment(\.downListNestLevel, downListNestLevel + 1)
     }
 
+    @ViewBuilder
+    func visit(table: Table) -> some View {
+      let rows = Array(repeating: GridItem(.flexible()), count: table.rows.count)
+
+      ScrollView {
+        LazyHGrid(rows: rows, content: {
+          renderTableCells(table.header.cells)
+          ForEach(0 ..< table.rows.count) { idx in
+            renderTableCells(table.rows[idx].cells)
+          }
+        })
+      }
+    }
+
+    private func renderTableCells(_ items: [TableCell]) -> some View {
+      ForEach(0 ..< items.count) { idx in
+        renderInline(inline: items[idx].items)
+      }
+    }
+
     private func renderChildren(_ items: [Node]) -> some View {
       ForEach(0 ..< items.count) { idx in
         MarkdownNode(node: items[idx])
@@ -233,6 +255,8 @@ struct Markdown: View {
         return visit(rule: node).eraseToAnyView()
       case let node as Maaku.Image:
         return visit(image: node).eraseToAnyView()
+      case let node as Maaku.Table:
+        return visit(table: node).eraseToAnyView()
       default:
         return EmptyView().eraseToAnyView()
       }
