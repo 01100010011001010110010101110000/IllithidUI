@@ -191,7 +191,7 @@ class GfycatData: ObservableObject {
 
   init(gfyId id: String) {
     self.id = id
-    ulithari.fetchGfycat(id: id) { result in
+    _ = ulithari.fetchGfycat(id: id) { result in
       switch result {
       case let .success(item):
         self.item = item
@@ -241,7 +241,7 @@ class RedGifData: ObservableObject {
 
   init(id: String) {
     self.id = id
-    ulithari.fetchRedGif(id: id) { result in
+    _ = ulithari.fetchRedGif(id: id) { result in
       switch result {
       case let .success(item):
         self.item = item
@@ -466,10 +466,11 @@ struct TextPostPreview: View {
   let text: String
 
   var body: some View {
-    Text(text)
-      .font(.body)
-      .padding()
-      .heightResizable()
+    VStack(alignment: .leading) {
+      Markdown(mdString: text)
+        .padding()
+        .heightResizable()
+    }
   }
 }
 

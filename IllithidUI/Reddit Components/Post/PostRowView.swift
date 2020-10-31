@@ -322,6 +322,7 @@ struct PostMetadataBar: View {
               .environmentObject(informationBarData)
           }
         }
+        .fixedSize()
       if let richtext = post.authorFlairRichtext, !richtext.isEmpty {
         FlairRichtextView(richtext: richtext,
                           backgroundColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor,
@@ -334,22 +335,25 @@ struct PostMetadataBar: View {
       Spacer()
       HStack {
         Group {
-          Image(systemName: "arrow.up")
-          Text("\(post.ups.postAbbreviation())")
-        }
-        .foregroundColor(.orange)
+          Group {
+            Image(systemName: "arrow.up")
+            Text("\(post.ups.postAbbreviation())")
+          }
+          .foregroundColor(.orange)
 
-        Group {
-          Image(systemName: "text.bubble")
-          Text("\(post.numComments.postAbbreviation())")
-        }
-        .foregroundColor(.blue)
+          Group {
+            Image(systemName: "text.bubble")
+            Text("\(post.numComments.postAbbreviation())")
+          }
+          .foregroundColor(.blue)
 
-        Group {
-          Image(systemName: "clock")
-          Text("\(post.relativePostTime) ago")
-            .help(post.absolutePostTime)
+          Group {
+            Image(systemName: "clock")
+            Text("\(post.relativePostTime) ago")
+              .help(post.absolutePostTime)
+          }
         }
+        .fixedSize()
       }
       Spacer()
       Text(post.subredditNamePrefixed)
@@ -359,6 +363,7 @@ struct PostMetadataBar: View {
               .environmentObject(informationBarData)
           }
         }
+        .fixedSize()
     }
     .padding(10)
     .font(.body)

@@ -57,10 +57,8 @@ struct Markdown: View {
       SwiftUI.Text(htmlBlock.html)
     }
 
-    func visit(paragraph: Paragraph) -> some View {
-      HStack(spacing: 0) {
-        renderInline(inline: paragraph.items)
-      }
+    func visit(paragraph: Paragraph) -> SwiftUI.Text {
+      renderInline(inline: paragraph.items)
     }
 
     func visit(heading: Heading) -> some View {
