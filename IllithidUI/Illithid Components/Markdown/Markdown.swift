@@ -44,7 +44,11 @@ struct Markdown: View {
     let node: Node
 
     func visit(blockQuote: BlockQuote) -> some View {
-      renderChildren(blockQuote.items)
+      GroupBox {
+        VStack(alignment: .leading) {
+          renderChildren(blockQuote.items)
+        }
+      }
     }
 
     func visit(codeBlock: CodeBlock) -> some View {
