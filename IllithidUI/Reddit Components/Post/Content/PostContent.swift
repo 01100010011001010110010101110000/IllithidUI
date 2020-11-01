@@ -14,6 +14,7 @@
 
 import SwiftUI
 
+import Alamofire
 import Illithid
 import SDWebImageSwiftUI
 import Ulithari
@@ -30,13 +31,11 @@ struct PostContent: View {
         .conditionalModifier(post.over18, NsfwBlurModifier())
         .mediaStamp("imgur")
     case .gfycat:
-      GfycatView(gfyId: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
+      GfycatView(id: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
-        .mediaStamp("gfycat")
     case .redgifs:
       RedGifView(id: String(post.contentUrl.path.split(separator: "/").last!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
-        .mediaStamp("redgifs")
     case .gallery:
       GalleryPost(metaData: post.mediaMetadata!, galleryData: post.galleryData!)
     case .text:
@@ -56,40 +55,6 @@ struct PostContent: View {
       LinkPreview(link: post.contentUrl, isNsfw: post.over18)
     }
   }
-}
-
-// MARK: - VideoPostPreview
-
-private struct VideoPostPreview: View {
-  // MARK: Lifecycle
-
-  init(post: Post) {
-    self.post = post
-    preview = post.bestVideoPreview!
-  }
-
-  // MARK: Internal
-
-  let post: Post
-
-  var body: some View {
-    if let url = url {
-      VideoPlayer(url: url, fullSize: .init(width: preview.width, height: preview.height))
-        .mediaStamp("reddit")
-    } else {
-      Rectangle()
-        .opacity(0.0)
-        .onAppear {
-          url = preview.url
-        }
-    }
-  }
-
-  // MARK: Private
-
-  private let preview: Preview.Source
-
-  @State private var url: URL? = nil
 }
 
 // MARK: Preview guessing
@@ -156,195 +121,6 @@ extension Post {
 
     return nil
   }
-}
-
-// MARK: - GfycatView
-
-struct GfycatView: View {
-  // MARK: Lifecycle
-
-  init(gfyId id: String) {
-    _gfyData = .init(wrappedValue: GfycatData(gfyId: id))
-  }
-
-  // MARK: Internal
-
-  var body: some View {
-    VStack {
-      if let url = gfyData.item?.mp4URL {
-        VideoPlayer(url: url, fullSize: .init(width: gfyData.item!.width, height: gfyData.item!.height))
-      } else {
-        EmptyView()
-      }
-    }
-  }
-
-  // MARK: Private
-
-  @StateObject private var gfyData: GfycatData
-}
-
-// MARK: - GfycatData
-
-class GfycatData: ObservableObject {
-  // MARK: Lifecycle
-
-  init(gfyId id: String) {
-    self.id = id
-    _ = ulithari.fetchGfycat(id: id) { result in
-      switch result {
-      case let .success(item):
-        self.item = item
-      case let .failure(error):
-        Illithid.shared.logger.errorMessage("Failed to fetch gfyitem \(id): \(error)")
-      }
-    }
-  }
-
-  // MARK: Internal
-
-  @Published var item: GfyItem? = nil
-  let id: String
-  let ulithari: Ulithari = .shared
-}
-
-// MARK: - RedGifView
-
-struct RedGifView: View {
-  // MARK: Lifecycle
-
-  init(id: String) {
-    _data = .init(wrappedValue: RedGifData(id: id))
-  }
-
-  // MARK: Internal
-
-  var body: some View {
-    VStack {
-      if let url = data.item?.mp4URL {
-        VideoPlayer(url: url, fullSize: .init(width: data.item!.width, height: data.item!.height))
-      } else {
-        EmptyView()
-      }
-    }
-  }
-
-  // MARK: Private
-
-  @StateObject private var data: RedGifData
-}
-
-// MARK: - RedGifData
-
-class RedGifData: ObservableObject {
-  // MARK: Lifecycle
-
-  init(id: String) {
-    self.id = id
-    _ = ulithari.fetchRedGif(id: id) { result in
-      switch result {
-      case let .success(item):
-        self.item = item
-      case let .failure(error):
-        Illithid.shared.logger.errorMessage("Failed to fetch gfyitem \(id): \(error)")
-      }
-    }
-  }
-
-  // MARK: Internal
-
-  @Published var item: GfyItem? = nil
-  let id: String
-  let ulithari: Ulithari = .shared
-}
-
-// MARK: - ImgurView
-
-struct ImgurView: View {
-  // MARK: Lifecycle
-
-  init(link: URL) {
-    imgurData = .init(link)
-  }
-
-  // MARK: Internal
-
-  @ObservedObject var imgurData: ImgurData
-
-  var body: some View {
-    Group {
-      if imgurData.images.isEmpty {
-        Rectangle()
-          .opacity(0)
-      } else if imgurData.images.count == 1, let image = imgurData.images.first {
-        if image.animated {
-          VideoPlayer(url: image.mp4!, fullSize: .init(width: image.width, height: image.height))
-        } else {
-          ImagePostPreview(url: image.link)
-        }
-      } else {
-        PagedView(data: imgurData.images) { image in
-          if image.animated {
-            VideoPlayer(url: image.mp4!, fullSize: .init(width: image.width, height: image.height))
-          } else {
-            ImagePostPreview(url: image.link)
-          }
-        }
-      }
-    }
-    .onAppear {
-      guard imgurData.images.isEmpty else { return }
-      imgurData.loadContent()
-    }
-  }
-
-  // MARK: Private
-
-  @State private var viewIndex: Int = 0
-}
-
-// MARK: - ImgurData
-
-final class ImgurData: ObservableObject {
-  // MARK: Lifecycle
-
-  init(_ link: URL) {
-    self.link = link
-  }
-
-  // MARK: Internal
-
-  @Published var images: [ImgurImage] = []
-
-  let link: URL
-
-  func loadContent() {
-    switch ulithari.imgurLinkType(link) {
-    case let .album(id):
-      ulithari.fetchImgurAlbum(id: id) { result in
-        switch result {
-        case let .success(album):
-          self.images.append(contentsOf: album.images)
-        case let .failure(error):
-          Illithid.shared.logger.errorMessage("Error fetching imgur album with id \(id): \(error)")
-        }
-      }
-    case .gallery:
-      // TODO: - implement gallery support
-      return
-    case let .image(id):
-      ulithari.fetchImgurImage(id: id) { result in
-        _ = result.map { self.images.append($0) }
-      }
-    case nil:
-      // Invalid link
-      return
-    }
-  }
-
-  // MARK: Private
-
-  private let ulithari: Ulithari = .shared
 }
 
 // MARK: - GalleryPost
@@ -431,12 +207,38 @@ struct GalleryPost: View {
   }
 }
 
-// MARK: - PostPreview_Previews
+// MARK: - VideoPostPreview
 
-struct PostPreview_Previews: PreviewProvider {
-  static var previews: some View {
-    EmptyView()
+private struct VideoPostPreview: View {
+  // MARK: Lifecycle
+
+  init(post: Post) {
+    self.post = post
+    preview = post.bestVideoPreview!
   }
+
+  // MARK: Internal
+
+  let post: Post
+
+  var body: some View {
+    if let url = url {
+      VideoPlayer(url: url, fullSize: .init(width: preview.width, height: preview.height))
+        .mediaStamp("reddit")
+    } else {
+      Rectangle()
+        .opacity(0.0)
+        .onAppear {
+          url = preview.url
+        }
+    }
+  }
+
+  // MARK: Private
+
+  private let preview: Preview.Source
+
+  @State private var url: URL? = nil
 }
 
 // MARK: - GifPostPreview
