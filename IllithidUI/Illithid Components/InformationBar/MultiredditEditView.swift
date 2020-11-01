@@ -57,10 +57,10 @@ struct MultiredditEditView: View {
               }
             }
           }
-          TextField("Search for subreddits to add", text: $searchData.query) {
+          TextField("Search for subreddits to add", text: $searchData.query, onCommit: {
             _ = searchData.search(for: searchData.query)
-          }
-          .padding([.top], 5)
+          })
+            .padding([.top], 5)
           List {
             ForEach(searchData.subreddits.filter { subreddit in
               !editing.subreddits.map { $0.name }.contains(subreddit.displayName)

@@ -51,12 +51,12 @@ struct SearchView: View {
   var body: some View {
     ZStack {
       VStack {
-        TextField("Search Reddit", text: $searchData.query) {
+        TextField("Search Reddit", text: $searchData.query, onCommit: {
           // Allows the user to force a search for a string shorter than 3 characters
           _ = self.searchData.search(for: self.searchData.query)
-        }
-        .textFieldStyle(RoundedBorderTextFieldStyle())
-        .padding()
+        })
+          .textFieldStyle(RoundedBorderTextFieldStyle())
+          .padding()
 
         ScrollView {
           LazyVGrid(columns: columns) {

@@ -170,49 +170,52 @@ struct SidebarView: View {
         Text(subreddit.displayName)
           .font(.largeTitle)
       }
+
       Divider()
+
       HStack {
-        RoundedRectangle(cornerRadius: 2.0)
-          .foregroundColor(subscribed ? .blue : Color(.darkGray))
-          .overlay(
-            Image(named: .rssFeed)
-              .resizable()
-              .frame(width: 24, height: 24),
-            alignment: .center
-          )
-          .foregroundColor(.white)
-          .onTapGesture {
-            if subscribed {
-              subreddit.unsubscribe { result in
-                if case Result.success = result {
-                  subscribed = false
-                  informationBarData.loadSubscriptions()
-                }
+        Spacer()
+
+        IllithidButton(label: {
+          Image(systemName: "newspaper.fill")
+            .font(.title)
+            .foregroundColor(subscribed ? .blue : .white)
+        }, mouseUp: {
+          if subscribed {
+            subreddit.unsubscribe { result in
+              if case Result.success = result {
+                subscribed = false
+                informationBarData.loadSubscriptions()
               }
-            } else {
-              subreddit.subscribe { result in
-                if case Result.success = result {
-                  subscribed = true
-                  informationBarData.loadSubscriptions()
-                }
+            }
+          } else {
+            subreddit.subscribe { result in
+              if case Result.success = result {
+                subscribed = true
+                informationBarData.loadSubscriptions()
               }
             }
           }
-          .frame(width: 32, height: 32)
-          .padding(.leading, 10)
+        })
+          .help("Subscribe")
+
         IllithidButton(label: {
           Image(systemName: "a.book.closed")
             .font(.title)
-            .help("Show Wiki")
+            .foregroundColor(.white)
         }, mouseUp: {
           WindowManager.shared.showWindow(withId: "\(subreddit.name)/wiki",
                                           title: "\(subreddit.displayName) Wiki") {
             WikiPagesView(wikiData: .init(subreddit: subreddit))
           }
         })
+          .help("Show Wiki")
+
         Spacer()
       }
+
       Divider()
+
       ScrollView {
         if let description = subreddit.description {
           VStack(alignment: .leading) {
@@ -225,7 +228,6 @@ struct SidebarView: View {
         }
       }
     }
-    .background(Color(.controlBackgroundColor))
   }
 
   // MARK: Private
