@@ -217,9 +217,10 @@ struct SidebarView: View {
       Divider()
 
       ScrollView {
-        if let description = subreddit.description {
+        if let description = subreddit.attributedDescription {
           VStack(alignment: .leading) {
-            Markdown(mdString: description)
+            AttributedText(attributed: description)
+              .padding()
           }
           .padding()
         } else {

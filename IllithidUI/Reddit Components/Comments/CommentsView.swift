@@ -53,13 +53,14 @@ struct CommentsView: View, Identifiable {
           Text(post.title)
             .font(.largeTitle)
             .multilineTextAlignment(.center)
+            .padding([.horizontal, .top])
             .heightResizable()
           Spacer()
           VStack {
             Text("in \(post.subreddit) by ")
               + Text(post.author)
               .usernameStyle(color: authorColor)
-            Text("\(post.relativePostTime) ago")
+              + Text("\(post.relativePostTime) ago")
           }
         }
         HStack {

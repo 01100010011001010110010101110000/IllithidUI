@@ -40,9 +40,8 @@ struct CommentRowView: View {
             AuthorBar(isCollapsed: $isCollapsed, comment: comment)
 
             if !isCollapsed {
-              Markdown(mdString: comment.body)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding()
+              AttributedText(attributed: comment.attributedBody)
+                .padding(.horizontal)
 
               CommentActionBar(comment: comment)
                 .padding(.bottom, 5)
@@ -121,7 +120,7 @@ private struct AuthorBar: View {
     HStack {
       Text(comment.author)
         .usernameStyle(color: authorColor)
-      Text(comment.scoreHidden ? "\u{2205}" : String(comment.ups.postAbbreviation(1)))
+      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
         .foregroundColor(.orange)
       Spacer()
       Text("\(comment.relativeCommentTime) ago")

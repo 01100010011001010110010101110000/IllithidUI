@@ -39,7 +39,7 @@ struct PostContent: View {
     case .gallery:
       GalleryPost(metaData: post.mediaMetadata!, galleryData: post.galleryData!)
     case .text:
-      TextPostPreview(text: post.selftext)
+      TextPostPreview(post: post)
     case .gif:
       GifPostPreview(post: post)
         .conditionalModifier(post.over18, NsfwBlurModifier())
@@ -265,13 +265,12 @@ struct GifPostPreview: View {
 // MARK: - TextPostPreview
 
 struct TextPostPreview: View {
-  let text: String
+  let post: Post
 
   var body: some View {
     VStack(alignment: .leading) {
-      Markdown(mdString: text)
-        .padding()
-        .heightResizable()
+      AttributedText(attributed: post.attributedSelfText)
+        .padding(.horizontal)
     }
   }
 }
