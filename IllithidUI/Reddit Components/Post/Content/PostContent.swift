@@ -26,6 +26,8 @@ struct PostContent: View {
 
   var body: some View {
     switch post.previewGuess {
+    case .removed:
+      RemovedPostView(removalCategory: post.removedByCategory!)
     case .imgur:
       ImgurView(link: post.contentUrl)
         .conditionalModifier(post.over18, NsfwBlurModifier())
@@ -68,6 +70,9 @@ extension Post {
     case gif
     case gallery
 
+    /// Removed by user, admin, or moderator
+    case removed
+
     // Site specific previews
     case imgur
     case gfycat
@@ -77,7 +82,9 @@ extension Post {
 
   /// Illithid's guess at the best type of preview to use for this post
   var previewGuess: PostPreviewType {
-    if domain.contains("imgur.com") {
+    if removedByCategory != nil {
+      return .removed
+    } else if domain.contains("imgur.com") {
       return .imgur
     } else if domain.contains("gfycat.com") {
       return .gfycat
@@ -120,6 +127,29 @@ extension Post {
     }
 
     return nil
+  }
+}
+
+// MARK: - RemovedPostView
+
+struct RemovedPostView: View {
+  // MARK: Internal
+
+  let removalCategory: Post.RemovedByCategory
+
+  var body: some View {
+    GroupBox {
+      Text(message)
+    }
+  }
+
+  // MARK: Private
+
+  private var message: String {
+    switch removalCategory {
+    case .moderator:
+      return "This post has been removed by a moderator"
+    }
   }
 }
 
