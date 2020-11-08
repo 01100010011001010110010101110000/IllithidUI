@@ -27,7 +27,24 @@ import Willow
 
 @main
 struct IllithidApp: App {
-  private let illithid: Illithid = .shared
+  // MARK: Lifecycle
+
+  init() {
+    illithid.configure(configuration: IllithidConfiguration())
+    Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
+    illithid.logger = delegate.logger
+
+    // MARK: SDWebImage configuration
+
+    let cache = SDImageCache()
+    cache.config.diskCacheExpireType = .modificationDate
+    cache.config.maxDiskSize = 1024 * 1024 * 1024 * 2
+    cache.config.maxMemoryCost = 1024 * 1024 * 200
+    SDImageCachesManager.shared.caches = [cache]
+    SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
+  }
+
+  // MARK: Internal
 
   @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
   @Environment(\.scenePhase) var phase
@@ -90,6 +107,10 @@ struct IllithidApp: App {
       }
     #endif
   }
+
+  // MARK: Private
+
+  private let illithid: Illithid = .shared
 }
 
 // MARK: - AppDelegate
@@ -104,29 +125,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       let logger: Logger = .releaseLogger(subsystem: "com.flayware.IllithidUI")
     #endif
     self.logger = logger
-    session = {
-      let alamoConfiguration = URLSessionConfiguration.default
-
-      // TODO: Make this some function of the system's available disk and memory
-      alamoConfiguration.urlCache = URLCache(memoryCapacity: 10 * 1024 * 1024, diskCapacity: 200 * 1024 * 1024)
-
-      let cacher: ResponseCacher = .cache
-      let session = Session(configuration: alamoConfiguration,
-                            rootQueue: DispatchQueue(label: "com.flayware.IllithidUI.AFRootQueue"),
-                            serializationQueue: DispatchQueue(label: "com.flayware.IllithidUI.AFSerializationQueue"),
-                            cachedResponseHandler: cacher,
-                            eventMonitors: [FireLogger(logger: logger)])
-      return session
-    }()
-
-    // MARK: SDWebImage configuration
-
-    let cache = SDImageCache()
-    cache.config.diskCacheExpireType = .modificationDate
-    cache.config.maxDiskSize = 1024 * 1024 * 1024 * 2
-    cache.config.maxMemoryCost = 1024 * 1024 * 200
-    SDImageCachesManager.shared.caches = [cache]
-    SDWebImageManager.defaultImageCache = SDImageCachesManager.shared
 
     super.init()
   }
@@ -134,9 +132,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   // MARK: Internal
 
   let windowManager: WindowManager = .shared
-  let illithid: Illithid = .shared
   let logger: Logger
-  let session: Session
 
   // MARK: - Core Data stack
 
@@ -169,11 +165,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationDidBecomeActive(_: Notification) {}
 
-  func applicationDidFinishLaunching(_: Notification) {
-    illithid.configure(configuration: IllithidConfiguration())
-    Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
-    illithid.logger = logger
-  }
+  func applicationDidFinishLaunching(_: Notification) {}
 
   func applicationShouldHandleReopen(_: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
     if !flag {

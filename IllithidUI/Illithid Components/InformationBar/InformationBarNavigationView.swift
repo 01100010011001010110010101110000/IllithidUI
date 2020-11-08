@@ -94,6 +94,10 @@ struct InformationBarNavigationView: View {
           }
         }
       }
+      .onAppear {
+        informationBarData.loadMultireddits()
+        informationBarData.loadSubscriptions()
+      }
       .listStyle(SidebarListStyle())
 
       NavigationPrompt(prompt: "Open the front page")

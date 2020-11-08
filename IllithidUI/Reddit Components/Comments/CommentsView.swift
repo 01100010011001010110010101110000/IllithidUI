@@ -60,7 +60,7 @@ struct CommentsView: View, Identifiable {
             Text("in \(post.subreddit) by ")
               + Text(post.author)
               .usernameStyle(color: authorColor)
-              + Text("\(post.relativePostTime) ago")
+              + Text(" \(post.relativePostTime) ago")
           }
         }
         HStack {

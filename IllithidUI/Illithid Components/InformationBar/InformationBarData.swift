@@ -39,9 +39,6 @@ final class InformationBarData: ObservableObject {
     } else {
       multiReddits = []
     }
-
-    loadMultireddits()
-    loadSubscriptions()
   }
 
   // MARK: Internal
