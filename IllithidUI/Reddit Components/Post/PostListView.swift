@@ -110,9 +110,13 @@ struct PostListView: View {
             postsData.cancel()
           }
         }
-        if postContainer is Subreddit && showSidebar {
-          SidebarView(subreddit: postContainer as! Subreddit)
-            .frame(minWidth: 300)
+
+        // TODO: This conditional is, as of macOS 11 beta 10, causing a crash when switching between navigation view links
+        // For now, it will be commented out and we will always show the sidebar
+        if // showSidebar,
+          postContainer is Subreddit {
+          SubredditSidebar(subreddit: postContainer as! Subreddit)
+            .frame(minWidth: 300, maxWidth: 600)
         }
       }
     }
@@ -143,97 +147,6 @@ struct PostListView: View {
       return true
     }
   }
-}
-
-// MARK: - SidebarView
-
-struct SidebarView: View {
-  // MARK: Lifecycle
-
-  init(subreddit: Subreddit) {
-    self.subreddit = subreddit
-    _subscribed = .init(initialValue: subreddit.userIsSubscriber ?? false)
-  }
-
-  // MARK: Internal
-
-  @EnvironmentObject var informationBarData: InformationBarData
-
-  let subreddit: Subreddit
-
-  var body: some View {
-    VStack {
-      HStack {
-        if let headerImageUrl = subreddit.headerImg {
-          WebImage(url: headerImageUrl)
-        }
-        Text(subreddit.displayName)
-          .font(.largeTitle)
-      }
-
-      Divider()
-
-      HStack {
-        Spacer()
-
-        IllithidButton(label: {
-          Image(systemName: "newspaper.fill")
-            .font(.title)
-            .foregroundColor(subscribed ? .blue : .white)
-        }, mouseUp: {
-          if subscribed {
-            subreddit.unsubscribe { result in
-              if case Result.success = result {
-                subscribed = false
-                informationBarData.loadSubscriptions()
-              }
-            }
-          } else {
-            subreddit.subscribe { result in
-              if case Result.success = result {
-                subscribed = true
-                informationBarData.loadSubscriptions()
-              }
-            }
-          }
-        })
-          .help("Subscribe")
-
-        IllithidButton(label: {
-          Image(systemName: "a.book.closed")
-            .font(.title)
-            .foregroundColor(.white)
-        }, mouseUp: {
-          WindowManager.shared.showWindow(withId: "\(subreddit.name)/wiki",
-                                          title: "\(subreddit.displayName) Wiki") {
-            WikiPagesView(wikiData: .init(subreddit: subreddit))
-          }
-        })
-          .help("Show Wiki")
-
-        Spacer()
-      }
-
-      Divider()
-
-      ScrollView {
-        if let description = subreddit.attributedDescription {
-          VStack(alignment: .leading) {
-            AttributedText(attributed: description)
-              .padding()
-          }
-          .padding()
-        } else {
-          Text("No sidebar text found")
-            .padding()
-        }
-      }
-    }
-  }
-
-  // MARK: Private
-
-  @State private var subscribed: Bool = false
 }
 
 // MARK: - SubredditLoader
