@@ -141,7 +141,7 @@ struct InformationBarNavigationView: View {
   }
 }
 
-extension FrontPage {
+private extension FrontPage {
   var systemImageIconName: String {
     switch self {
     case .all:
