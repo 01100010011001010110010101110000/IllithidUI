@@ -30,113 +30,102 @@ struct AttributedText: View {
   // MARK: Internal
 
   var body: some View {
-    _AttributedText(attributed: attributed, height: $height)
-      .frame(minWidth: 20, minHeight: 20, idealHeight: max(20, height))
+    AttributedTextRepresentable(attributed: attributed, height: $height)
+      .frame(minWidth: 1, minHeight: 1, idealHeight: max(1, height))
       .fixedSize(horizontal: false, vertical: true)
   }
 
   // MARK: Private
 
-  @State private var height: CGFloat = .zero
-  private let attributed: NSAttributedString
-}
+  // MARK: - AttributedTextRepresentable
 
-// MARK: - AttributedTextView
-
-private final class AttributedTextView: NSTextView {
-  // MARK: Lifecycle
-
-  init(height: Binding<CGFloat>) {
-    _height = height
-    let view = NSTextView(frame: .zero)
-    super.init(frame: view.frame, textContainer: view.textContainer)
-  }
-
-  @available(*, unavailable)
-  required init?(coder _: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-
-  // MARK: Internal
-
-  let container = NSTextContainer()
-
-  // MARK: Private
-
-  @Binding private var height: CGFloat
-}
-
-// MARK: - _AttributedText
-
-private struct _AttributedText: NSViewRepresentable {
-  // MARK: Lifecycle
-
-  init(attributed: NSAttributedString, height: Binding<CGFloat>) {
-    self.attributed = NSMutableAttributedString(attributedString: attributed)
-    self.attributed.addAttributes([.font: NSFont.systemFont(ofSize: 0)], range: NSRange(location: 0, length: self.attributed.length))
-
-    _height = height
-  }
-
-  // MARK: Internal
-
-  typealias NSViewType = AttributedTextView
-
-  final class Coordinator: NSObject, NSTextViewDelegate {
+  private struct AttributedTextRepresentable: NSViewRepresentable {
     // MARK: Lifecycle
 
-    init(height: Binding<CGFloat>) {
+    init(attributed: NSAttributedString, height: Binding<CGFloat>) {
+      self.attributed = NSMutableAttributedString(attributedString: attributed)
+      self.attributed.addAttributes([.font: NSFont.systemFont(ofSize: 0)], range: NSRange(location: 0, length: self.attributed.length))
+      self.attributed.addAttributes([.foregroundColor: NSColor.textColor], range: NSRange(location: 0, length: self.attributed.length))
+
       _height = height
     }
 
     // MARK: Internal
 
+    typealias NSViewType = NSTextView
+
+    final class Coordinator: NSObject, NSTextViewDelegate {
+      // MARK: Lifecycle
+
+      init(height: Binding<CGFloat>) {
+        _height = height
+      }
+
+      deinit {
+        cancel()
+      }
+
+      // MARK: Internal
+
+      @Binding var height: CGFloat
+
+      func listenToChanges(for view: NSTextView) {
+        tokens.append(NotificationCenter.default.publisher(for: NSView.frameDidChangeNotification, object: view)
+          .sink { notification in
+            DispatchQueue.main.async { [weak self] in
+              guard let self = self, let view = notification.object as? NSTextView else { return }
+              self.height = view.textHeight
+            }
+          })
+      }
+
+      func cancel() {
+        while !tokens.isEmpty {
+          tokens.popLast()?.cancel()
+        }
+      }
+
+      // MARK: Private
+
+      private var tokens: [AnyCancellable] = []
+    }
+
+    let attributed: NSMutableAttributedString
     @Binding var height: CGFloat
 
-    func listenToChanges(for view: NSTextView) {
-      tokens.append(NotificationCenter.default.publisher(for: NSView.frameDidChangeNotification, object: view)
-        .sink { notification in
-          DispatchQueue.main.async { [weak self] in
-            guard let self = self, let view = notification.object as? NSTextView else { return }
-            self.height = view.textHeight
-          }
-        })
+    static func dismantleNSView(_: NSTextView, coordinator: Coordinator) {
+      coordinator.cancel()
     }
 
-    // MARK: Private
+    func makeNSView(context: Context) -> NSTextView {
+      let view = NSTextView()
 
-    private var tokens: [AnyCancellable] = []
-  }
+      view.autoresizingMask = [.height, .width]
+      view.isEditable = false
+      view.drawsBackground = false
+      view.postsFrameChangedNotifications = true
 
-  let attributed: NSMutableAttributedString
-  @Binding var height: CGFloat
+      view.delegate = context.coordinator
+      context.coordinator.listenToChanges(for: view)
 
-  func makeNSView(context: Context) -> AttributedTextView {
-    let view = AttributedTextView(height: $height)
+      view.textStorage?.setAttributedString(attributed)
 
-    view.autoresizingMask = [.height, .width]
-    view.isEditable = false
-    view.drawsBackground = false
-    view.backgroundColor = NSColor.clear
-    view.postsFrameChangedNotifications = true
+      DispatchQueue.main.async {
+        self.height = view.textHeight
+      }
 
-    view.textStorage?.setAttributedString(attributed)
-    view.textColor = NSColor.textColor
-
-    view.delegate = context.coordinator
-    context.coordinator.listenToChanges(for: view)
-    DispatchQueue.main.async {
-      self.height = view.textHeight
+      return view
     }
 
-    return view
+    func updateNSView(_: NSTextView, context _: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+      Coordinator(height: $height)
+    }
   }
 
-  func updateNSView(_: AttributedTextView, context _: Context) {}
-
-  func makeCoordinator() -> Coordinator {
-    Coordinator(height: $height)
-  }
+  @State private var height: CGFloat = .zero
+  private let attributed: NSAttributedString
 }
 
 private extension NSTextView {
