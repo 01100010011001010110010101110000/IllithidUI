@@ -63,6 +63,7 @@ struct PostListView: View {
               Image(systemName: "sidebar.right")
                 .font(.body)
             })
+              .help("Toggle sidebar")
           }
         }
         .padding([.bottom, .leading, .trailing], 10)
@@ -87,17 +88,14 @@ struct PostListView: View {
               postsData.cancel()
             }
         case .large:
-          List(selection: $selection) {
-            ForEach(filteredPosts) { post in
-              PostRowView(post: post)
-                .tag(post.id)
-                .onAppear {
-                  if post == filteredPosts.last {
-                    postsData.loadPosts(sort: sorter.sort,
-                                        topInterval: sorter.topInterval)
-                  }
+          List(filteredPosts, selection: $selection) { post in
+            PostRowView(post: post)
+              .onAppear {
+                if post == filteredPosts.last {
+                  postsData.loadPosts(sort: sorter.sort,
+                                      topInterval: sorter.topInterval)
                 }
-            }
+              }
           }
           .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
           .onAppear {
@@ -125,7 +123,7 @@ struct PostListView: View {
 
   // MARK: Private
 
-  @State private var selection: Subreddit? = nil
+  @State private var selection: Post? = nil
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
   @StateObject private var sorter = SortModel(sort: PostSort.best, topInterval: .day)
