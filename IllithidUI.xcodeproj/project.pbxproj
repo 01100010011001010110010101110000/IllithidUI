@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		6D062E4F2402F6C500A3BDD0 /* IllithidButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */; };
+		6D068AE1251D868A0012A909 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
+		6D068AE2251D868A0012A909 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
+		6D068AE3251D868A0012A909 /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 6D6D420F2437C14E002D4413 /* Kanna */; };
+		6D068AE4251D868A0012A909 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D89F3912468A95E00364E29 /* Illithid */; };
 		6D0A1E45238399B9006CDB86 /* ToolbarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */; };
 		6D0A1E472383B06C006CDB86 /* PostContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A1E462383B06C006CDB86 /* PostContent.swift */; };
 		6D0A4EFA237A5CC700626E44 /* EraseToAnyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */; };
@@ -22,14 +26,12 @@
 		6D1DAF692407100C0020A9D6 /* RoundedBorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1DAF682407100C0020A9D6 /* RoundedBorderModifier.swift */; };
 		6D1DAF6B24073BA80020A9D6 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1DAF6A24073BA80020A9D6 /* Browser.swift */; };
 		6D1F97B92431905000B3E9FC /* NsfwBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1F97B82431905000B3E9FC /* NsfwBlur.swift */; };
-		6D2622A424592758003D7AEA /* LoopedIterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2622A324592758003D7AEA /* LoopedIterator.swift */; };
 		6D28395322D3EBA400DD08F9 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D28395222D3EBA400DD08F9 /* SearchView.swift */; };
 		6D28395522D3F27300DD08F9 /* SearchData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D28395422D3F27300DD08F9 /* SearchData.swift */; };
 		6D2EA59422A7FEE20059B6EA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */; };
 		6D2EA59922A7FEE20059B6EA /* IllithidUI.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6D2EA59722A7FEE20059B6EA /* IllithidUI.xcdatamodeld */; };
 		6D2EA59B22A7FEE40059B6EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */; };
 		6D2EA59E22A7FEE40059B6EA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D2EA59D22A7FEE40059B6EA /* Preview Assets.xcassets */; };
-		6D2EA5A122A7FEE40059B6EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D2EA59F22A7FEE40059B6EA /* Main.storyboard */; };
 		6D2EA5AD22A7FEE40059B6EA /* IllithidUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2EA5AC22A7FEE40059B6EA /* IllithidUITests.swift */; };
 		6D2EA5B822A7FEE40059B6EA /* IllithidUIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2EA5B722A7FEE40059B6EA /* IllithidUIUITests.swift */; };
 		6D2FB7A4243E4C3B008CE0EB /* MediaStamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D2FB7A3243E4C3B008CE0EB /* MediaStamp.swift */; };
@@ -37,6 +39,8 @@
 		6D340DCC243A330900058F4D /* SortController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D340DCB243A330900058F4D /* SortController.swift */; };
 		6D34C68A241C891500CAB469 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D34C689241C891500CAB469 /* WebView.swift */; };
 		6D3ADFB922FB81AC002DA19A /* single_post.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D3ADFB822FB81AC002DA19A /* single_post.json */; };
+		6D43AC3F252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D43AC3E252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift */; };
+		6D43AC45252C3018000787A3 /* AboutCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D43AC44252C3018000787A3 /* AboutCommands.swift */; };
 		6D4E68342431267900529CA7 /* PinchAndZoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4E68332431267900529CA7 /* PinchAndZoom.swift */; };
 		6D53D9E922A94E7F0018F19D /* SubredditListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D53D9E822A94E7F0018F19D /* SubredditListData.swift */; };
 		6D53D9EA22A94E7F0018F19D /* SubredditListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D53D9E822A94E7F0018F19D /* SubredditListData.swift */; };
@@ -44,17 +48,19 @@
 		6D558A0C22FF79080092AA88 /* CommentRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D558A0B22FF79080092AA88 /* CommentRowView.swift */; };
 		6D558A0E230080140092AA88 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D558A0D230080140092AA88 /* RootView.swift */; };
 		6D581E3E240AD2EE00B84606 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D581E3D240AD2EE00B84606 /* VideoPlayer.swift */; };
-		6D5B274F2350D33500C6F52A /* Tooltips.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5B274E2350D33500C6F52A /* Tooltips.swift */; };
+		6D5E61DF24C2A4B900C40154 /* PagedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D5E61DE24C2A4B900C40154 /* PagedView.swift */; };
 		6D63953F2468A53300169C1D /* Post+Comment+DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D63953E2468A53300169C1D /* Post+Comment+DateFormatter.swift */; };
 		6D639D7F22B2EE4600A24E72 /* IllithidConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */; };
 		6D651F17247DE5F500A8BC7A /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D651F16247DE5F500A8BC7A /* SearchBar.swift */; };
 		6D69371F241ED684004F5CBF /* HeightResizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D69371E241ED684004F5CBF /* HeightResizable.swift */; };
-		6D6D42102437C14E002D4413 /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 6D6D420F2437C14E002D4413 /* Kanna */; };
-		6D731BFF22A826CD0065183B /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
+		6D72F29A24B810FC00B686D8 /* NavigationPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */; };
 		6D85952D23AD502700FC90E0 /* PostDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D85952C23AD502700FC90E0 /* PostDebugView.swift */; };
-		6D89F3922468A95E00364E29 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D89F3912468A95E00364E29 /* Illithid */; };
-		6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
+		6D90CAA524E8995B00A6892A /* RecursiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D90CAA424E8995B00A6892A /* RecursiveView.swift */; };
+		6D9AC83024AD506B0076686B /* View+LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */; };
+		6D9F75E524B91551006D4F72 /* PostClassicRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9F75E424B91551006D4F72 /* PostClassicRowView.swift */; };
+		6DA7C41E24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA7C41D24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift */; };
 		6DA9A2FC245E6172009444CC /* HostingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A2FB245E6172009444CC /* HostingWindow.swift */; };
+		6DAA94EB24BBE663001A07E5 /* PostModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAA94EA24BBE663001A07E5 /* PostModalView.swift */; };
 		6DAEDDEF24A1B45D00B0FF06 /* Array+Cancel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAEDDEE24A1B45D00B0FF06 /* Array+Cancel.swift */; };
 		6DAEDDF124A1B9AA00B0FF06 /* SubredditSuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DAEDDF024A1B9AA00B0FF06 /* SubredditSuggestionView.swift */; };
 		6DB1549D246F932400D19100 /* SharingButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB1549C246F932400D19100 /* SharingButton.swift */; };
@@ -65,8 +71,10 @@
 		6DC19CD322B06AA7002F027B /* SubredditRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC19CD222B06AA7002F027B /* SubredditRowView.swift */; };
 		6DC67CF522CFE043001B85C7 /* comments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6DC67CF422CFE043001B85C7 /* comments.json */; };
 		6DD5534E22A8901700A00033 /* SubredditListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD5534D22A8901700A00033 /* SubredditListView.swift */; };
+		6DD6D92424BBCD2D004AC12D /* ClassicListBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD6D92324BBCD2D004AC12D /* ClassicListBody.swift */; };
 		6DDE004222BA8006008E6AF0 /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE004122BA8006008E6AF0 /* WindowManager.swift */; };
 		6DDE004422BA80EA008E6AF0 /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE004322BA80EA008E6AF0 /* CommentsView.swift */; };
+		6DE40A5424DFD3C600AEB1D5 /* SubredditIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE40A5324DFD3C600AEB1D5 /* SubredditIcon.swift */; };
 		6DE4DD9D2443A92D00CB57B1 /* OpenInNewTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE4DD9C2443A92D00CB57B1 /* OpenInNewTab.swift */; };
 		6DE756B822AE16E300A1F87B /* PostListData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE756B722AE16E300A1F87B /* PostListData.swift */; };
 		6DE756BC22AE176E00A1F87B /* PostListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DE756BB22AE176E00A1F87B /* PostListView.swift */; };
@@ -112,7 +120,6 @@
 		6D1DAF682407100C0020A9D6 /* RoundedBorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBorderModifier.swift; sourceTree = "<group>"; };
 		6D1DAF6A24073BA80020A9D6 /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		6D1F97B82431905000B3E9FC /* NsfwBlur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NsfwBlur.swift; sourceTree = "<group>"; };
-		6D2622A324592758003D7AEA /* LoopedIterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopedIterator.swift; sourceTree = "<group>"; };
 		6D28395222D3EBA400DD08F9 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		6D28395422D3F27300DD08F9 /* SearchData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchData.swift; sourceTree = "<group>"; };
 		6D2EA59022A7FEE20059B6EA /* IllithidUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IllithidUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -120,7 +127,6 @@
 		6D2EA59822A7FEE20059B6EA /* IllithidUI.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = IllithidUI.xcdatamodel; sourceTree = "<group>"; };
 		6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6D2EA59D22A7FEE40059B6EA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		6D2EA5A022A7FEE40059B6EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6D2EA5A222A7FEE40059B6EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6D2EA5A322A7FEE40059B6EA /* IllithidUI.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = IllithidUI.entitlements; sourceTree = "<group>"; };
 		6D2EA5A822A7FEE40059B6EA /* IllithidUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IllithidUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,20 +140,28 @@
 		6D340DCB243A330900058F4D /* SortController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortController.swift; sourceTree = "<group>"; };
 		6D34C689241C891500CAB469 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		6D3ADFB822FB81AC002DA19A /* single_post.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = single_post.json; sourceTree = "<group>"; };
+		6D43AC3E252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AboutPanelOptionKey+Copyright.swift"; sourceTree = "<group>"; };
+		6D43AC44252C3018000787A3 /* AboutCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutCommands.swift; sourceTree = "<group>"; };
 		6D4E68332431267900529CA7 /* PinchAndZoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchAndZoom.swift; sourceTree = "<group>"; };
 		6D53D9E822A94E7F0018F19D /* SubredditListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditListData.swift; sourceTree = "<group>"; };
 		6D544EE822FF40C100196C25 /* ConditionalModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionalModifier.swift; sourceTree = "<group>"; };
 		6D558A0B22FF79080092AA88 /* CommentRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentRowView.swift; sourceTree = "<group>"; };
 		6D558A0D230080140092AA88 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		6D581E3D240AD2EE00B84606 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
-		6D5B274E2350D33500C6F52A /* Tooltips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tooltips.swift; sourceTree = "<group>"; };
+		6D5E61DE24C2A4B900C40154 /* PagedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagedView.swift; sourceTree = "<group>"; };
 		6D63953E2468A53300169C1D /* Post+Comment+DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Post+Comment+DateFormatter.swift"; sourceTree = "<group>"; };
 		6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllithidConfiguration.swift; sourceTree = "<group>"; };
 		6D651F16247DE5F500A8BC7A /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		6D69371E241ED684004F5CBF /* HeightResizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeightResizable.swift; sourceTree = "<group>"; };
+		6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPrompt.swift; sourceTree = "<group>"; };
 		6D85952C23AD502700FC90E0 /* PostDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDebugView.swift; sourceTree = "<group>"; };
 		6D8CD57922B5628B00E35BA8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		6D90CAA424E8995B00A6892A /* RecursiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecursiveView.swift; sourceTree = "<group>"; };
+		6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+LoadingScreen.swift"; sourceTree = "<group>"; };
+		6D9F75E424B91551006D4F72 /* PostClassicRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostClassicRowView.swift; sourceTree = "<group>"; };
+		6DA7C41D24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+postAbbreviation.swift"; sourceTree = "<group>"; };
 		6DA9A2FB245E6172009444CC /* HostingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostingWindow.swift; sourceTree = "<group>"; };
+		6DAA94EA24BBE663001A07E5 /* PostModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostModalView.swift; sourceTree = "<group>"; };
 		6DAEDDEE24A1B45D00B0FF06 /* Array+Cancel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Cancel.swift"; sourceTree = "<group>"; };
 		6DAEDDF024A1B9AA00B0FF06 /* SubredditSuggestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditSuggestionView.swift; sourceTree = "<group>"; };
 		6DB1549C246F932400D19100 /* SharingButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingButton.swift; sourceTree = "<group>"; };
@@ -158,8 +172,10 @@
 		6DC19CD222B06AA7002F027B /* SubredditRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditRowView.swift; sourceTree = "<group>"; };
 		6DC67CF422CFE043001B85C7 /* comments.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = comments.json; sourceTree = "<group>"; };
 		6DD5534D22A8901700A00033 /* SubredditListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditListView.swift; sourceTree = "<group>"; };
+		6DD6D92324BBCD2D004AC12D /* ClassicListBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClassicListBody.swift; sourceTree = "<group>"; };
 		6DDE004122BA8006008E6AF0 /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManager.swift; sourceTree = "<group>"; };
 		6DDE004322BA80EA008E6AF0 /* CommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentsView.swift; sourceTree = "<group>"; };
+		6DE40A5324DFD3C600AEB1D5 /* SubredditIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditIcon.swift; sourceTree = "<group>"; };
 		6DE4DD9C2443A92D00CB57B1 /* OpenInNewTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenInNewTab.swift; sourceTree = "<group>"; };
 		6DE756B722AE16E300A1F87B /* PostListData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostListData.swift; sourceTree = "<group>"; };
 		6DE756BB22AE176E00A1F87B /* PostListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostListView.swift; sourceTree = "<group>"; };
@@ -177,10 +193,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D99083D23E3D8D500E8686A /* SDWebImageSwiftUI in Frameworks */,
-				6D731BFF22A826CD0065183B /* Illithid in Frameworks */,
-				6D6D42102437C14E002D4413 /* Kanna in Frameworks */,
-				6D89F3922468A95E00364E29 /* Illithid in Frameworks */,
+				6D068AE3251D868A0012A909 /* Kanna in Frameworks */,
+				6D068AE2251D868A0012A909 /* SDWebImageSwiftUI in Frameworks */,
+				6D068AE1251D868A0012A909 /* Illithid in Frameworks */,
+				6D068AE4251D868A0012A909 /* Illithid in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,22 +281,13 @@
 		6D2EA59222A7FEE20059B6EA /* IllithidUI */ = {
 			isa = PBXGroup;
 			children = (
-				6DBCFBDA2473730B00174442 /* Wiki */,
-				6D0EF1EA23B2BC6E007B4CCE /* Account */,
-				6D138DD623865779008E00CF /* InformationBar */,
-				6D0A1E4123839967006CDB86 /* Toolbar */,
-				6D28395122D3EB8B00DD08F9 /* Search */,
-				6DF5DDD122B98B2D00C41786 /* Comments */,
-				6DCD003922B0B8A2002FBE9A /* Preferences */,
-				6D34C688241C886C00CAB469 /* NSViewRepresentables */,
+				6D90CAA324E896C200A6892A /* Illithid Components */,
+				6D90CAA024E893A000A6892A /* Reddit Components */,
+				6D90CAA124E894B100A6892A /* View Components */,
+				6DE918722418B6C000C19F5E /* Extensions */,
+				6DA9A2FA245E6150009444CC /* Environment Values */,
 				6DDF418422AFFA110081A09D /* Utility */,
-				6DE756B322AE15A400A1F87B /* Subreddit */,
-				6DE756B422AE15AD00A1F87B /* Post */,
-				6D558A0D230080140092AA88 /* RootView.swift */,
-				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
-				6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */,
 				6D2EA59A22A7FEE40059B6EA /* Assets.xcassets */,
-				6D2EA59F22A7FEE40059B6EA /* Main.storyboard */,
 				6D2EA5A222A7FEE40059B6EA /* Info.plist */,
 				6D2EA5A322A7FEE40059B6EA /* IllithidUI.entitlements */,
 				6D2EA59722A7FEE20059B6EA /* IllithidUI.xcdatamodeld */,
@@ -320,11 +327,18 @@
 		6D34C688241C886C00CAB469 /* NSViewRepresentables */ = {
 			isa = PBXGroup;
 			children = (
-				6D581E3D240AD2EE00B84606 /* VideoPlayer.swift */,
 				6D34C689241C891500CAB469 /* WebView.swift */,
 				6DB1549C246F932400D19100 /* SharingButton.swift */,
 			);
 			path = NSViewRepresentables;
+			sourceTree = "<group>";
+		};
+		6D43AC43252C3003000787A3 /* Commands */ = {
+			isa = PBXGroup;
+			children = (
+				6D43AC44252C3018000787A3 /* AboutCommands.swift */,
+			);
+			path = Commands;
 			sourceTree = "<group>";
 		};
 		6D731BFD22A826CD0065183B /* Frameworks */ = {
@@ -332,6 +346,58 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6D90CAA024E893A000A6892A /* Reddit Components */ = {
+			isa = PBXGroup;
+			children = (
+				6DF5DDD122B98B2D00C41786 /* Comments */,
+				6DE756B322AE15A400A1F87B /* Subreddit */,
+				6DE756B422AE15AD00A1F87B /* Post */,
+				6DBCFBDA2473730B00174442 /* Wiki */,
+				6D0EF1EA23B2BC6E007B4CCE /* Account */,
+				6D28395122D3EB8B00DD08F9 /* Search */,
+			);
+			path = "Reddit Components";
+			sourceTree = "<group>";
+		};
+		6D90CAA124E894B100A6892A /* View Components */ = {
+			isa = PBXGroup;
+			children = (
+				6DE918712418B66F00C19F5E /* Modifiers */,
+				6D90CAA224E8953D00A6892A /* Common */,
+				6D34C688241C886C00CAB469 /* NSViewRepresentables */,
+			);
+			path = "View Components";
+			sourceTree = "<group>";
+		};
+		6D90CAA224E8953D00A6892A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				6D340DCB243A330900058F4D /* SortController.swift */,
+				6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */,
+				6D581E3D240AD2EE00B84606 /* VideoPlayer.swift */,
+				6DE40A5324DFD3C600AEB1D5 /* SubredditIcon.swift */,
+				6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */,
+				6D5E61DE24C2A4B900C40154 /* PagedView.swift */,
+				6D90CAA424E8995B00A6892A /* RecursiveView.swift */,
+				6D651F16247DE5F500A8BC7A /* SearchBar.swift */,
+				6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		6D90CAA324E896C200A6892A /* Illithid Components */ = {
+			isa = PBXGroup;
+			children = (
+				6D43AC43252C3003000787A3 /* Commands */,
+				6DCD003922B0B8A2002FBE9A /* Preferences */,
+				6D138DD623865779008E00CF /* InformationBar */,
+				6D0A1E4123839967006CDB86 /* Toolbar */,
+				6D558A0D230080140092AA88 /* RootView.swift */,
+				6D2EA59322A7FEE20059B6EA /* AppDelegate.swift */,
+			);
+			path = "Illithid Components";
 			sourceTree = "<group>";
 		};
 		6DA9A2FA245E6150009444CC /* Environment Values */ = {
@@ -362,20 +428,13 @@
 		6DDF418422AFFA110081A09D /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				6DFD531B2410D4A90066E70F /* ModeratorData.swift */,
 				6D1DAF6A24073BA80020A9D6 /* Browser.swift */,
-				6DA9A2FA245E6150009444CC /* Environment Values */,
-				6DE918722418B6C000C19F5E /* Extensions */,
 				6DBE9E4D240F73DE004E7375 /* FireLogger.swift */,
-				6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */,
 				6D639D7E22B2EE4600A24E72 /* IllithidConfiguration.swift */,
-				6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */,
-				6DE918712418B66F00C19F5E /* Modifiers */,
-				6D3062372418943700D9E47B /* RedditLinkView.swift */,
-				6D340DCB243A330900058F4D /* SortController.swift */,
 				6D1780B4240C975F005D7FD6 /* UserDefault.swift */,
 				6DF5DDCF22B95C1900C41786 /* WindowController.swift */,
 				6DDE004122BA8006008E6AF0 /* WindowManager.swift */,
-				6D651F16247DE5F500A8BC7A /* SearchBar.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -396,8 +455,12 @@
 				6DE756BB22AE176E00A1F87B /* PostListView.swift */,
 				6DE756B722AE16E300A1F87B /* PostListData.swift */,
 				6DC19CD022B069B0002F027B /* PostRowView.swift */,
+				6DD6D92324BBCD2D004AC12D /* ClassicListBody.swift */,
+				6D9F75E424B91551006D4F72 /* PostClassicRowView.swift */,
+				6DAA94EA24BBE663001A07E5 /* PostModalView.swift */,
 				6D0A1E462383B06C006CDB86 /* PostContent.swift */,
 				6D85952C23AD502700FC90E0 /* PostDebugView.swift */,
+				6D3062372418943700D9E47B /* RedditLinkView.swift */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -417,15 +480,16 @@
 			children = (
 				6D69371E241ED684004F5CBF /* HeightResizable.swift */,
 				6D1780B6240CD47B005D7FD6 /* NSImageNames.swift */,
-				6D5B274E2350D33500C6F52A /* Tooltips.swift */,
 				6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */,
+				6DA7C41D24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift */,
 				6D18CD662419DA1F00E4BAC1 /* LinkConfiguration.swift */,
 				6D4E68332431267900529CA7 /* PinchAndZoom.swift */,
 				6D2FB7A3243E4C3B008CE0EB /* MediaStamp.swift */,
 				6DE4DD9C2443A92D00CB57B1 /* OpenInNewTab.swift */,
-				6D2622A324592758003D7AEA /* LoopedIterator.swift */,
 				6D63953E2468A53300169C1D /* Post+Comment+DateFormatter.swift */,
 				6DAEDDEE24A1B45D00B0FF06 /* Array+Cancel.swift */,
+				6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */,
+				6D43AC3E252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -555,7 +619,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D2EA5A122A7FEE40059B6EA /* Main.storyboard in Resources */,
 				6D2EA59E22A7FEE40059B6EA /* Preview Assets.xcassets in Resources */,
 				6DFB42F622CA884500272845 /* README.md in Resources */,
 				6D2EA59B22A7FEE40059B6EA /* Assets.xcassets in Resources */,
@@ -597,9 +660,13 @@
 				6D0A1E45238399B9006CDB86 /* ToolbarDelegate.swift in Sources */,
 				6D0A1E472383B06C006CDB86 /* PostContent.swift in Sources */,
 				6D2EA59422A7FEE20059B6EA /* AppDelegate.swift in Sources */,
+				6DA7C41E24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift in Sources */,
 				6D16DBCD22BD5D3F00FB891B /* CommentData.swift in Sources */,
 				6D581E3E240AD2EE00B84606 /* VideoPlayer.swift in Sources */,
 				6D1DAF6B24073BA80020A9D6 /* Browser.swift in Sources */,
+				6D9F75E524B91551006D4F72 /* PostClassicRowView.swift in Sources */,
+				6D72F29A24B810FC00B686D8 /* NavigationPrompt.swift in Sources */,
+				6D43AC45252C3018000787A3 /* AboutCommands.swift in Sources */,
 				6D639D7F22B2EE4600A24E72 /* IllithidConfiguration.swift in Sources */,
 				6D340DCC243A330900058F4D /* SortController.swift in Sources */,
 				6DB1549D246F932400D19100 /* SharingButton.swift in Sources */,
@@ -608,6 +675,7 @@
 				6D85952D23AD502700FC90E0 /* PostDebugView.swift in Sources */,
 				6DF68D8723878F4B0009CA74 /* InformationBarNavigationView.swift in Sources */,
 				6DBE9E4E240F73DE004E7375 /* FireLogger.swift in Sources */,
+				6DAA94EB24BBE663001A07E5 /* PostModalView.swift in Sources */,
 				6DE756B822AE16E300A1F87B /* PostListData.swift in Sources */,
 				6DBCFBE0247381D600174442 /* WikiData.swift in Sources */,
 				6D544EE922FF40C100196C25 /* ConditionalModifier.swift in Sources */,
@@ -621,27 +689,31 @@
 				6D1780B7240CD47B005D7FD6 /* NSImageNames.swift in Sources */,
 				6DA9A2FC245E6172009444CC /* HostingWindow.swift in Sources */,
 				6DC19CD122B069B0002F027B /* PostRowView.swift in Sources */,
+				6D43AC3F252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift in Sources */,
 				6DF5DDD022B95C1900C41786 /* WindowController.swift in Sources */,
 				6DAEDDEF24A1B45D00B0FF06 /* Array+Cancel.swift in Sources */,
+				6DD6D92424BBCD2D004AC12D /* ClassicListBody.swift in Sources */,
 				6D138DDA23865ACB008E00CF /* InformationBarData.swift in Sources */,
 				6D1DAF692407100C0020A9D6 /* RoundedBorderModifier.swift in Sources */,
+				6DE40A5424DFD3C600AEB1D5 /* SubredditIcon.swift in Sources */,
 				6DC19CD322B06AA7002F027B /* SubredditRowView.swift in Sources */,
+				6D5E61DF24C2A4B900C40154 /* PagedView.swift in Sources */,
 				6DE756BC22AE176E00A1F87B /* PostListView.swift in Sources */,
+				6D9AC83024AD506B0076686B /* View+LoadingScreen.swift in Sources */,
 				6D0A4EFA237A5CC700626E44 /* EraseToAnyView.swift in Sources */,
 				6D558A0E230080140092AA88 /* RootView.swift in Sources */,
 				6D651F17247DE5F500A8BC7A /* SearchBar.swift in Sources */,
 				6D0EF1EC23B2BC8C007B4CCE /* AccountView.swift in Sources */,
 				6D28395322D3EBA400DD08F9 /* SearchView.swift in Sources */,
+				6D90CAA524E8995B00A6892A /* RecursiveView.swift in Sources */,
 				6DD5534E22A8901700A00033 /* SubredditListView.swift in Sources */,
 				6DBCFBDE2473737800174442 /* WikiPagesView.swift in Sources */,
 				6D3062382418943700D9E47B /* RedditLinkView.swift in Sources */,
 				6D63953F2468A53300169C1D /* Post+Comment+DateFormatter.swift in Sources */,
 				6D1F97B92431905000B3E9FC /* NsfwBlur.swift in Sources */,
 				6DDE004222BA8006008E6AF0 /* WindowManager.swift in Sources */,
-				6D2622A424592758003D7AEA /* LoopedIterator.swift in Sources */,
 				6DEDE5CA22B1D5FC0016EAF5 /* PreferencesView.swift in Sources */,
 				6D2FB7A4243E4C3B008CE0EB /* MediaStamp.swift in Sources */,
-				6D5B274F2350D33500C6F52A /* Tooltips.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,22 +749,12 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		6D2EA59F22A7FEE40059B6EA /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6D2EA5A022A7FEE40059B6EA /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		6D2EA5BA22A7FEE40059B6EA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -740,10 +802,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = Illithid;
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -755,6 +818,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -796,9 +860,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = Illithid;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -823,7 +888,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flayware.IllithidUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -848,7 +914,8 @@
 					"@executable_path/../Frameworks",
 				);
 				LLVM_LTO = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MARKETING_VERSION = 0.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.flayware.IllithidUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

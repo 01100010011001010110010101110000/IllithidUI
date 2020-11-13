@@ -16,8 +16,7 @@
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.illithid.IllithidUI</string>
-		<string>$(AppIdentifierPrefix)com.illithid</string>
+		<string>$(AppIdentifierPrefix)com.flayware.Illithid</string>
 	</array>
 </dict>
 </plist>
