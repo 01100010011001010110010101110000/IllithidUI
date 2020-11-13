@@ -298,9 +298,14 @@ struct TextPostPreview: View {
   let post: Post
 
   var body: some View {
-    VStack(alignment: .leading) {
-      AttributedText(attributed: post.attributedSelfText)
-        .padding(.horizontal)
+    if !post.selftext.isEmpty {
+      GroupBox {
+        VStack(alignment: .leading) {
+          AttributedText(attributed: post.attributedSelfText)
+            .padding(.horizontal)
+        }
+      }
+      .frame(width: 512)
     }
   }
 }
