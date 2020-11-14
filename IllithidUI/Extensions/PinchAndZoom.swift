@@ -26,7 +26,7 @@ private struct PinchAndZoomModifier: ViewModifier {
   // MARK: Internal
 
   func body(content: Content) -> some View {
-    ZStack(alignment: .topLeading) {
+    ZStack(alignment: .bottomTrailing) {
       content
         .offset(currentPosition)
         .clipShape(Rectangle())

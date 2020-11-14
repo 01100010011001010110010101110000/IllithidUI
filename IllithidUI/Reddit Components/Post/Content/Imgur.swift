@@ -41,15 +41,19 @@ struct ImgurView: View {
       } else if imgurData.images.count == 1, let image = imgurData.images.first {
         if image.animated {
           VideoPlayer(url: image.mp4!, fullSize: .init(width: image.width, height: image.height))
+            .mediaMetadataBar(metadata: image)
         } else {
           ImagePostPreview(url: image.link)
+            .mediaMetadataBar(metadata: image)
         }
       } else {
         PagedView(data: imgurData.images) { image in
           if image.animated {
             VideoPlayer(url: image.mp4!, fullSize: .init(width: image.width, height: image.height))
+              .mediaMetadataBar(metadata: image)
           } else {
             ImagePostPreview(url: image.link)
+              .mediaMetadataBar(metadata: image)
           }
         }
       }
@@ -58,6 +62,30 @@ struct ImgurView: View {
       guard imgurData.images.isEmpty else { return }
       imgurData.loadContent()
     }
+  }
+}
+
+// MARK: - ImgurImage + MediaMetadataProvider
+
+extension ImgurImage: MediaMetadataProvider {
+  var mediaTitle: String {
+    title ?? ""
+  }
+
+  var mediaDescription: String? {
+    dataDescription
+  }
+
+  var upvotes: Int? {
+    vote
+  }
+
+  var downvotes: Int? {
+    nil
+  }
+
+  var hostDisplayName: String {
+    "Imgur"
   }
 }
 

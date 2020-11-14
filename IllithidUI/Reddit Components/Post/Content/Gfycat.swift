@@ -36,7 +36,7 @@ struct GfycatView: View {
       switch data.result {
       case let .success(item):
         VideoPlayer(url: item.mp4URL, fullSize: .init(width: item.width, height: item.height))
-          .mediaStamp("gfycat")
+          .mediaMetadataBar(metadata: item)
       case let .failure(error):
         switch error {
         case let .responseValidationFailed(reason):
@@ -92,7 +92,7 @@ struct RedGifView: View {
       switch data.result {
       case let .success(item):
         VideoPlayer(url: item.mp4URL, fullSize: .init(width: item.width, height: item.height))
-          .mediaStamp("redgif")
+          .mediaMetadataBar(metadata: item)
       case let .failure(error):
         switch error {
         case let .responseValidationFailed(reason):
@@ -170,6 +170,30 @@ final class GfyData: ObservableObject, Cancellable {
       }
       self.result = result
     }
+  }
+}
+
+// MARK: - GfyItem + MediaMetadataProvider
+
+extension GfyItem: MediaMetadataProvider {
+  var mediaTitle: String {
+    title
+  }
+
+  var hostDisplayName: String {
+    "Gfycat"
+  }
+
+  var mediaDescription: String? {
+    gfyItemDescription
+  }
+
+  var upvotes: Int? {
+    likes
+  }
+
+  var downvotes: Int? {
+    dislikes
   }
 }
 

@@ -31,7 +31,8 @@ struct PostContent: View {
     case .imgur:
       ImgurView(link: post.contentUrl)
         .conditionalModifier(post.over18, NsfwBlurModifier())
-        .mediaStamp("imgur")
+    case .youtube:
+      YouTubeView(link: post.contentUrl)
     case .gfycat:
       GfycatView(id: String(post.contentUrl.path.dropFirst().split(separator: "-").first!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
@@ -78,6 +79,7 @@ extension Post {
     case gfycat
     case redgifs
     case reddit
+    case youtube
   }
 
   /// Illithid's guess at the best type of preview to use for this post
@@ -90,6 +92,8 @@ extension Post {
       return .gfycat
     } else if domain.contains("redgifs.com") {
       return .redgifs
+    } else if domain.contains("youtube.com") || domain.contains("youtu.be") {
+      return .youtube
     } else if isGallery ?? false {
       return .gallery
     } else if domain == "reddit.com" || domain == "old.reddit.com" {
@@ -254,7 +258,6 @@ private struct VideoPostPreview: View {
   var body: some View {
     if let url = url {
       VideoPlayer(url: url, fullSize: .init(width: preview.width, height: preview.height))
-        .mediaStamp("reddit")
     } else {
       Rectangle()
         .opacity(0.0)
@@ -282,12 +285,10 @@ struct GifPostPreview: View {
   var body: some View {
     if let mp4Preview = post.mp4Previews.last {
       VideoPlayer(url: mp4Preview.url, fullSize: .init(width: mp4Preview.width, height: mp4Preview.height))
-        .mediaStamp("gif")
     } else {
       AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)
         .resizable()
         .aspectRatio(contentMode: .fit)
-        .mediaStamp("gif")
     }
   }
 }
