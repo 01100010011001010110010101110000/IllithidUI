@@ -78,6 +78,7 @@ struct RootView: View {
           }, label: {
             Image(systemName: "sidebar.left")
           })
+            .help("Hide or show the navigator")
         }
         ToolbarItem(placement: .principal) {
           Picker(selection: $layout, label: EmptyView()) {
