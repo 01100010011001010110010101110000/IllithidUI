@@ -63,14 +63,14 @@ struct PostListView: View {
               Image(systemName: "sidebar.right")
                 .font(.body)
             })
-              .help("Toggle sidebar")
+              .help("Show or hide sidebar")
           }
         }
         .padding([.bottom, .leading, .trailing], 10)
       }
       .background(Color(.controlBackgroundColor))
 
-      HSplitView {
+      ZStack(alignment: .trailing) {
         switch layout {
         case .classic, .compact:
           ClassicListBody(posts: filteredPosts, onLastPost: {
@@ -109,12 +109,13 @@ struct PostListView: View {
           }
         }
 
-        // TODO: This conditional is, as of macOS 11 beta 10, causing a crash when switching between navigation view links
-        // For now, it will be commented out and we will always show the sidebar
-        if // showSidebar,
-          postContainer is Subreddit {
+        if showSidebar,
+           postContainer is Subreddit {
           SubredditSidebar(subreddit: postContainer as! Subreddit)
             .frame(minWidth: 300, maxWidth: 600)
+            .background(Color(.windowBackgroundColor).opacity(0.95))
+            .shadow(radius: 20)
+            .padding(.vertical)
         }
       }
     }
