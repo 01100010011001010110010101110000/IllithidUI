@@ -35,21 +35,40 @@ struct AccountView: View {
   @EnvironmentObject var informationBarData: InformationBarData
 
   var body: some View {
-    NavigationView {
-      List {
-        NavigationLink(destination: Content(data: accountData, content: .overview), label: { Label("Overview", systemImage: "newspaper") })
-        NavigationLink(destination: Content(data: accountData, content: .submissions), label: { Label("Posts", systemImage: "paperplane") })
-        NavigationLink(destination: Content(data: accountData, content: .comments), label: { Label("Comments", systemImage: "text.bubble") })
-        if accountData.account == Illithid.shared.accountManager.currentAccount {
-          NavigationLink(destination: Content(data: accountData, content: .saved), label: { Label("Saved", systemImage: "bookmark") })
-          NavigationLink(destination: Content(data: accountData, content: .hidden), label: { Label("Hidden", systemImage: "eye.slash") })
-          NavigationLink(destination: Content(data: accountData, content: .upvoted), label: { Label("Upvoted", systemImage: "arrow.up") })
-          NavigationLink(destination: Content(data: accountData, content: .downvoted), label: { Label("Downvoted", systemImage: "arrow.down") })
+    TabView {
+      Content(data: accountData, content: .overview)
+        .tabItem {
+          Label("Overview", systemImage: "newspaper")
         }
+      Content(data: accountData, content: .submissions)
+        .tabItem {
+          Label("Posts", systemImage: "paperplane")
+        }
+      Content(data: accountData, content: .comments)
+        .tabItem {
+          Label("Comments", systemImage: "text.bubble")
+        }
+      if accountData.account == Illithid.shared.accountManager.currentAccount {
+        Content(data: accountData, content: .saved)
+          .tabItem {
+            Label("Saved", systemImage: "bookmark")
+          }
+        Content(data: accountData, content: .hidden)
+          .tabItem {
+            Label("Hidden", systemImage: "eye.slash")
+          }
+        Content(data: accountData, content: .upvoted)
+          .tabItem {
+            Label("Upvoted", systemImage: "arrow.up")
+          }
+        Content(data: accountData, content: .downvoted)
+          .tabItem {
+            Label("Downvoted", systemImage: "arrow.down")
+          }
       }
-      NavigationPrompt(prompt: "Make a selection")
     }
     .environmentObject(informationBarData)
+    .padding(.top)
   }
 
   // MARK: Private
