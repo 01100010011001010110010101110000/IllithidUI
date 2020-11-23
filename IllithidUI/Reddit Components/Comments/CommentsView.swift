@@ -23,7 +23,7 @@ struct CommentsView: View, Identifiable {
   // MARK: Lifecycle
 
   init(post: Post, focusOn commentId: ID36? = nil) {
-    commentData = CommentData(post: post)
+    _commentData = .init(wrappedValue: CommentData(post: post))
     self.post = post
     id = post.id
     focusedComment = commentId
@@ -32,13 +32,12 @@ struct CommentsView: View, Identifiable {
   fileprivate init(from listing: Listing) {
     post = listing.posts.first!
     id = post.id
-    commentData = CommentData(from: listing)
+    _commentData = .init(wrappedValue: CommentData(from: listing))
     focusedComment = nil
   }
 
   // MARK: Internal
 
-  @ObservedObject var commentData: CommentData
   /// The post to which the comments belong
   let id: Fullname
 
@@ -105,6 +104,7 @@ struct CommentsView: View, Identifiable {
 
   // MARK: Private
 
+  @StateObject private var commentData: CommentData
   @ObservedObject private var moderators: ModeratorData = .shared
 
   private var authorColor: Color {
