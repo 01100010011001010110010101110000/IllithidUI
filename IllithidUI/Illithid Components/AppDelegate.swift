@@ -83,6 +83,7 @@ struct IllithidApp: App {
               delegate.logger.warnMessage("Unable to open URL: \(url.absoluteString)")
               return
             }
+
             if link.host == "reddit.com" ||
               link.host == "old.reddit.com" ||
               link.host == "www.reddit.com" {
