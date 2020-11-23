@@ -29,6 +29,7 @@ final class PostListData: ObservableObject {
   // MARK: Internal
 
   @Published var posts: [Post] = []
+  var noPosts: Bool = false
 
   let provider: PostProvider
 
@@ -43,6 +44,7 @@ final class PostListData: ObservableObject {
         case let .success(listing):
           if let anchor = listing.after { self.postListingParams.after = anchor }
           else { self.exhausted = true }
+          self.noPosts = self.exhausted && listing.posts.isEmpty && self.posts.isEmpty
           self.posts.append(contentsOf: listing.posts)
         case let .failure(error):
           self.illithid.logger.errorMessage("Failed to load posts: \(error)")

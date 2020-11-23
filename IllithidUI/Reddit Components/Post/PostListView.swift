@@ -41,13 +41,11 @@ struct PostListView: View {
     VStack(spacing: 0.0) {
       VStack {
         SortController(model: sorter)
-          .onReceive(sorter.$sort) { sort in
-            guard !postsData.posts.isEmpty else { return }
+          .onReceive(sorter.$sort.dropFirst()) { sort in
             postsData.reload(sort: sort,
                              topInterval: sorter.topInterval)
           }
-          .onReceive(sorter.$topInterval) { interval in
-            guard !postsData.posts.isEmpty else { return }
+          .onReceive(sorter.$topInterval.dropFirst()) { interval in
             postsData.reload(sort: sorter.sort,
                              topInterval: interval)
           }
@@ -71,12 +69,37 @@ struct PostListView: View {
       .background(Color(.controlBackgroundColor))
 
       ZStack(alignment: .trailing) {
-        switch layout {
-        case .classic, .compact:
-          ClassicListBody(posts: filteredPosts, onLastPost: {
-            postsData.loadPosts(sort: sorter.sort,
-                                topInterval: sorter.topInterval)
-          })
+        if postsData.noPosts {
+          Rectangle()
+            .foregroundColor(.clear)
+            .overlay(Text("No posts in \(postContainer.displayName) when sorting by \(sortDescription)").font(.title))
+        } else {
+          switch layout {
+          case .classic, .compact:
+            ClassicListBody(posts: filteredPosts, onLastPost: {
+              postsData.loadPosts(sort: sorter.sort,
+                                  topInterval: sorter.topInterval)
+            })
+              .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
+              .onAppear {
+                // Do not load posts on a re-render
+                guard postsData.posts.isEmpty else { return }
+                postsData.loadPosts(sort: sorter.sort,
+                                    topInterval: sorter.topInterval)
+              }
+              .onDisappear {
+                postsData.cancel()
+              }
+          case .large:
+            List(filteredPosts, selection: $selection) { post in
+              PostRowView(post: post)
+                .onAppear {
+                  if post == filteredPosts.last {
+                    postsData.loadPosts(sort: sorter.sort,
+                                        topInterval: sorter.topInterval)
+                  }
+                }
+            }
             .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
             .onAppear {
               // Do not load posts on a re-render
@@ -87,25 +110,6 @@ struct PostListView: View {
             .onDisappear {
               postsData.cancel()
             }
-        case .large:
-          List(filteredPosts, selection: $selection) { post in
-            PostRowView(post: post)
-              .onAppear {
-                if post == filteredPosts.last {
-                  postsData.loadPosts(sort: sorter.sort,
-                                      topInterval: sorter.topInterval)
-                }
-              }
-          }
-          .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
-          .onAppear {
-            // Do not load posts on a re-render
-            guard postsData.posts.isEmpty else { return }
-            postsData.loadPosts(sort: sorter.sort,
-                                topInterval: sorter.topInterval)
-          }
-          .onDisappear {
-            postsData.cancel()
           }
         }
 
@@ -131,6 +135,15 @@ struct PostListView: View {
   @StateObject private var postsData: PostListData
 
   private let cancelToken: AnyCancellable? = nil
+
+  private var sortDescription: String {
+    switch sorter.sort {
+    case .controversial, .top:
+      return "\(sorter.sort.rawValue) in the last \(sorter.topInterval.rawValue)"
+    default:
+      return sorter.sort.rawValue
+    }
+  }
 
   private var filteredPosts: [Post] {
     postsData.posts.filter { post in

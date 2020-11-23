@@ -39,7 +39,7 @@ final class InformationBarData: ObservableObject {
     } else {
       multiReddits = []
     }
-    listen()
+//    listen()
   }
 
   deinit {
