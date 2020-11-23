@@ -22,19 +22,19 @@ import Illithid
 final class SearchData: ObservableObject {
   // MARK: Lifecycle
 
-  init(for targets: Set<SearchType> = [.subreddit, .post, .user]) {
+  init(for targets: Set<SearchType> = [.post]) {
     searchTargets = targets
     let queryPublisher = $query.share()
-//    let searchToken = queryPublisher
-//      .filter { $0.count >= 3 }
-//      .debounce(for: 0.3, scheduler: RunLoop.current)
-//      .removeDuplicates()
-//      .sink { [weak self] searchFor in
-//        guard let self = self else { return }
-//        self.request?.cancel()
-//        self.request = self.search(for: searchFor)
-//      }
-//    cancelBag.append(searchToken)
+    let searchToken = queryPublisher
+      .filter { $0.count >= 3 }
+      .debounce(for: 0.3, scheduler: RunLoop.current)
+      .removeDuplicates()
+      .sink { [weak self] searchFor in
+        guard let self = self else { return }
+        self.request?.cancel()
+        self.request = self.search(for: searchFor)
+      }
+    cancelBag.append(searchToken)
     let autocompleteToken = queryPublisher
       .filter { $0.count >= 3 }
       .debounce(for: 0.2, scheduler: RunLoop.main)
@@ -63,9 +63,10 @@ final class SearchData: ObservableObject {
   // MARK: Internal
 
   @Published var query: String = ""
-  @Published var accounts: [Account] = []
+  /// Subreddits suggested by the search endpoint
   @Published var subreddits: [Subreddit] = []
   @Published var posts: [Post] = []
+  /// Subreddits suggested by the autocompletion endpoint
   @Published var suggestions: [Subreddit] = []
 
   let illithid: Illithid = .shared
@@ -79,7 +80,6 @@ final class SearchData: ObservableObject {
         self.clearData()
         // TODO: Optimize this
         for listing in listings {
-          self.accounts.append(contentsOf: listing.accounts)
           self.subreddits.append(contentsOf: listing.subreddits)
           self.posts.append(contentsOf: listing.posts)
         }
@@ -90,7 +90,6 @@ final class SearchData: ObservableObject {
   }
 
   func clearData() {
-    accounts.removeAll(keepingCapacity: true)
     subreddits.removeAll(keepingCapacity: true)
     posts.removeAll(keepingCapacity: true)
   }

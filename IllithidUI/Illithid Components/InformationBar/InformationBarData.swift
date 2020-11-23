@@ -39,6 +39,13 @@ final class InformationBarData: ObservableObject {
     } else {
       multiReddits = []
     }
+    listen()
+  }
+
+  deinit {
+    while !cancelTokens.isEmpty {
+      cancelTokens.popLast()?.cancel()
+    }
   }
 
   // MARK: Internal
@@ -57,10 +64,15 @@ final class InformationBarData: ObservableObject {
     }
   }
 
+  func loadAccountData() {
+    loadMultireddits()
+    loadSubscriptions()
+  }
+
   func loadMultireddits() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Multireddits", signpostID: signpostId)
-    Illithid.shared.accountManager.currentAccount?.multireddits(queue: Self.queue) { result in
+    accountManager.currentAccount?.multireddits(queue: Self.queue) { result in
       defer {
         os_signpost(.end, log: self.log, name: "Load Multireddits", signpostID: signpostId)
       }
@@ -81,7 +93,7 @@ final class InformationBarData: ObservableObject {
   func loadSubscriptions() {
     let signpostId = OSSignpostID(log: log)
     os_signpost(.begin, log: log, name: "Load Subscribed Subreddits", signpostID: signpostId)
-    Illithid.shared.accountManager.currentAccount?.subscribedSubreddits(queue: Self.queue) { result in
+    accountManager.currentAccount?.subscribedSubreddits(queue: Self.queue) { result in
       defer {
         os_signpost(.end, log: self.log, name: "Load Subscribed Subreddits", signpostID: signpostId)
       }
@@ -103,11 +115,47 @@ final class InformationBarData: ObservableObject {
 
   private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.InformationBar", qos: .background)
 
-  private var illithid: Illithid = .shared
-  private var defaults: UserDefaults = .standard
-  private var decoder = JSONDecoder()
-  private var encoder = JSONEncoder()
+  private let illithid: Illithid = .shared
+  private let accountManager: AccountManager = Illithid.shared.accountManager
+
+  private let defaults: UserDefaults = .standard
+  private let decoder = JSONDecoder()
+  private let encoder = JSONEncoder()
 
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.InformationBar",
                           category: .pointsOfInterest)
+
+  private var cancelTokens: [AnyCancellable] = []
+
+  private func listen() {
+    let token = accountManager.$currentAccount
+      .removeDuplicates()
+      .sink(receiveCompletion: { [weak self] completion in
+        switch completion {
+        case .finished:
+          self?.illithid.logger.infoMessage("Finished fetching accounts from the global account manager")
+        case let .failure(error):
+          self?.illithid.logger.infoMessage("Error fetching accounts from the global account manager: \(error)")
+        }
+      }) { [weak self] account in
+        self?.clearAccountData()
+        if account != nil {
+          self?.loadAccountData()
+        }
+      }
+    cancelTokens.append(token)
+  }
+
+  private func clearAccountData() {
+    clearSubscriptions()
+    clearMultireddits()
+  }
+
+  private func clearSubscriptions() {
+    subscribedSubreddits.removeAll()
+  }
+
+  private func clearMultireddits() {
+    multiReddits.removeAll()
+  }
 }

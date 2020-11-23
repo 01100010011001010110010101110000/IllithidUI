@@ -153,6 +153,8 @@ struct RemovedPostView: View {
     switch removalCategory {
     case .moderator:
       return "This post has been removed by a moderator"
+    case .copyrightTakedown:
+      return "This post has been removed due to a copyright notice"
     }
   }
 }

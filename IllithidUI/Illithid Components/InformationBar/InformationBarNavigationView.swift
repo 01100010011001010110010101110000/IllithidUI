@@ -95,8 +95,7 @@ struct InformationBarNavigationView: View {
         }
       }
       .onAppear {
-        informationBarData.loadMultireddits()
-        informationBarData.loadSubscriptions()
+        informationBarData.loadAccountData()
       }
       .listStyle(SidebarListStyle())
 
