@@ -35,43 +35,58 @@ struct AccountView: View {
   @EnvironmentObject var informationBarData: InformationBarData
 
   var body: some View {
-    TabView {
-      Content(data: accountData, content: .overview)
-        .tabItem {
-          Label("Overview", systemImage: "newspaper")
+    if accountData.account != nil {
+      TabView(selection: $selected) {
+        Content(data: accountData, content: .overview)
+          .tabItem {
+            Label("Overview", systemImage: "newspaper")
+          }
+          .tag(AccountContent.overview)
+        Content(data: accountData, content: .submissions)
+          .tabItem {
+            Label("Posts", systemImage: "paperplane")
+          }
+          .tag(AccountContent.submissions)
+        Content(data: accountData, content: .comments)
+          .tabItem {
+            Label("Comments", systemImage: "text.bubble")
+          }
+          .tag(AccountContent.comments)
+        if accountData.account == Illithid.shared.accountManager.currentAccount {
+          Content(data: accountData, content: .saved)
+            .tabItem {
+              Label("Saved", systemImage: "bookmark")
+            }
+            .tag(AccountContent.saved)
+          Content(data: accountData, content: .hidden)
+            .tabItem {
+              Label("Hidden", systemImage: "eye.slash")
+            }
+            .tag(AccountContent.hidden)
+          Content(data: accountData, content: .upvoted)
+            .tabItem {
+              Label("Upvoted", systemImage: "arrow.up")
+            }
+            .tag(AccountContent.upvoted)
+          Content(data: accountData, content: .downvoted)
+            .tabItem {
+              Label("Downvoted", systemImage: "arrow.down")
+            }
+            .tag(AccountContent.downvoted)
         }
-      Content(data: accountData, content: .submissions)
-        .tabItem {
-          Label("Posts", systemImage: "paperplane")
-        }
-      Content(data: accountData, content: .comments)
-        .tabItem {
-          Label("Comments", systemImage: "text.bubble")
-        }
-      if accountData.account == Illithid.shared.accountManager.currentAccount {
-        Content(data: accountData, content: .saved)
-          .tabItem {
-            Label("Saved", systemImage: "bookmark")
-          }
-        Content(data: accountData, content: .hidden)
-          .tabItem {
-            Label("Hidden", systemImage: "eye.slash")
-          }
-        Content(data: accountData, content: .upvoted)
-          .tabItem {
-            Label("Upvoted", systemImage: "arrow.up")
-          }
-        Content(data: accountData, content: .downvoted)
-          .tabItem {
-            Label("Downvoted", systemImage: "arrow.down")
-          }
       }
+      .environmentObject(informationBarData)
+      .padding(.top)
+    } else {
+      Rectangle()
+        .foregroundColor(.clear)
+        .loadingScreen(isLoading: accountData.account == nil, title: "Loading account")
     }
-    .environmentObject(informationBarData)
-    .padding(.top)
   }
 
   // MARK: Private
+
+  @State private var selected: AccountContent = .overview
 
   @StateObject private var accountData: AccountData
 }
@@ -114,21 +129,13 @@ private struct Content: View {
     .onAppear {
       data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
     }
-    .onReceive(sorter.$sort) { sort in
-      guard !data.content[content]!.isEmpty else { return }
+    .onReceive(sorter.$sort.dropFirst()) { sort in
       data.clearContent(content: content)
       data.loadContent(content: content, sort: sort, topInterval: sorter.topInterval)
     }
-    .onReceive(sorter.$topInterval) { interval in
-      guard !data.content[content]!.isEmpty else { return }
+    .onReceive(sorter.$topInterval.dropFirst()) { interval in
       data.clearContent(content: content)
       data.loadContent(content: content, sort: sorter.sort, topInterval: interval)
     }
   }
 }
-
-// struct AccountView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    AccountView()
-//  }
-// }
