@@ -19,54 +19,7 @@ import Illithid
 // MARK: - SearchView
 
 struct SearchView: View {
-  @StateObject var searchData: SearchData = .init()
-
-  @State private var subredditSelection: Subreddit? = nil
-  @State private var postSelection: Post? = nil
-  @State private var userToFind: String? = nil
-  @State private var blur: Bool = false
-
-  let columns: [GridItem] = [
-    GridItem(.adaptive(minimum: 320)),
-  ]
-
-  var prompt: String {
-    if searchData.query.isEmpty { return "Make a search" }
-    else if searchData.suggestions.isEmpty { return "No subreddits found" }
-    else { return "Open a subreddit" }
-  }
-
-  private func openModal(for subreddit: Subreddit) {
-    withAnimation(.modal) { subredditSelection = subreddit }
-    DispatchQueue.main.async {
-      withAnimation(.blur) { blur = true }
-    }
-  }
-
-  private func openModal(for post: Post) {
-    withAnimation(.modal) { postSelection = post }
-    DispatchQueue.main.async {
-      withAnimation(.blur) { blur = true }
-    }
-  }
-
-  private func openModal(for user: String) {
-    withAnimation(.modal) { userToFind = user }
-    DispatchQueue.main.async {
-      withAnimation(.blur) { blur = true }
-    }
-  }
-
-  private func closeModal() {
-    withAnimation(.modal) {
-      subredditSelection = nil
-      postSelection = nil
-      userToFind = nil
-    }
-    DispatchQueue.main.async {
-      withAnimation(.blur) { blur = false }
-    }
-  }
+  // MARK: Internal
 
   var body: some View {
     ZStack {
@@ -80,38 +33,59 @@ struct SearchView: View {
 
         ScrollView {
           if !searchData.query.isEmpty {
-            HStack {
-              Label("Go to user \(searchData.query)", systemImage: "person.crop.circle")
-              Spacer()
+            Group {
+              Divider()
+              HStack {
+                Label("Go to user \(searchData.query)", systemImage: "person.crop.circle")
+                  .font(.title)
+                Spacer()
+              }
+              .onTapGesture(count: 1, perform: {
+                openModal(for: searchData.query)
+              })
+              Divider()
             }
             .padding(.horizontal)
-            .onTapGesture(count: 1, perform: {
-              openModal(for: searchData.query)
-            })
           }
-          Divider()
-          Text("Subreddits")
-            .font(.title)
-          Divider()
-          LazyVGrid(columns: columns) {
-            ForEach(searchData.suggestions) { suggestion in
-              SubredditSuggestionLabel(suggestion: suggestion)
-                .onTapGesture(count: 1, perform: {
-                  openModal(for: suggestion)
-                })
+          if !searchData.suggestions.isEmpty {
+            Group {
+              HStack {
+                Text("Subreddits")
+                  .font(.largeTitle)
+                Spacer()
+              }
+              Divider()
+              LazyVGrid(columns: subredditColumns) {
+                ForEach(searchData.suggestions) { suggestion in
+                  SubredditSuggestionLabel(suggestion: suggestion)
+                    .onTapGesture(count: 1, perform: {
+                      openModal(for: suggestion)
+                    })
+                }
+              }
             }
+            .padding(.horizontal)
           }
-          .padding(10)
-          Text("Posts")
-            .font(.title)
-          Divider()
-          LazyVGrid(columns: columns) {
-            ForEach(searchData.posts) { post in
-              PostClassicRowView(post: post)
-                .onTapGesture(count: 1, perform: {
-                  openModal(for: post)
-                })
+          if !searchData.posts.isEmpty {
+            Group {
+              HStack {
+                Text("Posts")
+                  .font(.largeTitle)
+                Spacer()
+              }
+              Divider()
+              ScrollView {
+                LazyVGrid(columns: postColumns) {
+                  ForEach(searchData.posts) { post in
+                    PostClassicRowView(post: post)
+                      .onTapGesture(count: 1, perform: {
+                        openModal(for: post)
+                      })
+                  }
+                }
+              }
             }
+            .padding(.horizontal)
           }
         }
       }
@@ -151,6 +125,63 @@ struct SearchView: View {
           .shadow(radius: 10)
           .zIndex(3)
       }
+    }
+  }
+
+  // MARK: Private
+
+  @StateObject private var searchData: SearchData = .init()
+
+  @State private var subredditSelection: Subreddit? = nil
+  @State private var postSelection: Post? = nil
+  @State private var userToFind: String? = nil
+  @State private var blur: Bool = false
+
+  private let subredditColumns: [GridItem] = [
+    GridItem(.adaptive(minimum: 320)),
+  ]
+
+  private let postColumns: [GridItem] = [
+    GridItem(.flexible()),
+    GridItem(.flexible()),
+    GridItem(.flexible()),
+  ]
+
+  private var prompt: String {
+    if searchData.query.isEmpty { return "Make a search" }
+    else if searchData.suggestions.isEmpty { return "No subreddits found" }
+    else { return "Open a subreddit" }
+  }
+
+  private func openModal(for subreddit: Subreddit) {
+    withAnimation(.modal) { subredditSelection = subreddit }
+    DispatchQueue.main.async {
+      withAnimation(.blur) { blur = true }
+    }
+  }
+
+  private func openModal(for post: Post) {
+    withAnimation(.modal) { postSelection = post }
+    DispatchQueue.main.async {
+      withAnimation(.blur) { blur = true }
+    }
+  }
+
+  private func openModal(for user: String) {
+    withAnimation(.modal) { userToFind = user }
+    DispatchQueue.main.async {
+      withAnimation(.blur) { blur = true }
+    }
+  }
+
+  private func closeModal() {
+    withAnimation(.modal) {
+      subredditSelection = nil
+      postSelection = nil
+      userToFind = nil
+    }
+    DispatchQueue.main.async {
+      withAnimation(.blur) { blur = false }
     }
   }
 }
