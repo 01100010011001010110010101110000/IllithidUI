@@ -175,7 +175,7 @@ struct GalleryPost: View {
           case .image:
             ImagePostPreview(url: metadata.source.url!)
           case .animatedImage:
-            AnimatedImage(url: metadata.source.mp4!)
+            AnimatedImage(url: metadata.source.gif!)
           }
         }
         .overlay(
