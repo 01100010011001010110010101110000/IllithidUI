@@ -12,11 +12,14 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import Carbon
 import Combine
 import Foundation
 import SwiftUI
 
 import Illithid
+
+// MARK: - WindowManager
 
 final class WindowManager {
   // MARK: Internal
@@ -56,6 +59,29 @@ final class WindowManager {
       makeWindowController(with: id, title: title, styleMask: styleMask, view: view)
     controller.window!.makeKeyAndOrderFront(nil)
     return controller
+  }
+
+  @discardableResult
+  func showMediaPanel<Content: View>(withId id: ID = UUID().uuidString,
+                                     aspectRatio: NSSize?,
+                                     @ViewBuilder view: () -> Content)
+    -> NSPanel {
+    let window = MediaPanel()
+    window.contentViewController = NSHostingController(rootView: view().environment(\.hostingWindow, .init(window)))
+
+    NSApp.mainWindow?.addChildWindow(window, ordered: .above)
+    window.center()
+    window.isMovableByWindowBackground = true
+    window.tabbingIdentifier = id
+    window.styleMask = [.closable, .borderless, .resizable]
+    window.hasShadow = true
+    if let size = aspectRatio {
+      window.aspectRatio = size
+    }
+    window.isOpaque = false
+    window.backgroundColor = .clear
+    window.makeKeyAndOrderFront(nil)
+    return window
   }
 
   func newRootWindow() {
@@ -166,5 +192,26 @@ final class WindowManager {
       }
     controllers[id] = (controller: controller, token: token)
     return controller
+  }
+}
+
+// MARK: - MediaPanel
+
+final class MediaPanel: NSPanel {
+  override var canBecomeKey: Bool {
+    true
+  }
+
+  override func keyDown(with event: NSEvent) {
+    switch event.keyCode {
+    case UInt16(kVK_Space):
+      close()
+    default:
+      super.keyDown(with: event)
+    }
+  }
+
+  override func cancelOperation(_: Any?) {
+    close()
   }
 }

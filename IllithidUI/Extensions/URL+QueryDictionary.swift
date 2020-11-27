@@ -15,13 +15,14 @@
 import Foundation
 
 extension URL {
-  var queryDictionary: [String: String] {
+  var queryDictionary: [String: String?] {
     guard let query = self.query else { return [:] }
 
-    var queryParameters = [String: String]()
+    var queryParameters = [String: String?]()
     query.components(separatedBy: "&").forEach { kvPair in
       let components = kvPair.components(separatedBy: "=")
-      queryParameters[components[0]] = components[1].removingPercentEncoding
+      guard let key = components.first else { return }
+      queryParameters[key] = components.last
     }
     return queryParameters
   }

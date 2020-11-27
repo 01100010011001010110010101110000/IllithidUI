@@ -50,7 +50,7 @@ struct PostContent: View {
       VideoPostPreview(post: post)
         .conditionalModifier(post.over18, NsfwBlurModifier())
     case .image:
-      ImagePostPreview(url: post.imagePreviews.last!.url)
+      ImagePostPreview(url: post.imagePreviews.last!.url, size: NSSize(width: post.imagePreviews.last!.width, height: post.imagePreviews.last!.height))
         .conditionalModifier(post.over18, NsfwBlurModifier())
     case .reddit:
       RedditLinkView(link: post.contentUrl)
@@ -173,7 +173,7 @@ struct GalleryPost: View {
         Group {
           switch metadata.type {
           case .image:
-            ImagePostPreview(url: metadata.source.url!)
+            ImagePostPreview(url: metadata.source.url!, size: NSSize(width: metadata.source.width, height: metadata.source.height))
           case .animatedImage:
             AnimatedImage(url: metadata.source.gif!)
           }
@@ -185,6 +185,29 @@ struct GalleryPost: View {
         // Prevent row from collapsing by enforcing the frame size
         .frame(width: min(CGFloat(metadata.source.width), ImagePostPreview.thumbnailFrame.width),
                height: min(CGFloat(metadata.source.height), ImagePostPreview.thumbnailFrame.height))
+      }
+    }
+    .onTapGesture {
+      WindowManager.shared.showMediaPanel(aspectRatio: maxSize) {
+        PagedView(data: galleryData.items) { item in
+          if let metadata = metaData[item.mediaId] {
+            Group {
+              switch metadata.type {
+              case .image:
+                ImagePostPreview(url: metadata.source.url!, size: NSSize(width: metadata.source.width, height: metadata.source.height))
+              case .animatedImage:
+                AnimatedImage(url: metadata.source.gif!)
+              }
+            }
+            .overlay(
+              captionView(item: item),
+              alignment: .bottomLeading
+            )
+            // Prevent row from collapsing by enforcing the frame size
+            .frame(width: min(CGFloat(metadata.source.width), ImagePostPreview.thumbnailFrame.width),
+                   height: min(CGFloat(metadata.source.height), ImagePostPreview.thumbnailFrame.height))
+          }
+        }
       }
     }
   }
@@ -212,6 +235,13 @@ struct GalleryPost: View {
         .opacity(opacity)
         .overlay(label())
         .frame(height: height)
+    }
+  }
+
+  private var maxSize: NSSize? {
+    metaData.values.reduce(NSSize(width: 0, height: 0)) { (result, metadata) -> NSSize in
+      NSSize(width: CGFloat(metadata.source.width) > result.width ? CGFloat(metadata.source.width) : result.width,
+             height: CGFloat(metadata.source.height) > result.height ? CGFloat(metadata.source.height) : result.height)
     }
   }
 
@@ -319,10 +349,18 @@ struct ImagePostPreview: View {
   // MARK: Internal
 
   let url: URL
+  let size: NSSize
 
   var body: some View {
     WebImage(url: url, context: context)
       .dragAndZoom()
+      .onTapGesture {
+        WindowManager.shared.showMediaPanel(aspectRatio: size) {
+          WebImage(url: url)
+            .resizable()
+            .mediaPanelOverlay(size: size)
+        }
+      }
   }
 
   // MARK: Fileprivate

@@ -25,7 +25,7 @@ struct YouTubeView: View {
     self.link = link
     _data = .init(wrappedValue: YouTubeData())
     if link.host == "youtube.com" || link.host == "www.youtube.com" {
-      identifier = link.queryDictionary["v"] ?? ""
+      identifier = (link.queryDictionary["v"] ?? "") ?? ""
     } else if link.host == "youtu.be" {
       identifier = link.path.trimmingCharacters(in: .init(charactersIn: "/"))
         .components(separatedBy: "/")
