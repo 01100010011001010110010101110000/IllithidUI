@@ -29,18 +29,21 @@ struct InformationBarNavigationView: View {
       List(selection: $selection) {
         Section(header: Text("Meta")) {
           NavigationLink(destination: accountView, label: { Label("Account", systemImage: "person.crop.circle") })
+            .help("Account view")
             .tag("__account__")
             .openableInNewTab(id: Illithid.shared.accountManager.currentAccount?.id ?? "account",
                               title: Illithid.shared.accountManager.currentAccount?.name ?? "Account") {
               accountView
             }
           NavigationLink(destination: SearchView(), label: { Label("Search", systemImage: "magnifyingglass") })
+            .help("Search Reddit")
             .tag("__search__")
             .openableInNewTab(id: "search", title: "Search") { SearchView() }
         }
         Section(header: Text("Front Page")) {
           ForEach(FrontPage.allCases) { page in
             NavigationLink(destination: PostListView(postContainer: page), label: { Label(page.title, systemImage: page.systemImageIconName) })
+              .help(page.displayName)
               .tag(page)
               .openableInNewTab(id: page.id, title: page.title) { PostListView(postContainer: page) }
           }
@@ -61,6 +64,7 @@ struct InformationBarNavigationView: View {
                 Text(multireddit.displayName)
               }
             }
+            .help(multireddit.displayName)
             .tag("m/\(multireddit.id)")
             .openableInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
             .contextMenu {
@@ -90,6 +94,7 @@ struct InformationBarNavigationView: View {
               }
               .openableInNewTab(id: subreddit.id, title: subreddit.displayName) { PostListView(postContainer: subreddit) }
             }
+            .help(subreddit.displayName)
             .tag(subreddit.name)
           }
         }
