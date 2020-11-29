@@ -55,7 +55,7 @@ struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: Vie
         .foregroundColor(.black)
         .padding(4)
         .background(RoundedRectangle(cornerRadius: 8).foregroundColor(.white))
-        .padding([.top, .trailing], 4)
+        .padding([.top, .trailing], 10)
         .shadow(radius: 10)
     }
   }

@@ -60,6 +60,7 @@ private struct PinchAndZoomModifier: ViewModifier {
           Image(systemName: "arrow.triangle.2.circlepath")
         })
           .help("Reset")
+          .padding([.bottom, .trailing], 10)
       }
       .padding([.top, .leading], 4)
       .opacity(self.resetVisibility)
@@ -75,7 +76,6 @@ private struct PinchAndZoomModifier: ViewModifier {
         }
       }
     })
-    .padding([.bottom, .trailing], 10)
   }
 
   // MARK: Private
