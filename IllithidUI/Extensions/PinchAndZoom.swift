@@ -75,6 +75,7 @@ private struct PinchAndZoomModifier: ViewModifier {
         }
       }
     })
+    .padding([.bottom, .trailing], 10)
   }
 
   // MARK: Private

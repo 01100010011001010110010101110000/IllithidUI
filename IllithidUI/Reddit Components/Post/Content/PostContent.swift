@@ -173,18 +173,19 @@ struct GalleryPost: View {
         Group {
           switch metadata.type {
           case .image:
-            ImagePostPreview(url: metadata.source.url!, size: NSSize(width: metadata.source.width, height: metadata.source.height))
+            ImagePostPreview(url: metadata.source.url!,
+                             size: NSSize(width: metadata.source.width, height: metadata.source.height),
+                             enableMediaPanel: false)
           case .animatedImage:
             AnimatedImage(url: metadata.source.gif!)
           }
         }
+        // Alleviate row collapsing by enforcing the frame size
+        .frame(minWidth: 100, minHeight: 100)
         .overlay(
           captionView(item: item),
           alignment: .bottomLeading
         )
-        // Prevent row from collapsing by enforcing the frame size
-        .frame(width: min(CGFloat(metadata.source.width), ImagePostPreview.thumbnailFrame.width),
-               height: min(CGFloat(metadata.source.height), ImagePostPreview.thumbnailFrame.height))
       }
     }
     .onTapGesture {
@@ -194,7 +195,7 @@ struct GalleryPost: View {
             Group {
               switch metadata.type {
               case .image:
-                ImagePostPreview(url: metadata.source.url!, size: NSSize(width: metadata.source.width, height: metadata.source.height))
+                ImagePost(url: metadata.source.url!, size: NSSize(width: metadata.source.width, height: metadata.source.height))
               case .animatedImage:
                 AnimatedImage(url: metadata.source.gif!)
               }
@@ -203,9 +204,7 @@ struct GalleryPost: View {
               captionView(item: item),
               alignment: .bottomLeading
             )
-            // Prevent row from collapsing by enforcing the frame size
-            .frame(width: min(CGFloat(metadata.source.width), ImagePostPreview.thumbnailFrame.width),
-                   height: min(CGFloat(metadata.source.height), ImagePostPreview.thumbnailFrame.height))
+            .mediaPanelOverlay(size: NSSize(width: metadata.source.width, height: metadata.source.height))
           }
         }
       }
@@ -238,8 +237,8 @@ struct GalleryPost: View {
     }
   }
 
-  private var maxSize: NSSize? {
-    metaData.values.reduce(NSSize(width: 0, height: 0)) { (result, metadata) -> NSSize in
+  private var maxSize: NSSize {
+    metaData.values.reduce(NSSize.zero) { (result, metadata) -> NSSize in
       NSSize(width: CGFloat(metadata.source.width) > result.width ? CGFloat(metadata.source.width) : result.width,
              height: CGFloat(metadata.source.height) > result.height ? CGFloat(metadata.source.height) : result.height)
     }
@@ -343,24 +342,69 @@ struct TextPostPreview: View {
   }
 }
 
-// MARK: - ImagePostPreview
+// MARK: - ImagePost
 
-struct ImagePostPreview: View {
+struct ImagePost: View {
+  // MARK: Lifecycle
+
+  init(url: URL, size: NSSize, enableResizing: Bool = true) {
+    self.url = url
+    self.size = size
+    self.enableResizing = enableResizing
+  }
+
   // MARK: Internal
 
   let url: URL
   let size: NSSize
+  let enableResizing: Bool
 
   var body: some View {
-    WebImage(url: url, context: context)
-      .dragAndZoom()
-      .onTapGesture {
-        WindowManager.shared.showMediaPanel(aspectRatio: size) {
-          WebImage(url: url)
-            .resizable()
-            .mediaPanelOverlay(size: size)
-        }
+    Group {
+      if enableResizing {
+        WebImage(url: url)
+          .resizable()
+      } else {
+        WebImage(url: url)
       }
+    }
+    .dragAndZoom()
+  }
+}
+
+// MARK: - ImagePostPreview
+
+struct ImagePostPreview: View {
+  // MARK: Lifecycle
+
+  init(url: URL, size: NSSize, enableMediaPanel: Bool = true) {
+    self.url = url
+    self.size = size
+    self.enableMediaPanel = enableMediaPanel
+  }
+
+  // MARK: Internal
+
+  let url: URL
+  let size: NSSize
+  let enableMediaPanel: Bool
+
+  var body: some View {
+    Group {
+      if enableMediaPanel {
+        WebImage(url: url, context: context)
+          .onTapGesture {
+            WindowManager.shared.showMediaPanel(aspectRatio: size) {
+              WebImage(url: url)
+                .resizable()
+                .mediaPanelOverlay(size: size)
+            }
+          }
+      } else {
+        WebImage(url: url, context: context)
+      }
+    }
+    .dragAndZoom()
   }
 
   // MARK: Fileprivate

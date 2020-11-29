@@ -29,18 +29,14 @@ struct MediaPanelOverlay: ViewModifier {
   let size: NSSize
   let cornerRadius: CGFloat
 
-  @Environment(\.hostingWindow) var window
-
   func body(content: Content) -> some View {
     content
       .onTapGesture(count: 2) {
-        withAnimation {
-          maximized.toggle()
-        }
+        resolvedWindow?.performZoom(nil)
       }
       .aspectRatio(contentMode: .fit)
-      .frame(minWidth: size.width / 2, maxWidth: min(size.width * 2, screenSize?.width ?? .infinity),
-             minHeight: size.height / 2, maxHeight: min(size.height * 2, screenSize?.height ?? .infinity))
+      .frame(minWidth: size.width / 2, idealWidth: size.width, maxWidth: min(size.width * 2, screenSize?.width ?? .infinity),
+             minHeight: size.height / 2, idealHeight: size.height, maxHeight: min(size.height * 2, screenSize?.height ?? .infinity))
       .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
       .overlay(PanelCloseButton().padding(10), alignment: .topLeading)
   }
@@ -62,7 +58,7 @@ struct MediaPanelOverlay: ViewModifier {
     }
   }
 
-  @State private var maximized: Bool = false
+  @Environment(\.hostingWindow) private var window
 
   private var screenSize: NSSize? {
     // TODO: Multiscreen support by fetching the screen the window/view is actually on
