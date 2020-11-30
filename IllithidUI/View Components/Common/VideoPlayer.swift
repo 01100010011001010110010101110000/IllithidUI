@@ -40,6 +40,15 @@ struct VideoPlayer: View {
       .onDisappear {
         avPlayer.pause()
       }
+      .onTapGesture {
+        // TODO: Use a separate player for the media panel
+        avPlayer.pause()
+        avPlayer.seek(to: .zero)
+        WindowManager.shared.showMediaPanel(aspectRatio: fullSize) {
+          AVKit.VideoPlayer(player: avPlayer)
+            .mediaPanelOverlay(size: fullSize, resizable: false)
+        }
+      }
   }
 
   // MARK: Private

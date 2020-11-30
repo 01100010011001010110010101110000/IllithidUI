@@ -52,7 +52,9 @@ struct ImgurView: View {
             VideoPlayer(url: image.mp4!, fullSize: .init(width: image.width, height: image.height))
               .mediaMetadataBar(metadata: image)
           } else {
-            ImagePostPreview(url: image.link, size: NSSize(width: image.width, height: image.height))
+            ImagePostPreview(url: image.link,
+                             size: NSSize(width: image.width, height: image.height),
+                             enableMediaPanel: false)
               .mediaMetadataBar(metadata: image)
           }
         }

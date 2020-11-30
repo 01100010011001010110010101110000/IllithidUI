@@ -19,31 +19,15 @@ import SwiftUI
 struct MediaPanelOverlay: ViewModifier {
   // MARK: Lifecycle
 
-  init(size: NSSize, cornerRadius: CGFloat = 8) {
+  init(size: NSSize, cornerRadius: CGFloat = 8, resizable: Bool = true) {
     self.size = size
     self.cornerRadius = cornerRadius
+    self.resizable = resizable
   }
 
   // MARK: Internal
 
-  let size: NSSize
-  let cornerRadius: CGFloat
-
-  func body(content: Content) -> some View {
-    let size = initialSize
-    return content
-      .onTapGesture(count: 2) {
-        resolvedWindow?.performZoom(nil)
-      }
-      .aspectRatio(contentMode: .fit)
-      .frame(minWidth: size.width, minHeight: size.height)
-      .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-      .overlay(PanelCloseButton().padding(10), alignment: .topLeading)
-  }
-
-  // MARK: Private
-
-  private struct PanelCloseButton: View {
+  struct PanelCloseButton: View {
     @Environment(\.hostingWindow) var window
 
     var body: some View {
@@ -57,6 +41,28 @@ struct MediaPanelOverlay: ViewModifier {
         .keyboardShortcut(.cancelAction)
     }
   }
+
+  let size: NSSize
+  let cornerRadius: CGFloat
+  let resizable: Bool
+
+  func body(content: Content) -> some View {
+    let size = initialSize
+    return Group {
+      if resizable {
+        content
+          .aspectRatio(contentMode: .fit)
+          .frame(minWidth: size.width, minHeight: size.height)
+      } else {
+        content
+          .frame(width: size.width, height: size.height)
+      }
+    }
+    .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+    .overlay(PanelCloseButton().padding(10), alignment: .topLeading)
+  }
+
+  // MARK: Private
 
   @Environment(\.hostingWindow) private var window
 
@@ -82,8 +88,12 @@ struct MediaPanelOverlay: ViewModifier {
 }
 
 extension View {
-  func mediaPanelOverlay(size: NSSize, cornerRadius: CGFloat = 8) -> some View {
-    modifier(MediaPanelOverlay(size: size, cornerRadius: cornerRadius))
+  func mediaPanelOverlay(size: NSSize, cornerRadius: CGFloat = 8, resizable: Bool = true) -> some View {
+    modifier(
+      MediaPanelOverlay(size: size,
+                        cornerRadius: cornerRadius,
+                        resizable: resizable)
+    )
   }
 }
 

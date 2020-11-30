@@ -320,6 +320,13 @@ struct GifPostPreview: View {
       AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)
         .resizable()
         .aspectRatio(contentMode: .fit)
+        .onTapGesture {
+          WindowManager.shared.showMediaPanel(aspectRatio: NSSize(width: post.gifPreviews.last!.width, height: post.gifPreviews.last!.height)) {
+            AnimatedImage(url: post.gifPreviews.last!.url, isAnimating: $isAnimating)
+              .resizable()
+              .mediaPanelOverlay(size: NSSize(width: post.gifPreviews.last!.width, height: post.gifPreviews.last!.height))
+          }
+        }
     }
   }
 }
