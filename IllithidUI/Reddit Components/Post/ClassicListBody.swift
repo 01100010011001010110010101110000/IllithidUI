@@ -27,57 +27,55 @@ struct ClassicListBody: View {
 
   var body: some View {
     ZStack {
-      List {
-        ForEach(posts) { post in
-          PostClassicRowView(post: post)
-            .onTapGesture {
-              openModal(for: post)
+      List(posts, selection: $selection) { post in
+        PostClassicRowView(post: post, selection: $selection)
+//            .onTapGesture {
+//              openModal(for: post)
+//            }
+//            .opacity(selection == post.id ? 0.0 : 1.0)
+          .onAppear {
+            if post == posts.last {
+              onLastPost()
             }
-            .opacity(selection?.id == post.id ? 0.0 : 1.0)
-            .onAppear {
-              if post == posts.last {
-                onLastPost()
-              }
-            }
-        }
+          }
       }
-      .disabled(selection != nil)
-      .blur(radius: blur ? 25 : 0)
-      .transition(.opacity)
-      .zIndex(1)
+//      .disabled(selection != nil)
+//      .blur(radius: blur ? 25 : 0)
+//      .transition(.opacity)
+//      .zIndex(1)
 
-      if let post = selection {
-        RoundedRectangle(cornerRadius: 8)
-          .onMouseGesture(mouseDown: {
-            closeModal()
-          }, mouseUp: {})
-          .foregroundColor(.clear)
-          .zIndex(2)
-
-        PostModalView(post: post)
-          .zIndex(3)
-      }
+//      if let post = selection {
+//        RoundedRectangle(cornerRadius: 8)
+//          .onMouseGesture(mouseDown: {
+//            closeModal()
+//          }, mouseUp: {})
+//          .foregroundColor(.clear)
+//          .zIndex(2)
+//
+//        PostModalView(post: post)
+//          .zIndex(3)
+//      }
     }
   }
 
-  func openModal(for post: Post) {
-    withAnimation(.modal) { selection = post }
-    DispatchQueue.main.async {
-      withAnimation(.blur) { blur = true }
-    }
-  }
-
-  func closeModal() {
-    withAnimation(.modal) { selection = nil }
-    DispatchQueue.main.async {
-      withAnimation(.blur) { blur = false }
-    }
-  }
+//  func openModal(for post: Post) {
+//    withAnimation(.modal) { selection = post.id }
+//    DispatchQueue.main.async {
+//      withAnimation(.blur) { blur = true }
+//    }
+//  }
+//
+//  func closeModal() {
+//    withAnimation(.modal) { selection = nil }
+//    DispatchQueue.main.async {
+//      withAnimation(.blur) { blur = false }
+//    }
+//  }
 
   // MARK: Private
 
   @State private var blur: Bool = false
-  @State private var selection: Post? = nil
+  @State private var selection: Post.ID? = nil
 }
 
 private extension Animation {

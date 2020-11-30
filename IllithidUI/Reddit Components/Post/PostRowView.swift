@@ -23,7 +23,7 @@ import SDWebImageSwiftUI
 struct PostRowView: View {
   // MARK: Lifecycle
 
-  init(post: Post) {
+  init(post: Post, selection: Binding<Post.ID?> = .constant(nil)) {
     self.post = post
 
     if post.crosspostParentList != nil, !post.crosspostParentList!.isEmpty {
@@ -31,9 +31,13 @@ struct PostRowView: View {
     } else {
       crosspostParent = nil
     }
+
+    _selection = selection
   }
 
   // MARK: Internal
+
+  @Binding var selection: Post.ID?
 
   let post: Post
   let crosspostParent: Post?
@@ -89,10 +93,16 @@ struct PostRowView: View {
 
           PostMetadataBar(post: post)
         }
+        Group {
+          if selection == post.id {
+            commentsButton
+              .keyboardShortcut(.defaultAction)
+          } else {
+            commentsButton
+          }
+        }
+        .padding(10)
       }
-    }
-    .onTapGesture(count: 2) {
-      showComments(for: post)
     }
     .contextMenu {
       Button(action: {
@@ -145,6 +155,16 @@ struct PostRowView: View {
     windowManager.showMainWindowTab(withId: "\(post.name)_debug", title: "\(post.title) - Debug View") {
       PostDebugView(post: post)
     }
+  }
+
+  // MARK: Private
+
+  private var commentsButton: some View {
+    Button(action: {
+      showComments(for: post)
+    }, label: {
+      Image(systemName: "chevron.right")
+    })
   }
 }
 

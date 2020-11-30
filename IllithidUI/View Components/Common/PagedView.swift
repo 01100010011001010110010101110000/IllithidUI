@@ -39,7 +39,7 @@ struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: Vie
           HStack {
             if index != data.startIndex {
               Button(action: { previous() }, label: { Image(systemName: "chevron.left") })
-                .keyboardShortcut(.leftArrow, modifiers: .init(rawValue: 0))
+                .keyboardShortcut(.leftArrow, modifiers: .none)
                 .offset(x: 10)
             }
             Spacer()
@@ -49,7 +49,7 @@ struct PagedView<Data: RandomAccessCollection, ID: Hashable, Content: View>: Vie
                 "chevron.right"
               )
             })
-              .keyboardShortcut(.rightArrow, modifiers: .init(rawValue: 0))
+              .keyboardShortcut(.rightArrow, modifiers: .none)
               .offset(x: -10)
           })
         .tag(data[index][keyPath: id])

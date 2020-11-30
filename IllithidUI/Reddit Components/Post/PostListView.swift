@@ -64,7 +64,7 @@ struct PostListView: View {
               .help("Show or hide sidebar")
           }
         }
-        .padding([.bottom, .leading, .trailing], 10)
+        .padding([.bottom, .horizontal], 10)
       }
       .background(Color(.controlBackgroundColor))
 
@@ -92,7 +92,7 @@ struct PostListView: View {
               }
           case .large:
             List(filteredPosts, selection: $selection) { post in
-              PostRowView(post: post)
+              PostRowView(post: post, selection: $selection)
                 .onAppear {
                   if post == filteredPosts.last {
                     postsData.loadPosts(sort: sorter.sort,
@@ -128,7 +128,7 @@ struct PostListView: View {
 
   // MARK: Private
 
-  @State private var selection: Post? = nil
+  @State private var selection: Post.ID? = nil
   @State private var searchText: String = ""
   @State private var showSidebar: Bool = false
   @StateObject private var sorter = SortModel(sort: PostSort.best, topInterval: .day)

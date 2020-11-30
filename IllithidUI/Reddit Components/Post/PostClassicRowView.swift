@@ -18,42 +18,19 @@ import Illithid
 import SDWebImageSwiftUI
 
 struct PostClassicRowView: View {
-  @ObservedObject private var moderators: ModeratorData = .shared
+  // MARK: Lifecycle
+
+  init(post: Post, selection: Binding<Post.ID?> = .constant(nil)) {
+    self.post = post
+    _selection = selection
+  }
+
+  // MARK: Internal
+
   @EnvironmentObject var informationBarData: InformationBarData
+  @Binding var selection: Post.ID?
 
   let post: Post
-  private let windowManager: WindowManager = .shared
-
-  private var previewImage: String {
-    switch post.postHint {
-    case .image:
-      return "photo.fill"
-    case .hostedVideo, .richVideo:
-      return "video.fill"
-    default:
-      return "link"
-    }
-  }
-
-  private var authorColor: Color {
-    if post.isAdminPost {
-      return .red
-    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
-      return .green
-    } else {
-      return .white
-    }
-  }
-
-  private var thumbnailPlaceholder: some View {
-    ZStack(alignment: .center) {
-      RoundedRectangle(cornerRadius: 8, style: .continuous)
-        .foregroundColor(Color(.darkGray))
-      Image(systemName: previewImage)
-        .foregroundColor(.blue)
-    }
-    .frame(width: 90, height: 60)
-  }
 
   var body: some View {
     GroupBox {
@@ -102,11 +79,70 @@ struct PostClassicRowView: View {
           }
         }
         Spacer()
+        Group {
+          if selection == post.id {
+            commentsButton
+              .keyboardShortcut(.defaultAction)
+          } else {
+            commentsButton
+          }
+        }
+        .padding(10)
       }
       .padding([.top, .bottom], 10)
       .padding(.trailing, 5)
     }
     .frame(maxWidth: .infinity)
+  }
+
+  func showComments(for post: Post) {
+    windowManager.showMainWindowTab(withId: post.name, title: post.title) {
+      CommentsView(post: post)
+    }
+  }
+
+  // MARK: Private
+
+  @ObservedObject private var moderators: ModeratorData = .shared
+  private let windowManager: WindowManager = .shared
+
+  private var previewImage: String {
+    switch post.postHint {
+    case .image:
+      return "photo.fill"
+    case .hostedVideo, .richVideo:
+      return "video.fill"
+    default:
+      return "link"
+    }
+  }
+
+  private var authorColor: Color {
+    if post.isAdminPost {
+      return .red
+    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
+      return .green
+    } else {
+      return .white
+    }
+  }
+
+  private var thumbnailPlaceholder: some View {
+    ZStack(alignment: .center) {
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .foregroundColor(Color(.darkGray))
+      Image(systemName: previewImage)
+        .foregroundColor(.blue)
+    }
+    .frame(width: 90, height: 60)
+  }
+
+  private var commentsButton: some View {
+    Button(action: {
+      showComments(for: post)
+    }, label: {
+      Image(systemName: "chevron.right")
+    })
   }
 }
 
