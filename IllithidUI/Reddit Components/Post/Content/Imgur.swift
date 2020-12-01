@@ -70,25 +70,23 @@ struct ImgurView: View {
 // MARK: - ImgurImage + MediaMetadataProvider
 
 extension ImgurImage: MediaMetadataProvider {
-  var mediaTitle: String {
-    title ?? ""
-  }
+  var mediaTitle: String { title ?? "" }
 
-  var mediaDescription: String? {
-    dataDescription
-  }
+  var mediaDescription: String? { dataDescription }
 
-  var upvotes: Int? {
-    vote
-  }
+  var upvotes: Int? { vote }
 
-  var downvotes: Int? {
-    nil
-  }
+  var downvotes: Int? { nil }
 
-  var hostDisplayName: String {
-    "Imgur"
-  }
+  var hostDisplayName: String { "Imgur" }
+
+  var imageUrl: URL? { link }
+
+  var mp4Url: URL? { mp4 }
+
+  var gifUrl: URL? { gifv }
+
+  var size: CGSize { .init(width: width, height: height) }
 }
 
 // MARK: - ImgurData

@@ -176,25 +176,23 @@ final class GfyData: ObservableObject, Cancellable {
 // MARK: - GfyItem + MediaMetadataProvider
 
 extension GfyItem: MediaMetadataProvider {
-  var mediaTitle: String {
-    title
-  }
+  var mediaTitle: String { title }
 
-  var hostDisplayName: String {
-    "Gfycat"
-  }
+  var hostDisplayName: String { "Gfycat" }
 
-  var mediaDescription: String? {
-    gfyItemDescription
-  }
+  var mediaDescription: String? { gfyItemDescription }
 
-  var upvotes: Int? {
-    likes
-  }
+  var upvotes: Int? { likes }
 
-  var downvotes: Int? {
-    dislikes
-  }
+  var downvotes: Int? { dislikes }
+
+  var imageUrl: URL? { nil }
+
+  var mp4Url: URL? { mp4URL }
+
+  var gifUrl: URL? { gifURL }
+
+  var size: CGSize { .init(width: width, height: height) }
 }
 
 // MARK: - GfyNotFound

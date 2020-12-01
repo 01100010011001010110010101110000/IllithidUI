@@ -63,29 +63,25 @@ struct YouTubeView: View {
 // MARK: - XCDYouTubeVideo + MediaMetadataProvider
 
 extension XCDYouTubeVideo: MediaMetadataProvider {
-  var mediaTitle: String {
-    title
-  }
+  var mediaTitle: String { title }
 
-  var mediaDescription: String? {
-    videoDescription
-  }
+  var mediaDescription: String? { videoDescription }
 
-  var upvotes: Int? {
-    nil
-  }
+  var upvotes: Int? { nil }
 
-  var downvotes: Int? {
-    nil
-  }
+  var downvotes: Int? { nil }
 
-  var hostDisplayName: String {
-    "YouTube"
-  }
+  var hostDisplayName: String { "YouTube" }
 
-  var views: Int {
-    viewCount
-  }
+  var views: Int { viewCount }
+
+  var imageUrl: URL? { nil }
+
+  var mp4Url: URL? { streamURL }
+
+  var gifUrl: URL? { nil }
+
+  var size: CGSize { .init(width: 1920, height: 1080) }
 }
 
 // MARK: - YouTubeData

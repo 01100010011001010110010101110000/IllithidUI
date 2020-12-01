@@ -12,6 +12,8 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import Foundation
+
 /// A provider of metadata related to a media item, e.g. an image or video
 protocol MediaMetadataProvider {
   /// The media item's title
@@ -26,4 +28,12 @@ protocol MediaMetadataProvider {
   var hostDisplayName: String { get }
   /// The number of views the media item has gotten on its host
   var views: Int { get }
+  /// The URL of the media's image source, if there is one
+  var imageUrl: URL? { get }
+  /// The URL of the media's MP4 source, if there is one
+  var mp4Url: URL? { get }
+  /// The URL of the media's image source, if there is one
+  var gifUrl: URL? { get }
+  /// The size of the media
+  var size: CGSize { get }
 }
