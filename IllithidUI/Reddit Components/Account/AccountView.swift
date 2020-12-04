@@ -32,8 +32,6 @@ struct AccountView: View {
 
   // MARK: Internal
 
-  @EnvironmentObject var informationBarData: InformationBarData
-
   var body: some View {
     if accountData.account != nil {
       TabView(selection: $selected) {
@@ -75,7 +73,6 @@ struct AccountView: View {
             .tag(AccountContent.downvoted)
         }
       }
-      .environmentObject(informationBarData)
       .padding(.top)
     } else {
       Rectangle()

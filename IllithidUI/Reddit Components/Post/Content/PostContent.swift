@@ -173,11 +173,13 @@ struct GalleryPost: View {
         Group {
           switch metadata.type {
           case .image:
-            ImagePostPreview(url: metadata.source.url!,
-                             size: NSSize(width: metadata.source.width, height: metadata.source.height),
+            ImagePostPreview(url: metadata.source!.url!,
+                             size: NSSize(width: metadata.source!.width, height: metadata.source!.height),
                              enableMediaPanel: false)
           case .animatedImage:
-            AnimatedImage(url: metadata.source.gif!)
+            AnimatedImage(url: metadata.source!.gif!)
+          case .redditVideo:
+            VideoPlayer(url: metadata.hls!)
           }
         }
         // Alleviate row collapsing by enforcing the frame size
@@ -195,16 +197,18 @@ struct GalleryPost: View {
             Group {
               switch metadata.type {
               case .image:
-                ImagePost(url: metadata.source.url!, size: NSSize(width: metadata.source.width, height: metadata.source.height))
+                ImagePost(url: metadata.source!.url!, size: NSSize(width: metadata.source!.width, height: metadata.source!.height))
               case .animatedImage:
-                AnimatedImage(url: metadata.source.gif!)
+                AnimatedImage(url: metadata.source!.gif!)
+              case .redditVideo:
+                VideoPlayer(url: metadata.hls!)
               }
             }
             .overlay(
               captionView(item: item),
               alignment: .bottomLeading
             )
-            .mediaPanelOverlay(size: NSSize(width: metadata.source.width, height: metadata.source.height))
+            .mediaPanelOverlay(size: NSSize(width: metadata.source!.width, height: metadata.source!.height))
           }
         }
       }
@@ -239,8 +243,8 @@ struct GalleryPost: View {
 
   private var maxSize: NSSize {
     metaData.values.reduce(NSSize.zero) { (result, metadata) -> NSSize in
-      NSSize(width: CGFloat(metadata.source.width) > result.width ? CGFloat(metadata.source.width) : result.width,
-             height: CGFloat(metadata.source.height) > result.height ? CGFloat(metadata.source.height) : result.height)
+      NSSize(width: CGFloat(metadata.source!.width) > result.width ? CGFloat(metadata.source!.width) : result.width,
+             height: CGFloat(metadata.source!.height) > result.height ? CGFloat(metadata.source!.height) : result.height)
     }
   }
 

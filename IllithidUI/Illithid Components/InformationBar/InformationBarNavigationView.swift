@@ -138,14 +138,13 @@ struct InformationBarNavigationView: View {
   @ViewBuilder private var accountView: some View {
     if let account = Illithid.shared.accountManager.currentAccount {
       AccountView(account: account)
-        .environmentObject(informationBarData)
     } else {
       Text("There is no logged in account")
     }
   }
 }
 
-private extension FrontPage {
+extension FrontPage {
   var systemImageIconName: String {
     switch self {
     case .all:
