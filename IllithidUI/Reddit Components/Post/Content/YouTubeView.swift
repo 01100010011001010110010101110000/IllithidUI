@@ -81,6 +81,7 @@ extension XCDYouTubeVideo: MediaMetadataProvider {
 
   var gifUrl: URL? { nil }
 
+  // The maximum size of any non-livestream video returned by XCDYouTubeKit
   var size: CGSize { .init(width: 1280, height: 720) }
 }
 

@@ -394,6 +394,8 @@ struct ImagePostPreview: View {
     self.enableMediaPanel = enableMediaPanel
   }
 
+  @ObservedObject private var preferences: PreferencesData = .shared
+
   // MARK: Internal
 
   let url: URL
@@ -418,14 +420,12 @@ struct ImagePostPreview: View {
     .dragAndZoom()
   }
 
-  // MARK: Fileprivate
-
-  fileprivate static let thumbnailFrame: CGSize = .init(width: 480, height: 360)
-
   // MARK: Private
 
-  private let context: [SDWebImageContextOption: Any] = [
-    .imageThumbnailPixelSize: CGSize(width: thumbnailFrame.width,
-                                     height: thumbnailFrame.height),
-  ]
+  private var context: [SDWebImageContextOption: Any] {
+    [
+      .imageThumbnailPixelSize: CGSize(width: preferences.previewSize.targetSize.width,
+                                       height: preferences.previewSize.targetSize.height),
+    ]
+  }
 }
