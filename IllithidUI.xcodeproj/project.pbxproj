@@ -14,6 +14,7 @@
 		6D09352725757FAE002DDBD8 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D89F3912468A95E00364E29 /* Illithid */; };
 		6D09352825757FAE002DDBD8 /* XCDYouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6DBB484125756B2300C0B1E2 /* XCDYouTubeKit */; };
 		6D09352925757FAE002DDBD8 /* Maaku in Frameworks */ = {isa = PBXBuildFile; productRef = 6DBB487625756E0000C0B1E2 /* Maaku */; };
+		6D09354025760F8C002DDBD8 /* PostGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D09353F25760F8C002DDBD8 /* PostGridView.swift */; };
 		6D0A1E45238399B9006CDB86 /* ToolbarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */; };
 		6D0A4EFA237A5CC700626E44 /* EraseToAnyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */; };
 		6D0A4EFD237A6D2F00626E44 /* LinkPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */; };
@@ -120,6 +121,7 @@
 
 /* Begin PBXFileReference section */
 		6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllithidButton.swift; sourceTree = "<group>"; };
+		6D09353F25760F8C002DDBD8 /* PostGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostGridView.swift; sourceTree = "<group>"; };
 		6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarDelegate.swift; sourceTree = "<group>"; };
 		6D0A4EF9237A5CC700626E44 /* EraseToAnyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EraseToAnyView.swift; sourceTree = "<group>"; };
 		6D0A4EFC237A6D2F00626E44 /* LinkPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreview.swift; sourceTree = "<group>"; };
@@ -426,6 +428,7 @@
 				6DCD003922B0B8A2002FBE9A /* Preferences */,
 				6D138DD623865779008E00CF /* InformationBar */,
 				6D0A1E4123839967006CDB86 /* Toolbar */,
+				6D09353F25760F8C002DDBD8 /* PostGridView.swift */,
 			);
 			path = "Illithid Components";
 			sourceTree = "<group>";
@@ -749,6 +752,7 @@
 				6DBB487125756D7400C0B1E2 /* Markdown.swift in Sources */,
 				6DBE9E4E240F73DE004E7375 /* FireLogger.swift in Sources */,
 				6DAA94EB24BBE663001A07E5 /* PostModalView.swift in Sources */,
+				6D09354025760F8C002DDBD8 /* PostGridView.swift in Sources */,
 				6DBB483C25756A7300C0B1E2 /* YouTubeView.swift in Sources */,
 				6DE756B822AE16E300A1F87B /* PostListData.swift in Sources */,
 				6DBCFBE0247381D600174442 /* WikiData.swift in Sources */,
