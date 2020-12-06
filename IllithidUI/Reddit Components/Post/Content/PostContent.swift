@@ -420,7 +420,7 @@ struct ImagePostPreview: View {
 
   // MARK: Fileprivate
 
-  fileprivate static let thumbnailFrame: CGSize = .init(width: 1536, height: 864)
+  fileprivate static let thumbnailFrame: CGSize = .init(width: 480, height: 360)
 
   // MARK: Private
 

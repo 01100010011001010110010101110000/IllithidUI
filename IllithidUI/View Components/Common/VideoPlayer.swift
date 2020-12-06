@@ -36,7 +36,7 @@ struct VideoPlayer: View {
 
   var body: some View {
     AVKit.VideoPlayer(player: avPlayer)
-      .frame(width: calculateSize.width, height: calculateSize.height)
+      .frame(width: 480, height: 360)
       .onDisappear {
         avPlayer.pause()
       }
