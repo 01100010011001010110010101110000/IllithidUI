@@ -89,14 +89,13 @@ struct SearchView: View {
           }
         }
       }
-      .allowsHitTesting(subredditSelection == nil && postSelection == nil && userToFind == nil)
-      .disabled(subredditSelection != nil || postSelection != nil || userToFind != nil)
+      .allowsHitTesting(!haveSelection)
+      .disabled(haveSelection)
+      .redacted(reason: haveSelection ? .placeholder : [])
       .blur(radius: blur ? 8 : 0)
       .zIndex(1)
 
-      if subredditSelection != nil
-        || postSelection != nil
-        || userToFind != nil {
+      if haveSelection {
         RoundedRectangle(cornerRadius: 8)
           .onMouseGesture(mouseDown: {
             closeModal()
@@ -105,27 +104,25 @@ struct SearchView: View {
           .zIndex(2)
       }
 
-      if let subreddit = subredditSelection {
-        PostListView(postContainer: subreddit)
-          .clipShape(ContainerRelativeShape())
-          .padding(20)
-          .shadow(radius: 10)
-          .zIndex(3)
-      } else if let post = postSelection {
-        CommentsView(post: post)
-          .clipShape(ContainerRelativeShape())
-          .background(Color(.windowBackgroundColor))
-          .padding(20)
-          .shadow(radius: 10)
-          .zIndex(3)
-      } else if let user = userToFind {
-        AccountView(name: user)
-          .clipShape(ContainerRelativeShape())
-          .padding(20)
-          .shadow(radius: 10)
-          .zIndex(3)
+      Group {
+        if let subreddit = subredditSelection {
+          PostListView(postContainer: subreddit)
+        } else if let post = postSelection {
+          CommentsView(post: post)
+            .background(Color(.windowBackgroundColor))
+        } else if let user = userToFind {
+          AccountView(name: user)
+        }
       }
+      .modalModifier()
+      .zIndex(3)
     }
+  }
+
+  private var haveSelection: Bool {
+    subredditSelection != nil
+      || postSelection != nil
+      || userToFind != nil
   }
 
   // MARK: Private
@@ -183,6 +180,15 @@ struct SearchView: View {
     DispatchQueue.main.async {
       withAnimation(.blur) { blur = false }
     }
+  }
+}
+
+private extension View {
+  func modalModifier() -> some View {
+    self
+      .clipShape(ContainerRelativeShape())
+      .padding(20)
+      .shadow(radius: 10)
   }
 }
 
