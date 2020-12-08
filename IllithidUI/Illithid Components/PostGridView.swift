@@ -12,13 +12,14 @@ import Illithid
 
 struct PostGridView: View {
   @StateObject private var informationBarData: InformationBarData = .init()
-  @State private var columns: [UUID] = [UUID()]
   @StateObject private var columnManager: ColumnManager = ColumnManager()
 
   var body: some View {
     ZStack(alignment: .bottomTrailing) {
       HStack {
         HSplitView {
+          NavigationSidebar(informationBarData: informationBarData, selection: $columnManager.columns[0].selection)
+            .frame(minWidth: 150, maxWidth: 350)
           ForEach(columnManager.columns.indices, id: \.self) { idx in
             SubredditSelectorView(column: $columnManager.columns[idx], onExit: { columnManager.removeColumn(id: $0) })
               .environmentObject(informationBarData)
@@ -42,6 +43,87 @@ struct PostGridView: View {
   }
 }
 
+fileprivate struct NavigationSidebar: View {
+  @ObservedObject var informationBarData: InformationBarData
+  @State private var isEditingMulti: Bool = false
+  @State private var editing: Multireddit.ID?
+
+  @Binding var selection: String?
+  @ViewBuilder private var accountView: some View {
+    if let account = Illithid.shared.accountManager.currentAccount {
+      AccountView(account: account)
+    } else {
+      Text("There is no logged in account")
+    }
+  }
+
+  var body: some View {
+    List(selection: $selection) {
+      Section(header: Text("Meta")) {
+        Label("Account", systemImage: "person.crop.circle")
+          .onDrag { NSItemProvider(object: "__account__" as NSString) }
+          .help("Account view")
+          .tag("__account__")
+          .openableInNewTab(id: Illithid.shared.accountManager.currentAccount?.id ?? "account",
+                            title: Illithid.shared.accountManager.currentAccount?.name ?? "Account") {
+            accountView
+          }
+        Label("Search", systemImage: "magnifyingglass")
+          .onDrag { NSItemProvider(object: "__search__" as NSString) }
+          .help("Search Reddit")
+          .tag("__search__")
+          .openableInNewTab(id: "search", title: "Search") { SearchView() }
+      }
+      Section(header: Text("Front Page")) {
+        ForEach(FrontPage.allCases) { page in
+          Label(page.title, systemImage: page.systemImageIconName)
+            .onDrag { NSItemProvider(object: page.id as NSString) }
+            .help(page.displayName)
+            .tag(page)
+            .openableInNewTab(id: page.id, title: page.title) { PostListView(postContainer: page) }
+        }
+      }
+
+      Section(header: Text("Multireddits")) {
+        ForEach(informationBarData.multiReddits) { multireddit in
+          HStack {
+            SubredditIcon(multireddit: multireddit)
+              .frame(width: 24, height: 24)
+            Text(multireddit.displayName)
+          }
+          .onDrag { NSItemProvider(object: multireddit.id as NSString) }
+          .help(multireddit.displayName)
+          .tag("m/\(multireddit.id)")
+          .openableInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
+          .contextMenu {
+            Button(action: {
+              isEditingMulti = true
+              editing = multireddit.id
+            }) {
+              Text("Edit Multireddit")
+            }
+          }
+        }
+      }
+
+      Section(header: Text("Subscribed")) {
+        ForEach(informationBarData.subscribedSubreddits) { subreddit in
+          HStack {
+            SubredditIcon(subreddit: subreddit)
+              .frame(width: 24, height: 24)
+            Text(subreddit.displayName)
+          }
+          .onDrag { NSItemProvider(object: subreddit.id as NSString) }
+          .openableInNewTab(id: subreddit.id, title: subreddit.displayName) { PostListView(postContainer: subreddit) }
+          .help(subreddit.displayName)
+          .tag(subreddit.name)
+        }
+      }
+    }
+    .listStyle(SidebarListStyle())
+  }
+}
+
 fileprivate struct SubredditSelectorView: View {
   @State private var presentSelector: Bool = false
   @Binding var column: ColumnManager.Column
@@ -56,11 +138,14 @@ fileprivate struct SubredditSelectorView: View {
   @ViewBuilder var body: some View {
     VStack {
       HStack {
-        Button(action: {
-          onExit(column.id)
-        }, label: {
-          Image(systemName: "xmark.circle.fill")
-        })
+        if column.closable {
+          Button(action: {
+            onExit(column.id)
+          }, label: {
+            Image(systemName: "xmark.circle.fill")
+          })
+          .keyboardShortcut(.cancelAction)
+        }
         Spacer()
         Text(column.selection == nil ? "Select" : column.selection!)
         Image(systemName: "chevron.down")
@@ -164,7 +249,7 @@ final private class ColumnManager: ObservableObject {
   init() {
     guard let data = UserDefaults.standard.data(forKey: Self.columnKey),
           let saved = try? JSONDecoder().decode([Column].self, from: data) else {
-      columns = [Column(selection: "__search__")]
+      columns = [Column(closable: false, selection: "__search__")]
       return
     }
     columns = saved
@@ -199,10 +284,12 @@ final private class ColumnManager: ObservableObject {
 
   struct Column: Identifiable, Codable {
     let id: UUID
+    let closable: Bool
     var selection: String?
 
-    init(id: UUID = UUID(), selection: String = "__search__") {
+    init(id: UUID = UUID(), closable: Bool = true, selection: String = "__search__") {
       self.id = id
+      self.closable = closable
       self.selection = selection
     }
   }

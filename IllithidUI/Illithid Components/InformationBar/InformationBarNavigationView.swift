@@ -99,10 +99,10 @@ struct InformationBarNavigationView: View {
           }
         }
       }
+      .listStyle(SidebarListStyle())
       .onAppear {
         informationBarData.loadAccountData()
       }
-      .listStyle(SidebarListStyle())
 
       NavigationPrompt(prompt: "Open the front page")
     }
