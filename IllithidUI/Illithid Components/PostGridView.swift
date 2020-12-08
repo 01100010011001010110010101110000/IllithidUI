@@ -1,25 +1,32 @@
+// Copyright (C) 2020 Tyler Gregory (@01100010011001010110010101110000)
 //
-//  PostGridView.swift
-//  IllithidUI
+// This program is free software: you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free Software
+// Foundation, either version 3 of the License, or (at your option) any later
+// version.
 //
-//  Created by Tyler Gregory on 11/30/20.
-//  Copyright © 2020 Tyler Gregory. All rights reserved.
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 //
+// You should have received a copy of the GNU General Public License along with
+// this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import SwiftUI
 
 import Illithid
 
+// MARK: - PostGridView
+
 struct PostGridView: View {
-  @StateObject private var informationBarData: InformationBarData = .init()
-  @StateObject private var columnManager: ColumnManager = ColumnManager()
+  // MARK: Internal
 
   var body: some View {
     ZStack(alignment: .bottomTrailing) {
       HStack {
         HSplitView {
           NavigationSidebar(informationBarData: informationBarData, selection: $columnManager.columns[0].selection)
-            .frame(minWidth: 150, maxWidth: 350)
+            .frame(minWidth: 150, maxWidth: 270)
           ForEach(columnManager.columns.indices, id: \.self) { idx in
             SubredditSelectorView(column: $columnManager.columns[idx], onExit: { columnManager.removeColumn(id: $0) })
               .environmentObject(informationBarData)
@@ -34,16 +41,23 @@ struct PostGridView: View {
       }, label: {
         Image(systemName: "plus")
       })
-      .keyboardShortcut(.rightArrow)
-      .shadow(radius: 20)
-      .padding()
-      .help("Add a column")
+        .keyboardShortcut(.rightArrow)
+        .shadow(radius: 20)
+        .padding()
+        .help("Add a column")
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
+
+  // MARK: Private
+
+  @StateObject private var informationBarData: InformationBarData = .init()
+  @StateObject private var columnManager = ColumnManager()
 }
 
-fileprivate struct NavigationSidebar: View {
+// MARK: - NavigationSidebar
+
+private struct NavigationSidebar: View {
   @ObservedObject var informationBarData: InformationBarData
   @State private var isEditingMulti: Bool = false
   @State private var editing: Multireddit.ID?
@@ -124,16 +138,21 @@ fileprivate struct NavigationSidebar: View {
   }
 }
 
-fileprivate struct SubredditSelectorView: View {
-  @State private var presentSelector: Bool = false
-  @Binding var column: ColumnManager.Column
-  @EnvironmentObject var informationBarData: InformationBarData
-  let onExit: (UUID) -> Void
+// MARK: - SubredditSelectorView
+
+private struct SubredditSelectorView: View {
+  // MARK: Lifecycle
 
   init(column: Binding<ColumnManager.Column>, onExit: @escaping (UUID) -> Void) {
     self.onExit = onExit
     _column = column
   }
+
+  // MARK: Internal
+
+  @Binding var column: ColumnManager.Column
+  @EnvironmentObject var informationBarData: InformationBarData
+  let onExit: (UUID) -> Void
 
   @ViewBuilder var body: some View {
     VStack {
@@ -144,7 +163,7 @@ fileprivate struct SubredditSelectorView: View {
           }, label: {
             Image(systemName: "xmark.circle.fill")
           })
-          .keyboardShortcut(.cancelAction)
+            .keyboardShortcut(.cancelAction)
         }
         Spacer()
         Text(column.selection == nil ? "Select" : column.selection!)
@@ -202,22 +221,43 @@ fileprivate struct SubredditSelectorView: View {
 
       Divider()
         .padding(.horizontal)
-      
+
+      // TODO: Fix this idiotic hacky workaround 
       if column.selection == "__account__" {
         accountView
       } else if column.selection == "__search__" {
         SearchView()
       } else if let page = selectedPage {
-        PostListView(postContainer: page)
+        if reload {
+          PostListView(postContainer: page)
+        } else {
+          PostListView(postContainer: page)
+        }
       } else if let multireddit = selectedMultireddit {
-        PostListView(postContainer: multireddit)
+        if reload {
+          PostListView(postContainer: multireddit)
+        } else {
+          PostListView(postContainer: multireddit)
+        }
       } else if let subreddit = selectedSubreddit {
-        PostListView(postContainer: subreddit)
+        if reload {
+          PostListView(postContainer: subreddit)
+        } else {
+          PostListView(postContainer: subreddit)
+        }
       } else {
         Spacer()
       }
     }
+    .onChange(of: column.selection) { _ in
+      reload.toggle()
+    }
   }
+
+  // MARK: Private
+
+  @State private var reload: Bool = false
+  @State private var presentSelector: Bool = false
 
   private var selectedSubreddit: Subreddit? {
     guard let selection = column.selection else { return nil }
@@ -243,8 +283,10 @@ fileprivate struct SubredditSelectorView: View {
   }
 }
 
-final private class ColumnManager: ObservableObject {
-  static let columnKey: String = "postGridView.columns"
+// MARK: - ColumnManager
+
+private final class ColumnManager: ObservableObject {
+  // MARK: Lifecycle
 
   init() {
     guard let data = UserDefaults.standard.data(forKey: Self.columnKey),
@@ -254,6 +296,26 @@ final private class ColumnManager: ObservableObject {
     }
     columns = saved
   }
+
+  // MARK: Internal
+
+  struct Column: Identifiable, Codable {
+    // MARK: Lifecycle
+
+    init(id: UUID = UUID(), closable: Bool = true, selection: String = "__search__") {
+      self.id = id
+      self.closable = closable
+      self.selection = selection
+    }
+
+    // MARK: Internal
+
+    let id: UUID
+    let closable: Bool
+    var selection: String?
+  }
+
+  static let columnKey: String = "postGridView.columns"
 
   @Published var columns: [Column] {
     didSet {
@@ -280,17 +342,5 @@ final private class ColumnManager: ObservableObject {
   @discardableResult
   func removeLast() -> Column? {
     columns.popLast()
-  }
-
-  struct Column: Identifiable, Codable {
-    let id: UUID
-    let closable: Bool
-    var selection: String?
-
-    init(id: UUID = UUID(), closable: Bool = true, selection: String = "__search__") {
-      self.id = id
-      self.closable = closable
-      self.selection = selection
-    }
   }
 }
