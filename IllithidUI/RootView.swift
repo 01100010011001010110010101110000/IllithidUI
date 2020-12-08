@@ -69,7 +69,7 @@ struct RootView: View {
   @AppStorage("navigationLayout") var layout: NavigationLayout = NavigationLayoutKey.defaultValue
 
   var body: some View {
-    InformationBarNavigationView()
+    PostGridView()
       .environment(\.navigationLayout, layout)
       .toolbar {
         ToolbarItem(placement: .navigation) {
