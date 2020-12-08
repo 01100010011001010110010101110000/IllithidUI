@@ -330,6 +330,7 @@ final class PreferencesData: ObservableObject, Codable {
     try container.encode(autoPlayGifs, forKey: .autoPlayGifs)
     try container.encode(browser, forKey: .browser)
     try container.encode(openLinksInForeground, forKey: .openLinksInForeground)
+    try container.encode(previewSize, forKey: .previewSize)
   }
 
   // MARK: Private
