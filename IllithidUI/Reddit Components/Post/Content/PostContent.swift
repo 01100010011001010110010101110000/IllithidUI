@@ -394,8 +394,6 @@ struct ImagePostPreview: View {
     self.enableMediaPanel = enableMediaPanel
   }
 
-  @ObservedObject private var preferences: PreferencesData = .shared
-
   // MARK: Internal
 
   let url: URL
@@ -421,6 +419,8 @@ struct ImagePostPreview: View {
   }
 
   // MARK: Private
+
+  @ObservedObject private var preferences: PreferencesData = .shared
 
   private var context: [SDWebImageContextOption: Any] {
     [

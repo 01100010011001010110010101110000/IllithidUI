@@ -319,8 +319,6 @@ final class PreferencesData: ObservableObject, Codable {
     }
   }
 
-  private static let defaults: UserDefaults = .standard
-
   func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
@@ -334,6 +332,8 @@ final class PreferencesData: ObservableObject, Codable {
   }
 
   // MARK: Private
+
+  private static let defaults: UserDefaults = .standard
 
   private func updateDefaults() {
     guard let data = try? JSONEncoder().encode(self) else {
@@ -351,8 +351,10 @@ extension PreferencesData {
     case medium
     case large
 
+    // MARK: Internal
+
     var id: Self.RawValue {
-      self.rawValue
+      rawValue
     }
 
     var targetSize: CGSize {

@@ -119,12 +119,6 @@ struct SearchView: View {
     }
   }
 
-  private var haveSelection: Bool {
-    subredditSelection != nil
-      || postSelection != nil
-      || userToFind != nil
-  }
-
   // MARK: Private
 
   @StateObject private var searchData: SearchData = .init()
@@ -143,6 +137,12 @@ struct SearchView: View {
     GridItem(.flexible()),
     GridItem(.flexible()),
   ]
+
+  private var haveSelection: Bool {
+    subredditSelection != nil
+      || postSelection != nil
+      || userToFind != nil
+  }
 
   private var prompt: String {
     if searchData.query.isEmpty { return "Make a search" }
@@ -185,8 +185,7 @@ struct SearchView: View {
 
 private extension View {
   func modalModifier() -> some View {
-    self
-      .clipShape(ContainerRelativeShape())
+    clipShape(ContainerRelativeShape())
       .padding(20)
       .shadow(radius: 10)
   }
