@@ -25,15 +25,15 @@ struct PostGridView: View {
     ZStack(alignment: .bottomTrailing) {
       HStack {
         HSplitView {
-          NavigationSidebar(informationBarData: informationBarData, selection: $columnManager.columns[0].selection)
+          NavigationSidebar(column: columnManager.columns.first!)
             .frame(minWidth: 150, maxWidth: 270)
-          ForEach(columnManager.columns.indices, id: \.self) { idx in
-            SubredditSelectorView(column: $columnManager.columns[idx], onExit: { columnManager.removeColumn(id: $0) })
-              .environmentObject(informationBarData)
-              .environmentObject(columnManager)
+          ForEach(columnManager.columns) { column in
+            SubredditSelectorView(column: column, onExit: { columnManager.removeColumn(id: $0) })
               .frame(minWidth: 300)
           }
         }
+        .environmentObject(informationBarData)
+        .environmentObject(columnManager)
         Spacer()
       }
       Button(action: {
@@ -58,18 +58,18 @@ struct PostGridView: View {
 // MARK: - NavigationSidebar
 
 private struct NavigationSidebar: View {
-  @ObservedObject var informationBarData: InformationBarData
-  @State private var isEditingMulti: Bool = false
-  @State private var editing: Multireddit.ID?
+  // MARK: Lifecycle
 
-  @Binding var selection: String?
-  @ViewBuilder private var accountView: some View {
-    if let account = Illithid.shared.accountManager.currentAccount {
-      AccountView(account: account)
-    } else {
-      Text("There is no logged in account")
-    }
+  init(column: ColumnManager.Column) {
+    self.column = column
+    _selection = .init(initialValue: column.selection)
   }
+
+  // MARK: Internal
+
+  @EnvironmentObject var informationBarData: InformationBarData
+  @EnvironmentObject var columnManager: ColumnManager
+  let column: ColumnManager.Column
 
   var body: some View {
     List(selection: $selection) {
@@ -135,6 +135,28 @@ private struct NavigationSidebar: View {
       }
     }
     .listStyle(SidebarListStyle())
+    .onChange(of: selection) { selected in
+      columnManager.setSelection(for: column, selection: selected)
+    }
+    .onReceive(columnManager.$columns) { columns in
+      if let column = columns.first(where: { $0 == column }), column.selection != self.column.selection {
+        self.selection = column.selection
+      }
+    }
+  }
+
+  // MARK: Private
+
+  @State private var selection: String?
+  @State private var isEditingMulti: Bool = false
+  @State private var editing: Multireddit.ID?
+
+  @ViewBuilder private var accountView: some View {
+    if let account = Illithid.shared.accountManager.currentAccount {
+      AccountView(account: account)
+    } else {
+      Text("There is no logged in account")
+    }
   }
 }
 
@@ -143,15 +165,17 @@ private struct NavigationSidebar: View {
 private struct SubredditSelectorView: View {
   // MARK: Lifecycle
 
-  init(column: Binding<ColumnManager.Column>, onExit: @escaping (UUID) -> Void) {
+  init(column: ColumnManager.Column, onExit: @escaping (UUID) -> Void) {
+    self.column = column
+    _selection = .init(initialValue: column.selection)
     self.onExit = onExit
-    _column = column
   }
 
   // MARK: Internal
 
-  @Binding var column: ColumnManager.Column
+  @EnvironmentObject var columnManager: ColumnManager
   @EnvironmentObject var informationBarData: InformationBarData
+  let column: ColumnManager.Column
   let onExit: (UUID) -> Void
 
   @ViewBuilder var body: some View {
@@ -175,7 +199,7 @@ private struct SubredditSelectorView: View {
         presentSelector = true
       }
       .popover(isPresented: $presentSelector) {
-        List(selection: $column.selection) {
+        List(selection: $selection) {
           Section(header: Text("Meta")) {
             Label("Account", systemImage: "person.crop.circle")
               .help("Account view")
@@ -218,11 +242,14 @@ private struct SubredditSelectorView: View {
           }
         }
       }
+      .onChange(of: selection) { selected in
+        columnManager.setSelection(for: column, selection: selected)
+      }
 
       Divider()
         .padding(.horizontal)
 
-      // TODO: Fix this idiotic hacky workaround 
+      // TODO: Fix this idiotic hacky workaround
       if column.selection == "__account__" {
         accountView
       } else if column.selection == "__search__" {
@@ -256,6 +283,7 @@ private struct SubredditSelectorView: View {
 
   // MARK: Private
 
+  @State private var selection: String?
   @State private var reload: Bool = false
   @State private var presentSelector: Bool = false
 
@@ -299,7 +327,7 @@ private final class ColumnManager: ObservableObject {
 
   // MARK: Internal
 
-  struct Column: Identifiable, Codable {
+  struct Column: Identifiable, Codable, Equatable {
     // MARK: Lifecycle
 
     init(id: UUID = UUID(), closable: Bool = true, selection: String = "__search__") {
@@ -333,6 +361,20 @@ private final class ColumnManager: ObservableObject {
 
   func addColumn(selection: String) {
     columns.append(Column(selection: selection))
+  }
+
+  func column(with id: UUID) -> Column? {
+    columns.first { $0.id == id }
+  }
+
+  func setSelection(for column: Column, selection: String?) {
+    guard let idx = columns.firstIndex(where: { $0.id == column.id }) else { return }
+    columns[idx].selection = selection
+  }
+
+  func setSelection(for id: UUID, selection: String?) {
+    guard let idx = columns.firstIndex(where: { $0.id == id }) else { return }
+    columns[idx].selection = selection
   }
 
   func removeColumn(id: UUID) {
