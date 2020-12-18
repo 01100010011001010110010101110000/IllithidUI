@@ -29,6 +29,11 @@ struct PostListView: View {
     _postsData = .init(wrappedValue: .init(provider: postContainer))
   }
 
+  init(from listing: Listing) {
+    _postsData = .init(wrappedValue: PostListData(from: listing))
+    postContainer = FakePostProvider()
+  }
+
   // MARK: Internal
 
   @Environment(\.navigationLayout) var layout

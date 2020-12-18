@@ -32,6 +32,8 @@ struct PostGridView: View {
               .frame(minWidth: 300)
           }
         }
+        .onDrop(of: [.text],
+                delegate: GridDropDelegate(columnManager: columnManager))
         .environmentObject(informationBarData)
         .environmentObject(columnManager)
         Spacer()
@@ -50,6 +52,35 @@ struct PostGridView: View {
   }
 
   // MARK: Private
+
+  private struct GridDropDelegate: DropDelegate {
+    let columnManager: ColumnManager
+
+    func dropExited(info: DropInfo) {
+      if info.location.x < 0 || info.location.y < 0 {
+        columnManager.removeLast()
+      }
+    }
+
+    func dropEntered(info: DropInfo) {
+      if let item = info.itemProviders(for: [.utf8PlainText]).first {
+        if item.canLoadObject(ofClass: String.self) {
+          _ = item.loadObject(ofClass: String.self) { string, _ in
+            guard let id = string else { return }
+            columnManager.addColumn(selection: id)
+          }
+        }
+      }
+    }
+
+    func validateDrop(info: DropInfo) -> Bool {
+      info.itemProviders(for: [.utf8PlainText]).first?.canLoadObject(ofClass: String.self) ?? false
+    }
+
+    func performDrop(info _: DropInfo) -> Bool {
+      true
+    }
+  }
 
   @StateObject private var informationBarData: InformationBarData = .init()
   @StateObject private var columnManager = ColumnManager()
@@ -360,7 +391,9 @@ private final class ColumnManager: ObservableObject {
   }
 
   func addColumn(selection: String) {
-    columns.append(Column(selection: selection))
+    DispatchQueue.main.async {
+      self.columns.append(Column(selection: selection))
+    }
   }
 
   func column(with id: UUID) -> Column? {
