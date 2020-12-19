@@ -44,7 +44,7 @@ struct YouTubeView: View {
     HStack {
       // TODO: Control full size based on which streamURL we use
       if let video = data.video, let url = video.streamURL {
-        VideoPlayer(url: url, fullSize: NSSize(width: 1920, height: 1080))
+        VideoPlayer(url: url, fullSize: video.size)
           .mediaMetadataBar(metadata: video)
       }
     }
@@ -81,7 +81,8 @@ extension XCDYouTubeVideo: MediaMetadataProvider {
 
   var gifUrl: URL? { nil }
 
-  var size: CGSize { .init(width: 1920, height: 1080) }
+  // The maximum size of any non-livestream video returned by XCDYouTubeKit
+  var size: CGSize { .init(width: 1280, height: 720) }
 }
 
 // MARK: - YouTubeData

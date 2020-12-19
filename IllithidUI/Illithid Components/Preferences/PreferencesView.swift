@@ -126,7 +126,7 @@ struct GeneralPreferences: View {
             Text("Blur NSFW content")
           }
 
-          Picker(selection: $preferences.browser, label: Text("Open links with:")) {
+          Picker(selection: $preferences.browser, label: Text("Open links with: ")) {
             ForEach(Browser.installed.sorted()) { browser in
               HStack {
                 if let icon = browser.icon() {
@@ -144,6 +144,14 @@ struct GeneralPreferences: View {
           Toggle(isOn: $preferences.openLinksInForeground) {
             Text("Open links in foreground")
           }
+
+          Picker(selection: $preferences.previewSize, label: Text("Preview Size: ")) {
+            ForEach(PreferencesData.PreviewSize.allCases) { size in
+              Text(size.rawValue.capitalized)
+                .tag(size)
+            }
+          }
+          .frame(width: 200)
         }
       }
 
@@ -230,6 +238,7 @@ final class PreferencesData: ObservableObject, Codable {
     autoPlayGifs = false
     openLinksInForeground = true
     browser = .inApp
+    previewSize = .small
   }
 
   init(from decoder: Decoder) throws {
@@ -241,6 +250,7 @@ final class PreferencesData: ObservableObject, Codable {
     autoPlayGifs = try (container.decodeIfPresent(Bool.self, forKey: .autoPlayGifs) ?? false)
     browser = try (container.decodeIfPresent(Browser.self, forKey: .browser) ?? .inApp)
     openLinksInForeground = try (container.decodeIfPresent(Bool.self, forKey: .openLinksInForeground) ?? true)
+    previewSize = try (container.decodeIfPresent(PreviewSize.self, forKey: .previewSize) ?? .small)
   }
 
   // MARK: Internal
@@ -253,10 +263,11 @@ final class PreferencesData: ObservableObject, Codable {
     /// Which `Browser` to use for Links
     case browser
     case openLinksInForeground
+    case previewSize
   }
 
   static let shared: PreferencesData = {
-    if let data = UserDefaults.standard.data(forKey: "preferences"),
+    if let data = defaults.data(forKey: "preferences"),
        let value = try? JSONDecoder().decode(PreferencesData.self, from: data) {
       return value
     } else {
@@ -302,6 +313,12 @@ final class PreferencesData: ObservableObject, Codable {
     }
   }
 
+  @Published fileprivate(set) var previewSize: PreviewSize {
+    didSet {
+      updateDefaults()
+    }
+  }
+
   func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
@@ -311,9 +328,12 @@ final class PreferencesData: ObservableObject, Codable {
     try container.encode(autoPlayGifs, forKey: .autoPlayGifs)
     try container.encode(browser, forKey: .browser)
     try container.encode(openLinksInForeground, forKey: .openLinksInForeground)
+    try container.encode(previewSize, forKey: .previewSize)
   }
 
   // MARK: Private
+
+  private static let defaults: UserDefaults = .standard
 
   private func updateDefaults() {
     guard let data = try? JSONEncoder().encode(self) else {
@@ -321,7 +341,32 @@ final class PreferencesData: ObservableObject, Codable {
       return
     }
 
-    UserDefaults.standard.set(data, forKey: "preferences")
+    Self.defaults.set(data, forKey: "preferences")
+  }
+}
+
+extension PreferencesData {
+  enum PreviewSize: String, Codable, CaseIterable, Identifiable {
+    case small
+    case medium
+    case large
+
+    // MARK: Internal
+
+    var id: Self.RawValue {
+      rawValue
+    }
+
+    var targetSize: CGSize {
+      switch self {
+      case .small:
+        return CGSize(width: 480, height: 360)
+      case .medium:
+        return CGSize(width: 720, height: 480)
+      case .large:
+        return CGSize(width: 1280, height: 720)
+      }
+    }
   }
 }
 

@@ -100,6 +100,9 @@ struct IllithidApp: App {
       AboutCommands()
       SidebarCommands()
       ToolbarCommands()
+      #if DEBUG
+        DebugCommands()
+      #endif
     }
 
     #if os(macOS)

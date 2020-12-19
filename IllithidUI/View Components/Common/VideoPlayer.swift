@@ -32,11 +32,10 @@ struct VideoPlayer: View {
 
   // MARK: Internal
 
-  @ObservedObject var preferences: PreferencesData = .shared
-
   var body: some View {
     AVKit.VideoPlayer(player: avPlayer)
-      .frame(width: calculateSize.width, height: calculateSize.height)
+      .frame(width: preferences.previewSize.targetSize.width,
+             height: preferences.previewSize.targetSize.height)
       .onDisappear {
         avPlayer.pause()
       }
@@ -52,6 +51,8 @@ struct VideoPlayer: View {
   }
 
   // MARK: Private
+
+  @ObservedObject private var preferences: PreferencesData = .shared
 
   @StateObject private var avPlayer: AVPlayer
   private let fullSize: NSSize

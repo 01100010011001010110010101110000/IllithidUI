@@ -26,6 +26,13 @@ final class PostListData: ObservableObject {
     self.provider = provider
   }
 
+  init(from listing: Listing) {
+    posts = listing.posts
+    provider = FakePostProvider()
+    noPosts = posts.isEmpty
+    exhausted = true
+  }
+
   // MARK: Internal
 
   @Published var posts: [Post] = []

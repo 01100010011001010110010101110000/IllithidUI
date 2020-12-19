@@ -418,14 +418,14 @@ struct ImagePostPreview: View {
     .dragAndZoom()
   }
 
-  // MARK: Fileprivate
-
-  fileprivate static let thumbnailFrame: CGSize = .init(width: 1536, height: 864)
-
   // MARK: Private
 
-  private let context: [SDWebImageContextOption: Any] = [
-    .imageThumbnailPixelSize: CGSize(width: thumbnailFrame.width,
-                                     height: thumbnailFrame.height),
-  ]
+  @ObservedObject private var preferences: PreferencesData = .shared
+
+  private var context: [SDWebImageContextOption: Any] {
+    [
+      .imageThumbnailPixelSize: CGSize(width: preferences.previewSize.targetSize.width,
+                                       height: preferences.previewSize.targetSize.height),
+    ]
+  }
 }
