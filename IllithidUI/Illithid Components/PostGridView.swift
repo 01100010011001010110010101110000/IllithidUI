@@ -221,7 +221,11 @@ private struct SubredditSelectorView: View {
             .keyboardShortcut(.cancelAction)
         }
         Spacer()
-        Text(column.selection == nil ? "Select" : column.selection!)
+        if let selection = column.selection {
+          Text(informationBarData.displayName(forId: selection) ?? selection)
+        } else {
+          Text("Select")
+        }
         Image(systemName: "chevron.down")
         Spacer()
       }

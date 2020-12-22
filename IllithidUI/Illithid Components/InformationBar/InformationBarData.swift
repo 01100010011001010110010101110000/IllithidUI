@@ -111,6 +111,15 @@ final class InformationBarData: ObservableObject {
     }
   }
 
+  func displayName(forId id: String) -> String? {
+    if id == "__account__" { return "Account" }
+    else if id == "__search__" { return "Search" }
+    else if let page = FrontPage.allCases.first(where: { $0.id == id }) { return page.displayName }
+    else if let multireddit = multiReddits.first(where: { $0.id == id }) { return multireddit.displayName }
+    else if let subreddit = subscribedSubreddits.first(where: { $0.id == id }) { return subreddit.displayName }
+    else { return nil }
+  }
+
   // MARK: Private
 
   private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.InformationBar", qos: .background)
