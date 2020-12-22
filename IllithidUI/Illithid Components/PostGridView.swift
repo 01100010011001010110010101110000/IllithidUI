@@ -130,7 +130,7 @@ private struct NavigationSidebar: View {
       }
 
       Section(header: Text("Multireddits")) {
-        ForEach(informationBarData.multiReddits) { multireddit in
+        ForEach(informationBarData.multireddits) { multireddit in
           HStack {
             SubredditIcon(multireddit: multireddit)
               .frame(width: 24, height: 24)
@@ -253,7 +253,7 @@ private struct SubredditSelectorView: View {
           }
           Divider()
           Section(header: Text("Multiredits")) {
-            ForEach(informationBarData.multiReddits) { multireddit in
+            ForEach(informationBarData.multireddits) { multireddit in
               HStack {
                 SubredditIcon(multireddit: multireddit)
                   .frame(width: 24, height: 24)
@@ -329,7 +329,7 @@ private struct SubredditSelectorView: View {
 
   private var selectedMultireddit: Multireddit? {
     guard let selection = column.selection else { return nil }
-    return informationBarData.multiReddits.first { $0.id == selection }
+    return informationBarData.multireddits.first { $0.id == selection }
   }
 
   private var selectedPage: FrontPage? {

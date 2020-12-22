@@ -31,7 +31,7 @@ struct MultiredditEditView: View {
   let editingId: Multireddit.ID
 
   var body: some View {
-    let editing = informationBarData.multiReddits.first { $0.id == editingId }!
+    let editing = informationBarData.multireddits.first { $0.id == editingId }!
     return VStack {
       VStack {
         Text(editing.displayName)

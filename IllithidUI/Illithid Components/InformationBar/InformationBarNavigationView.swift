@@ -50,7 +50,7 @@ struct InformationBarNavigationView: View {
         }
 
         Section(header: Text("Multireddits")) {
-          ForEach(informationBarData.multiReddits.filter { multi in
+          ForEach(informationBarData.multireddits.filter { multi in
             if preferences.hideNsfw {
               return !(multi.over18 ?? false)
             } else {

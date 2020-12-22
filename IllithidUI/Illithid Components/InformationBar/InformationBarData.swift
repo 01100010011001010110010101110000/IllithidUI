@@ -35,9 +35,9 @@ final class InformationBarData: ObservableObject {
 
     if let multiData = defaults.data(forKey: "multireddits"),
        let multis = try? decoder.decode([Multireddit].self, from: multiData) {
-      multiReddits = multis
+      multireddits = multis
     } else {
-      multiReddits = []
+      multireddits = []
     }
 //    listen()
   }
@@ -57,9 +57,9 @@ final class InformationBarData: ObservableObject {
     }
   }
 
-  @Published var multiReddits: [Multireddit] {
+  @Published var multireddits: [Multireddit] {
     didSet {
-      guard let data = try? encoder.encode(multiReddits) else { return }
+      guard let data = try? encoder.encode(multireddits) else { return }
       defaults.set(data, forKey: "multireddits")
     }
   }
@@ -79,9 +79,9 @@ final class InformationBarData: ObservableObject {
       switch result {
       case let .success(multireddits):
         let sortedMultireddits = multireddits.sorted(by: { $0.name.caseInsensitiveCompare($1.name) == .orderedAscending })
-        if self.multiReddits != sortedMultireddits {
+        if self.multireddits != sortedMultireddits {
           DispatchQueue.main.async {
-            self.multiReddits = sortedMultireddits
+            self.multireddits = sortedMultireddits
           }
         }
       case let .failure(error):
@@ -115,7 +115,7 @@ final class InformationBarData: ObservableObject {
     if id == "__account__" { return "Account" }
     else if id == "__search__" { return "Search" }
     else if let page = FrontPage.allCases.first(where: { $0.id == id }) { return page.displayName }
-    else if let multireddit = multiReddits.first(where: { $0.id == id }) { return multireddit.displayName }
+    else if let multireddit = multireddits.first(where: { $0.id == id }) { return multireddit.displayName }
     else if let subreddit = subscribedSubreddits.first(where: { $0.id == id }) { return subreddit.displayName }
     else { return nil }
   }
@@ -165,6 +165,6 @@ final class InformationBarData: ObservableObject {
   }
 
   private func clearMultireddits() {
-    multiReddits.removeAll()
+    multireddits.removeAll()
   }
 }
