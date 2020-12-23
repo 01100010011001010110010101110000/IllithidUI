@@ -26,11 +26,7 @@ struct CommentRowView: View {
 
   var body: some View {
     VStack {
-      HStack {
-        if (comment.depth ?? 0) > 0 {
-          CommentColorBar(depth: comment.depth!)
-        }
-
+      Group {
         if comment.isRemoved {
           RemovedComment(isCollapsed: $isCollapsed, comment: comment)
         } else if comment.isDeleted {
@@ -41,7 +37,6 @@ struct CommentRowView: View {
 
             if !isCollapsed {
               AttributedText(attributed: comment.attributedBody)
-                .padding(.horizontal)
 
               CommentActionBar(comment: comment)
                 .padding(.bottom, 5)
@@ -49,6 +44,13 @@ struct CommentRowView: View {
           }
         }
       }
+      .offset(x: 10)
+      .overlay(
+        HStack {
+          CommentColorBar(for: comment)
+          Spacer()
+        }
+      )
       Divider()
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
@@ -91,7 +93,6 @@ private struct DeletedComment: View {
       AuthorBar(isCollapsed: $isCollapsed, comment: comment)
       if !isCollapsed {
         Text("Deleted by author")
-          .padding(.horizontal)
       }
     }
   }
@@ -144,9 +145,7 @@ struct MoreCommentsRowView: View {
 
   var body: some View {
     HStack {
-      if more.depth > 0 {
-        CommentColorBar(depth: more.depth)
-      }
+      CommentColorBar(for: more)
 
       // This represents a thread continuation
       if more.isThreadContinuation {
@@ -258,14 +257,30 @@ struct CommentActionBar: View {
 // MARK: - CommentColorBar
 
 struct CommentColorBar: View {
-  let depth: Int
-  let width: CGFloat = 3.0
+  // MARK: Lifecycle
+
+  init(for comment: Comment) {
+    depth = comment.depth ?? 0
+  }
+
+  init(for more: More) {
+    depth = more.depth
+  }
+
+  // MARK: Internal
 
   var body: some View {
-    RoundedRectangle(cornerRadius: 1.5)
-      .foregroundColor(Color(hue: 1.0 / Double(depth), saturation: 1.0, brightness: 1.0))
-      .frame(width: width)
+    if depth > 0 {
+      RoundedRectangle(cornerRadius: 1.5, style: .continuous)
+        .foregroundColor(Color(hue: 1.0 / Double(depth), saturation: 1.0, brightness: 1.0))
+        .frame(width: width)
+    }
   }
+
+  // MARK: Private
+
+  private let depth: Int
+  private let width: CGFloat = 3.0
 }
 
 extension Text {
