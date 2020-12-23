@@ -87,10 +87,11 @@ private struct DeletedComment: View {
   let comment: Comment
 
   var body: some View {
-    VStack {
+    VStack(alignment: .leading) {
       AuthorBar(isCollapsed: $isCollapsed, comment: comment)
       if !isCollapsed {
         Text("Deleted by author")
+          .padding(.horizontal)
       }
     }
   }
