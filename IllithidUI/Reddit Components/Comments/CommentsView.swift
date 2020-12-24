@@ -38,9 +38,12 @@ struct CommentsView: View, Identifiable {
 
   // MARK: Internal
 
-  /// The post to which the comments belong
+  let thing = true
+
+  /// The `Fullname` of the post to which the comments belong
   let id: Fullname
 
+  /// The post to which the comments belong
   let post: Post
 
   let focusedComment: ID36?
