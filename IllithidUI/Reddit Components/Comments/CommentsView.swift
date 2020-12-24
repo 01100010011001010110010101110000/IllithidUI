@@ -59,8 +59,7 @@ struct CommentsView: View, Identifiable {
               Spacer()
               VStack {
                 Text("in \(post.subreddit) by ")
-                  + Text(post.author)
-                  .usernameStyle(color: authorColor)
+                  + Text(post.author).usernameStyle(color: authorColor)
                   + Text(" \(post.relativePostTime) ago")
               }
             }
@@ -74,47 +73,16 @@ struct CommentsView: View, Identifiable {
 
           Divider()
 
-          LazyVStack {
-            RecursiveView(data: commentData.comments, children: \.replies) { comment, isCollapsed in
-              CommentRowView(isCollapsed: isCollapsed, comment: comment)
-                .id(comment.id)
-                .contextMenu {
-                  Button("Upvote") {}
-                  Button("Downvote") {}
-                  Divider()
-                  Button("Save") {}
-                  Divider()
-                  if let depth = comment.depth ?? 0, depth != 0 {
-                    Button(action: {
-                      withAnimation {
-                        scrollProxy.scrollTo(comment.parentId.components(separatedBy: "_").last!, anchor: .top)
-                      }
-                    }, label: { Label("Parent comment", systemImage: "ellipsis.bubble") })
-                  }
-                }
-              if let more = comment.more, more.isThreadContinuation {
-                MoreCommentsRowView(more: more)
-                  .onTapGesture {
-                    commentData.expandMore(more: more)
-                  }
-              }
-            } footer: { comment in
-              if let more = comment.more, more.id != More.continueThreadId {
-                MoreCommentsRowView(more: more)
-                  .onTapGesture {
-                    commentData.expandMore(more: more)
-                  }
-              }
-            }
-
-            if let more = commentData.rootMore {
-              MoreCommentsRowView(more: more)
-                .onTapGesture {
-                  commentData.expandMore(more: more)
-                }
-            }
+          if !commentData.loadingComments && commentData.comments.isEmpty {
+            Text("comments.no.comments")
+              .offset(y: 40)
+          } else {
+            CommentsStack(commentData: commentData, scrollProxy: scrollProxy)
+              .padding([.bottom, .horizontal])
+              .loadingScreen(isLoading: commentData.comments.isEmpty && commentData.loadingComments,
+                             title: "comments.loading",
+                             offset: (x: 0, y: 40))
           }
-          .padding([.bottom, .horizontal])
         }
         Button(action: {
           withAnimation {
@@ -150,6 +118,57 @@ struct CommentsView: View, Identifiable {
       return .green
     } else {
       return .blue
+    }
+  }
+}
+
+// MARK: - CommentsStack
+
+private struct CommentsStack: View {
+  @ObservedObject var commentData: CommentData
+
+  let scrollProxy: ScrollViewProxy
+
+  var body: some View {
+    LazyVStack {
+      RecursiveView(data: commentData.comments, children: \.replies) { comment, isCollapsed in
+        CommentRowView(isCollapsed: isCollapsed, comment: comment)
+          .id(comment.id)
+          .contextMenu {
+            Button("Upvote") {}
+            Button("Downvote") {}
+            Divider()
+            Button("Save") {}
+            Divider()
+            if let depth = comment.depth ?? 0, depth != 0 {
+              Button(action: {
+                withAnimation {
+                  scrollProxy.scrollTo(comment.parentId.components(separatedBy: "_").last!, anchor: .top)
+                }
+              }, label: { Label("Parent comment", systemImage: "ellipsis.bubble") })
+            }
+          }
+        if let more = comment.more, more.isThreadContinuation {
+          MoreCommentsRowView(more: more)
+            .onTapGesture {
+              commentData.expandMore(more: more)
+            }
+        }
+      } footer: { comment in
+        if let more = comment.more, more.id != More.continueThreadId {
+          MoreCommentsRowView(more: more)
+            .onTapGesture {
+              commentData.expandMore(more: more)
+            }
+        }
+      }
+
+      if let more = commentData.rootMore {
+        MoreCommentsRowView(more: more)
+          .onTapGesture {
+            commentData.expandMore(more: more)
+          }
+      }
     }
   }
 }

@@ -16,17 +16,19 @@ import Foundation
 import SwiftUI
 
 extension View {
-  func loadingScreen(isLoading: Bool, title: String) -> some View {
+  func loadingScreen(isLoading: Bool, title: String, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0)) -> some View {
     overlay(
       ProgressView(title)
         .opacity(isLoading ? 1 : 0)
+        .offset(x: offset.x, y: offset.y)
     )
   }
 
-  func loadingScreen<Content: View>(isLoading: Bool, @ViewBuilder _ label: () -> Content) -> some View {
+  func loadingScreen<Content: View>(isLoading: Bool, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0), @ViewBuilder _ label: () -> Content) -> some View {
     overlay(
       ProgressView(label: label)
         .opacity(isLoading ? 1 : 0)
+        .offset(x: offset.x, y: offset.y)
     )
   }
 }
