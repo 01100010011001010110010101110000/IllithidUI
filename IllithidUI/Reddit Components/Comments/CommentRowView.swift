@@ -34,6 +34,7 @@ struct CommentRowView: View {
         } else {
           VStack(alignment: .leading) {
             AuthorBar(isCollapsed: $isCollapsed, comment: comment)
+              .padding(.leading, 4)
 
             if !isCollapsed {
               AttributedText(attributed: comment.attributedBody)
@@ -43,6 +44,7 @@ struct CommentRowView: View {
           }
         }
       }
+      .padding(.trailing)
       .offset(x: 10)
       .overlay(
         HStack {
