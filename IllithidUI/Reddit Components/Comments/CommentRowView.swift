@@ -33,7 +33,7 @@ struct CommentRowView: View {
           DeletedComment(isCollapsed: $isCollapsed, comment: comment)
         } else {
           VStack(alignment: .leading) {
-            AuthorBar(isCollapsed: $isCollapsed, comment: comment)
+            AuthorBar(comment: comment)
               .padding(.leading, 4)
 
             if !isCollapsed {
@@ -48,7 +48,7 @@ struct CommentRowView: View {
       .offset(x: 10)
       .overlay(
         HStack {
-          CommentColorBar(for: comment)
+          CommentColorBar(isCollapsed: $isCollapsed, for: comment)
           Spacer()
         }
       )
@@ -91,7 +91,7 @@ private struct DeletedComment: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      AuthorBar(isCollapsed: $isCollapsed, comment: comment)
+      AuthorBar(comment: comment)
       if !isCollapsed {
         Text("Deleted by author")
       }
@@ -102,10 +102,30 @@ private struct DeletedComment: View {
 // MARK: - AuthorBar
 
 private struct AuthorBar: View {
-  @ObservedObject private var moderators: ModeratorData = .shared
-  @Binding var isCollapsed: Bool
+  // MARK: Lifecycle
+
+  init(comment: Comment) {
+    self.comment = comment
+  }
+
+  // MARK: Internal
 
   let comment: Comment
+
+  var body: some View {
+    HStack {
+      Text(comment.author)
+        .usernameStyle(color: authorColor)
+      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
+        .foregroundColor(.orange)
+      Spacer()
+      Text("\(comment.relativeCommentTime) ago")
+    }
+  }
+
+  // MARK: Private
+
+  @ObservedObject private var moderators: ModeratorData = .shared
 
   private var authorColor: Color {
     if comment.isAdminComment {
@@ -116,25 +136,6 @@ private struct AuthorBar: View {
       return .blue
     } else {
       return .white
-    }
-  }
-
-  var body: some View {
-    HStack {
-      Text(comment.author)
-        .usernameStyle(color: authorColor)
-      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
-        .foregroundColor(.orange)
-      Spacer()
-      Text("\(comment.relativeCommentTime) ago")
-      Image(systemName: "chevron.down")
-        .animation(.easeIn)
-        .rotationEffect(.degrees(isCollapsed ? -90 : 0))
-        .onTapGesture {
-          withAnimation {
-            isCollapsed.toggle()
-          }
-        }
     }
   }
 }
@@ -165,8 +166,14 @@ struct MoreCommentsRowView: View {
 
 // TODO: Sync saved and voted state with model
 struct CommentActionBar: View {
-  @State private var vote: VoteDirection = .clear
-  @State private var saved: Bool = false
+  // MARK: Lifecycle
+
+  init(comment: Comment) {
+    self.comment = comment
+  }
+
+  // MARK: Internal
+
   let comment: Comment
 
   var body: some View {
@@ -251,6 +258,11 @@ struct CommentActionBar: View {
       self.saved = self.comment.saved
     }
   }
+
+  // MARK: Private
+
+  @State private var vote: VoteDirection = .clear
+  @State private var saved: Bool = false
 }
 
 // MARK: - CommentColorBar
@@ -258,28 +270,53 @@ struct CommentActionBar: View {
 struct CommentColorBar: View {
   // MARK: Lifecycle
 
-  init(for comment: Comment) {
+  init(isCollapsed: Binding<Bool>, for comment: Comment) {
     depth = comment.depth ?? 0
+    _isCollapsed = isCollapsed
   }
 
   init(for more: More) {
     depth = more.depth
+    // A more view may not be collapsed
+    _isCollapsed = .constant(false)
   }
 
   // MARK: Internal
 
+  @Binding var isCollapsed: Bool
+
   var body: some View {
     if depth > 0 {
       RoundedRectangle(cornerRadius: 1.5, style: .continuous)
-        .foregroundColor(Color(hue: 1.0 / Double(depth), saturation: 1.0, brightness: 1.0))
+        .foregroundColor(foregroundColor)
         .frame(width: width)
+        .onTapGesture {
+          withAnimation {
+            isCollapsed.toggle()
+          }
+        }
+        .onHover { hovering in
+          withAnimation {
+            isHovered = hovering
+          }
+        }
+        .scaleEffect(isHovered ? 1.05 : 1.0)
+        .shadow(color: isHovered ? .accentColor : .clear, radius: 8)
+        .shadow(color: isHovered ? .accentColor : .clear, radius: 8)
     }
   }
 
   // MARK: Private
 
+  @State private var isHovered: Bool = false
   private let depth: Int
   private let width: CGFloat = 3.0
+
+  private var foregroundColor: Color {
+    isHovered
+      ? .accentColor
+      : Color(hue: 1.0 / Double(depth), saturation: 1.0, brightness: 1.0)
+  }
 }
 
 extension Text {

@@ -33,7 +33,8 @@ struct VideoPlayer: View {
   // MARK: Internal
 
   var body: some View {
-    AVKit.VideoPlayer(player: avPlayer)
+    Rectangle()
+//    AVKit.VideoPlayer(player: avPlayer)
       .frame(width: preferences.previewSize.targetSize.width,
              height: preferences.previewSize.targetSize.height)
       .onDisappear {
