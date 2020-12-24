@@ -155,6 +155,8 @@ struct RemovedPostView: View {
       return "This post has been removed by a moderator"
     case .copyrightTakedown:
       return "This post has been removed due to a copyright notice"
+    case .reddit:
+      return "This post has been removed for violating site-wide rules"
     }
   }
 }

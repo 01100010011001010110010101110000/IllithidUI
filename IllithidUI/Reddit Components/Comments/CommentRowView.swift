@@ -37,7 +37,6 @@ struct CommentRowView: View {
 
             if !isCollapsed {
               AttributedText(attributed: comment.attributedBody)
-
               CommentActionBar(comment: comment)
                 .padding(.bottom, 5)
             }
@@ -170,76 +169,74 @@ struct CommentActionBar: View {
 
   var body: some View {
     HStack {
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(vote == .up ? .orange : Color(.darkGray))
-        .overlay(Text("Up"), alignment: .center)
-        .foregroundColor(.white)
-        .onTapGesture {
-          if self.vote == .up {
-            self.vote = .clear
-            self.comment.clearVote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
+      Button(action: {
+        if self.vote == .up {
+          self.vote = .clear
+          self.comment.clearVote { result in
+            if case let Result.failure(error) = result {
+              Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
             }
-          } else {
-            self.vote = .up
-            self.comment.upvote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error upvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
+          }
+        } else {
+          self.vote = .up
+          self.comment.upvote { result in
+            if case let Result.failure(error) = result {
+              Illithid.shared.logger.errorMessage("Error upvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
             }
           }
         }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(vote == .down ? .purple : Color(.darkGray))
-        .overlay(Text("Down"), alignment: .center)
-        .foregroundColor(.white)
-        .onTapGesture {
-          if self.vote == .down {
-            self.vote = .clear
-            self.comment.clearVote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
+      }, label: {
+        Image(systemName: "arrow.up")
+      })
+        .foregroundColor(vote == .up ? .orange : .white)
+
+      Button(action: {
+        if self.vote == .down {
+          self.vote = .clear
+          self.comment.clearVote { result in
+            if case let Result.failure(error) = result {
+              Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
             }
-          } else {
-            self.vote = .down
-            self.comment.downvote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error downvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
+          }
+        } else {
+          self.vote = .down
+          self.comment.downvote { result in
+            if case let Result.failure(error) = result {
+              Illithid.shared.logger.errorMessage("Error downvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
             }
           }
         }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(saved ? .green : Color(.darkGray))
-        .overlay(Text("Save"), alignment: .center)
-        .foregroundColor(.white)
-        .onTapGesture {
-          self.saved.toggle()
-          if self.saved {
-            self.comment.save { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error saving \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
+      }, label: {
+        Image(systemName: "arrow.down")
+      })
+        .foregroundColor(vote == .down ? .purple : .white)
+
+      Button(action: {
+        self.saved.toggle()
+        if self.saved {
+          self.comment.save { result in
+            if case let Result.failure(error) = result {
+              Illithid.shared.logger.errorMessage("Error saving \(self.comment.author) - \(self.comment.fullname): \(error)")
             }
-          } else {
-            self.comment.unsave { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error unsaving \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
+          }
+        } else {
+          self.comment.unsave { result in
+            if case let Result.failure(error) = result {
+              Illithid.shared.logger.errorMessage("Error unsaving \(self.comment.author) - \(self.comment.fullname): \(error)")
             }
           }
         }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(.red)
-        .overlay(Text("Report"), alignment: .center)
-        .foregroundColor(.white)
-        .frame(width: 32, height: 32)
+      }, label: {
+        Image(systemName: "bookmark.fill")
+      })
+        .foregroundColor(saved ? .green : .white)
+
+      Button(action: {}, label: {
+        Image(systemName: "flag.fill")
+      })
+        .buttonStyle(DangerButtonStyle())
+        .help("Report comment")
+
       Spacer()
     }
     .padding(10)

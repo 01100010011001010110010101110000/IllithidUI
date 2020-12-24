@@ -46,63 +46,99 @@ struct CommentsView: View, Identifiable {
   let focusedComment: ID36?
 
   var body: some View {
-    ScrollView {
-      VStack(alignment: .leading) {
-        HStack {
-          Text(post.title)
-            .font(.largeTitle)
-            .multilineTextAlignment(.center)
-            .padding([.horizontal, .top])
-            .heightResizable()
-          Spacer()
-          VStack {
-            Text("in \(post.subreddit) by ")
-              + Text(post.author)
-              .usernameStyle(color: authorColor)
-              + Text(" \(post.relativePostTime) ago")
-          }
-        }
-        HStack {
-          Spacer()
-          PostContent(post: post)
-          Spacer()
-        }
-      }
-      Divider()
-      LazyVStack {
-        RecursiveView(data: commentData.comments, children: \.replies) { comment, isCollapsed in
-          CommentRowView(isCollapsed: isCollapsed, comment: comment)
-          if let more = comment.more, more.isThreadContinuation {
-            MoreCommentsRowView(more: more)
-              .onTapGesture {
-                commentData.expandMore(more: more)
+    ScrollViewReader { scrollProxy in
+      ZStack(alignment: .bottomTrailing) {
+        ScrollView {
+          VStack(alignment: .leading) {
+            HStack {
+              Text(post.title)
+                .font(.largeTitle)
+                .multilineTextAlignment(.center)
+                .padding([.horizontal, .top])
+                .heightResizable()
+              Spacer()
+              VStack {
+                Text("in \(post.subreddit) by ")
+                  + Text(post.author)
+                  .usernameStyle(color: authorColor)
+                  + Text(" \(post.relativePostTime) ago")
               }
-          }
-        } footer: { comment in
-          if let more = comment.more, more.id != More.continueThreadId {
-            MoreCommentsRowView(more: more)
-              .onTapGesture {
-                commentData.expandMore(more: more)
-              }
-          }
-        }
-
-        if let more = commentData.rootMore {
-          MoreCommentsRowView(more: more)
-            .onTapGesture {
-              commentData.expandMore(more: more)
             }
+            .id(Self.rootViewId)
+            HStack {
+              Spacer()
+              PostContent(post: post)
+              Spacer()
+            }
+          }
+
+          Divider()
+
+          LazyVStack {
+            RecursiveView(data: commentData.comments, children: \.replies) { comment, isCollapsed in
+              CommentRowView(isCollapsed: isCollapsed, comment: comment)
+                .id(comment.id)
+                .contextMenu {
+                  Button("Upvote") {}
+                  Button("Downvote") {}
+                  Divider()
+                  Button("Save") {}
+                  Divider()
+                  if let depth = comment.depth ?? 0, depth != 0 {
+                    Button(action: {
+                      withAnimation {
+                        scrollProxy.scrollTo(comment.parentId.components(separatedBy: "_").last!, anchor: .top)
+                      }
+                    }, label: { Label("Parent comment", systemImage: "ellipsis.bubble") })
+                  }
+                }
+              if let more = comment.more, more.isThreadContinuation {
+                MoreCommentsRowView(more: more)
+                  .onTapGesture {
+                    commentData.expandMore(more: more)
+                  }
+              }
+            } footer: { comment in
+              if let more = comment.more, more.id != More.continueThreadId {
+                MoreCommentsRowView(more: more)
+                  .onTapGesture {
+                    commentData.expandMore(more: more)
+                  }
+              }
+            }
+
+            if let more = commentData.rootMore {
+              MoreCommentsRowView(more: more)
+                .onTapGesture {
+                  commentData.expandMore(more: more)
+                }
+            }
+          }
+          .padding([.bottom, .horizontal])
         }
+        Button(action: {
+          withAnimation {
+            scrollProxy.scrollTo(Self.rootViewId)
+          }
+        }, label: {
+          Image(systemName: "chevron.up")
+        })
+          .keyboardShortcut(.upArrow)
+          .keyboardShortcut(.home)
+          .shadow(radius: 20)
+          .padding()
+          .help("Scroll to the top")
       }
-      .padding([.bottom, .horizontal])
-    }
-    .onAppear {
-      self.commentData.loadComments(focusOn: self.focusedComment,
-                                    context: self.focusedComment != nil ? 2 : nil)
+      .onAppear {
+        commentData.loadComments(focusOn: focusedComment,
+                                 context: focusedComment != nil ? 2 : nil)
+      }
     }
   }
 
   // MARK: Private
+
+  private static let rootViewId = "view.root"
 
   @StateObject private var commentData: CommentData
   @ObservedObject private var moderators: ModeratorData = .shared

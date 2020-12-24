@@ -274,7 +274,7 @@ struct PostActionBar: View {
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(Color(.darkGray))
-        .overlay(Image(systemName: "bookmark")
+        .overlay(Image(systemName: "bookmark.fill")
           .foregroundColor(saved ? .green : .white))
         .onTapGesture {
           saved.toggle()
