@@ -18,7 +18,7 @@ import SwiftUI
 extension View {
   func loadingScreen(isLoading: Bool, title: String, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0)) -> some View {
     overlay(
-      ProgressView(title)
+      ProgressView(NSLocalizedString(title, comment: ""))
         .opacity(isLoading ? 1 : 0)
         .offset(x: offset.x, y: offset.y)
     )

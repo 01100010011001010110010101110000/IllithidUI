@@ -51,6 +51,15 @@
 		6D651F17247DE5F500A8BC7A /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D651F16247DE5F500A8BC7A /* SearchBar.swift */; };
 		6D69371F241ED684004F5CBF /* HeightResizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D69371E241ED684004F5CBF /* HeightResizable.swift */; };
 		6D72F29A24B810FC00B686D8 /* NavigationPrompt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */; };
+		6D8487652595157D00B2109A /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
+		6D8487662595157D00B2109A /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
+		6D8487672595157D00B2109A /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 6D6D420F2437C14E002D4413 /* Kanna */; };
+		6D8487682595157D00B2109A /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D89F3912468A95E00364E29 /* Illithid */; };
+		6D8487692595157D00B2109A /* XCDYouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6DBB484125756B2300C0B1E2 /* XCDYouTubeKit */; };
+		6D84876A2595157D00B2109A /* Maaku in Frameworks */ = {isa = PBXBuildFile; productRef = 6DBB487625756E0000C0B1E2 /* Maaku */; };
+		6D84876E259515AE00B2109A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D848772259515AE00B2109A /* Localizable.strings */; };
+		6D84876F259515AE00B2109A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D848772259515AE00B2109A /* Localizable.strings */; };
+		6D848770259515AE00B2109A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D848772259515AE00B2109A /* Localizable.strings */; };
 		6D85952D23AD502700FC90E0 /* PostDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D85952C23AD502700FC90E0 /* PostDebugView.swift */; };
 		6D90CAA524E8995B00A6892A /* RecursiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D90CAA424E8995B00A6892A /* RecursiveView.swift */; };
 		6D9AC83024AD506B0076686B /* View+LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */; };
@@ -168,6 +177,8 @@
 		6D651F16247DE5F500A8BC7A /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		6D69371E241ED684004F5CBF /* HeightResizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeightResizable.swift; sourceTree = "<group>"; };
 		6D72F29924B810FC00B686D8 /* NavigationPrompt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationPrompt.swift; sourceTree = "<group>"; };
+		6D848771259515AE00B2109A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6D848776259515FD00B2109A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6D85952C23AD502700FC90E0 /* PostDebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostDebugView.swift; sourceTree = "<group>"; };
 		6D8CD57922B5628B00E35BA8 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		6D90CAA424E8995B00A6892A /* RecursiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecursiveView.swift; sourceTree = "<group>"; };
@@ -223,6 +234,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D84876A2595157D00B2109A /* Maaku in Frameworks */,
+				6D8487672595157D00B2109A /* Kanna in Frameworks */,
+				6D8487662595157D00B2109A /* SDWebImageSwiftUI in Frameworks */,
+				6D8487652595157D00B2109A /* Illithid in Frameworks */,
+				6D8487692595157D00B2109A /* XCDYouTubeKit in Frameworks */,
+				6D8487682595157D00B2109A /* Illithid in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,6 +346,7 @@
 				6D2EA5A322A7FEE40059B6EA /* IllithidUI.entitlements */,
 				6D2EA59722A7FEE20059B6EA /* IllithidUI.xcdatamodeld */,
 				6D2EA59C22A7FEE40059B6EA /* Preview Content */,
+				6D848772259515AE00B2109A /* Localizable.strings */,
 			);
 			path = IllithidUI;
 			sourceTree = "<group>";
@@ -596,12 +614,12 @@
 			);
 			name = IllithidUI;
 			packageProductDependencies = (
-				6D731BFE22A826CD0065183B,
-				6D99083C23E3D8D500E8686A,
-				6D6D420F2437C14E002D4413,
-				6D89F3912468A95E00364E29,
-				6DBB484125756B2300C0B1E2,
-				6DBB487625756E0000C0B1E2,
+				6D731BFE22A826CD0065183B /* Illithid */,
+				6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */,
+				6D6D420F2437C14E002D4413 /* Kanna */,
+				6D89F3912468A95E00364E29 /* Illithid */,
+				6DBB484125756B2300C0B1E2 /* XCDYouTubeKit */,
+				6DBB487625756E0000C0B1E2 /* Maaku */,
 			);
 			productName = IllithidUI;
 			productReference = 6D2EA59022A7FEE20059B6EA /* IllithidUI.app */;
@@ -673,14 +691,15 @@
 			knownRegions = (
 				en,
 				Base,
+				ru,
 			);
 			mainGroup = 6D2EA58722A7FEE20059B6EA;
 			packageReferences = (
-				6D99083B23E3D8D500E8686A,
-				6D6D420E2437C14E002D4413,
-				6D89F3902468A95E00364E29,
-				6DBB484025756B2300C0B1E2,
-				6DBB487525756E0000C0B1E2,
+				6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */,
+				6D89F3902468A95E00364E29 /* XCRemoteSwiftPackageReference "Illithid" */,
+				6DBB484025756B2300C0B1E2 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */,
+				6DBB487525756E0000C0B1E2 /* XCRemoteSwiftPackageReference "Maaku" */,
 			);
 			productRefGroup = 6D2EA59122A7FEE20059B6EA /* Products */;
 			projectDirPath = "";
@@ -705,6 +724,7 @@
 				6DFB42F822CA885000272845 /* LICENSE in Resources */,
 				6D3ADFB922FB81AC002DA19A /* single_post.json in Resources */,
 				6DC67CF522CFE043001B85C7 /* comments.json in Resources */,
+				6D84876E259515AE00B2109A /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -712,6 +732,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D84876F259515AE00B2109A /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -719,6 +740,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D848770259515AE00B2109A /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -845,12 +867,25 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		6D848772259515AE00B2109A /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6D848771259515AE00B2109A /* en */,
+				6D848776259515FD00B2109A /* ru */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		6D2EA5BA22A7FEE40059B6EA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -916,6 +951,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -1144,7 +1180,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6D6D420E2437C14E002D4413 = {
+		6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/tid-kijyun/Kanna";
 			requirement = {
@@ -1152,7 +1188,7 @@
 				minimumVersion = 5.2.2;
 			};
 		};
-		6D89F3902468A95E00364E29 = {
+		6D89F3902468A95E00364E29 /* XCRemoteSwiftPackageReference "Illithid" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:01100010011001010110010101110000/Illithid.git";
 			requirement = {
@@ -1160,7 +1196,7 @@
 				kind = branch;
 			};
 		};
-		6D99083B23E3D8D500E8686A = {
+		6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
 			requirement = {
@@ -1168,7 +1204,7 @@
 				minimumVersion = 1.4.0;
 			};
 		};
-		6DBB484025756B2300C0B1E2 = {
+		6DBB484025756B2300C0B1E2 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:0xced/XCDYouTubeKit.git";
 			requirement = {
@@ -1176,7 +1212,7 @@
 				minimumVersion = 2.15.1;
 			};
 		};
-		6DBB487525756E0000C0B1E2 = {
+		6DBB487525756E0000C0B1E2 /* XCRemoteSwiftPackageReference "Maaku" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:KristopherGBaker/Maaku.git";
 			requirement = {
@@ -1187,33 +1223,33 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6D6D420F2437C14E002D4413 = {
+		6D6D420F2437C14E002D4413 /* Kanna */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D6D420E2437C14E002D4413;
+			package = 6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */;
 			productName = Kanna;
 		};
-		6D731BFE22A826CD0065183B = {
+		6D731BFE22A826CD0065183B /* Illithid */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Illithid;
 		};
-		6D89F3912468A95E00364E29 = {
+		6D89F3912468A95E00364E29 /* Illithid */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D89F3902468A95E00364E29;
+			package = 6D89F3902468A95E00364E29 /* XCRemoteSwiftPackageReference "Illithid" */;
 			productName = Illithid;
 		};
-		6D99083C23E3D8D500E8686A = {
+		6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D99083B23E3D8D500E8686A;
+			package = 6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
 		};
-		6DBB484125756B2300C0B1E2 = {
+		6DBB484125756B2300C0B1E2 /* XCDYouTubeKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6DBB484025756B2300C0B1E2;
+			package = 6DBB484025756B2300C0B1E2 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */;
 			productName = XCDYouTubeKit;
 		};
-		6DBB487625756E0000C0B1E2 = {
+		6DBB487625756E0000C0B1E2 /* Maaku */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6DBB487525756E0000C0B1E2;
+			package = 6DBB487525756E0000C0B1E2 /* XCRemoteSwiftPackageReference "Maaku" */;
 			productName = Maaku;
 		};
 /* End XCSwiftPackageProductDependency section */
