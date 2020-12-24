@@ -286,24 +286,22 @@ struct CommentColorBar: View {
   @Binding var isCollapsed: Bool
 
   var body: some View {
-    if depth > 0 {
-      RoundedRectangle(cornerRadius: 1.5, style: .continuous)
-        .foregroundColor(foregroundColor)
-        .frame(width: width)
-        .onTapGesture {
-          withAnimation {
-            isCollapsed.toggle()
-          }
+    RoundedRectangle(cornerRadius: 1.5, style: .continuous)
+      .foregroundColor(foregroundColor)
+      .frame(width: width)
+      .onTapGesture {
+        withAnimation {
+          isCollapsed.toggle()
         }
-        .onHover { hovering in
-          withAnimation {
-            isHovered = hovering
-          }
+      }
+      .onHover { hovering in
+        withAnimation {
+          isHovered = hovering
         }
-        .scaleEffect(isHovered ? 1.05 : 1.0)
-        .shadow(color: isHovered ? .accentColor : .clear, radius: 8)
-        .shadow(color: isHovered ? .accentColor : .clear, radius: 8)
-    }
+      }
+      .scaleEffect(isHovered ? 1.05 : 1.0)
+      .shadow(color: isHovered ? .accentColor : .clear, radius: 8)
+      .shadow(color: isHovered ? .accentColor : .clear, radius: 8)
   }
 
   // MARK: Private
@@ -315,7 +313,7 @@ struct CommentColorBar: View {
   private var foregroundColor: Color {
     isHovered
       ? .accentColor
-      : Color(hue: 1.0 / Double(depth), saturation: 1.0, brightness: 1.0)
+      : Color(hue: 1.0 / Double(depth + 1), saturation: 1.0, brightness: 1.0)
   }
 }
 

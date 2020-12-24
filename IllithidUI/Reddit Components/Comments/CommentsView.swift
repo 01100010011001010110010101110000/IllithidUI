@@ -38,14 +38,13 @@ struct CommentsView: View, Identifiable {
 
   // MARK: Internal
 
-  let thing = true
-
   /// The `Fullname` of the post to which the comments belong
   let id: Fullname
 
   /// The post to which the comments belong
   let post: Post
 
+  /// The `ID36` of the comment which should be focused
   let focusedComment: ID36?
 
   var body: some View {
@@ -87,18 +86,44 @@ struct CommentsView: View, Identifiable {
                              offset: (x: 0, y: 40))
           }
         }
-        Button(action: {
-          withAnimation {
-            scrollProxy.scrollTo(Self.rootViewId)
-          }
-        }, label: {
-          Image(systemName: "chevron.up")
-        })
-          .keyboardShortcut(.upArrow)
-          .keyboardShortcut(.home)
-          .shadow(radius: 20)
-          .padding()
-          .help("Scroll to the top")
+        HStack(spacing: 5) {
+          Button(action: {
+            if let lastComment = commentData.comments.last {
+              withAnimation {
+                scrollProxy.scrollTo(lastComment.id, anchor: .top)
+              }
+            }
+          }, label: {
+            VStack {
+              Image(systemName: "chevron.down")
+              Image(systemName: "chevron.down")
+                .offset(y: -2)
+            }
+            .offset(y: -3)
+          })
+            .keyboardShortcut(.downArrow)
+            .keyboardShortcut(.end)
+            .shadow(radius: 20)
+            .help("comments.scroll.bottom")
+
+          Button(action: {
+            withAnimation {
+              scrollProxy.scrollTo(Self.rootViewId, anchor: .top)
+            }
+          }, label: {
+            VStack {
+              Image(systemName: "chevron.up")
+              Image(systemName: "chevron.up")
+                .offset(y: -2)
+            }
+            .offset(y: -3)
+          })
+            .keyboardShortcut(.upArrow)
+            .keyboardShortcut(.home)
+            .shadow(radius: 20)
+            .help("comments.scroll.top")
+        }
+        .padding()
       }
       .onAppear {
         commentData.loadComments(focusOn: focusedComment,

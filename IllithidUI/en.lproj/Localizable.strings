@@ -4,3 +4,5 @@
 
 "comments.no.comments" = "Looks like this is a comment graveyard";
 "comments.loading" = "Loading comments";
+"comments.scroll.top" = "Scroll to top";
+"comments.scroll.bottom" = "Scroll to bottom";
