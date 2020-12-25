@@ -117,11 +117,6 @@ struct PostRowView: View {
   }
 }
 
-extension Post {
-  static let pinnedDescription: String = "This post has been pinned by a moderator"
-  static let lockedDescription: String = "This post has been locked. New comments are disabled"
-}
-
 // MARK: - PostActionBar
 
 // TODO: Sync saved and voted state with model

@@ -6,3 +6,5 @@
 "comments.loading" = "Loading comments";
 "comments.scroll.top" = "Scroll to top";
 "comments.scroll.bottom" = "Scroll to bottom";
+"post.pinned" = "This post has been pinned by a moderator";
+"post.locked" = "This post has been locked. New comments are disabled";

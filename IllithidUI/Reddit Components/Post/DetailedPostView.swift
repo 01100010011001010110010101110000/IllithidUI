@@ -42,22 +42,25 @@ struct DetailedPostView: View {
           Text("Crossposted by \(post.author) \(post.relativePostTime) ago")
             .font(.caption)
         }
-        HStack {
-          if post.stickied {
-            Image(systemName: "pin.circle.fill")
-              .font(.title)
-              .foregroundColor(.green)
-              .help(Post.pinnedDescription)
+        HStack(alignment: .center) {
+          HStack(alignment: .center) {
+            if post.stickied {
+              Image(systemName: "pin.fill")
+                .help("post.pinned")
+            }
+            if post.locked {
+              Image(systemName: "lock.fill")
+                .help("post.locked")
+            }
           }
-          if post.locked {
-            Image(systemName: "lock.circle.fill")
-              .font(.title)
-              .foregroundColor(.green)
-              .help(Post.lockedDescription)
-          }
+          .font(.title2)
+          .foregroundColor(.green)
+          .padding(.leading, 10)
+          Spacer()
+          TitleView(post: post)
           Spacer()
         }
-        TitleView(post: post)
+        .padding(.top)
       }
 
       if let crosspostParent = crosspostParent {
@@ -116,6 +119,5 @@ private struct TitleView: View {
           .flairTag(rectangleColor: .red)
       }
     }
-    .padding([.leading, .trailing, .bottom])
   }
 }
