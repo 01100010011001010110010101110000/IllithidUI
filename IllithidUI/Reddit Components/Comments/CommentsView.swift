@@ -51,27 +51,7 @@ struct CommentsView: View, Identifiable {
     ScrollViewReader { scrollProxy in
       ZStack(alignment: .bottomTrailing) {
         ScrollView {
-          VStack(alignment: .leading) {
-            HStack {
-              Text(post.title)
-                .font(.largeTitle)
-                .multilineTextAlignment(.center)
-                .padding([.horizontal, .top])
-                .heightResizable()
-              Spacer()
-              VStack {
-                Text("in \(post.subreddit) by ")
-                  + Text(post.author).usernameStyle(color: authorColor)
-                  + Text(" \(post.relativePostTime) ago")
-              }
-            }
-            .id(Self.rootViewId)
-            HStack {
-              Spacer()
-              PostContent(post: post)
-              Spacer()
-            }
-          }
+          DetailedPostView(post: post)
 
           Divider()
 
