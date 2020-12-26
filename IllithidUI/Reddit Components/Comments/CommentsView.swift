@@ -122,6 +122,7 @@ struct CommentsView: View, Identifiable {
   private static let rootViewId = "view.root"
 
   @StateObject private var commentData: CommentData
+  // TODO: Setup a user preference to choose a specific static sort, or to respect the Subreddit sort
   @StateObject private var sorter = SortModel(sort: CommentsSort.best, topInterval: .day)
   @ObservedObject private var moderators: ModeratorData = .shared
 
