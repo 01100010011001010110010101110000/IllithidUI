@@ -52,9 +52,9 @@ class CommentData: ObservableObject {
 
   // MARK: Comment loading
 
-  func loadComments(focusOn commentId: ID36? = nil, context: Int? = nil) {
+  func loadComments(focusOn commentId: ID36? = nil, context: Int? = nil, sort: CommentsSort) {
     loadingComments = true
-    cancelToken = illithid.comments(for: post, parameters: listingParameters, focusOn: commentId, context: context)
+    cancelToken = illithid.comments(for: post, parameters: listingParameters, by: sort, focusOn: commentId, context: context)
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { completion in
         self.loadingComments = false
@@ -68,6 +68,13 @@ class CommentData: ObservableObject {
         self.comments.append(contentsOf: listing.comments)
         self.rootMore = listing.more
       }
+  }
+
+  func reload(focusOn commentId: ID36? = nil, context: Int? = nil, sort: CommentsSort) {
+    cancel()
+    comments.removeAll(keepingCapacity: true)
+    rootMore = nil
+    loadComments(focusOn: commentId, context: context, sort: sort)
   }
 
   func cancel() {

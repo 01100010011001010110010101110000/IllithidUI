@@ -49,65 +49,70 @@ struct CommentsView: View, Identifiable {
 
   var body: some View {
     ScrollViewReader { scrollProxy in
-      ZStack(alignment: .bottomTrailing) {
-        ScrollView {
-          DetailedPostView(post: post)
-
-          Divider()
-
-          if !commentData.loadingComments && commentData.comments.isEmpty {
-            Text("comments.no.comments")
-              .offset(y: 40)
-          } else {
-            CommentsStack(commentData: commentData, scrollProxy: scrollProxy)
-              .padding([.bottom, .horizontal])
-              .loadingScreen(isLoading: commentData.comments.isEmpty && commentData.loadingComments,
-                             title: "comments.loading",
-                             offset: (x: 0, y: 40))
+      VStack {
+        SortController(model: sorter)
+          .onReceive(sorter.$sort.dropFirst()) { sort in
+            commentData.reload(focusOn: focusedComment, context: commentContext, sort: sort)
           }
-        }
-        HStack(spacing: 5) {
-          Button(action: {
-            if let lastComment = commentData.comments.last {
-              withAnimation {
-                scrollProxy.scrollTo(lastComment.id, anchor: .top)
-              }
-            }
-          }, label: {
-            VStack {
-              Image(systemName: "chevron.down")
-              Image(systemName: "chevron.down")
-                .offset(y: -2)
-            }
-            .offset(y: -3)
-          })
-            .keyboardShortcut(.downArrow)
-            .keyboardShortcut(.end)
-            .shadow(radius: 20)
-            .help("comments.scroll.bottom")
+        ZStack(alignment: .bottomTrailing) {
+          ScrollView {
+            DetailedPostView(post: post)
 
-          Button(action: {
-            withAnimation {
-              scrollProxy.scrollTo(Self.rootViewId, anchor: .top)
+            Divider()
+
+            if !commentData.loadingComments && commentData.comments.isEmpty {
+              Text("comments.no.comments")
+                .offset(y: 40)
+            } else {
+              CommentsStack(commentData: commentData, scrollProxy: scrollProxy)
+                .padding([.bottom, .horizontal])
+                .loadingScreen(isLoading: commentData.comments.isEmpty && commentData.loadingComments,
+                               title: "comments.loading",
+                               offset: (x: 0, y: 40))
             }
-          }, label: {
-            VStack {
-              Image(systemName: "chevron.up")
-              Image(systemName: "chevron.up")
-                .offset(y: -2)
-            }
-            .offset(y: -3)
-          })
-            .keyboardShortcut(.upArrow)
-            .keyboardShortcut(.home)
-            .shadow(radius: 20)
-            .help("comments.scroll.top")
+          }
+          HStack(spacing: 5) {
+            Button(action: {
+              if let lastComment = commentData.comments.last {
+                withAnimation {
+                  scrollProxy.scrollTo(lastComment.id, anchor: .top)
+                }
+              }
+            }, label: {
+              VStack {
+                Image(systemName: "chevron.down")
+                Image(systemName: "chevron.down")
+                  .offset(y: -2)
+              }
+              .offset(y: -3)
+            })
+              .keyboardShortcut(.downArrow)
+              .keyboardShortcut(.end)
+              .shadow(radius: 20)
+              .help("comments.scroll.bottom")
+
+            Button(action: {
+              withAnimation {
+                scrollProxy.scrollTo(Self.rootViewId, anchor: .top)
+              }
+            }, label: {
+              VStack {
+                Image(systemName: "chevron.up")
+                Image(systemName: "chevron.up")
+                  .offset(y: -2)
+              }
+              .offset(y: -3)
+            })
+              .keyboardShortcut(.upArrow)
+              .keyboardShortcut(.home)
+              .shadow(radius: 20)
+              .help("comments.scroll.top")
+          }
+          .padding()
         }
-        .padding()
-      }
-      .onAppear {
-        commentData.loadComments(focusOn: focusedComment,
-                                 context: focusedComment != nil ? 2 : nil)
+        .onAppear {
+          commentData.loadComments(focusOn: focusedComment, context: commentContext, sort: sorter.sort)
+        }
       }
     }
   }
@@ -117,7 +122,12 @@ struct CommentsView: View, Identifiable {
   private static let rootViewId = "view.root"
 
   @StateObject private var commentData: CommentData
+  @StateObject private var sorter = SortModel(sort: CommentsSort.best, topInterval: .day)
   @ObservedObject private var moderators: ModeratorData = .shared
+
+  private var commentContext: Int? {
+    focusedComment != nil ? 2 : nil
+  }
 
   private var authorColor: Color {
     if post.isAdminPost {
