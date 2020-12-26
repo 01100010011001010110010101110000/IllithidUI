@@ -18,6 +18,18 @@ import SwiftUI
 import Illithid
 
 struct NewCommentForm: View {
+  // MARK: Lifecycle
+
+  init(isPresented: Binding<Bool>, comment: Comment) {
+    _isPresented = isPresented
+    parentFullname = comment.name
+  }
+
+  init(isPresented: Binding<Bool>, post: Post) {
+    _isPresented = isPresented
+    parentFullname = post.name
+  }
+
   // MARK: Internal
 
   @Binding var isPresented: Bool
@@ -51,6 +63,8 @@ struct NewCommentForm: View {
   }
 
   // MARK: Private
+
+  private let parentFullname: Fullname
 
   @State private var newComment: String = ""
 }
