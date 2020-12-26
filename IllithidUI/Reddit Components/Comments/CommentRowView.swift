@@ -313,9 +313,8 @@ private struct CommentActionBar: View {
   let comment: Comment
 
   var body: some View {
-    // TODO: Debug freezes caused by the buttons in this view; PlainButtonStyle() fixes the issue but seems to disable things like foreground coloring
     HStack {
-      Button(action: {
+      IllithidButton(action: {
         if interactionState.ballot == .up { interactionState.clearVote(comment: comment) }
         else { interactionState.upvote(comment: comment) }
       }, label: {
@@ -323,7 +322,7 @@ private struct CommentActionBar: View {
       })
         .foregroundColor(interactionState.ballot == .up ? .orange : .white)
 
-      Button(action: {
+      IllithidButton(action: {
         if interactionState.ballot == .down { interactionState.clearVote(comment: comment) }
         else { interactionState.downvote(comment: comment) }
       }, label: {
@@ -331,7 +330,7 @@ private struct CommentActionBar: View {
       })
         .foregroundColor(interactionState.ballot == .down ? .purple : .white)
 
-      Button(action: {
+      IllithidButton(action: {
         if interactionState.saved { interactionState.unsave(comment: comment) }
         else { interactionState.save(comment: comment) }
       }, label: {
@@ -339,11 +338,12 @@ private struct CommentActionBar: View {
       })
         .foregroundColor(interactionState.saved ? .green : .white)
 
-      Button(action: {}, label: {
+      // TODO: Support button styling via environment in IllithidButton
+      IllithidButton(action: {}, label: {
         Image(systemName: "flag.fill")
       })
         .buttonStyle(DangerButtonStyle())
-        .help("Report comment")
+        .help("comments.report")
 
       Spacer()
     }

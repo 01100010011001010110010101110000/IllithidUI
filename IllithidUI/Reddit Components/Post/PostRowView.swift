@@ -109,7 +109,7 @@ struct PostRowView: View {
   // MARK: Private
 
   private var commentsButton: some View {
-    Button(action: {
+    IllithidButton(action: {
       showComments(for: post)
     }, label: {
       Image(systemName: "chevron.right")
@@ -141,85 +141,87 @@ struct PostActionBar: View {
 
   var body: some View {
     VStack {
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(Color(.darkGray))
-        .overlay(Image(systemName: "arrow.up")
-          .foregroundColor(vote == .up ? .orange : .white))
-        .onTapGesture {
-          if vote == .up {
-            vote = .clear
-            post.clearVote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
-              }
+      IllithidButton(action: {
+        if vote == .up {
+          post.clearVote { result in
+            switch result {
+            case .success:
+              vote = .clear
+            case let .failure(error):
+              Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
             }
-          } else {
-            vote = .up
-            post.upvote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error upvoting \(post.title) - \(post.name): \(error)")
-              }
+          }
+        } else {
+          post.upvote { result in
+            switch result {
+            case .success:
+              vote = .up
+            case let .failure(error):
+              Illithid.shared.logger.errorMessage("Error upvoting \(post.title) - \(post.name): \(error)")
             }
           }
         }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(Color(.darkGray))
-        .overlay(Image(systemName: "arrow.down")
-          .foregroundColor(vote == .down ? .purple : .white))
-        .onTapGesture {
-          if vote == .down {
-            vote = .clear
-            post.clearVote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
-              }
+      }, label: {
+        Image(systemName: "arrow.up")
+          .foregroundColor(vote == .up ? .orange : .white)
+      })
+      IllithidButton(action: {
+        if vote == .down {
+          post.clearVote { result in
+            switch result {
+            case .success:
+              vote = .clear
+            case let .failure(error):
+              Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
             }
-          } else {
-            vote = .down
-            post.downvote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error downvoting \(post.title) - \(post.name): \(error)")
-              }
+          }
+        } else {
+          post.downvote { result in
+            switch result {
+            case .success:
+              vote = .down
+            case let .failure(error):
+              Illithid.shared.logger.errorMessage("Error downvoting \(post.title) - \(post.name): \(error)")
             }
           }
         }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(Color(.darkGray))
-        .overlay(Image(systemName: "bookmark.fill")
-          .foregroundColor(saved ? .green : .white))
-        .onTapGesture {
-          saved.toggle()
-          if saved {
-            post.save { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error saving \(post.title) - \(post.name): \(error)")
-              }
+      }, label: {
+        Image(systemName: "arrow.down")
+          .foregroundColor(vote == .down ? .purple : .white)
+      })
+      IllithidButton(action: {
+        if saved {
+          post.unsave { result in
+            switch result {
+            case .success:
+              saved = false
+            case let .failure(error):
+              Illithid.shared.logger.errorMessage("Error unsaving \(post.title) - \(post.name): \(error)")
             }
-          } else {
-            post.unsave { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error unsaving \(post.title) - \(post.name): \(error)")
-              }
+          }
+        } else {
+          post.save { result in
+            switch result {
+            case .success:
+              saved = true
+            case let .failure(error):
+              Illithid.shared.logger.errorMessage("Error saving \(post.title) - \(post.name): \(error)")
             }
           }
         }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(.red)
-        .overlay(Image(systemName: "eye.slash")
-          .foregroundColor(.white))
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(.red)
-        .overlay(Image(systemName: "flag")
-          .foregroundColor(.white))
-        .foregroundColor(.white)
-        .frame(width: 32, height: 32)
+      }, label: {
+        Image(systemName: "bookmark.fill")
+          .foregroundColor(saved ? .green : .white)
+      })
+      IllithidButton(action: {}, label: {
+        Image(systemName: "eye.slash")
+      })
+      IllithidButton(action: {}, label: {
+        Image(systemName: "flag")
+      })
       Spacer()
     }
-    .font(.title)
+    .font(.title2)
     .padding(10)
   }
 

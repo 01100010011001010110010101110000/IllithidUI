@@ -28,11 +28,26 @@ struct IllithidButton: View {
       .eraseToAnyView()
   }
 
+  init<S: StringProtocol>(action: @escaping () -> Void, label: S) {
+    mouseUp = action
+    mouseDown = {}
+    self.label = Text(label)
+      .eraseToAnyView()
+  }
+
   init<V: View>(@ViewBuilder label: () -> V,
                 mouseDown: @escaping () -> Void = {},
                 mouseUp: @escaping () -> Void) {
     self.mouseUp = mouseUp
     self.mouseDown = mouseDown
+    self.label = label()
+      .eraseToAnyView()
+  }
+
+  init<V: View>(action: @escaping () -> Void,
+                @ViewBuilder label: () -> V) {
+    mouseUp = action
+    mouseDown = {}
     self.label = label()
       .eraseToAnyView()
   }
@@ -45,10 +60,11 @@ struct IllithidButton: View {
 
   var body: some View {
     label
-      .padding([.leading, .trailing], 12)
-      .padding([.top, .bottom], 2)
-      .background(RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(pressed ? .accentColor : Color(.controlColor)))
+      .padding(.horizontal, 7)
+      .padding(.vertical, 2)
+      .background(RoundedRectangle(cornerRadius: 5)
+        .foregroundColor(pressed ? .accentColor : Color(.controlColor))
+      )
       .onMouseGesture(mouseDown: {
         pressed = true
         mouseDown()

@@ -14,6 +14,7 @@
 "comments.clearvote" = "Clear vote";
 "comments.save" = "Save";
 "comments.unsave" = "Unsave";
+"comments.report" = "Report";
 
 "post.pinned" = "This post has been pinned by a moderator";
 "post.locked" = "This post has been locked. New comments are disabled";
