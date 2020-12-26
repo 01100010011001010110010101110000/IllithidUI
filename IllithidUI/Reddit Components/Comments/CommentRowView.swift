@@ -14,15 +14,27 @@
 
 import SwiftUI
 
+import Alamofire
 import Illithid
 
 // MARK: - CommentRowView
 
 struct CommentRowView: View {
-  @State private var textSize: CGRect = .zero
+  // MARK: Lifecycle
+
+  init(isCollapsed: Binding<Bool>, comment: Comment, scrollProxy: ScrollViewProxy? = nil) {
+    _interactions = .init(wrappedValue: CommentState(comment: comment))
+    _isCollapsed = isCollapsed
+    self.comment = comment
+    self.scrollProxy = scrollProxy
+  }
+
+  // MARK: Internal
+
   @Binding var isCollapsed: Bool
 
   let comment: Comment
+  let scrollProxy: ScrollViewProxy?
 
   var body: some View {
     VStack {
@@ -55,7 +67,131 @@ struct CommentRowView: View {
       Divider()
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
+    .environmentObject(interactions)
+    .contextMenu {
+      if interactions.ballot != .up {
+        Button("comments.upvote") { interactions.upvote(comment: comment) }
+      }
+      if interactions.ballot != .down {
+        Button("comments.downvote") { interactions.downvote(comment: comment) }
+      }
+      if interactions.ballot != .clear {
+        Button("comments.clearvote") { interactions.clearVote(comment: comment) }
+      }
+      Divider()
+      if !interactions.saved {
+        Button("comments.save") { interactions.save(comment: comment) }
+      } else {
+        Button("comments.unsave") { interactions.unsave(comment: comment) }
+      }
+      Divider()
+      if let depth = comment.depth ?? 0, depth != 0 {
+        Button(action: {
+          withAnimation {
+            if let parentId36 = comment.parentId.components(separatedBy: "_").last {
+              scrollProxy?.scrollTo(parentId36, anchor: .top)
+            }
+          }
+        }, label: { Label("comments.scroll.parent.comment", systemImage: "ellipsis.bubble") })
+      }
+    }
   }
+
+  // MARK: Fileprivate
+
+  fileprivate class CommentState: ObservableObject {
+    // MARK: Lifecycle
+
+    init(comment: Comment) {
+      ballot = VoteDirection(from: comment)
+      saved = comment.saved
+    }
+
+    // MARK: Internal
+
+    @Published private(set) var ballot: VoteDirection
+    @Published private(set) var voting: Bool = false
+    @Published private(set) var saved: Bool
+    @Published private(set) var saving: Bool = false
+
+    func upvote(comment: Comment) {
+      voting = true
+      comment.upvote { [weak self] result in
+        guard let self = self else { return }
+        self.voting = false
+        switch result {
+        case .success:
+          self.ballot = .up
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error upvoting \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    func downvote(comment: Comment) {
+      voting = true
+      comment.downvote { [weak self] result in
+        guard let self = self else { return }
+        self.voting = false
+        switch result {
+        case .success:
+          self.ballot = .down
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error downvoting \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    func clearVote(comment: Comment) {
+      voting = true
+      comment.clearVote { [weak self] result in
+        guard let self = self else { return }
+        self.voting = false
+        switch result {
+        case .success:
+          self.ballot = .clear
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error clearing vote \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    func save(comment: Comment) {
+      saving = true
+      comment.save { [weak self] result in
+        guard let self = self else { return }
+        self.saving = false
+        switch result {
+        case .success:
+          self.saved = true
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error saving comment \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    func unsave(comment: Comment) {
+      saving = true
+      comment.unsave { [weak self] result in
+        guard let self = self else { return }
+        self.saving = false
+        switch result {
+        case .success:
+          self.saved = false
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error unsaving comment \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    // MARK: Private
+
+    private let illithid: Illithid = .shared
+  }
+
+  // MARK: Private
+
+  @StateObject private var interactions: CommentState
 }
 
 // MARK: - RemovedComment
@@ -164,8 +300,7 @@ struct MoreCommentsRowView: View {
 
 // MARK: - CommentActionBar
 
-// TODO: Sync saved and voted state with model
-struct CommentActionBar: View {
+private struct CommentActionBar: View {
   // MARK: Lifecycle
 
   init(comment: Comment) {
@@ -179,66 +314,28 @@ struct CommentActionBar: View {
   var body: some View {
     HStack {
       Button(action: {
-        if self.vote == .up {
-          self.vote = .clear
-          self.comment.clearVote { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
-            }
-          }
-        } else {
-          self.vote = .up
-          self.comment.upvote { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error upvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
-            }
-          }
-        }
+        if interactionState.ballot == .up { interactionState.clearVote(comment: comment) }
+        else { interactionState.upvote(comment: comment) }
       }, label: {
         Image(systemName: "arrow.up")
       })
-        .foregroundColor(vote == .up ? .orange : .white)
+        .foregroundColor(interactionState.ballot == .up ? .orange : .white)
 
       Button(action: {
-        if self.vote == .down {
-          self.vote = .clear
-          self.comment.clearVote { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
-            }
-          }
-        } else {
-          self.vote = .down
-          self.comment.downvote { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error downvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
-            }
-          }
-        }
+        if interactionState.ballot == .down { interactionState.clearVote(comment: comment) }
+        else { interactionState.downvote(comment: comment) }
       }, label: {
         Image(systemName: "arrow.down")
       })
-        .foregroundColor(vote == .down ? .purple : .white)
+        .foregroundColor(interactionState.ballot == .down ? .purple : .white)
 
       Button(action: {
-        self.saved.toggle()
-        if self.saved {
-          self.comment.save { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error saving \(self.comment.author) - \(self.comment.fullname): \(error)")
-            }
-          }
-        } else {
-          self.comment.unsave { result in
-            if case let Result.failure(error) = result {
-              Illithid.shared.logger.errorMessage("Error unsaving \(self.comment.author) - \(self.comment.fullname): \(error)")
-            }
-          }
-        }
+        if interactionState.saved { interactionState.unsave(comment: comment) }
+        else { interactionState.save(comment: comment) }
       }, label: {
         Image(systemName: "bookmark.fill")
       })
-        .foregroundColor(saved ? .green : .white)
+        .foregroundColor(interactionState.saved ? .green : .white)
 
       Button(action: {}, label: {
         Image(systemName: "flag.fill")
@@ -249,25 +346,16 @@ struct CommentActionBar: View {
       Spacer()
     }
     .padding(10)
-    .onAppear {
-      if let likeDirection = self.comment.likes {
-        self.vote = likeDirection ? .up : .down
-      } else {
-        self.vote = .clear
-      }
-      self.saved = self.comment.saved
-    }
   }
 
   // MARK: Private
 
-  @State private var vote: VoteDirection = .clear
-  @State private var saved: Bool = false
+  @EnvironmentObject private var interactionState: CommentRowView.CommentState
 }
 
 // MARK: - CommentColorBar
 
-struct CommentColorBar: View {
+private struct CommentColorBar: View {
   // MARK: Lifecycle
 
   init(isCollapsed: Binding<Bool>, for comment: Comment) {

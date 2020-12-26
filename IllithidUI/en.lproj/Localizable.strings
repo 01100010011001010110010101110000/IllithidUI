@@ -4,7 +4,16 @@
 
 "comments.no.comments" = "Looks like this is a comment graveyard";
 "comments.loading" = "Loading comments";
+
 "comments.scroll.top" = "Scroll to top";
 "comments.scroll.bottom" = "Scroll to bottom";
+"comments.scroll.parent.comment" = "Parent comment";
+
+"comments.upvote" = "Upvote";
+"comments.downvote" = "Downvote";
+"comments.clearvote" = "Clear vote";
+"comments.save" = "Save";
+"comments.unsave" = "Unsave";
+
 "post.pinned" = "This post has been pinned by a moderator";
-"post.locked" = "This post has been locked. New comments are disabled";
+"post.locked" = "This post has been locked. New comments are disabl ed";

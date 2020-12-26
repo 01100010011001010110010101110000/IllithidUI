@@ -151,22 +151,8 @@ private struct CommentsStack: View {
   var body: some View {
     LazyVStack {
       RecursiveView(data: commentData.comments, children: \.replies) { comment, isCollapsed in
-        CommentRowView(isCollapsed: isCollapsed, comment: comment)
+        CommentRowView(isCollapsed: isCollapsed, comment: comment, scrollProxy: scrollProxy)
           .id(comment.id)
-          .contextMenu {
-            Button("Upvote") {}
-            Button("Downvote") {}
-            Divider()
-            Button("Save") {}
-            Divider()
-            if let depth = comment.depth ?? 0, depth != 0 {
-              Button(action: {
-                withAnimation {
-                  scrollProxy.scrollTo(comment.parentId.components(separatedBy: "_").last!, anchor: .top)
-                }
-              }, label: { Label("Parent comment", systemImage: "ellipsis.bubble") })
-            }
-          }
         if let more = comment.more, more.isThreadContinuation {
           MoreCommentsRowView(more: more)
             .onTapGesture {
