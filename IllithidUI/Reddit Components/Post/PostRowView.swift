@@ -109,7 +109,7 @@ struct PostRowView: View {
   // MARK: Private
 
   private var commentsButton: some View {
-    IllithidButton(action: {
+    Button(action: {
       showComments(for: post)
     }, label: {
       Image(systemName: "chevron.right")
