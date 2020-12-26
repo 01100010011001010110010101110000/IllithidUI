@@ -57,6 +57,7 @@ struct CommentsView: View, Identifiable {
         ZStack(alignment: .bottomTrailing) {
           ScrollView {
             DetailedPostView(post: post)
+              .id(Self.rootViewId)
 
             Divider()
 
@@ -87,7 +88,6 @@ struct CommentsView: View, Identifiable {
               .offset(y: -3)
             })
               .keyboardShortcut(.downArrow)
-              .keyboardShortcut(.end)
               .shadow(radius: 20)
               .help("comments.scroll.bottom")
 
@@ -104,7 +104,6 @@ struct CommentsView: View, Identifiable {
               .offset(y: -3)
             })
               .keyboardShortcut(.upArrow)
-              .keyboardShortcut(.home)
               .shadow(radius: 20)
               .help("comments.scroll.top")
           }
