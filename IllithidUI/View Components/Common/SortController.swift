@@ -37,13 +37,15 @@ final class SortModel<Sort>: ObservableObject where Sort: RawRepresentable & Cas
 struct SortController<Sort>: View where Sort: RawRepresentable & CaseIterable & Identifiable & Hashable, Sort.RawValue == String, Sort.AllCases: RandomAccessCollection {
   // MARK: Lifecycle
 
-  init(model: SortModel<Sort>) {
+  init(model: SortModel<Sort>, hideIntervalPicker: Bool = false) {
     sortModel = model
+    self.hideIntervalPicker = hideIntervalPicker
   }
 
   // MARK: Internal
 
   @ObservedObject var sortModel: SortModel<Sort>
+  let hideIntervalPicker: Bool
 
   var body: some View {
     HStack {
@@ -53,7 +55,7 @@ struct SortController<Sort>: View where Sort: RawRepresentable & CaseIterable & 
         }
       }
       .frame(maxWidth: 100)
-      if sortModel.sort.rawValue == "top" || sortModel.sort.rawValue == "controversial" {
+      if (sortModel.sort.rawValue == "top" || sortModel.sort.rawValue == "controversial") && !hideIntervalPicker {
         Picker(selection: $sortModel.topInterval, label: EmptyView()) {
           ForEach(TopInterval.allCases) { interval in
             Text(interval.rawValue).tag(interval)
