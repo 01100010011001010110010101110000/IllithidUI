@@ -14,15 +14,27 @@
 
 import SwiftUI
 
+import Alamofire
 import Illithid
 
 // MARK: - CommentRowView
 
 struct CommentRowView: View {
-  @State private var textSize: CGRect = .zero
+  // MARK: Lifecycle
+
+  init(isCollapsed: Binding<Bool>, comment: Comment, scrollProxy: ScrollViewProxy? = nil) {
+    _interactions = .init(wrappedValue: CommentState(comment: comment))
+    _isCollapsed = isCollapsed
+    self.comment = comment
+    self.scrollProxy = scrollProxy
+  }
+
+  // MARK: Internal
+
   @Binding var isCollapsed: Bool
 
   let comment: Comment
+  let scrollProxy: ScrollViewProxy?
 
   var body: some View {
     VStack {
@@ -33,28 +45,153 @@ struct CommentRowView: View {
           DeletedComment(isCollapsed: $isCollapsed, comment: comment)
         } else {
           VStack(alignment: .leading) {
-            AuthorBar(isCollapsed: $isCollapsed, comment: comment)
+            AuthorBar(comment: comment)
+              .padding(.leading, 4)
 
             if !isCollapsed {
               AttributedText(attributed: comment.attributedBody)
-
               CommentActionBar(comment: comment)
                 .padding(.bottom, 5)
             }
           }
         }
       }
+      .padding(.trailing)
       .offset(x: 10)
       .overlay(
         HStack {
-          CommentColorBar(for: comment)
+          CommentColorBar(isCollapsed: $isCollapsed, for: comment)
           Spacer()
         }
       )
       Divider()
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
+    .environmentObject(interactions)
+    .contextMenu {
+      if interactions.ballot != .up {
+        Button("comments.upvote") { interactions.upvote(comment: comment) }
+      }
+      if interactions.ballot != .down {
+        Button("comments.downvote") { interactions.downvote(comment: comment) }
+      }
+      if interactions.ballot != .clear {
+        Button("comments.clearvote") { interactions.clearVote(comment: comment) }
+      }
+      Divider()
+      if !interactions.saved {
+        Button("comments.save") { interactions.save(comment: comment) }
+      } else {
+        Button("comments.unsave") { interactions.unsave(comment: comment) }
+      }
+      Divider()
+      if let depth = comment.depth ?? 0, depth != 0 {
+        Button(action: {
+          withAnimation {
+            if let parentId36 = comment.parentId.components(separatedBy: "_").last {
+              scrollProxy?.scrollTo(parentId36, anchor: .top)
+            }
+          }
+        }, label: { Label("comments.scroll.parent.comment", systemImage: "ellipsis.bubble") })
+      }
+    }
   }
+
+  // MARK: Fileprivate
+
+  fileprivate class CommentState: ObservableObject {
+    // MARK: Lifecycle
+
+    init(comment: Comment) {
+      ballot = VoteDirection(from: comment)
+      saved = comment.saved
+    }
+
+    // MARK: Internal
+
+    @Published private(set) var ballot: VoteDirection
+    @Published private(set) var voting: Bool = false
+    @Published private(set) var saved: Bool
+    @Published private(set) var saving: Bool = false
+
+    func upvote(comment: Comment) {
+      voting = true
+      comment.upvote { [weak self] result in
+        guard let self = self else { return }
+        self.voting = false
+        switch result {
+        case .success:
+          self.ballot = .up
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error upvoting \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    func downvote(comment: Comment) {
+      voting = true
+      comment.downvote { [weak self] result in
+        guard let self = self else { return }
+        self.voting = false
+        switch result {
+        case .success:
+          self.ballot = .down
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error downvoting \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    func clearVote(comment: Comment) {
+      voting = true
+      comment.clearVote { [weak self] result in
+        guard let self = self else { return }
+        self.voting = false
+        switch result {
+        case .success:
+          self.ballot = .clear
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error clearing vote \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    func save(comment: Comment) {
+      saving = true
+      comment.save { [weak self] result in
+        guard let self = self else { return }
+        self.saving = false
+        switch result {
+        case .success:
+          self.saved = true
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error saving comment \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    func unsave(comment: Comment) {
+      saving = true
+      comment.unsave { [weak self] result in
+        guard let self = self else { return }
+        self.saving = false
+        switch result {
+        case .success:
+          self.saved = false
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Error unsaving comment \(comment.author) - \(comment.fullname): \(error)")
+        }
+      }
+    }
+
+    // MARK: Private
+
+    private let illithid: Illithid = .shared
+  }
+
+  // MARK: Private
+
+  @StateObject private var interactions: CommentState
 }
 
 // MARK: - RemovedComment
@@ -90,7 +227,7 @@ private struct DeletedComment: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      AuthorBar(isCollapsed: $isCollapsed, comment: comment)
+      AuthorBar(comment: comment)
       if !isCollapsed {
         Text("Deleted by author")
       }
@@ -101,10 +238,30 @@ private struct DeletedComment: View {
 // MARK: - AuthorBar
 
 private struct AuthorBar: View {
-  @ObservedObject private var moderators: ModeratorData = .shared
-  @Binding var isCollapsed: Bool
+  // MARK: Lifecycle
+
+  init(comment: Comment) {
+    self.comment = comment
+  }
+
+  // MARK: Internal
 
   let comment: Comment
+
+  var body: some View {
+    HStack {
+      Text(comment.author)
+        .usernameStyle(color: authorColor)
+      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
+        .foregroundColor(.orange)
+      Spacer()
+      Text("\(comment.relativeCommentTime) ago")
+    }
+  }
+
+  // MARK: Private
+
+  @ObservedObject private var moderators: ModeratorData = .shared
 
   private var authorColor: Color {
     if comment.isAdminComment {
@@ -115,25 +272,6 @@ private struct AuthorBar: View {
       return .blue
     } else {
       return .white
-    }
-  }
-
-  var body: some View {
-    HStack {
-      Text(comment.author)
-        .usernameStyle(color: authorColor)
-      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
-        .foregroundColor(.orange)
-      Spacer()
-      Text("\(comment.relativeCommentTime) ago")
-      Image(systemName: "chevron.down")
-        .animation(.easeIn)
-        .rotationEffect(.degrees(isCollapsed ? -90 : 0))
-        .onTapGesture {
-          withAnimation {
-            isCollapsed.toggle()
-          }
-        }
     }
   }
 }
@@ -162,125 +300,109 @@ struct MoreCommentsRowView: View {
 
 // MARK: - CommentActionBar
 
-// TODO: Sync saved and voted state with model
-struct CommentActionBar: View {
-  @State private var vote: VoteDirection = .clear
-  @State private var saved: Bool = false
-  let comment: Comment
-
-  var body: some View {
-    HStack {
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(vote == .up ? .orange : Color(.darkGray))
-        .overlay(Text("Up"), alignment: .center)
-        .foregroundColor(.white)
-        .onTapGesture {
-          if self.vote == .up {
-            self.vote = .clear
-            self.comment.clearVote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
-            }
-          } else {
-            self.vote = .up
-            self.comment.upvote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error upvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
-            }
-          }
-        }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(vote == .down ? .purple : Color(.darkGray))
-        .overlay(Text("Down"), alignment: .center)
-        .foregroundColor(.white)
-        .onTapGesture {
-          if self.vote == .down {
-            self.vote = .clear
-            self.comment.clearVote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error clearing vote on \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
-            }
-          } else {
-            self.vote = .down
-            self.comment.downvote { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error downvoting \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
-            }
-          }
-        }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(saved ? .green : Color(.darkGray))
-        .overlay(Text("Save"), alignment: .center)
-        .foregroundColor(.white)
-        .onTapGesture {
-          self.saved.toggle()
-          if self.saved {
-            self.comment.save { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error saving \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
-            }
-          } else {
-            self.comment.unsave { result in
-              if case let Result.failure(error) = result {
-                Illithid.shared.logger.errorMessage("Error unsaving \(self.comment.author) - \(self.comment.fullname): \(error)")
-              }
-            }
-          }
-        }
-        .frame(width: 32, height: 32)
-      RoundedRectangle(cornerRadius: 2.0)
-        .foregroundColor(.red)
-        .overlay(Text("Report"), alignment: .center)
-        .foregroundColor(.white)
-        .frame(width: 32, height: 32)
-      Spacer()
-    }
-    .padding(10)
-    .onAppear {
-      if let likeDirection = self.comment.likes {
-        self.vote = likeDirection ? .up : .down
-      } else {
-        self.vote = .clear
-      }
-      self.saved = self.comment.saved
-    }
-  }
-}
-
-// MARK: - CommentColorBar
-
-struct CommentColorBar: View {
+private struct CommentActionBar: View {
   // MARK: Lifecycle
 
-  init(for comment: Comment) {
-    depth = comment.depth ?? 0
-  }
-
-  init(for more: More) {
-    depth = more.depth
+  init(comment: Comment) {
+    self.comment = comment
   }
 
   // MARK: Internal
 
+  let comment: Comment
+
   var body: some View {
-    if depth > 0 {
-      RoundedRectangle(cornerRadius: 1.5, style: .continuous)
-        .foregroundColor(Color(hue: 1.0 / Double(depth), saturation: 1.0, brightness: 1.0))
-        .frame(width: width)
+    HStack {
+      Button(action: {
+        if interactionState.ballot == .up { interactionState.clearVote(comment: comment) }
+        else { interactionState.upvote(comment: comment) }
+      }, label: {
+        Image(systemName: "arrow.up")
+      })
+        .foregroundColor(interactionState.ballot == .up ? .orange : .white)
+
+      Button(action: {
+        if interactionState.ballot == .down { interactionState.clearVote(comment: comment) }
+        else { interactionState.downvote(comment: comment) }
+      }, label: {
+        Image(systemName: "arrow.down")
+      })
+        .foregroundColor(interactionState.ballot == .down ? .purple : .white)
+
+      Button(action: {
+        if interactionState.saved { interactionState.unsave(comment: comment) }
+        else { interactionState.save(comment: comment) }
+      }, label: {
+        Image(systemName: "bookmark.fill")
+      })
+        .foregroundColor(interactionState.saved ? .green : .white)
+
+      Button(action: {}, label: {
+        Image(systemName: "flag.fill")
+      })
+        .buttonStyle(DangerButtonStyle())
+        .help("Report comment")
+
+      Spacer()
     }
+    .padding(10)
   }
 
   // MARK: Private
 
+  @EnvironmentObject private var interactionState: CommentRowView.CommentState
+}
+
+// MARK: - CommentColorBar
+
+private struct CommentColorBar: View {
+  // MARK: Lifecycle
+
+  init(isCollapsed: Binding<Bool>, for comment: Comment) {
+    depth = comment.depth ?? 0
+    _isCollapsed = isCollapsed
+  }
+
+  init(for more: More) {
+    depth = more.depth
+    // A more view may not be collapsed
+    _isCollapsed = .constant(false)
+  }
+
+  // MARK: Internal
+
+  @Binding var isCollapsed: Bool
+
+  var body: some View {
+    RoundedRectangle(cornerRadius: 1.5, style: .continuous)
+      .foregroundColor(foregroundColor)
+      .frame(width: width)
+      .onTapGesture {
+        withAnimation {
+          isCollapsed.toggle()
+        }
+      }
+      .onHover { hovering in
+        withAnimation {
+          isHovered = hovering
+        }
+      }
+      .scaleEffect(isHovered ? 1.05 : 1.0)
+      .shadow(color: isHovered ? .accentColor : .clear, radius: 8)
+      .shadow(color: isHovered ? .accentColor : .clear, radius: 8)
+  }
+
+  // MARK: Private
+
+  @State private var isHovered: Bool = false
   private let depth: Int
   private let width: CGFloat = 3.0
+
+  private var foregroundColor: Color {
+    isHovered
+      ? .accentColor
+      : Color(hue: 1.0 / Double(depth + 1), saturation: 1.0, brightness: 1.0)
+  }
 }
 
 extension Text {

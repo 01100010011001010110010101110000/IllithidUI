@@ -25,11 +25,13 @@ class CommentData: ObservableObject {
 
   init(post: Post) {
     self.post = post
+    loadingComments = false
   }
 
   init(from listing: Listing) {
     post = listing.posts.first!
     comments = listing.comments
+    loadingComments = false
   }
 
   // MARK: Internal
@@ -42,17 +44,20 @@ class CommentData: ObservableObject {
   }
 
   @Published private(set) var comments: [Comment] = []
-  /// The root-level more object, representing additional top-level comments on `post`
+  /// The root-level `More` object, representing additional top-level comments on `post`
   @Published private(set) var rootMore: More? = nil
+  @Published private(set) var loadingComments: Bool
 
   let post: Post
 
   // MARK: Comment loading
 
-  func loadComments(focusOn commentId: ID36? = nil, context: Int? = nil) {
-    cancelToken = illithid.comments(for: post, parameters: listingParameters, focusOn: commentId, context: context)
+  func loadComments(focusOn commentId: ID36? = nil, context: Int? = nil, sort: CommentsSort) {
+    loadingComments = true
+    cancelToken = illithid.comments(for: post, parameters: listingParameters, by: sort, focusOn: commentId, context: context)
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { completion in
+        self.loadingComments = false
         switch completion {
         case .finished:
           Illithid.shared.logger.debugMessage("Finished fetching comments for \(self.post.name) - \(self.post.title)")
@@ -63,6 +68,13 @@ class CommentData: ObservableObject {
         self.comments.append(contentsOf: listing.comments)
         self.rootMore = listing.more
       }
+  }
+
+  func reload(focusOn commentId: ID36? = nil, context: Int? = nil, sort: CommentsSort) {
+    cancel()
+    comments.removeAll(keepingCapacity: true)
+    rootMore = nil
+    loadComments(focusOn: commentId, context: context, sort: sort)
   }
 
   func cancel() {

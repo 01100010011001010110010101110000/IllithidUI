@@ -79,6 +79,11 @@ struct AttributedText: View {
           })
       }
 
+      // Do not present a context menu
+      func textView(_: NSTextView, menu _: NSMenu, for _: NSEvent, at _: Int) -> NSMenu? {
+        nil
+      }
+
       func cancel() {
         while !tokens.isEmpty {
           tokens.popLast()?.cancel()

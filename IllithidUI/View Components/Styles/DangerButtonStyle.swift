@@ -12,23 +12,14 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import Foundation
 import SwiftUI
 
-extension View {
-  func loadingScreen(isLoading: Bool, title: String, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0)) -> some View {
-    overlay(
-      ProgressView(NSLocalizedString(title, comment: ""))
-        .opacity(isLoading ? 1 : 0)
-        .offset(x: offset.x, y: offset.y)
-    )
-  }
-
-  func loadingScreen<Content: View>(isLoading: Bool, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0), @ViewBuilder _ label: () -> Content) -> some View {
-    overlay(
-      ProgressView(label: label)
-        .opacity(isLoading ? 1 : 0)
-        .offset(x: offset.x, y: offset.y)
-    )
+struct DangerButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+      .padding(.horizontal, 7)
+      .padding(.vertical, 2)
+      .background(RoundedRectangle(cornerRadius: 5).fill(Color.red))
+      .opacity(configuration.isPressed ? 0.5 : 1.0)
   }
 }

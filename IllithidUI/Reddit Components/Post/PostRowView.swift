@@ -25,13 +25,6 @@ struct PostRowView: View {
 
   init(post: Post, selection: Binding<Post.ID?> = .constant(nil)) {
     self.post = post
-
-    if post.crosspostParentList != nil, !post.crosspostParentList!.isEmpty {
-      crosspostParent = post.crosspostParentList?.first!
-    } else {
-      crosspostParent = nil
-    }
-
     _selection = selection
   }
 
@@ -40,7 +33,6 @@ struct PostRowView: View {
   @Binding var selection: Post.ID?
 
   let post: Post
-  let crosspostParent: Post?
 
   let windowManager: WindowManager = .shared
 
@@ -49,50 +41,7 @@ struct PostRowView: View {
       HStack {
         PostActionBar(post: post)
         Divider()
-        VStack {
-          VStack {
-            if crosspostParent != nil {
-              Text("Crossposted by \(post.author) \(post.relativePostTime) ago")
-                .font(.caption)
-            }
-            HStack {
-              if post.stickied {
-                Image(systemName: "pin.circle.fill")
-                  .font(.title)
-                  .foregroundColor(.green)
-                  .help(Post.pinnedDescription)
-              }
-              if post.locked {
-                Image(systemName: "lock.circle.fill")
-                  .font(.title)
-                  .foregroundColor(.green)
-                  .help(Post.lockedDescription)
-              }
-              Spacer()
-            }
-            TitleView(post: post)
-          }
-
-          if let crosspostParent = crosspostParent {
-            GroupBox {
-              VStack {
-                TitleView(post: crosspostParent)
-
-                PostContent(post: crosspostParent)
-
-                PostMetadataBar(post: crosspostParent)
-              }
-            }
-            .padding([.leading, .trailing], 4.0)
-            .onTapGesture(count: 2) {
-              showComments(for: crosspostParent)
-            }
-          } else {
-            PostContent(post: post)
-          }
-
-          PostMetadataBar(post: post)
-        }
+        DetailedPostView(post: post)
         Group {
           if selection == post.id {
             commentsButton
@@ -168,42 +117,6 @@ struct PostRowView: View {
   }
 }
 
-// MARK: - TitleView
-
-private struct TitleView: View {
-  let post: Post
-
-  var body: some View {
-    HStack {
-      if let richtext = post.linkFlairRichtext, !richtext.isEmpty {
-        FlairRichtextView(richtext: richtext,
-                          backgroundColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor,
-                          textColor: post.authorFlairTextSwiftUiColor)
-      } else if let text = post.linkFlairText, !text.isEmpty {
-        Text(text)
-          .foregroundColor(post.linkFlairTextSwiftUiColor)
-          .flairTag(rectangleColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor)
-      }
-
-      Text(post.title)
-        .font(.title)
-        .heightResizable()
-        .multilineTextAlignment(.center)
-
-      if post.over18 {
-        Text("NSFW")
-          .flairTag(rectangleColor: .red)
-      }
-    }
-    .padding([.leading, .trailing, .bottom])
-  }
-}
-
-extension Post {
-  static let pinnedDescription: String = "This post has been pinned by a moderator"
-  static let lockedDescription: String = "This post has been locked. New comments are disabled"
-}
-
 // MARK: - PostActionBar
 
 // TODO: Sync saved and voted state with model
@@ -274,7 +187,7 @@ struct PostActionBar: View {
         .frame(width: 32, height: 32)
       RoundedRectangle(cornerRadius: 2.0)
         .foregroundColor(Color(.darkGray))
-        .overlay(Image(systemName: "bookmark")
+        .overlay(Image(systemName: "bookmark.fill")
           .foregroundColor(saved ? .green : .white))
         .onTapGesture {
           saved.toggle()
