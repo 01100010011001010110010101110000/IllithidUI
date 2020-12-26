@@ -252,7 +252,7 @@ private struct AuthorBar: View {
     HStack {
       Text(comment.author)
         .usernameStyle(color: authorColor)
-      Text(comment.scoreHidden ? "-" : String(comment.ups.postAbbreviation(1)))
+      Text(comment.scoreHidden ? "-" : (comment.ups + interactions.ballot.rawValue).postAbbreviation(1))
         .foregroundColor(.orange)
       Spacer()
       Text("\(comment.relativeCommentTime) ago")
@@ -262,6 +262,7 @@ private struct AuthorBar: View {
   // MARK: Private
 
   @ObservedObject private var moderators: ModeratorData = .shared
+  @EnvironmentObject private var interactions: CommentRowView.CommentState
 
   private var authorColor: Color {
     if comment.isAdminComment {
@@ -312,6 +313,7 @@ private struct CommentActionBar: View {
   let comment: Comment
 
   var body: some View {
+    // TODO: Debug freezes caused by the buttons in this view; PlainButtonStyle() fixes the issue but seems to disable things like foreground coloring
     HStack {
       Button(action: {
         if interactionState.ballot == .up { interactionState.clearVote(comment: comment) }
