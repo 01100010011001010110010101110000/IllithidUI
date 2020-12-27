@@ -39,7 +39,7 @@ struct PostRowView: View {
   var body: some View {
     GroupBox {
       HStack {
-        PostActionBar(post: post)
+        PostActionBar(post: post, presentReplyForm: $presentReplyForm)
         Divider()
         DetailedPostView(post: post)
         Group {
@@ -135,8 +135,9 @@ struct PostRowView: View {
 struct PostActionBar: View {
   // MARK: Lifecycle
 
-  init(post: Post) {
+  init(post: Post, presentReplyForm: Binding<Bool>) {
     self.post = post
+    _presentReplyForm = presentReplyForm
 
     // Likes is actually ternary, with nil implying no vote
     if let likeDirection = post.likes {
@@ -148,6 +149,8 @@ struct PostActionBar: View {
   }
 
   // MARK: Internal
+
+  @Binding var presentReplyForm: Bool
 
   let post: Post
 
@@ -225,6 +228,11 @@ struct PostActionBar: View {
         Image(systemName: "bookmark.fill")
           .foregroundColor(saved ? .green : .white)
       })
+      IllithidButton(action: {
+        presentReplyForm = true
+      }, label: {
+        Image(systemName: "arrowshape.turn.up.backward.fill")
+      })
       IllithidButton(action: {}, label: {
         Image(systemName: "eye.slash")
       })
@@ -239,8 +247,8 @@ struct PostActionBar: View {
 
   // MARK: Private
 
-  @State private var vote: VoteDirection = .clear
-  @State private var saved: Bool = false
+  @State private var vote: VoteDirection
+  @State private var saved: Bool
 }
 
 // MARK: - PostMetadataBar
