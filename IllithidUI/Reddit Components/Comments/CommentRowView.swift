@@ -66,6 +66,9 @@ struct CommentRowView: View {
       )
       Divider()
     }
+    .sheet(isPresented: $presentReplyForm) {
+      NewCommentForm(isPresented: $presentReplyForm, comment: comment)
+    }
     .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
     .environmentObject(interactions)
     .contextMenu {
@@ -85,6 +88,13 @@ struct CommentRowView: View {
         Button("comments.unsave") { interactions.unsave(comment: comment) }
       }
       Divider()
+      Button(action: {
+        withAnimation {
+          presentReplyForm = true
+        }
+      }, label: {
+        Text("Reply")
+      })
       if let depth = comment.depth ?? 0, depth != 0 {
         Button(action: {
           withAnimation {
@@ -190,6 +200,8 @@ struct CommentRowView: View {
   }
 
   // MARK: Private
+
+  @State private var presentReplyForm: Bool = false
 
   @StateObject private var interactions: CommentState
 }
