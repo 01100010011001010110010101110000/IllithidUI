@@ -54,7 +54,7 @@ struct PostRowView: View {
       }
     }
     .sheet(isPresented: $presentReplyForm) {
-      NewCommentForm(isPresented: $presentReplyForm)
+      NewCommentForm(isPresented: $presentReplyForm, post: post)
     }
     .contextMenu {
       Button(action: {
