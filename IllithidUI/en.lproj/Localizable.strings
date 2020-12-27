@@ -1,6 +1,7 @@
 /****************************************************************************/
 /* Localization file */
 
+"cancel" = "Cancel";
 
 "comments.no.comments" = "Looks like this is a comment graveyard";
 "comments.loading" = "Loading comments";
@@ -9,6 +10,8 @@
 "comments.scroll.bottom" = "Scroll to bottom";
 "comments.scroll.parent.comment" = "Parent comment";
 
+"comments.new.heading" = "New comment";
+"comments.submit" = "Submit";
 "comments.upvote" = "Upvote";
 "comments.downvote" = "Downvote";
 "comments.clearvote" = "Clear vote";

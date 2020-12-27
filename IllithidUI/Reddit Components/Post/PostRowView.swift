@@ -53,11 +53,21 @@ struct PostRowView: View {
         .padding(10)
       }
     }
+    .sheet(isPresented: $presentReplyForm) {
+      NewCommentForm(isPresented: $presentReplyForm, post: post)
+    }
     .contextMenu {
       Button(action: {
         showComments(for: post)
       }, label: {
         Text("Show comments…")
+      })
+      Button(action: {
+        withAnimation {
+          presentReplyForm = true
+        }
+      }, label: {
+        Text("Reply")
       })
       Divider()
       Button(action: {
@@ -107,6 +117,8 @@ struct PostRowView: View {
   }
 
   // MARK: Private
+
+  @State private var presentReplyForm: Bool = false
 
   private var commentsButton: some View {
     Button(action: {
