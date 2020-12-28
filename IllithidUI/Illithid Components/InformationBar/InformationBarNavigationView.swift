@@ -106,11 +106,9 @@ struct InformationBarNavigationView: View {
       NavigationPrompt(prompt: "Open the front page")
     }
     .environmentObject(informationBarData)
-    .sheet(item: $editing, onDismiss: {
-      multiredditSearch.reset()
-    }, content: { multireddit in
+    .sheet(item: $editing) { multireddit in
       VStack {
-        MultiredditEditView(editing: multireddit, searchData: multiredditSearch)
+        MultiredditEditView(editing: multireddit)
           .environmentObject(informationBarData)
         HStack {
           Spacer()
@@ -122,12 +120,11 @@ struct InformationBarNavigationView: View {
           .padding([.trailing, .bottom])
         }
       }
-    })
+    }
   }
 
   // MARK: Private
 
-  @StateObject private var multiredditSearch = SearchData(for: [.subreddit])
   @StateObject private var informationBarData = InformationBarData()
   @State private var editing: Multireddit?
   @State private var selection: String? = nil

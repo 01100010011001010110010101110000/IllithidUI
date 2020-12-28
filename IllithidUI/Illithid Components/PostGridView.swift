@@ -136,11 +136,9 @@ private struct NavigationSidebar: View {
               .frame(width: 24, height: 24)
             Text(multireddit.displayName)
           }
-          .sheet(item: $editing, onDismiss: {
-            multiredditSearch.reset()
-          }, content: { multireddit in
+          .sheet(item: $editing) { multireddit in
             VStack {
-              MultiredditEditView(editing: multireddit, searchData: multiredditSearch)
+              MultiredditEditView(editing: multireddit)
               HStack {
                 Spacer()
                 Button(action: {
@@ -152,7 +150,7 @@ private struct NavigationSidebar: View {
                 .padding([.trailing, .bottom])
               }
             }
-          })
+          }
           .onDrag { NSItemProvider(object: multireddit.id as NSString) }
           .help(multireddit.displayName)
           .tag("m/\(multireddit.id)")
@@ -196,8 +194,6 @@ private struct NavigationSidebar: View {
 
   @State private var selection: String?
   @State private var editing: Multireddit? = nil
-
-  @StateObject private var multiredditSearch = SearchData(for: [.subreddit])
 
   @ViewBuilder private var accountView: some View {
     if let account = Illithid.shared.accountManager.currentAccount {

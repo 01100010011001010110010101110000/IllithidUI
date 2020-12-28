@@ -19,15 +19,14 @@ import Illithid
 struct MultiredditEditView: View {
   // MARK: Lifecycle
 
-  init(editing multireddit: Multireddit, searchData: SearchData) {
+  init(editing multireddit: Multireddit) {
     editing = multireddit
-    self.searchData = searchData
   }
 
   // MARK: Internal
 
   @EnvironmentObject var informationBarData: InformationBarData
-  @ObservedObject var searchData: SearchData
+  @StateObject var searchData: SearchData = .init(for: [.subreddit])
   let editing: Multireddit
 
   var body: some View {
@@ -38,7 +37,7 @@ struct MultiredditEditView: View {
           .padding(.top)
         Text(editing.descriptionMd)
         Divider()
-        VSplitView {
+        HSplitView {
           List {
             ForEach(editing.subreddits) { subreddit in
               Text(subreddit.name)
@@ -56,24 +55,28 @@ struct MultiredditEditView: View {
               }
             }
           }
-          TextField("Search for subreddits to add", text: $searchData.query, onCommit: {
-            _ = searchData.search(for: searchData.query)
-          })
-            .padding([.top], 5)
-          List {
-            ForEach(searchData.subreddits.filter { subreddit in
-              !editing.subreddits.map { $0.name }.contains(subreddit.displayName)
-            }) { subreddit in
-              HStack {
-                Text(subreddit.displayName)
-                Spacer()
-                IllithidButton(label: "Add to \(editing.displayName)") {
-                  editing.addSubreddit(subreddit) { result in
-                    switch result {
-                    case .success:
-                      informationBarData.loadMultireddits()
-                    case let .failure(error):
-                      print("Error adding \(subreddit.displayName) to \(editing.displayName): \(error)")
+
+          VStack {
+            TextField("Search for subreddits to add", text: $searchData.query, onCommit: {
+              _ = searchData.search(for: searchData.query)
+            })
+              .padding(.horizontal)
+              .padding(.vertical, 5)
+            List {
+              ForEach(searchData.suggestions.filter { subreddit in
+                !editing.subreddits.contains { $0.name == subreddit.displayName }
+              }) { subreddit in
+                HStack {
+                  Text(subreddit.displayName)
+                  Spacer()
+                  IllithidButton(label: { Image(systemName: "plus") }) {
+                    editing.addSubreddit(subreddit) { result in
+                      switch result {
+                      case .success:
+                        informationBarData.loadMultireddits()
+                      case let .failure(error):
+                        print("Error adding \(subreddit.displayName) to \(editing.displayName): \(error)")
+                      }
                     }
                   }
                 }
@@ -81,9 +84,10 @@ struct MultiredditEditView: View {
             }
           }
         }
+        .frame(maxHeight: .infinity)
       }
     }
-    .frame(minWidth: 600, minHeight: 500)
+    .frame(minWidth: 1600, minHeight: 900)
   }
 
   // MARK: Private
