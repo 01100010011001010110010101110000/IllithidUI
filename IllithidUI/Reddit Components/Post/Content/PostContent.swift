@@ -40,7 +40,7 @@ struct PostContent: View {
       RedGifView(id: String(post.contentUrl.path.split(separator: "/").last!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
     case .gallery:
-      GalleryPost(metaData: post.mediaMetadata!, galleryData: post.galleryData!)
+      GalleryPost(metadata: post.mediaMetadata!, galleryData: post.galleryData!)
     case .text:
       TextPostPreview(post: post)
     case .gif:
@@ -166,12 +166,12 @@ struct RemovedPostView: View {
 struct GalleryPost: View {
   // MARK: Internal
 
-  let metaData: [String: MediaMetadata]
+  let metadata: [String: MediaMetadata]
   let galleryData: GalleryData
 
   var body: some View {
     PagedView(data: galleryData.items) { item in
-      if let metadata = metaData[item.mediaId] {
+      if let metadata = metadata[item.mediaId] {
         Group {
           switch metadata.type {
           case .image:
@@ -195,7 +195,7 @@ struct GalleryPost: View {
     .onTapGesture {
       WindowManager.shared.showMediaPanel(aspectRatio: maxSize) {
         PagedView(data: galleryData.items) { item in
-          if let metadata = metaData[item.mediaId] {
+          if let metadata = metadata[item.mediaId] {
             Group {
               switch metadata.type {
               case .image:
@@ -244,7 +244,7 @@ struct GalleryPost: View {
   }
 
   private var maxSize: NSSize {
-    metaData.values.reduce(NSSize.zero) { (result, metadata) -> NSSize in
+    metadata.values.reduce(NSSize.zero) { (result, metadata) -> NSSize in
       NSSize(width: CGFloat(metadata.source!.width) > result.width ? CGFloat(metadata.source!.width) : result.width,
              height: CGFloat(metadata.source!.height) > result.height ? CGFloat(metadata.source!.height) : result.height)
     }
