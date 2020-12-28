@@ -77,7 +77,7 @@ final class SearchData: ObservableObject {
       guard let self = self else { return }
       switch result {
       case let .success(listings):
-        self.clearData()
+        self.clearSearchData()
         // TODO: Optimize this
         for listing in listings {
           self.subreddits.append(contentsOf: listing.subreddits)
@@ -89,8 +89,11 @@ final class SearchData: ObservableObject {
     }
   }
 
-  func clearData() {
+  func clearAutoCompleteData() {
     suggestions.removeAll(keepingCapacity: true)
+  }
+
+  func clearSearchData() {
     subreddits.removeAll(keepingCapacity: true)
     posts.removeAll(keepingCapacity: true)
   }
@@ -101,7 +104,8 @@ final class SearchData: ObservableObject {
 
   /// Resets all data, clearing the query text and all search results
   func reset() {
-    clearData()
+    clearSearchData()
+    clearAutoCompleteData()
     clearQueryText()
   }
 
