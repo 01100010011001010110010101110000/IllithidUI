@@ -15,6 +15,7 @@
 import SwiftUI
 
 import Illithid
+import SDWebImageSwiftUI
 
 // MARK: - DetailedPostView
 
@@ -95,6 +96,8 @@ struct DetailedPostView: View {
 // MARK: - TitleView
 
 private struct TitleView: View {
+  // MARK: Internal
+
   let post: Post
 
   var body: some View {
@@ -102,10 +105,10 @@ private struct TitleView: View {
       if let richtext = post.linkFlairRichtext, !richtext.isEmpty {
         FlairRichtextView(richtext: richtext,
                           backgroundColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor,
-                          textColor: post.authorFlairTextSwiftUiColor)
+                          textColor: flairTextColor)
       } else if let text = post.linkFlairText, !text.isEmpty {
         Text(text)
-          .foregroundColor(post.linkFlairTextSwiftUiColor)
+          .foregroundColor(flairTextColor)
           .flairTag(rectangleColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor)
       }
 
@@ -118,6 +121,181 @@ private struct TitleView: View {
         Text("NSFW")
           .flairTag(rectangleColor: .red)
       }
+    }
+  }
+
+  // MARK: Private
+
+  private var flairTextColor: Color {
+    post.linkFlairBackgroundSwiftUiColor == nil
+      ? Color(.textColor)
+      : post.authorFlairTextSwiftUiColor
+  }
+}
+
+// MARK: - PostMetadataBar
+
+private struct PostMetadataBar: View {
+  // MARK: Lifecycle
+
+  init(post: Post) {
+    self.post = post
+  }
+
+  // MARK: Internal
+
+  @EnvironmentObject var informationBarData: InformationBarData
+
+  let post: Post
+
+  var body: some View {
+    HStack {
+      (Text("by ") +
+        Text("\(post.author)")
+        .usernameStyle(color: authorColor))
+        .onTapGesture {
+          windowManager.showMainWindowTab(withId: post.author, title: post.author) {
+            AccountView(name: post.author)
+              .environmentObject(informationBarData)
+          }
+        }
+        .fixedSize()
+      if let richtext = post.authorFlairRichtext, !richtext.isEmpty {
+        FlairRichtextView(richtext: richtext,
+                          backgroundColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor,
+                          textColor: authorFlairTextColor)
+      } else if let text = post.authorFlairText, !text.isEmpty {
+        Text(text)
+          .foregroundColor(authorFlairTextColor)
+          .flairTag(rectangleColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor)
+      }
+      Spacer()
+      HStack {
+        Group {
+          Group {
+            Image(systemName: "arrow.up")
+            Text("\(post.ups.postAbbreviation())")
+          }
+          .foregroundColor(.orange)
+
+          Group {
+            Image(systemName: "text.bubble")
+            Text("\(post.numComments.postAbbreviation())")
+          }
+          .foregroundColor(.blue)
+
+          Group {
+            Image(systemName: "clock")
+            Text("\(post.relativePostTime) ago")
+              .help(post.absolutePostTime)
+          }
+        }
+        .fixedSize()
+      }
+      Spacer()
+      Text(post.subredditNamePrefixed)
+        .onTapGesture {
+          windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
+            SubredditLoader(fullname: post.subredditId)
+              .environmentObject(informationBarData)
+          }
+        }
+        .fixedSize()
+    }
+    .padding(10)
+    .font(.body)
+  }
+
+  // MARK: Private
+
+  @ObservedObject private var moderators: ModeratorData = .shared
+
+  private let windowManager: WindowManager = .shared
+
+  private var authorFlairTextColor: Color {
+    post.authorFlairBackgroundSwiftUiColor == nil
+      ? Color(.textColor)
+      : post.authorFlairTextSwiftUiColor
+  }
+
+  private var authorColor: Color {
+    if post.isAdminPost {
+      return .red
+    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
+      return .green
+    } else {
+      return .white
+    }
+  }
+}
+
+// MARK: - FlairRichtextView
+
+private struct FlairRichtextView: View {
+  // MARK: Internal
+
+  let richtext: [FlairRichtext]
+  let backgroundColor: Color
+  let textColor: Color
+
+  var body: some View {
+    HStack {
+      ForEach(richtext.indices) { idx in
+        Self.renderRichtext(richtext[idx])
+      }
+    }
+    .flairTag(rectangleColor: .accentColor)
+  }
+
+  // MARK: Private
+
+  @ViewBuilder
+  private static func renderRichtext(_ text: FlairRichtext) -> some View {
+    switch text.type {
+    case .emoji:
+      WebImage(url: text.emojiUrl)
+        .resizable()
+        .frame(width: 24, height: 24)
+        .help(text.emojiShortcode ?? "")
+    case .text:
+      if let flairText = text.text {
+        Text(flairText)
+          .fixedSize(horizontal: true, vertical: false)
+      } else {
+        EmptyView()
+      }
+    }
+  }
+}
+
+extension View {
+  func flairTag(rectangleColor: Color = .accentColor) -> some View {
+    padding(4.0)
+      .background(rectangleColor)
+      .clipShape(RoundedRectangle(cornerRadius: 4.0))
+  }
+}
+
+extension Post {
+  var authorFlairTextSwiftUiColor: Color {
+    switch authorFlairTextColor {
+    case .light:
+      return .white
+    case .dark:
+      return .black
+    default:
+      return .white
+    }
+  }
+
+  var linkFlairTextSwiftUiColor: Color {
+    switch linkFlairTextColor {
+    case .light:
+      return .white
+    case .dark:
+      return .black
+    default:
+      return .white
     }
   }
 }
