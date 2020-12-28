@@ -19,8 +19,8 @@ import Illithid
 struct MultiredditEditView: View {
   // MARK: Lifecycle
 
-  init(id: Multireddit.ID, searchData: SearchData) {
-    editingId = id
+  init(editing multireddit: Multireddit, searchData: SearchData) {
+    editing = multireddit
     self.searchData = searchData
   }
 
@@ -28,11 +28,10 @@ struct MultiredditEditView: View {
 
   @EnvironmentObject var informationBarData: InformationBarData
   @ObservedObject var searchData: SearchData
-  let editingId: Multireddit.ID
+  let editing: Multireddit
 
   var body: some View {
-    let editing = informationBarData.multireddits.first { $0.id == editingId }!
-    return VStack {
+    VStack {
       VStack {
         Text(editing.displayName)
           .font(.title)

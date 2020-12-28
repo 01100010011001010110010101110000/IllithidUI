@@ -2,6 +2,9 @@
 /* Localization file */
 
 "cancel" = "Cancel";
+"done" = "Done";
+
+"multireddit.edit" = "Edit multireddit";
 
 "comments.no.comments" = "Looks like this is a comment graveyard";
 "comments.loading" = "Loading comments";
