@@ -137,8 +137,7 @@ private struct NavigationSidebar: View {
             Text(multireddit.displayName)
           }
           .sheet(item: $editing, onDismiss: {
-            multiredditSearch.clearData()
-            multiredditSearch.clearQueryText()
+            multiredditSearch.reset()
           }, content: { multireddit in
             VStack {
               MultiredditEditView(editing: multireddit, searchData: multiredditSearch)

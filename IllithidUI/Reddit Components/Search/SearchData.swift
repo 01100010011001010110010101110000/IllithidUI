@@ -90,12 +90,19 @@ final class SearchData: ObservableObject {
   }
 
   func clearData() {
+    suggestions.removeAll(keepingCapacity: true)
     subreddits.removeAll(keepingCapacity: true)
     posts.removeAll(keepingCapacity: true)
   }
 
   func clearQueryText() {
     query.removeAll()
+  }
+
+  /// Resets all data, clearing the query text and all search results
+  func reset() {
+    clearData()
+    clearQueryText()
   }
 
   // MARK: Private

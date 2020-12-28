@@ -107,8 +107,7 @@ struct InformationBarNavigationView: View {
     }
     .environmentObject(informationBarData)
     .sheet(item: $editing, onDismiss: {
-      multiredditSearch.clearData()
-      multiredditSearch.clearQueryText()
+      multiredditSearch.reset()
     }, content: { multireddit in
       VStack {
         MultiredditEditView(editing: multireddit, searchData: multiredditSearch)
