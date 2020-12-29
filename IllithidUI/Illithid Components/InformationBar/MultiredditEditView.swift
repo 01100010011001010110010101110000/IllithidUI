@@ -40,7 +40,7 @@ struct MultiredditEditView: View {
           .padding(.top)
         Text(editing.descriptionMd)
         Divider()
-        HSplitView {
+        HStack {
           List(selection: $currentSubscription) {
             ForEach(editing.subreddits) { subreddit in
               HStack {
@@ -61,6 +61,8 @@ struct MultiredditEditView: View {
               }
             }
           }
+
+          Divider()
 
           VStack {
             TextField("Search for subreddits to add", text: $searchData.query, onCommit: {
