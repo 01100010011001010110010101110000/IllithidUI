@@ -52,6 +52,9 @@ struct IllithidApp: App {
   var body: some Scene {
     WindowGroup {
       RootView()
+        .sheet(isPresented: $presentNewPostForm) {
+          NewPostForm(showNewPostForm: $presentNewPostForm)
+        }
         .onChange(of: phase, perform: { phase in
           // TODO: Move pasteboard URL checking down here or also here
           switch phase {
@@ -65,6 +68,7 @@ struct IllithidApp: App {
             fatalError("A new application phase has been added: \(phase)")
           }
         })
+        .environmentObject(informationBarData)
         .onOpenURL { url in
 
           // MARK: OAuth2 Callback
@@ -100,6 +104,7 @@ struct IllithidApp: App {
       AboutCommands()
       SidebarCommands()
       ToolbarCommands()
+      NewItemCommands(presentNewPostForm: $presentNewPostForm)
       #if DEBUG
         DebugCommands()
       #endif
@@ -113,6 +118,9 @@ struct IllithidApp: App {
   }
 
   // MARK: Private
+
+  @State private var presentNewPostForm: Bool = false
+  @StateObject private var informationBarData = InformationBarData()
 
   private let illithid: Illithid = .shared
 }

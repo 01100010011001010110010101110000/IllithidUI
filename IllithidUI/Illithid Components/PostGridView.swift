@@ -21,6 +21,8 @@ import Illithid
 struct PostGridView: View {
   // MARK: Internal
 
+  @EnvironmentObject var informationBarData: InformationBarData
+
   var body: some View {
     ZStack(alignment: .bottomTrailing) {
       HStack {
@@ -82,7 +84,6 @@ struct PostGridView: View {
     }
   }
 
-  @StateObject private var informationBarData: InformationBarData = .init()
   @StateObject private var columnManager = ColumnManager()
 }
 
@@ -183,6 +184,8 @@ private struct NavigationSidebar: View {
     .onChange(of: selection) { selected in
       columnManager.setSelection(for: column, selection: selected)
     }
+    .preference(key: NavigationSelectionPreferenceKey.self,
+                value: selection)
     .onReceive(columnManager.$columns) { columns in
       if let column = columns.first(where: { $0 == column }), column.selection != self.column.selection {
         self.selection = column.selection

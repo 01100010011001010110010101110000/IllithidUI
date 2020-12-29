@@ -24,3 +24,10 @@
 
 "post.pinned" = "This post has been pinned by a moderator";
 "post.locked" = "This post has been locked. New comments are disabled";
+"post.new" = "New Post";
+"post.new.subreddit.prompt" = "Post in";
+"post.submit" = "Submit";
+
+"subreddits.subscribed" = "Subscribed";
+
+"user.profile" = "Your profile";
