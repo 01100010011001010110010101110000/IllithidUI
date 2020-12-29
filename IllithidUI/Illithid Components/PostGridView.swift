@@ -136,16 +136,30 @@ private struct NavigationSidebar: View {
               .frame(width: 24, height: 24)
             Text(multireddit.displayName)
           }
+          .sheet(item: $editing) { multireddit in
+            VStack {
+              MultiredditEditView(editing: multireddit)
+              HStack {
+                Spacer()
+                Button(action: {
+                  editing = nil
+                }) {
+                  Text("done")
+                }
+                .keyboardShortcut(.cancelAction)
+                .padding([.trailing, .bottom])
+              }
+            }
+          }
           .onDrag { NSItemProvider(object: multireddit.id as NSString) }
           .help(multireddit.displayName)
           .tag("m/\(multireddit.id)")
           .openableInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
           .contextMenu {
             Button(action: {
-              isEditingMulti = true
-              editing = multireddit.id
+              editing = multireddit
             }) {
-              Text("Edit Multireddit")
+              Text("multireddit.edit")
             }
           }
         }
@@ -179,8 +193,7 @@ private struct NavigationSidebar: View {
   // MARK: Private
 
   @State private var selection: String?
-  @State private var isEditingMulti: Bool = false
-  @State private var editing: Multireddit.ID?
+  @State private var editing: Multireddit? = nil
 
   @ViewBuilder private var accountView: some View {
     if let account = Illithid.shared.accountManager.currentAccount {

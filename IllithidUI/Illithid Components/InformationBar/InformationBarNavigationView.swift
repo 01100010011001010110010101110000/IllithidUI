@@ -69,8 +69,7 @@ struct InformationBarNavigationView: View {
             .openableInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
             .contextMenu {
               Button(action: {
-                isEditingMulti = true
-                editing = multireddit.id
+                editing = multireddit
               }) {
                 Text("Edit Multireddit")
               }
@@ -107,32 +106,27 @@ struct InformationBarNavigationView: View {
       NavigationPrompt(prompt: "Open the front page")
     }
     .environmentObject(informationBarData)
-    .sheet(isPresented: $isEditingMulti, onDismiss: {
-      multiredditSearch.clearData()
-      multiredditSearch.clearQueryText()
-    }, content: {
+    .sheet(item: $editing) { multireddit in
       VStack {
-        MultiredditEditView(id: editing!, searchData: multiredditSearch)
+        MultiredditEditView(editing: multireddit)
           .environmentObject(informationBarData)
         HStack {
           Spacer()
           Button(action: {
-            isEditingMulti = false
+            editing = nil
           }) {
             Text("Done")
           }
           .padding([.trailing, .bottom])
         }
       }
-    })
+    }
   }
 
   // MARK: Private
 
-  @StateObject private var multiredditSearch = SearchData(for: [.subreddit])
   @StateObject private var informationBarData = InformationBarData()
-  @State private var isEditingMulti: Bool = false
-  @State private var editing: Multireddit.ID?
+  @State private var editing: Multireddit?
   @State private var selection: String? = nil
 
   @ViewBuilder private var accountView: some View {

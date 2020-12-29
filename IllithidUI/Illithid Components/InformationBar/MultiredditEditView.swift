@@ -19,75 +19,106 @@ import Illithid
 struct MultiredditEditView: View {
   // MARK: Lifecycle
 
-  init(id: Multireddit.ID, searchData: SearchData) {
-    editingId = id
-    self.searchData = searchData
+  init(editing multireddit: Multireddit) {
+    toEdit = multireddit
   }
 
   // MARK: Internal
 
   @EnvironmentObject var informationBarData: InformationBarData
-  @ObservedObject var searchData: SearchData
-  let editingId: Multireddit.ID
+  let toEdit: Multireddit
+
+  var editing: Multireddit {
+    informationBarData.multireddits.first { $0.id == toEdit.id } ?? toEdit
+  }
 
   var body: some View {
-    let editing = informationBarData.multireddits.first { $0.id == editingId }!
-    return VStack {
+    VStack {
       VStack {
         Text(editing.displayName)
           .font(.title)
           .padding(.top)
         Text(editing.descriptionMd)
         Divider()
-        VSplitView {
-          List {
+        HSplitView {
+          List(selection: $currentSubscription) {
             ForEach(editing.subreddits) { subreddit in
-              Text(subreddit.name)
+              HStack {
+                Text(subreddit.name)
+                Spacer()
+                Button(action: {
+                  removeSubreddit(subreddit)
+                }, label: {
+                  Image(systemName: "trash")
+                    .foregroundColor(.red)
+                })
+              }
             }
             .onDelete { indexSet in
               indexSet.forEach { index in
-                editing.removeSubreddit(editing.subreddits[index]) { result in
-                  switch result {
-                  case .success:
-                    informationBarData.loadMultireddits()
-                  case let .failure(error):
-                    print("Error removing \(editing.subreddits[index].name) from \(editing.displayName): \(error)")
-                  }
-                }
+                let subreddit = editing.subreddits[index]
+                removeSubreddit(subreddit)
               }
             }
           }
-          TextField("Search for subreddits to add", text: $searchData.query, onCommit: {
-            _ = searchData.search(for: searchData.query)
-          })
-            .padding([.top], 5)
-          List {
-            ForEach(searchData.subreddits.filter { subreddit in
-              !editing.subreddits.map { $0.name }.contains(subreddit.displayName)
-            }) { subreddit in
-              HStack {
-                Text(subreddit.displayName)
-                Spacer()
-                IllithidButton(label: "Add to \(editing.displayName)") {
-                  editing.addSubreddit(subreddit) { result in
-                    switch result {
-                    case .success:
-                      informationBarData.loadMultireddits()
-                    case let .failure(error):
-                      print("Error adding \(subreddit.displayName) to \(editing.displayName): \(error)")
-                    }
-                  }
+
+          VStack {
+            TextField("Search for subreddits to add", text: $searchData.query, onCommit: {
+              guard !searchData.query.isEmpty else { return }
+              _ = searchData.search(for: searchData.query)
+            })
+              .padding(.horizontal)
+              .padding(.vertical, 5)
+            List {
+              ForEach(searchData.suggestions.filter { subreddit in
+                !editing.subreddits.contains { $0.name == subreddit.displayName }
+              }) { subreddit in
+                HStack {
+                  Text(subreddit.displayName)
+                  Spacer()
+                  Button(action: {
+                    addSubreddit(subreddit)
+                  }, label: {
+                    Image(systemName: "plus")
+                      .foregroundColor(.accentColor)
+                  })
                 }
               }
             }
           }
         }
+        .frame(maxHeight: .infinity)
       }
     }
-    .frame(minWidth: 600, minHeight: 500)
+    .frame(idealWidth: 1600, idealHeight: 900)
   }
 
   // MARK: Private
 
+  @StateObject private var searchData: SearchData = .init(for: [.subreddit])
+  @State private var currentSubscription: String? = nil
+
   @State private var tapped: Bool = false
+
+  private func addSubreddit(_ subreddit: Subreddit) {
+    editing.addSubreddit(subreddit) { result in
+      switch result {
+      case .success:
+        informationBarData.loadMultireddits()
+      case let .failure(error):
+        Illithid.shared.logger.errorMessage("Error adding \(subreddit.displayName) to \(editing.displayName): \(error)")
+      }
+    }
+  }
+
+  private func removeSubreddit(_ subreddit: Multireddit.MultiSubreddit) {
+    editing.removeSubreddit(subreddit) { result in
+      switch result {
+      case .success:
+        informationBarData.loadMultireddits()
+      case let .failure(error):
+        Illithid.shared.logger.errorMessage("Error removing \(subreddit.name) from \(editing.displayName): \(error)")
+      }
+    }
+  }
 }
