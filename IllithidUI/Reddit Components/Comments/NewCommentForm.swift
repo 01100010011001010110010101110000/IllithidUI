@@ -46,7 +46,7 @@ struct NewCommentForm: View {
       TextEditor(text: $commentBody)
         .border(Color.gray)
         .padding(.horizontal)
-        .frame(width: 1600, height: 900)
+        .frame(idealWidth: 1600, idealHeight: 900)
         .font(.system(size: 18))
 
       HStack {

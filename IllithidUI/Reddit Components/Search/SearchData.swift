@@ -22,8 +22,10 @@ import Illithid
 final class SearchData: ObservableObject {
   // MARK: Lifecycle
 
-  init(for targets: Set<SearchType> = [.post]) {
+  init(for targets: Set<SearchType> = [.post], searchLimit: UInt = 25, autocompleteLimit: UInt = 10) {
     searchTargets = targets
+    self.searchLimit = searchLimit
+    self.autocompleteLimit = autocompleteLimit
     let queryPublisher = $query.share()
     let searchToken = queryPublisher
       .filter { $0.count >= 3 }
@@ -42,7 +44,7 @@ final class SearchData: ObservableObject {
       .sink { [weak self] toComplete in
         guard let self = self else { return }
         self.autocompleteRequest?.cancel()
-        self.autocompleteRequest = self.illithid.completeSubreddits(startsWith: toComplete, limit: 10) { result in
+        self.autocompleteRequest = self.illithid.completeSubreddits(startsWith: toComplete, limit: Int(autocompleteLimit)) { result in
           switch result {
           case let .success(subreddits):
             self.suggestions = subreddits
@@ -71,9 +73,11 @@ final class SearchData: ObservableObject {
 
   let illithid: Illithid = .shared
   let searchTargets: Set<SearchType>
+  let searchLimit: UInt
+  let autocompleteLimit: UInt
 
   func search(for searchText: String) -> DataRequest {
-    illithid.search(for: searchText, resultTypes: searchTargets) { [weak self] result in
+    illithid.search(for: searchText, limit: searchLimit, resultTypes: searchTargets) { [weak self] result in
       guard let self = self else { return }
       switch result {
       case let .success(listings):

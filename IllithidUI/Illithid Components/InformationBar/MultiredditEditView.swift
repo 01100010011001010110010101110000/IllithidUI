@@ -20,14 +20,17 @@ struct MultiredditEditView: View {
   // MARK: Lifecycle
 
   init(editing multireddit: Multireddit) {
-    editing = multireddit
+    toEdit = multireddit
   }
 
   // MARK: Internal
 
   @EnvironmentObject var informationBarData: InformationBarData
-  @StateObject var searchData: SearchData = .init(for: [.subreddit])
-  let editing: Multireddit
+  let toEdit: Multireddit
+
+  var editing: Multireddit {
+    informationBarData.multireddits.first { $0.id == toEdit.id } ?? toEdit
+  }
 
   var body: some View {
     VStack {
@@ -38,26 +41,30 @@ struct MultiredditEditView: View {
         Text(editing.descriptionMd)
         Divider()
         HSplitView {
-          List {
+          List(selection: $currentSubscription) {
             ForEach(editing.subreddits) { subreddit in
-              Text(subreddit.name)
+              HStack {
+                Text(subreddit.name)
+                Spacer()
+                Button(action: {
+                  removeSubreddit(subreddit)
+                }, label: {
+                  Image(systemName: "trash")
+                    .foregroundColor(.red)
+                })
+              }
             }
             .onDelete { indexSet in
               indexSet.forEach { index in
-                editing.removeSubreddit(editing.subreddits[index]) { result in
-                  switch result {
-                  case .success:
-                    informationBarData.loadMultireddits()
-                  case let .failure(error):
-                    print("Error removing \(editing.subreddits[index].name) from \(editing.displayName): \(error)")
-                  }
-                }
+                let subreddit = editing.subreddits[index]
+                removeSubreddit(subreddit)
               }
             }
           }
 
           VStack {
             TextField("Search for subreddits to add", text: $searchData.query, onCommit: {
+              guard !searchData.query.isEmpty else { return }
               _ = searchData.search(for: searchData.query)
             })
               .padding(.horizontal)
@@ -69,16 +76,12 @@ struct MultiredditEditView: View {
                 HStack {
                   Text(subreddit.displayName)
                   Spacer()
-                  IllithidButton(label: { Image(systemName: "plus") }) {
-                    editing.addSubreddit(subreddit) { result in
-                      switch result {
-                      case .success:
-                        informationBarData.loadMultireddits()
-                      case let .failure(error):
-                        print("Error adding \(subreddit.displayName) to \(editing.displayName): \(error)")
-                      }
-                    }
-                  }
+                  Button(action: {
+                    addSubreddit(subreddit)
+                  }, label: {
+                    Image(systemName: "plus")
+                      .foregroundColor(.accentColor)
+                  })
                 }
               }
             }
@@ -87,10 +90,35 @@ struct MultiredditEditView: View {
         .frame(maxHeight: .infinity)
       }
     }
-    .frame(minWidth: 1600, minHeight: 900)
+    .frame(idealWidth: 1600, idealHeight: 900)
   }
 
   // MARK: Private
 
+  @StateObject private var searchData: SearchData = .init(for: [.subreddit])
+  @State private var currentSubscription: String? = nil
+
   @State private var tapped: Bool = false
+
+  private func addSubreddit(_ subreddit: Subreddit) {
+    editing.addSubreddit(subreddit) { result in
+      switch result {
+      case .success:
+        informationBarData.loadMultireddits()
+      case let .failure(error):
+        Illithid.shared.logger.errorMessage("Error adding \(subreddit.displayName) to \(editing.displayName): \(error)")
+      }
+    }
+  }
+
+  private func removeSubreddit(_ subreddit: Multireddit.MultiSubreddit) {
+    editing.removeSubreddit(subreddit) { result in
+      switch result {
+      case .success:
+        informationBarData.loadMultireddits()
+      case let .failure(error):
+        Illithid.shared.logger.errorMessage("Error removing \(subreddit.name) from \(editing.displayName): \(error)")
+      }
+    }
+  }
 }
