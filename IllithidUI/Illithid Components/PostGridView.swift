@@ -234,12 +234,15 @@ private struct SubredditSelectorView: View {
             .keyboardShortcut(.cancelAction)
         }
         Spacer()
-        if let selection = column.selection {
-          Text(informationBarData.displayName(forId: selection) ?? selection)
-        } else {
-          Text("Select")
+        Group {
+          if let selection = column.selection {
+            Text(informationBarData.displayName(forId: selection) ?? selection)
+          } else {
+            Text("Select")
+          }
+          Image(systemName: "chevron.down")
         }
-        Image(systemName: "chevron.down")
+        .font(.title)
         Spacer()
       }
       .padding()
