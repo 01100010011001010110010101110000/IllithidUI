@@ -49,6 +49,12 @@
 		6D3062382418943700D9E47B /* RedditLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3062372418943700D9E47B /* RedditLinkView.swift */; };
 		6D340DCC243A330900058F4D /* SortController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D340DCB243A330900058F4D /* SortController.swift */; };
 		6D34C68A241C891500CAB469 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D34C689241C891500CAB469 /* WebView.swift */; };
+		6D3A1072259E77BB00A377CB /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
+		6D3A1073259E77BB00A377CB /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
+		6D3A1074259E77BB00A377CB /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 6D6D420F2437C14E002D4413 /* Kanna */; };
+		6D3A1075259E77BB00A377CB /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D89F3912468A95E00364E29 /* Illithid */; };
+		6D3A1076259E77BB00A377CB /* XCDYouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6DBB484125756B2300C0B1E2 /* XCDYouTubeKit */; };
+		6D3A1077259E77BB00A377CB /* Maaku in Frameworks */ = {isa = PBXBuildFile; productRef = 6DBB487625756E0000C0B1E2 /* Maaku */; };
 		6D3ADFB922FB81AC002DA19A /* single_post.json in Resources */ = {isa = PBXBuildFile; fileRef = 6D3ADFB822FB81AC002DA19A /* single_post.json */; };
 		6D43AC3F252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D43AC3E252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift */; };
 		6D43AC45252C3018000787A3 /* AboutCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D43AC44252C3018000787A3 /* AboutCommands.swift */; };
@@ -246,6 +252,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D3A1077259E77BB00A377CB /* Maaku in Frameworks */,
+				6D3A1074259E77BB00A377CB /* Kanna in Frameworks */,
+				6D3A1073259E77BB00A377CB /* SDWebImageSwiftUI in Frameworks */,
+				6D3A1072259E77BB00A377CB /* Illithid in Frameworks */,
+				6D3A1076259E77BB00A377CB /* XCDYouTubeKit in Frameworks */,
+				6D3A1075259E77BB00A377CB /* Illithid in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -633,12 +645,12 @@
 			);
 			name = IllithidUI;
 			packageProductDependencies = (
-				6D731BFE22A826CD0065183B,
-				6D99083C23E3D8D500E8686A,
-				6D6D420F2437C14E002D4413,
-				6D89F3912468A95E00364E29,
-				6DBB484125756B2300C0B1E2,
-				6DBB487625756E0000C0B1E2,
+				6D731BFE22A826CD0065183B /* Illithid */,
+				6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */,
+				6D6D420F2437C14E002D4413 /* Kanna */,
+				6D89F3912468A95E00364E29 /* Illithid */,
+				6DBB484125756B2300C0B1E2 /* XCDYouTubeKit */,
+				6DBB487625756E0000C0B1E2 /* Maaku */,
 			);
 			productName = IllithidUI;
 			productReference = 6D2EA59022A7FEE20059B6EA /* IllithidUI.app */;
@@ -714,11 +726,11 @@
 			);
 			mainGroup = 6D2EA58722A7FEE20059B6EA;
 			packageReferences = (
-				6D99083B23E3D8D500E8686A,
-				6D6D420E2437C14E002D4413,
-				6D89F3902468A95E00364E29,
-				6DBB484025756B2300C0B1E2,
-				6DBB487525756E0000C0B1E2,
+				6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */,
+				6D89F3902468A95E00364E29 /* XCRemoteSwiftPackageReference "Illithid" */,
+				6DBB484025756B2300C0B1E2 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */,
+				6DBB487525756E0000C0B1E2 /* XCRemoteSwiftPackageReference "Maaku" */,
 			);
 			productRefGroup = 6D2EA59122A7FEE20059B6EA /* Products */;
 			projectDirPath = "";
@@ -1212,7 +1224,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6D6D420E2437C14E002D4413 = {
+		6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/tid-kijyun/Kanna";
 			requirement = {
@@ -1220,7 +1232,7 @@
 				minimumVersion = 5.2.2;
 			};
 		};
-		6D89F3902468A95E00364E29 = {
+		6D89F3902468A95E00364E29 /* XCRemoteSwiftPackageReference "Illithid" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:01100010011001010110010101110000/Illithid.git";
 			requirement = {
@@ -1228,7 +1240,7 @@
 				kind = branch;
 			};
 		};
-		6D99083B23E3D8D500E8686A = {
+		6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
 			requirement = {
@@ -1236,7 +1248,7 @@
 				minimumVersion = 1.4.0;
 			};
 		};
-		6DBB484025756B2300C0B1E2 = {
+		6DBB484025756B2300C0B1E2 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:0xced/XCDYouTubeKit.git";
 			requirement = {
@@ -1244,7 +1256,7 @@
 				minimumVersion = 2.15.1;
 			};
 		};
-		6DBB487525756E0000C0B1E2 = {
+		6DBB487525756E0000C0B1E2 /* XCRemoteSwiftPackageReference "Maaku" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:KristopherGBaker/Maaku.git";
 			requirement = {
@@ -1255,33 +1267,33 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6D6D420F2437C14E002D4413 = {
+		6D6D420F2437C14E002D4413 /* Kanna */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D6D420E2437C14E002D4413;
+			package = 6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */;
 			productName = Kanna;
 		};
-		6D731BFE22A826CD0065183B = {
+		6D731BFE22A826CD0065183B /* Illithid */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Illithid;
 		};
-		6D89F3912468A95E00364E29 = {
+		6D89F3912468A95E00364E29 /* Illithid */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D89F3902468A95E00364E29;
+			package = 6D89F3902468A95E00364E29 /* XCRemoteSwiftPackageReference "Illithid" */;
 			productName = Illithid;
 		};
-		6D99083C23E3D8D500E8686A = {
+		6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D99083B23E3D8D500E8686A;
+			package = 6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
 		};
-		6DBB484125756B2300C0B1E2 = {
+		6DBB484125756B2300C0B1E2 /* XCDYouTubeKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6DBB484025756B2300C0B1E2;
+			package = 6DBB484025756B2300C0B1E2 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */;
 			productName = XCDYouTubeKit;
 		};
-		6DBB487625756E0000C0B1E2 = {
+		6DBB487625756E0000C0B1E2 /* Maaku */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6DBB487525756E0000C0B1E2;
+			package = 6DBB487525756E0000C0B1E2 /* XCRemoteSwiftPackageReference "Maaku" */;
 			productName = Maaku;
 		};
 /* End XCSwiftPackageProductDependency section */
