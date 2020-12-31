@@ -51,6 +51,9 @@ struct PostGridView: View {
         .help("Add a column")
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .onAppear {
+      informationBarData.loadAccountData()
+    }
   }
 
   // MARK: Private
@@ -131,7 +134,7 @@ private struct NavigationSidebar: View {
       }
 
       Section(header: Text("Multireddits")) {
-        ForEach(informationBarData.multireddits) { multireddit in
+        ForEach(filteredPostProviders(informationBarData.multireddits)) { multireddit in
           HStack {
             SubredditIcon(multireddit: multireddit)
               .frame(width: 24, height: 24)
@@ -167,7 +170,7 @@ private struct NavigationSidebar: View {
       }
 
       Section(header: Text("Subscribed")) {
-        ForEach(informationBarData.subscribedSubreddits) { subreddit in
+        ForEach(filteredPostProviders(informationBarData.subscribedSubreddits)) { subreddit in
           HStack {
             SubredditIcon(subreddit: subreddit)
               .frame(width: 24, height: 24)
@@ -197,12 +200,21 @@ private struct NavigationSidebar: View {
 
   @State private var selection: String?
   @State private var editing: Multireddit? = nil
+  @ObservedObject private var preferences: PreferencesData = .shared
 
   @ViewBuilder private var accountView: some View {
     if let account = Illithid.shared.accountManager.currentAccount {
       AccountView(account: account)
     } else {
       Text("There is no logged in account")
+    }
+  }
+
+  private func filteredPostProviders<Provider: PostProvider>(_ providers: [Provider]) -> [Provider] {
+    if preferences.hideNsfw {
+      return providers.filter { !$0.isNsfw }
+    } else {
+      return providers
     }
   }
 }
@@ -272,7 +284,7 @@ private struct SubredditSelectorView: View {
           }
           Divider()
           Section(header: Text("Multiredits")) {
-            ForEach(informationBarData.multireddits) { multireddit in
+            ForEach(filteredPostProviders(informationBarData.multireddits)) { multireddit in
               HStack {
                 SubredditIcon(multireddit: multireddit)
                   .frame(width: 24, height: 24)
@@ -284,7 +296,7 @@ private struct SubredditSelectorView: View {
           }
           Divider()
           Section(header: Text("Subscribed")) {
-            ForEach(informationBarData.subscribedSubreddits) { subreddit in
+            ForEach(filteredPostProviders(informationBarData.subscribedSubreddits)) { subreddit in
               HStack {
                 SubredditIcon(subreddit: subreddit)
                   .frame(width: 24, height: 24)
@@ -340,6 +352,7 @@ private struct SubredditSelectorView: View {
   @State private var selection: String?
   @State private var reload: Bool = false
   @State private var presentSelector: Bool = false
+  @ObservedObject private var preferences: PreferencesData = .shared
 
   private var selectedSubreddit: Subreddit? {
     guard let selection = column.selection else { return nil }
@@ -361,6 +374,14 @@ private struct SubredditSelectorView: View {
       AccountView(account: account)
     } else {
       Text("There is no logged in account")
+    }
+  }
+
+  private func filteredPostProviders<Provider: PostProvider>(_ providers: [Provider]) -> [Provider] {
+    if preferences.hideNsfw {
+      return providers.filter { !$0.isNsfw }
+    } else {
+      return providers
     }
   }
 }
