@@ -35,8 +35,9 @@ struct NewPostForm: View {
         showSelectionPopover = true
       }
       .popover(isPresented: $showSelectionPopover, arrowEdge: .top) {
-        SubredditSelectorView(subredditSelection: $createPostIn)
+        SubredditSelectorView(subredditSelection: $createPostIn, isPresented: $showSelectionPopover)
       }
+      .padding()
 
       TabView {
         TextEditor(text: $postBody)
@@ -45,6 +46,7 @@ struct NewPostForm: View {
             Label(title: { Text("post.type.text") }, icon: { Image(systemName: "text.bubble") })
           }
       }
+      .disabled(createPostIn == nil)
 
       HStack {
         Button(action: {
@@ -76,6 +78,7 @@ private struct SubredditSelectorView: View {
 
   @EnvironmentObject var informationBarData: InformationBarData
   @Binding var subredditSelection: Subreddit?
+  @Binding var isPresented: Bool
 
   var body: some View {
     VStack {
@@ -84,6 +87,7 @@ private struct SubredditSelectorView: View {
         Section(header: Text("user.profile")) {
           // TODO: Get the current account
           Text("CURRENT USER PLACEHOLDER")
+            .tag("__account__")
         }
 
         Section(header: Text("subreddits.subscribed")) {
@@ -98,11 +102,21 @@ private struct SubredditSelectorView: View {
       }
     }
     .onChange(of: subredditId) { _ in
-      // TODO: Find the subreddit the user selected among the data sources and assign to subredditSelection
+      DispatchQueue.main.asyncAfter(deadline: .now() + dismissalDelay) {
+        isPresented = false
+      }
+      subredditSelection = findSelection()
     }
   }
 
   // MARK: Private
 
   @State private var subredditId: String?
+  private let dismissalDelay: Double = 0.4
+  private func findSelection() -> Subreddit? {
+    // TODO: Support user subreddit, moderated subreddits, etc
+    if let subreddit = informationBarData.subscribedSubreddits.first { $0.id == subredditId } {
+      return subreddit
+    } else { return nil }
+  }
 }
