@@ -161,7 +161,7 @@ private struct SubredditSelectorView: View {
   // MARK: Private
 
   @State private var subredditId: String?
-  private let dismissalDelay: Double = 0.4
+  private let dismissalDelay: Double = 0.5
 
   private func findSelection() -> Subreddit? {
     // TODO: Support user subreddit, moderated subreddits, etc

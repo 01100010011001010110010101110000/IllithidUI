@@ -83,7 +83,7 @@ struct NewCommentForm: View {
       .onReceive(submitter.$result) { result in
         switch result {
         case .success:
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+          DispatchQueue.main.asyncAfter(deadline: .now() + dismissalDelay) {
             isPresented = false
           }
         default:
@@ -96,6 +96,7 @@ struct NewCommentForm: View {
   // MARK: Private
 
   private let parentFullname: Fullname
+  private let dismissalDelay: Double = 0.5
   @State private var commentBody: String = ""
   @StateObject private var submitter = CommentSubmitter()
 }
