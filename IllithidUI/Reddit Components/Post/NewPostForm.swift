@@ -28,9 +28,13 @@ struct NewPostForm: View {
   var body: some View {
     VStack(alignment: .center) {
       HStack {
-        Text("post.new.subreddit.prompt")
+        Text(createPostIn == nil
+          ? NSLocalizedString("post.new.subreddit.prompt", comment: "Prompt to select the post's target subreddit")
+          : createPostIn!.displayNamePrefixed)
+
         Image(systemName: "chevron.down")
       }
+      .font(.title)
       .onTapGesture {
         showSelectionPopover = true
       }
@@ -39,14 +43,30 @@ struct NewPostForm: View {
       }
       .padding()
 
-      TabView {
-        TextEditor(text: $postBody)
-          .frame(idealWidth: 1600, idealHeight: 900)
-          .tabItem {
-            Label(title: { Text("post.type.text") }, icon: { Image(systemName: "text.bubble") })
+      if let targetSubreddit = createPostIn {
+        TabView(selection: $postType) {
+          if targetSubreddit.allowsSelfPosts ?? false {
+            SelfPostForm(model: selfPostModel)
+              .tag(NewPostType.`self`)
+              .tabItem {
+                Label(title: { Text("post.type.text") },
+                      icon: { Image(systemName: "text.bubble") })
+              }
+              .padding()
           }
+          if targetSubreddit.allowsLinkPosts ?? false {
+            LinkPostForm(model: linkPostModel)
+              .tag(NewPostType.link)
+              .tabItem {
+                Label(title: { Text("post.type.link") },
+                      icon: { Image(systemName: "link") })
+              }
+              .padding(.horizontal)
+          }
+        }
+      } else {
+        Spacer()
       }
-      .disabled(createPostIn == nil)
 
       HStack {
         Button(action: {
@@ -58,17 +78,46 @@ struct NewPostForm: View {
         })
           .keyboardShortcut(.cancelAction)
         Spacer()
+        Button("post.submit") {}
+          .disabled(!isValid())
       }
       .padding()
     }
+    .onChange(of: createPostIn, perform: { targetSubreddit in
+      if targetSubreddit?.allowsSelfPosts ?? false { postType = .`self` }
+      else if targetSubreddit?.allowsImagePosts ?? false { postType = .image }
+      else if targetSubreddit?.allowsLinkPosts ?? false { postType = .link }
+    })
+    .frame(idealWidth: 1600, idealHeight: 900)
   }
 
   // MARK: Private
 
+  @StateObject private var selfPostModel: SelfPostForm.ViewModel = .init()
+  @StateObject private var linkPostModel: LinkPostForm.ViewModel = .init()
+
   @State private var showSelectionPopover: Bool = false
   @State private var createPostIn: Subreddit? = nil
+  @State private var postType: NewPostType = .`self`
 
-  @State private var postBody: String = ""
+  private func isValid() -> Bool {
+    switch postType {
+    case .`self`:
+      return selfPostModel.isValid()
+    case .image:
+      return false
+    case .link:
+      return linkPostModel.isValid()
+    }
+  }
+}
+
+private extension NewPostForm {
+  enum NewPostType {
+    case `self`
+    case image
+    case link
+  }
 }
 
 // MARK: - SubredditSelectorView
@@ -113,10 +162,65 @@ private struct SubredditSelectorView: View {
 
   @State private var subredditId: String?
   private let dismissalDelay: Double = 0.4
+
   private func findSelection() -> Subreddit? {
     // TODO: Support user subreddit, moderated subreddits, etc
-    if let subreddit = informationBarData.subscribedSubreddits.first { $0.id == subredditId } {
+    if let subreddit = informationBarData.subscribedSubreddits.first(where: { $0.id == subredditId }) {
       return subreddit
     } else { return nil }
+  }
+}
+
+// MARK: - SubmissionViewModel
+
+protocol SubmissionViewModel: ObservableObject {
+  func isValid() -> Bool
+}
+
+// MARK: - SelfPostForm
+
+private struct SelfPostForm: View {
+  class ViewModel: SubmissionViewModel {
+    @Published var title: String = ""
+    @Published var body: String = ""
+
+    func isValid() -> Bool {
+      !title.isEmpty && !body.isEmpty
+    }
+  }
+
+  @ObservedObject var model: SelfPostForm.ViewModel
+
+  var body: some View {
+    VStack {
+      TextField("post.new.title", text: $model.title)
+        .font(.title)
+      TextEditor(text: $model.body)
+        .font(.system(size: 18))
+    }
+  }
+}
+
+// MARK: - LinkPostForm
+
+private struct LinkPostForm: View {
+  class ViewModel: SubmissionViewModel {
+    @Published var title: String = ""
+    @Published var linkTo: String = ""
+
+    func isValid() -> Bool {
+      URL(string: linkTo) != nil && !title.isEmpty
+    }
+  }
+
+  @ObservedObject var model: LinkPostForm.ViewModel
+
+  var body: some View {
+    VStack {
+      TextField("post.new.title", text: $model.title)
+        .font(.title)
+      TextField("post.new.link-to", text: $model.linkTo)
+        .font(.title)
+    }
   }
 }

@@ -27,6 +27,10 @@
 "post.new" = "New Post";
 "post.new.subreddit.prompt" = "Post in";
 "post.submit" = "Submit";
+"post.new.title" = "Title";
+"post.type.text" = "Self Post";
+"post.type.link" = "Link";
+"post.new.link-to" = "URL";
 
 "subreddits.subscribed" = "Subscribed";
 
