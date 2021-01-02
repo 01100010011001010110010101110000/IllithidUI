@@ -12,8 +12,10 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import Combine
 import SwiftUI
 
+import Alamofire
 import Illithid
 
 // MARK: - NewPostForm
@@ -28,9 +30,9 @@ struct NewPostForm: View {
   var body: some View {
     VStack(alignment: .center) {
       HStack {
-        Text(createPostIn == nil
+        Text(model.createPostIn == nil
           ? NSLocalizedString("post.new.subreddit.prompt", comment: "Prompt to select the post's target subreddit")
-          : createPostIn!.displayNamePrefixed)
+          : model.createPostIn!.displayNamePrefixed)
 
         Image(systemName: "chevron.down")
       }
@@ -39,14 +41,14 @@ struct NewPostForm: View {
         showSelectionPopover = true
       }
       .popover(isPresented: $showSelectionPopover, arrowEdge: .top) {
-        SubredditSelectorView(subredditSelection: $createPostIn, isPresented: $showSelectionPopover)
+        SubredditSelectorView(subredditSelection: $model.createPostIn, isPresented: $showSelectionPopover)
       }
       .padding()
 
-      if let targetSubreddit = createPostIn {
-        TabView(selection: $postType) {
+      if let targetSubreddit = model.createPostIn {
+        TabView(selection: $model.postType) {
           if targetSubreddit.allowsSelfPosts ?? false {
-            SelfPostForm(model: selfPostModel)
+            SelfPostForm(model: model.selfPostModel)
               .tag(NewPostType.`self`)
               .tabItem {
                 Label(title: { Text("post.type.text") },
@@ -55,7 +57,7 @@ struct NewPostForm: View {
               .padding()
           }
           if targetSubreddit.allowsLinkPosts ?? false {
-            LinkPostForm(model: linkPostModel)
+            LinkPostForm(model: model.linkPostModel)
               .tag(NewPostType.link)
               .tabItem {
                 Label(title: { Text("post.type.link") },
@@ -78,45 +80,102 @@ struct NewPostForm: View {
         })
           .keyboardShortcut(.cancelAction)
         Spacer()
-        Button("post.submit") {}
+        Button(action: {
+          switch model.postType {
+          case .`self`:
+            model.submitSelfPost()
+          case .link:
+            model.submitLinkPost()
+          default:
+            return
+          }
+        }, label: {
+          HStack {
+            Text("comments.submit")
+            if model.posting {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+                .scaleEffect(0.5, anchor: .center)
+            } else if case .success = model.result {
+              Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.green)
+            } else if case .failure = model.result {
+              Image(systemName: "xmark.circle.fill")
+                .foregroundColor(.red)
+            }
+          }
+        })
           .disabled(!isValid())
       }
       .padding()
     }
-    .onChange(of: createPostIn, perform: { targetSubreddit in
-      if targetSubreddit?.allowsSelfPosts ?? false { postType = .`self` }
-      else if targetSubreddit?.allowsImagePosts ?? false { postType = .image }
-      else if targetSubreddit?.allowsLinkPosts ?? false { postType = .link }
+    .onReceive(model.$createPostIn, perform: { targetSubreddit in
+      if targetSubreddit?.allowsSelfPosts ?? false { model.postType = .`self` }
+      else if targetSubreddit?.allowsImagePosts ?? false { model.postType = .image }
+      else if targetSubreddit?.allowsLinkPosts ?? false { model.postType = .link }
     })
+    .onReceive(model.$result) { result in
+      switch result {
+      case .success:
+        DispatchQueue.main.asyncAfter(deadline: .now() + dismissalDelay) {
+          showNewPostForm = false
+        }
+      default:
+        break
+      }
+    }
     .frame(idealWidth: 1600, idealHeight: 900)
   }
 
   // MARK: Private
 
-  @StateObject private var selfPostModel: SelfPostForm.ViewModel = .init()
-  @StateObject private var linkPostModel: LinkPostForm.ViewModel = .init()
+  @StateObject private var model = ViewModel()
 
   @State private var showSelectionPopover: Bool = false
-  @State private var createPostIn: Subreddit? = nil
-  @State private var postType: NewPostType = .`self`
+  private let dismissalDelay: Double = 0.5
 
   private func isValid() -> Bool {
-    switch postType {
+    switch model.postType {
     case .`self`:
-      return selfPostModel.isValid()
-    case .image:
-      return false
+      return model.selfPostModel.isValid()
     case .link:
-      return linkPostModel.isValid()
+      return model.linkPostModel.isValid()
+    default:
+      return false
     }
   }
-}
 
-private extension NewPostForm {
-  enum NewPostType {
-    case `self`
-    case image
-    case link
+  private class ViewModel: ObservableObject {
+    @Published var createPostIn: Subreddit? = nil
+    @Published var postType: NewPostType = .`self`
+    @Published var posting: Bool = false
+    @Published var result: Result<NewPostResponse, AFError>? = nil
+
+    @Published var linkPostModel: LinkPostForm.ViewModel = .init()
+    @Published var selfPostModel: SelfPostForm.ViewModel = .init()
+
+    private var cancelBag: [AnyCancellable] = []
+
+    init() {
+      let postingToken = Publishers.MergeMany([linkPostModel.$posting, selfPostModel.$posting])
+        .receive(on: RunLoop.main)
+        .assign(to: \.posting, on: self)
+      let resultToken = Publishers.MergeMany([linkPostModel.$postResult, selfPostModel.$postResult])
+        .receive(on: RunLoop.main)
+        .assign(to: \.result, on: self)
+      cancelBag.append(postingToken)
+      cancelBag.append(resultToken)
+    }
+
+    func submitSelfPost() {
+      guard let target = createPostIn else { return }
+      selfPostModel.submitTextPost(in: target)
+    }
+
+    func submitLinkPost() {
+      guard let target = createPostIn else { return }
+      linkPostModel.submitLinkPost(in: target)
+    }
   }
 }
 
@@ -183,9 +242,32 @@ private struct SelfPostForm: View {
   class ViewModel: SubmissionViewModel {
     @Published var title: String = ""
     @Published var body: String = ""
+    @Published var posting: Bool = false
+    @Published var postResult: Result<NewPostResponse, AFError>? = nil
+
+    private var cancelBag: [AnyCancellable] = []
 
     func isValid() -> Bool {
       !title.isEmpty && !body.isEmpty
+    }
+
+    func submitTextPost(in subreddit: Subreddit) {
+      posting = true
+      let cancelToken = subreddit.submitTextPost(title: title, markdown: body)
+        .receive(on: RunLoop.main)
+        .sink { [weak self] completion in
+          guard let self = self else { return }
+          switch completion {
+          case .finished:
+            break
+          case let .failure(error):
+            self.postResult = .failure(error)
+          }
+        } receiveValue: { response in
+          self.posting = false
+          self.postResult = .success(response)
+        }
+      cancelBag.append(cancelToken)
     }
   }
 
@@ -207,9 +289,34 @@ private struct LinkPostForm: View {
   class ViewModel: SubmissionViewModel {
     @Published var title: String = ""
     @Published var linkTo: String = ""
+    @Published var posting: Bool = false
+    @Published var postResult: Result<NewPostResponse, AFError>? = nil
+
+    private var cancelBag: [AnyCancellable] = []
 
     func isValid() -> Bool {
       URL(string: linkTo) != nil && !title.isEmpty
+    }
+
+    func submitLinkPost(in subreddit: Subreddit) {
+      // We validate this before enabling the submit button, but just in case
+      guard let url = URL(string: linkTo) else { return }
+      posting = true
+      let cancelToken = subreddit.submitLinkPost(title: title, linkTo: url)
+        .receive(on: RunLoop.main)
+        .sink { [weak self] completion in
+          guard let self = self else { return }
+          switch completion {
+          case .finished:
+            break
+          case let .failure(error):
+            self.postResult = .failure(error)
+          }
+        } receiveValue: { response in
+          self.posting = false
+          self.postResult = .success(response)
+        }
+      cancelBag.append(cancelToken)
     }
   }
 
