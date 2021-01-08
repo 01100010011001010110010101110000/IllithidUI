@@ -192,10 +192,12 @@ private struct SubredditSelectorView: View {
     VStack {
       // TODO: Add a search bar
       List(selection: $subredditId) {
-        Section(header: Text("user.profile")) {
-          // TODO: Get the current account
-          Text("CURRENT USER PLACEHOLDER")
-            .tag("__account__")
+        if let user = Illithid.shared.accountManager.currentAccount {
+          Section(header: Text("user.profile")) {
+            // TODO: Get the current account
+            Text("u/\(user.name)")
+              .tag("__account__")
+          }
         }
 
         Section(header: Text("subreddits.subscribed")) {
