@@ -32,7 +32,7 @@ struct NewPostForm: View {
       HStack {
         Text(model.createPostIn == nil
           ? NSLocalizedString("post.new.subreddit.prompt", comment: "Prompt to select the post's target subreddit")
-          : model.createPostIn!.displayNamePrefixed)
+          : targetDisplayName!)
 
         Image(systemName: "chevron.down")
       }
@@ -41,13 +41,13 @@ struct NewPostForm: View {
         showSelectionPopover = true
       }
       .popover(isPresented: $showSelectionPopover, arrowEdge: .top) {
-        SubredditSelectorView(subredditSelection: $model.createPostIn, isPresented: $showSelectionPopover)
+        SubredditSelectorView(submissionTarget: $model.createPostIn, isPresented: $showSelectionPopover)
       }
       .padding()
 
-      if let targetSubreddit = model.createPostIn {
+      if model.createPostIn != nil {
         TabView(selection: $model.postType) {
-          if targetSubreddit.allowsSelfPosts ?? false {
+          if allowSelfPosts {
             SelfPostForm(model: model.selfPostModel)
               .tag(NewPostType.`self`)
               .tabItem {
@@ -56,16 +56,21 @@ struct NewPostForm: View {
               }
               .padding()
           }
-          if targetSubreddit.allowsLinkPosts ?? false {
-            LinkPostForm(model: model.linkPostModel)
-              .tag(NewPostType.link)
-              .tabItem {
-                Label(title: { Text("post.type.link") },
-                      icon: { Image(systemName: "link") })
-              }
-              .padding(.horizontal)
+
+          if allowLinkPosts {
+            VStack {
+              LinkPostForm(model: model.linkPostModel)
+                .tag(NewPostType.link)
+                .tabItem {
+                  Label(title: { Text("post.type.link") },
+                        icon: { Image(systemName: "link") })
+                }
+              Spacer()
+            }
+            .padding(.horizontal)
           }
         }
+        .padding(.horizontal)
       } else {
         Spacer()
       }
@@ -109,10 +114,14 @@ struct NewPostForm: View {
       }
       .padding()
     }
-    .onReceive(model.$createPostIn, perform: { targetSubreddit in
-      if targetSubreddit?.allowsSelfPosts ?? false { model.postType = .`self` }
-      else if targetSubreddit?.allowsImagePosts ?? false { model.postType = .image }
-      else if targetSubreddit?.allowsLinkPosts ?? false { model.postType = .link }
+    .onReceive(model.$createPostIn, perform: { target in
+      if let subreddit = targetSubreddit {
+        if subreddit.allowsSelfPosts ?? false { model.postType = .`self` }
+        else if subreddit.allowsImagePosts ?? false { model.postType = .image }
+        else if subreddit.allowsLinkPosts ?? false { model.postType = .link }
+      } else {
+        model.postType = .`self`
+      }
     })
     .onReceive(model.$result) { result in
       switch result {
@@ -145,8 +154,28 @@ struct NewPostForm: View {
     }
   }
 
+  private var targetSubreddit: Subreddit? {
+    model.createPostIn as? Subreddit
+  }
+
+  private var targetAccount: Account? {
+    model.createPostIn as? Account
+  }
+
+  private var targetDisplayName: String? {
+    targetSubreddit?.displayNamePrefixed ?? targetAccount?.name
+  }
+
+  private var allowSelfPosts: Bool {
+    targetAccount != nil || (targetSubreddit?.allowsSelfPosts ?? false)
+  }
+
+  private var allowLinkPosts: Bool {
+    targetAccount != nil || (targetSubreddit?.allowsLinkPosts ?? false)
+  }
+
   private class ViewModel: ObservableObject {
-    @Published var createPostIn: Subreddit? = nil
+    @Published var createPostIn: PostAcceptor? = nil
     @Published var postType: NewPostType = .`self`
     @Published var posting: Bool = false
     @Published var result: Result<NewPostResponse, AFError>? = nil
@@ -185,7 +214,7 @@ private struct SubredditSelectorView: View {
   // MARK: Internal
 
   @EnvironmentObject var informationBarData: InformationBarData
-  @Binding var subredditSelection: Subreddit?
+  @Binding var submissionTarget: PostAcceptor?
   @Binding var isPresented: Bool
 
   var body: some View {
@@ -194,9 +223,12 @@ private struct SubredditSelectorView: View {
       List(selection: $subredditId) {
         if let user = Illithid.shared.accountManager.currentAccount {
           Section(header: Text("user.profile")) {
-            // TODO: Get the current account
-            Text("u/\(user.name)")
-              .tag("__account__")
+            // TODO: Fetch account avatar if present
+            Label(
+              title: { Text("u/\(user.name)") },
+              icon: { Image(systemName: "person.crop.circle") }
+            )
+            .tag("__account__")
           }
         }
 
@@ -215,7 +247,7 @@ private struct SubredditSelectorView: View {
       DispatchQueue.main.asyncAfter(deadline: .now() + dismissalDelay) {
         isPresented = false
       }
-      subredditSelection = findSelection()
+      submissionTarget = findSelection()
     }
   }
 
@@ -224,9 +256,11 @@ private struct SubredditSelectorView: View {
   @State private var subredditId: String?
   private let dismissalDelay: Double = 0.5
 
-  private func findSelection() -> Subreddit? {
+  private func findSelection() -> PostAcceptor? {
     // TODO: Support user subreddit, moderated subreddits, etc
-    if let subreddit = informationBarData.subscribedSubreddits.first(where: { $0.id == subredditId }) {
+    if subredditId == "__account__" {
+      return Illithid.shared.accountManager.currentAccount
+    } else if let subreddit = informationBarData.subscribedSubreddits.first(where: { $0.id == subredditId }) {
       return subreddit
     } else { return nil }
   }
@@ -253,9 +287,9 @@ private struct SelfPostForm: View {
       !title.isEmpty && !body.isEmpty
     }
 
-    func submitTextPost(in subreddit: Subreddit) {
+    func submitTextPost(in acceptor: PostAcceptor) {
       posting = true
-      let cancelToken = subreddit.submitTextPost(title: title, markdown: body)
+      let cancelToken = acceptor.submitSelfPost(title: title, markdown: body)
         .receive(on: RunLoop.main)
         .sink { [weak self] completion in
           guard let self = self else { return }
@@ -300,11 +334,11 @@ private struct LinkPostForm: View {
       URL(string: linkTo) != nil && !title.isEmpty
     }
 
-    func submitLinkPost(in subreddit: Subreddit) {
+    func submitLinkPost(in acceptor: PostAcceptor) {
       // We validate this before enabling the submit button, but just in case
       guard let url = URL(string: linkTo) else { return }
       posting = true
-      let cancelToken = subreddit.submitLinkPost(title: title, linkTo: url)
+      let cancelToken = acceptor.submitLinkPost(title: title, linkTo: url)
         .receive(on: RunLoop.main)
         .sink { [weak self] completion in
           guard let self = self else { return }
