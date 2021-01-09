@@ -35,7 +35,7 @@ struct GfycatView: View {
     VStack {
       switch data.result {
       case let .success(item):
-        VideoPlayer(url: item.mp4URL, fullSize: .init(width: item.width, height: item.height))
+        VideoPlayer(url: item.mp4Url!, fullSize: item.size)
           .mediaMetadataBar(metadata: item)
       case let .failure(error):
         switch error {
@@ -91,7 +91,7 @@ struct RedGifView: View {
     VStack {
       switch data.result {
       case let .success(item):
-        VideoPlayer(url: item.mp4URL, fullSize: .init(width: item.width, height: item.height))
+        VideoPlayer(url: item.mp4Url!, fullSize: item.size)
           .mediaMetadataBar(metadata: item)
       case let .failure(error):
         switch error {
@@ -143,10 +143,9 @@ final class GfyData: ObservableObject, Cancellable {
 
   // MARK: Internal
 
-  @Published var result: Result<GfyItem, AFError>? = nil
+  @Published var result: Result<MediaMetadataProvider, AFError>? = nil
   let id: String
   var request: DataRequest?
-  let ulithari: Ulithari = .shared
 
   func fetchRedGif() {
     fetchGfy(retriever: ulithari.fetchRedGif)
@@ -162,13 +161,40 @@ final class GfyData: ObservableObject, Cancellable {
 
   // MARK: Private
 
-  private func fetchGfy(retriever: (String, DispatchQueue, @escaping (Result<GfyItem, AFError>) -> Void) -> DataRequest) {
+  private let ulithari: Ulithari = .shared
+  private func fetchGfy(retriever: (String, DispatchQueue, @escaping (Result<MediaMetadataProvider, AFError>) -> Void) -> DataRequest) {
     request = retriever(id, .main) { [weak self] result in
       guard let self = self else { return }
       if case let .failure(error) = result {
         Illithid.shared.logger.errorMessage("Failed to fetch gfyitem \(self.id): \(error)")
       }
       self.result = result
+    }
+  }
+}
+
+private extension Ulithari {
+  func fetchRedGif(id: String, queue: DispatchQueue = .main, completion: @escaping (Result<MediaMetadataProvider, AFError>) -> Void)
+  -> DataRequest {
+    fetchRedGif(id: id, queue: queue) { (result: Result<RedGfyItem, AFError>) in
+      switch result {
+      case let .success(item):
+        completion(.success(item))
+      case let .failure(error):
+        completion(.failure(error))
+      } 
+    }
+  }
+
+  func fetchGfycat(id: String, queue: DispatchQueue = .main, completion: @escaping (Result<MediaMetadataProvider, AFError>) -> Void)
+  -> DataRequest {
+    fetchGfycat(id: id, queue: queue) { (result: Result<GfyItem, AFError>) in
+      switch result {
+      case let .success(item):
+        completion(.success(item))
+      case let .failure(error):
+        completion(.failure(error))
+      }
     }
   }
 }
@@ -181,6 +207,26 @@ extension GfyItem: MediaMetadataProvider {
   var hostDisplayName: String { "Gfycat" }
 
   var mediaDescription: String? { gfyItemDescription }
+
+  var upvotes: Int? { likes }
+
+  var downvotes: Int? { dislikes }
+
+  var imageUrl: URL? { nil }
+
+  var mp4Url: URL? { mp4URL }
+
+  var gifUrl: URL? { gifURL }
+
+  var size: CGSize { .init(width: width, height: height) }
+}
+
+extension RedGfyItem: MediaMetadataProvider {
+  var mediaTitle: String { title }
+
+  var hostDisplayName: String { "Gfycat" }
+
+  var mediaDescription: String? { nil }
 
   var upvotes: Int? { likes }
 
