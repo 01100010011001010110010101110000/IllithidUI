@@ -54,18 +54,18 @@ struct NewPostForm: View {
                 Label(title: { Text("post.type.text") },
                       icon: { Image(systemName: "text.bubble") })
               }
-              .padding()
+              .padding([.horizontal, .bottom])
           }
 
           if allowLinkPosts {
             VStack {
               LinkPostForm(model: model.linkPostModel)
-                .tag(NewPostType.link)
-                .tabItem {
-                  Label(title: { Text("post.type.link") },
-                        icon: { Image(systemName: "link") })
-                }
               Spacer()
+            }
+            .tag(NewPostType.link)
+            .tabItem {
+              Label(title: { Text("post.type.link") },
+                    icon: { Image(systemName: "link") })
             }
             .padding(.horizontal)
           }
@@ -110,7 +110,7 @@ struct NewPostForm: View {
             }
           }
         })
-          .disabled(!isValid())
+        .disabled(!model.postIsValid)
       }
       .padding()
     }
@@ -143,17 +143,6 @@ struct NewPostForm: View {
   @State private var showSelectionPopover: Bool = false
   private let dismissalDelay: Double = 0.5
 
-  private func isValid() -> Bool {
-    switch model.postType {
-    case .`self`:
-      return model.selfPostModel.isValid()
-    case .link:
-      return model.linkPostModel.isValid()
-    default:
-      return false
-    }
-  }
-
   private var targetSubreddit: Subreddit? {
     model.createPostIn as? Subreddit
   }
@@ -177,6 +166,7 @@ struct NewPostForm: View {
   private class ViewModel: ObservableObject {
     @Published var createPostIn: PostAcceptor? = nil
     @Published var postType: NewPostType = .`self`
+    @Published var postIsValid: Bool = false
     @Published var posting: Bool = false
     @Published var result: Result<NewPostResponse, AFError>? = nil
 
@@ -192,8 +182,31 @@ struct NewPostForm: View {
       let resultToken = Publishers.MergeMany([linkPostModel.$postResult, selfPostModel.$postResult])
         .receive(on: RunLoop.main)
         .assign(to: \.result, on: self)
+      let validityToken = Publishers.MergeMany([linkPostModel.$isValid, selfPostModel.$isValid])
+        .receive(on: RunLoop.main)
+        .sink { [weak self] _ in
+          self?.calculateSubmissionValidity()
+        }
+      let submissionTypeToken = $postType
+        .receive(on: RunLoop.main)
+        .sink { [weak self] _ in
+          self?.calculateSubmissionValidity()
+        }
+      cancelBag.append(submissionTypeToken)
+      cancelBag.append(validityToken)
       cancelBag.append(postingToken)
       cancelBag.append(resultToken)
+    }
+
+    private func calculateSubmissionValidity() {
+      switch self.postType {
+      case .`self`:
+        self.postIsValid = self.selfPostModel.isValid
+      case .link:
+        self.postIsValid = self.linkPostModel.isValid
+      default:
+        break
+      }
     }
 
     func submitSelfPost() {
@@ -266,26 +279,27 @@ private struct SubredditSelectorView: View {
   }
 }
 
-// MARK: - SubmissionViewModel
-
-protocol SubmissionViewModel: ObservableObject {
-  func isValid() -> Bool
-}
-
 // MARK: - SelfPostForm
 
 private struct SelfPostForm: View {
-  class ViewModel: SubmissionViewModel {
+  class ViewModel: ObservableObject {
     @Published var title: String = ""
     @Published var body: String = ""
     @Published var posting: Bool = false
+    @Published var isValid: Bool = false
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
 
-    private var cancelBag: [AnyCancellable] = []
-
-    func isValid() -> Bool {
-      !title.isEmpty && !body.isEmpty
+    init() {
+      let validityToken = Publishers.Merge($title, $body)
+        .receive(on: RunLoop.main)
+        .sink { [weak self] _ in
+          guard let self = self else { return }
+          self.isValid = !self.body.isEmpty && !self.title.isEmpty
+        }
+      cancelBag.append(validityToken)
     }
+
+    private var cancelBag: [AnyCancellable] = []
 
     func submitTextPost(in acceptor: PostAcceptor) {
       posting = true
@@ -322,17 +336,26 @@ private struct SelfPostForm: View {
 // MARK: - LinkPostForm
 
 private struct LinkPostForm: View {
-  class ViewModel: SubmissionViewModel {
+  class ViewModel: ObservableObject {
     @Published var title: String = ""
     @Published var linkTo: String = ""
     @Published var posting: Bool = false
+    @Published var isValid: Bool = false
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
 
-    private var cancelBag: [AnyCancellable] = []
-
-    func isValid() -> Bool {
-      URL(string: linkTo) != nil && !title.isEmpty
+    init() {
+      let validityToken = Publishers.Merge($title, $linkTo)
+        .receive(on: RunLoop.main)
+        .sink { [weak self] _ in
+          guard let self = self else { return }
+          self.isValid = !self.title.isEmpty && !self.linkTo.isEmpty
+            && self.detector.firstMatch(in: self.linkTo, range: NSRange(location: 0, length: self.linkTo.utf16.count)) != nil
+        }
+      cancelBag.append(validityToken)
     }
+
+    private var cancelBag: [AnyCancellable] = []
+    private let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
 
     func submitLinkPost(in acceptor: PostAcceptor) {
       // We validate this before enabling the submit button, but just in case
