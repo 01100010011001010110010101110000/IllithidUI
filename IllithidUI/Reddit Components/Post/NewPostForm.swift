@@ -182,6 +182,10 @@ struct NewPostForm: View {
       let resultToken = Publishers.MergeMany([linkPostModel.$postResult, selfPostModel.$postResult])
         .receive(on: RunLoop.main)
         .assign(to: \.result, on: self)
+
+      // These two subscribers update the validity of the submission whenever:
+      // * A tab's fields are updated
+      // * The tab is changed
       let validityToken = Publishers.MergeMany([linkPostModel.$isValid, selfPostModel.$isValid])
         .receive(on: RunLoop.main)
         .sink { [weak self] _ in
@@ -192,6 +196,7 @@ struct NewPostForm: View {
         .sink { [weak self] _ in
           self?.calculateSubmissionValidity()
         }
+      
       cancelBag.append(submissionTypeToken)
       cancelBag.append(validityToken)
       cancelBag.append(postingToken)
