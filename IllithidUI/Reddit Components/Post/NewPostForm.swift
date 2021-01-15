@@ -13,6 +13,7 @@
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import Combine
+import UniformTypeIdentifiers
 import SwiftUI
 
 import Alamofire
@@ -57,6 +58,16 @@ struct NewPostForm: View {
               .padding([.horizontal, .bottom])
           }
 
+          if allowMediaPosts {
+            MediaPostForm(model: model.mediaPostModel)
+              .tag(NewPostType.image)
+              .tabItem {
+                Label(title: { Text("post.type.media") },
+                      icon: { Image(systemName: "photo.on.rectangle.angled") })
+              }
+              .padding([.horizontal, .bottom])
+          }
+
           if allowLinkPosts {
             VStack {
               LinkPostForm(model: model.linkPostModel)
@@ -91,12 +102,14 @@ struct NewPostForm: View {
             model.submitSelfPost()
           case .link:
             model.submitLinkPost()
+          case .image:
+            model.mediaPostModel.submitImagePost(to: model.createPostIn!)
           default:
             return
           }
         }, label: {
           HStack {
-            Text("comments.submit")
+            Text("post.submit")
             if model.posting {
               ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
@@ -159,8 +172,32 @@ struct NewPostForm: View {
     targetAccount != nil || (targetSubreddit?.allowsSelfPosts ?? false)
   }
 
+  private var allowMediaPosts: Bool {
+    allowImagePosts || allowGalleryPosts || allowVideoPosts || allowGifPosts
+  }
+
+  private var allowImagePosts: Bool {
+    targetAccount != nil || (targetSubreddit?.allowsImagePosts ?? false)
+  }
+
+  private var allowGalleryPosts: Bool {
+    targetAccount != nil || (targetSubreddit?.allowGalleries ?? false)
+  }
+
+  private var allowVideoPosts: Bool {
+    targetAccount != nil || (targetSubreddit?.allowVideos ?? false)
+  }
+
+  private var allowGifPosts: Bool {
+    targetAccount != nil || (targetSubreddit?.allowsGifPosts ?? false)
+  }
+
   private var allowLinkPosts: Bool {
     targetAccount != nil || (targetSubreddit?.allowsLinkPosts ?? false)
+  }
+
+  private var allowPollPosts: Bool {
+    targetAccount != nil || (targetSubreddit?.allowsPollPosts ?? false)
   }
 
   private class ViewModel: ObservableObject {
@@ -172,6 +209,7 @@ struct NewPostForm: View {
 
     @Published var linkPostModel: LinkPostForm.ViewModel = .init()
     @Published var selfPostModel: SelfPostForm.ViewModel = .init()
+    @Published var mediaPostModel: MediaPostForm.ViewModel = .init()
 
     private var cancelBag: [AnyCancellable] = []
 
@@ -186,29 +224,26 @@ struct NewPostForm: View {
       // These two subscribers update the validity of the submission whenever:
       // * A tab's fields are updated
       // * The tab is changed
-      let validityToken = Publishers.MergeMany([linkPostModel.$isValid, selfPostModel.$isValid])
+      let validityToken = Publishers.MergeMany([linkPostModel.$isValid, selfPostModel.$isValid, mediaPostModel.$isValid])
+        .combineLatest($postType)
         .receive(on: RunLoop.main)
-        .sink { [weak self] _ in
+        .sink { [weak self] _, _ in
           self?.calculateSubmissionValidity()
         }
-      let submissionTypeToken = $postType
-        .receive(on: RunLoop.main)
-        .sink { [weak self] _ in
-          self?.calculateSubmissionValidity()
-        }
-      
-      cancelBag.append(submissionTypeToken)
+
       cancelBag.append(validityToken)
       cancelBag.append(postingToken)
       cancelBag.append(resultToken)
     }
 
     private func calculateSubmissionValidity() {
-      switch self.postType {
+      switch postType {
       case .`self`:
-        self.postIsValid = self.selfPostModel.isValid
+        postIsValid = selfPostModel.isValid
       case .link:
-        self.postIsValid = self.linkPostModel.isValid
+        postIsValid = linkPostModel.isValid
+      case .image:
+        postIsValid = mediaPostModel.isValid
       default:
         break
       }
@@ -393,5 +428,96 @@ private struct LinkPostForm: View {
       TextField("post.new.link-to", text: $model.linkTo)
         .font(.title)
     }
+  }
+}
+
+private struct MediaPostForm: View {
+  class ViewModel: ObservableObject {
+    @Published var isValid: Bool = false
+    @Published var presentImageSelector: Bool = false
+    @Published var title: String = ""
+    @Published var selectedItems: [URL]? = nil
+    @Published var postResult: Result<NewPostResponse, AFError>? = nil
+
+    init() {
+      let validityToken = Publishers.CombineLatest($title, $selectedItems)
+        .receive(on: RunLoop.main)
+        .sink { [weak self] title, photoUrl in
+          guard let self = self else { return }
+          self.isValid = !self.title.isEmpty && !(self.selectedItems?.isEmpty ?? true)
+        }
+      cancelBag.append(validityToken)
+    }
+
+    private var cancelBag: [AnyCancellable] = []
+    private var uploadToken: AnyCancellable? = nil
+
+    func submitImagePost(to acceptor: PostAcceptor) {
+      let illithid: Illithid = .shared
+      guard let url = selectedItems?.first else { return }
+
+      uploadToken = illithid
+        .uploadMedia(fileUrl: url)
+        .flatMap { lease, uploadResponseData in
+          Publishers.Zip(illithid.receiveUploadResponse(lease: lease),
+                         illithid.submit(kind: .image, subredditDisplayName: acceptor.uploadTarget,
+                                         title: self.title, linkTo: lease.lease.retrievalUrl))
+        }
+        .sink(receiveCompletion: { completion in
+          switch completion {
+          case .finished:
+            break
+          case let .failure(error):
+            illithid.logger.errorMessage("Failed to submit image post: \(error)")
+          }
+        }) { uploadResponse, postResponse in
+          illithid.logger.debugMessage("Successfully submitted post: \(postResponse.json.data.url?.absoluteString ?? "NO ASSOCIATED URL")")
+        }
+    }
+  }
+
+  @ObservedObject var model: MediaPostForm.ViewModel
+
+  var body: some View {
+    VStack {
+      TextField("post.new.title", text: $model.title)
+        .font(.title)
+      RoundedRectangle(cornerRadius: 5)
+        .foregroundColor(Color(.windowBackgroundColor))
+        .overlay(
+          RoundedRectangle(cornerRadius: 5)
+            .stroke(Color(.darkGray))
+        )
+        .overlay(
+          VStack {
+            if let imageUrl = model.selectedItems?.first {
+              Image(nsImage: NSImage(byReferencing: imageUrl))
+            } else {
+              Button(action: { model.presentImageSelector = true }, label: {
+                Text("choose.image")
+              })
+            }
+          }
+        )
+      .fileImporter(isPresented: $model.presentImageSelector, allowedContentTypes: allowedContentTypes, allowsMultipleSelection: allowsMultipleItems) { result in
+        switch result {
+        case let .success(urls):
+          model.selectedItems = urls
+        case let .failure(error):
+          Illithid.shared.logger.errorMessage("Failed to select image: \(error)")
+        }
+        model.presentImageSelector = false
+      }
+    }
+  }
+
+  private var allowsMultipleItems: Bool {
+    // TODO: Set to true if we allow gallery posts
+    false
+  }
+
+  private var allowedContentTypes: [UTType] {
+    // TODO: Filter based on target subreddit's allowed media types & already selected media
+    [.png, .jpeg, .quickTimeMovie, .mpeg4Movie, .gif]
   }
 }

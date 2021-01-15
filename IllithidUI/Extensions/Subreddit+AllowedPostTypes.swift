@@ -42,7 +42,7 @@ extension Subreddit {
     return type != .`self` && allowVideos
   }
 
-  /// Whether the subreddit allows video posts
+  /// Whether the subreddit allows GIF posts
   /// - Note: `nil` if the subreddit is private and the current user context does not have access
   var allowsGifPosts: Bool? {
     guard let type = submissionType else { return nil }

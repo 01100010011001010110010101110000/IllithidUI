@@ -1244,7 +1244,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "git@github.com:01100010011001010110010101110000/Illithid.git";
 			requirement = {
-				branch = "post-creation";
+				branch = master;
 				kind = branch;
 			};
 		};

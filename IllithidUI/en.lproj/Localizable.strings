@@ -30,7 +30,10 @@
 "post.new.title" = "Title";
 "post.type.text" = "Self Post";
 "post.type.link" = "Link";
+"post.type.media" = "Media";
 "post.new.link-to" = "URL";
+
+"choose.image" = "Upload";
 
 "subreddits.subscribed" = "Subscribed";
 
