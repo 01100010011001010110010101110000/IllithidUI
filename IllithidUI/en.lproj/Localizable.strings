@@ -30,10 +30,13 @@
 "post.new.title" = "Title";
 "post.type.text" = "Self Post";
 "post.type.link" = "Link";
-"post.type.media" = "Media";
+"post.type.image.and.gif" = "Image & GIF";
 "post.new.link-to" = "URL";
 
 "choose.image" = "Upload";
+"too.many.gallery.items.body" = "Reddit currently only allows a maximum of 20 iages in a gallery post.
+The first twenty items you selected are still selected";
+"too.many.gallery.items.title" = "Too Selected Gallery Images";
 
 "subreddits.subscribed" = "Subscribed";
 

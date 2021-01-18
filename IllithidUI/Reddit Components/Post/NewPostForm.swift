@@ -18,6 +18,7 @@ import SwiftUI
 
 import Alamofire
 import Illithid
+import SDWebImageSwiftUI
 
 // MARK: - NewPostForm
 
@@ -30,25 +31,11 @@ struct NewPostForm: View {
 
   var body: some View {
     VStack(alignment: .center) {
-      HStack {
-        Text(model.createPostIn == nil
-          ? NSLocalizedString("post.new.subreddit.prompt", comment: "Prompt to select the post's target subreddit")
-          : targetDisplayName!)
+      selectionHeader
 
-        Image(systemName: "chevron.down")
-      }
-      .font(.title)
-      .onTapGesture {
-        showSelectionPopover = true
-      }
-      .popover(isPresented: $showSelectionPopover, arrowEdge: .top) {
-        SubredditSelectorView(submissionTarget: $model.createPostIn, isPresented: $showSelectionPopover)
-      }
-      .padding()
-
-      if model.createPostIn != nil {
+      if let acceptor = model.createPostIn {
         TabView(selection: $model.postType) {
-          if allowSelfPosts {
+          if acceptor.permitsSelfPosts {
             SelfPostForm(model: model.selfPostModel)
               .tag(NewPostType.`self`)
               .tabItem {
@@ -58,17 +45,18 @@ struct NewPostForm: View {
               .padding([.horizontal, .bottom])
           }
 
-          if allowMediaPosts {
-            MediaPostForm(model: model.mediaPostModel)
+          // In the current Reddit API implementation, if image posts are allowed, so are GIFs
+          if acceptor.permitsImagePosts {
+            ImageGifPostForm(for: acceptor, model: model.imagePostModel)
               .tag(NewPostType.image)
               .tabItem {
-                Label(title: { Text("post.type.media") },
+                Label(title: { Text("post.type.image.and.gif") },
                       icon: { Image(systemName: "photo.on.rectangle.angled") })
               }
               .padding([.horizontal, .bottom])
           }
 
-          if allowLinkPosts {
+          if acceptor.permitsLinkPosts {
             VStack {
               LinkPostForm(model: model.linkPostModel)
               Spacer()
@@ -86,52 +74,13 @@ struct NewPostForm: View {
         Spacer()
       }
 
-      HStack {
-        Button(action: {
-          withAnimation {
-            showNewPostForm = false
-          }
-        }, label: {
-          Text("cancel")
-        })
-          .keyboardShortcut(.cancelAction)
-        Spacer()
-        Button(action: {
-          switch model.postType {
-          case .`self`:
-            model.submitSelfPost()
-          case .link:
-            model.submitLinkPost()
-          case .image:
-            model.mediaPostModel.submitImagePost(to: model.createPostIn!)
-          default:
-            return
-          }
-        }, label: {
-          HStack {
-            Text("post.submit")
-            if model.posting {
-              ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
-                .scaleEffect(0.5, anchor: .center)
-            } else if case .success = model.result {
-              Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.green)
-            } else if case .failure = model.result {
-              Image(systemName: "xmark.circle.fill")
-                .foregroundColor(.red)
-            }
-          }
-        })
-        .disabled(!model.postIsValid)
-      }
-      .padding()
+      formControl
     }
     .onReceive(model.$createPostIn, perform: { target in
-      if let subreddit = targetSubreddit {
-        if subreddit.allowsSelfPosts ?? false { model.postType = .`self` }
-        else if subreddit.allowsImagePosts ?? false { model.postType = .image }
-        else if subreddit.allowsLinkPosts ?? false { model.postType = .link }
+      if let acceptor = target {
+        if acceptor.permitsSelfPosts { model.postType = .`self` }
+        else if acceptor.permitsImagePosts { model.postType = .image }
+        else if acceptor.permitsLinkPosts { model.postType = .link }
       } else {
         model.postType = .`self`
       }
@@ -156,48 +105,64 @@ struct NewPostForm: View {
   @State private var showSelectionPopover: Bool = false
   private let dismissalDelay: Double = 0.5
 
-  private var targetSubreddit: Subreddit? {
-    model.createPostIn as? Subreddit
+  private var selectionHeader: some View {
+    HStack {
+      Text(model.createPostIn == nil
+               ? NSLocalizedString("post.new.subreddit.prompt", comment: "Prompt to select the post's target subreddit")
+               : model.createPostIn!.displayName)
+      Image(systemName: "chevron.down")
+    }
+    .font(.title)
+    .onTapGesture {
+      showSelectionPopover = true
+    }
+    .popover(isPresented: $showSelectionPopover, arrowEdge: .top) {
+      SubredditSelectorView(submissionTarget: $model.createPostIn, isPresented: $showSelectionPopover)
+    }
+    .padding()
   }
 
-  private var targetAccount: Account? {
-    model.createPostIn as? Account
-  }
-
-  private var targetDisplayName: String? {
-    targetSubreddit?.displayNamePrefixed ?? targetAccount?.name
-  }
-
-  private var allowSelfPosts: Bool {
-    targetAccount != nil || (targetSubreddit?.allowsSelfPosts ?? false)
-  }
-
-  private var allowMediaPosts: Bool {
-    allowImagePosts || allowGalleryPosts || allowVideoPosts || allowGifPosts
-  }
-
-  private var allowImagePosts: Bool {
-    targetAccount != nil || (targetSubreddit?.allowsImagePosts ?? false)
-  }
-
-  private var allowGalleryPosts: Bool {
-    targetAccount != nil || (targetSubreddit?.allowGalleries ?? false)
-  }
-
-  private var allowVideoPosts: Bool {
-    targetAccount != nil || (targetSubreddit?.allowVideos ?? false)
-  }
-
-  private var allowGifPosts: Bool {
-    targetAccount != nil || (targetSubreddit?.allowsGifPosts ?? false)
-  }
-
-  private var allowLinkPosts: Bool {
-    targetAccount != nil || (targetSubreddit?.allowsLinkPosts ?? false)
-  }
-
-  private var allowPollPosts: Bool {
-    targetAccount != nil || (targetSubreddit?.allowsPollPosts ?? false)
+  private var formControl: some View {
+    HStack {
+      Button(action: {
+        withAnimation {
+          showNewPostForm = false
+        }
+      }, label: {
+        Text("cancel")
+      })
+      .keyboardShortcut(.cancelAction)
+      Spacer()
+      Button(action: {
+        switch model.postType {
+        case .`self`:
+          model.submitSelfPost()
+        case .link:
+          model.submitLinkPost()
+        case .image:
+          model.submitImagePost()
+        default:
+          return
+        }
+      }, label: {
+        HStack {
+          Text("post.submit")
+          if model.posting {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+              .scaleEffect(0.5, anchor: .center)
+          } else if case .success = model.result {
+            Image(systemName: "checkmark.circle.fill")
+              .foregroundColor(.green)
+          } else if case .failure = model.result {
+            Image(systemName: "xmark.circle.fill")
+              .foregroundColor(.red)
+          }
+        }
+      })
+      .disabled(!model.postIsValid)
+    }
+    .padding()
   }
 
   private class ViewModel: ObservableObject {
@@ -207,9 +172,9 @@ struct NewPostForm: View {
     @Published var posting: Bool = false
     @Published var result: Result<NewPostResponse, AFError>? = nil
 
-    @Published var linkPostModel: LinkPostForm.ViewModel = .init()
-    @Published var selfPostModel: SelfPostForm.ViewModel = .init()
-    @Published var mediaPostModel: MediaPostForm.ViewModel = .init()
+    @Published var linkPostModel = LinkPostForm.ViewModel()
+    @Published var selfPostModel = SelfPostForm.ViewModel()
+    @Published var imagePostModel = ImageGifPostForm.ViewModel()
 
     private var cancelBag: [AnyCancellable] = []
 
@@ -224,7 +189,7 @@ struct NewPostForm: View {
       // These two subscribers update the validity of the submission whenever:
       // * A tab's fields are updated
       // * The tab is changed
-      let validityToken = Publishers.MergeMany([linkPostModel.$isValid, selfPostModel.$isValid, mediaPostModel.$isValid])
+      let validityToken = Publishers.MergeMany([linkPostModel.$isValid, selfPostModel.$isValid, imagePostModel.$isValid])
         .combineLatest($postType)
         .receive(on: RunLoop.main)
         .sink { [weak self] _, _ in
@@ -243,7 +208,7 @@ struct NewPostForm: View {
       case .link:
         postIsValid = linkPostModel.isValid
       case .image:
-        postIsValid = mediaPostModel.isValid
+        postIsValid = imagePostModel.isValid
       default:
         break
       }
@@ -251,12 +216,17 @@ struct NewPostForm: View {
 
     func submitSelfPost() {
       guard let target = createPostIn else { return }
-      selfPostModel.submitTextPost(in: target)
+      selfPostModel.submitTextPost(to: target)
     }
 
     func submitLinkPost() {
       guard let target = createPostIn else { return }
-      linkPostModel.submitLinkPost(in: target)
+      linkPostModel.submitLinkPost(to: target)
+    }
+
+    func submitImagePost() {
+      guard let target = createPostIn else { return }
+      imagePostModel.submitImagePost(to: target)
     }
   }
 }
@@ -341,7 +311,7 @@ private struct SelfPostForm: View {
 
     private var cancelBag: [AnyCancellable] = []
 
-    func submitTextPost(in acceptor: PostAcceptor) {
+    func submitTextPost(to acceptor: PostAcceptor) {
       posting = true
       let cancelToken = acceptor.submitSelfPost(title: title, markdown: body)
         .receive(on: RunLoop.main)
@@ -397,7 +367,7 @@ private struct LinkPostForm: View {
     private var cancelBag: [AnyCancellable] = []
     private let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
 
-    func submitLinkPost(in acceptor: PostAcceptor) {
+    func submitLinkPost(to acceptor: PostAcceptor) {
       // We validate this before enabling the submit button, but just in case
       guard let url = URL(string: linkTo) else { return }
       posting = true
@@ -431,7 +401,7 @@ private struct LinkPostForm: View {
   }
 }
 
-private struct MediaPostForm: View {
+private struct ImageGifPostForm: View {
   class ViewModel: ObservableObject {
     @Published var isValid: Bool = false
     @Published var presentImageSelector: Bool = false
@@ -476,7 +446,13 @@ private struct MediaPostForm: View {
     }
   }
 
-  @ObservedObject var model: MediaPostForm.ViewModel
+  let acceptor: PostAcceptor
+  @ObservedObject var model: ImageGifPostForm.ViewModel
+
+  init(for acceptor: PostAcceptor, model: ViewModel) {
+    self.acceptor = acceptor
+    self.model = model
+  }
 
   var body: some View {
     VStack {
@@ -489,9 +465,39 @@ private struct MediaPostForm: View {
             .stroke(Color(.darkGray))
         )
         .overlay(
-          VStack {
-            if let imageUrl = model.selectedItems?.first {
-              Image(nsImage: NSImage(byReferencing: imageUrl))
+          Group {
+            if acceptor.permitsGalleryPosts, let imageUrls = model.selectedItems, !imageUrls.isEmpty {
+              VStack {
+                ScrollView(.horizontal) {
+                  LazyHStack {
+                    ForEach(imageUrls, id: \.absoluteString) { url in
+                      // TODO: Cleanup the view, calculate correct widths
+                      GroupBox {
+                        AnimatedImage(url: url, isAnimating: .constant(false))
+                          .resizable()
+                          .aspectRatio(contentMode: .fill)
+                          .frame(width: 240, height: 240)
+                          .padding()
+                      }
+                      .overlay(Button(action: {
+                        // TODO: Appear only on hover, still react to keyboard shortcuts
+                         model.selectedItems?.removeAll { $0 == url }
+                        }, label: {
+                          Image(systemName: "xmark.circle.fill")
+                        })
+                        .keyboardShortcut(.delete, modifiers: .none), alignment: .topLeading
+                      )
+                    }
+                  }
+                }
+                .frame(height: 320)
+                Spacer()
+              }
+            } else if acceptor.permitsImagePosts, let imageUrl = model.selectedItems?.first {
+              AnimatedImage(url: imageUrl, isAnimating: .constant(true))
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 120, height: 120)
             } else {
               Button(action: { model.presentImageSelector = true }, label: {
                 Text("choose.image")
@@ -499,25 +505,45 @@ private struct MediaPostForm: View {
             }
           }
         )
-      .fileImporter(isPresented: $model.presentImageSelector, allowedContentTypes: allowedContentTypes, allowsMultipleSelection: allowsMultipleItems) { result in
-        switch result {
-        case let .success(urls):
-          model.selectedItems = urls
-        case let .failure(error):
-          Illithid.shared.logger.errorMessage("Failed to select image: \(error)")
+        .fileImporter(isPresented: $model.presentImageSelector, allowedContentTypes: allowedContentTypes, allowsMultipleSelection: allowsMultipleItems) { result in
+          switch result {
+          case let .success(urls):
+            // TODO: Append to URL list instead of overwriting, while respecting 20 item max, if user wants to add more gallery items after first selection
+            if urls.count > maxGalleryItems {
+              model.selectedItems = Array(urls[..<maxGalleryItems])
+              showTooManyItemsAlert = true
+            } else {
+              model.selectedItems = urls
+            }
+          case let .failure(error):
+            Illithid.shared.logger.errorMessage("Failed to select image: \(error)")
+          }
+          model.presentImageSelector = false
         }
-        model.presentImageSelector = false
-      }
+        .alert(isPresented: $showTooManyItemsAlert) {
+          Alert(title: Text("too.many.gallery.items.title"), message: Text("too.many.gallery.items.body"))
+        }
     }
   }
 
+  @State private var showTooManyItemsAlert: Bool = false
+
+  private let maxGalleryItems = Illithid.maximumGalleryItems
+
   private var allowsMultipleItems: Bool {
-    // TODO: Set to true if we allow gallery posts
-    false
+    acceptor.permitsGalleryPosts
   }
 
   private var allowedContentTypes: [UTType] {
-    // TODO: Filter based on target subreddit's allowed media types & already selected media
-    [.png, .jpeg, .quickTimeMovie, .mpeg4Movie, .gif]
+    var result: [UTType] = []
+
+    if acceptor.permitsImagePosts {
+      result.append(contentsOf: [.png, .jpeg])
+    }
+    if acceptor.permitsGifPosts {
+      result.append(.gif)
+    }
+
+    return result
   }
 }
