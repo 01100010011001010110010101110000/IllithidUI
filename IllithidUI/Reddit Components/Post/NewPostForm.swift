@@ -460,10 +460,7 @@ private struct ImageGifPostForm: View {
         .font(.title)
       RoundedRectangle(cornerRadius: 5)
         .foregroundColor(Color(.windowBackgroundColor))
-        .overlay(
-          RoundedRectangle(cornerRadius: 5)
-            .stroke(Color(.darkGray))
-        )
+        .roundedBorder(style: Color(.darkGray))
         .overlay(
           Group {
             if acceptor.permitsGalleryPosts, let imageUrls = model.selectedItems, !imageUrls.isEmpty {

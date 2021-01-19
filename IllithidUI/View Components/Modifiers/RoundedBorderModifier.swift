@@ -26,3 +26,9 @@ struct RoundedBorder<Style: ShapeStyle>: ViewModifier {
       .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
   }
 }
+
+extension View {
+  func roundedBorder<Style: ShapeStyle>(style: Style, cornerRadius: CGFloat = 8, width: CGFloat = 1) -> some View {
+    self.modifier(RoundedBorder(style: style, cornerRadius: cornerRadius, width: width))
+  }
+}
