@@ -468,22 +468,7 @@ private struct ImageGifPostForm: View {
                 ScrollView(.horizontal) {
                   LazyHStack {
                     ForEach(imageUrls, id: \.absoluteString) { url in
-                      // TODO: Cleanup the view, calculate correct widths
-                      GroupBox {
-                        AnimatedImage(url: url, isAnimating: .constant(false))
-                          .resizable()
-                          .aspectRatio(contentMode: .fill)
-                          .frame(width: 240, height: 240)
-                          .padding()
-                      }
-                      .overlay(Button(action: {
-                        // TODO: Appear only on hover, still react to keyboard shortcuts
-                         model.selectedItems?.removeAll { $0 == url }
-                        }, label: {
-                          Image(systemName: "xmark.circle.fill")
-                        })
-                        .keyboardShortcut(.delete, modifiers: .none), alignment: .topLeading
-                      )
+                      UploadImagePreview(imageUrl: url, onRemoval: { urlToDelete in model.selectedItems?.removeAll(where: { $0 == urlToDelete }) } )
                     }
                   }
                 }
@@ -542,5 +527,32 @@ private struct ImageGifPostForm: View {
     }
 
     return result
+  }
+}
+
+private struct UploadImagePreview: View {
+  @State private var isHovering: Bool = false
+  let imageUrl: URL
+  let onRemoval: (URL) -> Void
+
+  var body: some View {
+    // TODO: Calculate correct widths
+    GroupBox {
+      AnimatedImage(url: imageUrl, isAnimating: .constant(false))
+        .resizable()
+        .aspectRatio(contentMode: .fill)
+        .frame(width: 240, height: 240)
+        .padding()
+        .onHover { isHovering = $0 }
+        .overlay(
+          Button(action: {
+            onRemoval(imageUrl)
+          }, label: {
+            Image(systemName: "xmark.circle.fill")
+          })
+          .keyboardShortcut(.deleteForward, modifiers: .none)
+          .opacity(isHovering ? 1 : 0), alignment: .topLeading
+        )
+    }
   }
 }
