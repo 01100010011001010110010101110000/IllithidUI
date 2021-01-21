@@ -240,7 +240,7 @@ private struct FlairRichtextView: View {
 
   var body: some View {
     HStack {
-      ForEach(richtext.indices) { idx in
+      ForEach(richtext.indices, id: \.self) { idx in
         Self.renderRichtext(richtext[idx])
       }
     }
