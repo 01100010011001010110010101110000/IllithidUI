@@ -13,8 +13,8 @@
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import Combine
-import UniformTypeIdentifiers
 import SwiftUI
+import UniformTypeIdentifiers
 
 import Alamofire
 import Illithid
@@ -37,7 +37,7 @@ struct NewPostForm: View {
         TabView(selection: $model.postType) {
           if acceptor.permitsSelfPosts {
             SelfPostForm(model: model.selfPostModel)
-              .tag(NewPostType.`self`)
+              .tag(NewPostType.self)
               .tabItem {
                 Label(title: { Text("post.type.text") },
                       icon: { Image(systemName: "text.bubble") })
@@ -78,11 +78,11 @@ struct NewPostForm: View {
     }
     .onReceive(model.$createPostIn, perform: { target in
       if let acceptor = target {
-        if acceptor.permitsSelfPosts { model.postType = .`self` }
+        if acceptor.permitsSelfPosts { model.postType = .self }
         else if acceptor.permitsImagePosts { model.postType = .image }
         else if acceptor.permitsLinkPosts { model.postType = .link }
       } else {
-        model.postType = .`self`
+        model.postType = .self
       }
     })
     .onReceive(model.$result) { result in
@@ -100,83 +100,8 @@ struct NewPostForm: View {
 
   // MARK: Private
 
-  @StateObject private var model = ViewModel()
-
-  @State private var showSelectionPopover: Bool = false
-  private let dismissalDelay: Double = 0.5
-
-  private var selectionHeader: some View {
-    HStack {
-      Text(model.createPostIn == nil
-               ? NSLocalizedString("post.new.subreddit.prompt", comment: "Prompt to select the post's target subreddit")
-               : model.createPostIn!.displayName)
-      Image(systemName: "chevron.down")
-    }
-    .font(.title)
-    .onTapGesture {
-      showSelectionPopover = true
-    }
-    .popover(isPresented: $showSelectionPopover, arrowEdge: .top) {
-      SubredditSelectorView(submissionTarget: $model.createPostIn, isPresented: $showSelectionPopover)
-    }
-    .padding()
-  }
-
-  private var formControl: some View {
-    HStack {
-      Button(action: {
-        withAnimation {
-          showNewPostForm = false
-        }
-      }, label: {
-        Text("cancel")
-      })
-      .keyboardShortcut(.cancelAction)
-      Spacer()
-      Button(action: {
-        switch model.postType {
-        case .`self`:
-          model.submitSelfPost()
-        case .link:
-          model.submitLinkPost()
-        case .image:
-          model.submitImagePost()
-        default:
-          return
-        }
-      }, label: {
-        HStack {
-          Text("post.submit")
-          if model.posting {
-            ProgressView()
-              .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
-              .scaleEffect(0.5, anchor: .center)
-          } else if case .success = model.result {
-            Image(systemName: "checkmark.circle.fill")
-              .foregroundColor(.green)
-          } else if case .failure = model.result {
-            Image(systemName: "xmark.circle.fill")
-              .foregroundColor(.red)
-          }
-        }
-      })
-      .disabled(!model.postIsValid)
-    }
-    .padding()
-  }
-
   private class ViewModel: ObservableObject {
-    @Published var createPostIn: PostAcceptor? = nil
-    @Published var postType: NewPostType = .`self`
-    @Published var postIsValid: Bool = false
-    @Published var posting: Bool = false
-    @Published var result: Result<NewPostResponse, AFError>? = nil
-
-    @Published var linkPostModel = LinkPostForm.ViewModel()
-    @Published var selfPostModel = SelfPostForm.ViewModel()
-    @Published var imagePostModel = ImageGifPostForm.ViewModel()
-
-    private var cancelBag: [AnyCancellable] = []
+    // MARK: Lifecycle
 
     init() {
       let postingToken = Publishers.MergeMany([linkPostModel.$posting, selfPostModel.$posting])
@@ -201,18 +126,17 @@ struct NewPostForm: View {
       cancelBag.append(resultToken)
     }
 
-    private func calculateSubmissionValidity() {
-      switch postType {
-      case .`self`:
-        postIsValid = selfPostModel.isValid
-      case .link:
-        postIsValid = linkPostModel.isValid
-      case .image:
-        postIsValid = imagePostModel.isValid
-      default:
-        break
-      }
-    }
+    // MARK: Internal
+
+    @Published var createPostIn: PostAcceptor? = nil
+    @Published var postType: NewPostType = .self
+    @Published var postIsValid: Bool = false
+    @Published var posting: Bool = false
+    @Published var result: Result<NewPostResponse, AFError>? = nil
+
+    @Published var linkPostModel = LinkPostForm.ViewModel()
+    @Published var selfPostModel = SelfPostForm.ViewModel()
+    @Published var imagePostModel = ImageGifPostForm.ViewModel()
 
     func submitSelfPost() {
       guard let target = createPostIn else { return }
@@ -228,6 +152,88 @@ struct NewPostForm: View {
       guard let target = createPostIn else { return }
       imagePostModel.submitImagePost(to: target)
     }
+
+    // MARK: Private
+
+    private var cancelBag: [AnyCancellable] = []
+
+    private func calculateSubmissionValidity() {
+      switch postType {
+      case .self:
+        postIsValid = selfPostModel.isValid
+      case .link:
+        postIsValid = linkPostModel.isValid
+      case .image:
+        postIsValid = imagePostModel.isValid
+      default:
+        break
+      }
+    }
+  }
+
+  @StateObject private var model = ViewModel()
+
+  @State private var showSelectionPopover: Bool = false
+  private let dismissalDelay: Double = 0.5
+
+  private var selectionHeader: some View {
+    HStack {
+      Text(model.createPostIn == nil
+        ? NSLocalizedString("post.new.subreddit.prompt", comment: "Prompt to select the post's target subreddit")
+        : model.createPostIn!.displayName)
+      Image(systemName: "chevron.down")
+    }
+    .font(.title)
+    .onTapGesture {
+      showSelectionPopover = true
+    }
+    .popover(isPresented: $showSelectionPopover, arrowEdge: .top) {
+      SubredditSelectorView(submissionTarget: $model.createPostIn, isPresented: $showSelectionPopover)
+    }
+    .padding()
+  }
+
+  private var formControl: some View {
+    HStack {
+      Button(action: {
+        withAnimation {
+          showNewPostForm = false
+        }
+      }, label: {
+        Text("cancel")
+      })
+        .keyboardShortcut(.cancelAction)
+      Spacer()
+      Button(action: {
+        switch model.postType {
+        case .self:
+          model.submitSelfPost()
+        case .link:
+          model.submitLinkPost()
+        case .image:
+          model.submitImagePost()
+        default:
+          return
+        }
+      }, label: {
+        HStack {
+          Text("post.submit")
+          if model.posting {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+              .scaleEffect(0.5, anchor: .center)
+          } else if case .success = model.result {
+            Image(systemName: "checkmark.circle.fill")
+              .foregroundColor(.green)
+          } else if case .failure = model.result {
+            Image(systemName: "xmark.circle.fill")
+              .foregroundColor(.red)
+          }
+        }
+      })
+        .disabled(!model.postIsValid)
+    }
+    .padding()
   }
 }
 
@@ -293,11 +299,7 @@ private struct SubredditSelectorView: View {
 
 private struct SelfPostForm: View {
   class ViewModel: ObservableObject {
-    @Published var title: String = ""
-    @Published var body: String = ""
-    @Published var posting: Bool = false
-    @Published var isValid: Bool = false
-    @Published var postResult: Result<NewPostResponse, AFError>? = nil
+    // MARK: Lifecycle
 
     init() {
       let validityToken = Publishers.Merge($title, $body)
@@ -309,7 +311,13 @@ private struct SelfPostForm: View {
       cancelBag.append(validityToken)
     }
 
-    private var cancelBag: [AnyCancellable] = []
+    // MARK: Internal
+
+    @Published var title: String = ""
+    @Published var body: String = ""
+    @Published var posting: Bool = false
+    @Published var isValid: Bool = false
+    @Published var postResult: Result<NewPostResponse, AFError>? = nil
 
     func submitTextPost(to acceptor: PostAcceptor) {
       posting = true
@@ -329,6 +337,10 @@ private struct SelfPostForm: View {
         }
       cancelBag.append(cancelToken)
     }
+
+    // MARK: Private
+
+    private var cancelBag: [AnyCancellable] = []
   }
 
   @ObservedObject var model: SelfPostForm.ViewModel
@@ -347,11 +359,7 @@ private struct SelfPostForm: View {
 
 private struct LinkPostForm: View {
   class ViewModel: ObservableObject {
-    @Published var title: String = ""
-    @Published var linkTo: String = ""
-    @Published var posting: Bool = false
-    @Published var isValid: Bool = false
-    @Published var postResult: Result<NewPostResponse, AFError>? = nil
+    // MARK: Lifecycle
 
     init() {
       let validityToken = Publishers.Merge($title, $linkTo)
@@ -364,8 +372,13 @@ private struct LinkPostForm: View {
       cancelBag.append(validityToken)
     }
 
-    private var cancelBag: [AnyCancellable] = []
-    private let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+    // MARK: Internal
+
+    @Published var title: String = ""
+    @Published var linkTo: String = ""
+    @Published var posting: Bool = false
+    @Published var isValid: Bool = false
+    @Published var postResult: Result<NewPostResponse, AFError>? = nil
 
     func submitLinkPost(to acceptor: PostAcceptor) {
       // We validate this before enabling the submit button, but just in case
@@ -387,6 +400,11 @@ private struct LinkPostForm: View {
         }
       cancelBag.append(cancelToken)
     }
+
+    // MARK: Private
+
+    private var cancelBag: [AnyCancellable] = []
+    private let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
   }
 
   @ObservedObject var model: LinkPostForm.ViewModel
@@ -401,26 +419,38 @@ private struct LinkPostForm: View {
   }
 }
 
+// MARK: - ImageGifPostForm
+
 private struct ImageGifPostForm: View {
+  // MARK: Lifecycle
+
+  init(for acceptor: PostAcceptor, model: ViewModel) {
+    self.acceptor = acceptor
+    self.model = model
+  }
+
+  // MARK: Internal
+
   class ViewModel: ObservableObject {
-    @Published var isValid: Bool = false
-    @Published var presentImageSelector: Bool = false
-    @Published var title: String = ""
-    @Published var selectedItems: [URL]? = nil
-    @Published var postResult: Result<NewPostResponse, AFError>? = nil
+    // MARK: Lifecycle
 
     init() {
       let validityToken = Publishers.CombineLatest($title, $selectedItems)
         .receive(on: RunLoop.main)
-        .sink { [weak self] title, photoUrl in
+        .sink { [weak self] _, _ in
           guard let self = self else { return }
           self.isValid = !self.title.isEmpty && !(self.selectedItems?.isEmpty ?? true)
         }
       cancelBag.append(validityToken)
     }
 
-    private var cancelBag: [AnyCancellable] = []
-    private var uploadToken: AnyCancellable? = nil
+    // MARK: Internal
+
+    @Published var isValid: Bool = false
+    @Published var presentImageSelector: Bool = false
+    @Published var title: String = ""
+    @Published var selectedItems: [URL]? = nil
+    @Published var postResult: Result<NewPostResponse, AFError>? = nil
 
     func submitImagePost(to acceptor: PostAcceptor) {
       let illithid: Illithid = .shared
@@ -428,7 +458,7 @@ private struct ImageGifPostForm: View {
 
       uploadToken = illithid
         .uploadMedia(fileUrl: url)
-        .flatMap { lease, uploadResponseData in
+        .flatMap { lease, _ in
           Publishers.Zip(illithid.receiveUploadResponse(lease: lease),
                          illithid.submit(kind: .image, subredditDisplayName: acceptor.uploadTarget,
                                          title: self.title, linkTo: lease.lease.retrievalUrl))
@@ -440,53 +470,24 @@ private struct ImageGifPostForm: View {
           case let .failure(error):
             illithid.logger.errorMessage("Failed to submit image post: \(error)")
           }
-        }) { uploadResponse, postResponse in
+        }) { _, postResponse in
           illithid.logger.debugMessage("Successfully submitted post: \(postResponse.json.data.url?.absoluteString ?? "NO ASSOCIATED URL")")
         }
     }
+
+    // MARK: Private
+
+    private var cancelBag: [AnyCancellable] = []
+    private var uploadToken: AnyCancellable?
   }
 
   let acceptor: PostAcceptor
   @ObservedObject var model: ImageGifPostForm.ViewModel
 
-  init(for acceptor: PostAcceptor, model: ViewModel) {
-    self.acceptor = acceptor
-    self.model = model
-  }
-
   var body: some View {
     VStack {
       TextField("post.new.title", text: $model.title)
         .font(.title)
-      RoundedRectangle(cornerRadius: 5)
-        .foregroundColor(Color(.windowBackgroundColor))
-        .roundedBorder(style: Color(.darkGray))
-        .overlay(
-          Group {
-            if acceptor.permitsGalleryPosts, let imageUrls = model.selectedItems, !imageUrls.isEmpty {
-              VStack {
-                ScrollView(.horizontal) {
-                  LazyHStack {
-                    ForEach(imageUrls, id: \.absoluteString) { url in
-                      UploadImagePreview(imageUrl: url, onRemoval: { urlToDelete in model.selectedItems?.removeAll(where: { $0 == urlToDelete }) } )
-                    }
-                  }
-                }
-                .frame(height: 320)
-                Spacer()
-              }
-            } else if acceptor.permitsImagePosts, let imageUrl = model.selectedItems?.first {
-              AnimatedImage(url: imageUrl, isAnimating: .constant(true))
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 120, height: 120)
-            } else {
-              Button(action: { model.presentImageSelector = true }, label: {
-                Text("choose.image")
-              })
-            }
-          }
-        )
         .fileImporter(isPresented: $model.presentImageSelector, allowedContentTypes: allowedContentTypes, allowsMultipleSelection: allowsMultipleItems) { result in
           switch result {
           case let .success(urls):
@@ -505,8 +506,28 @@ private struct ImageGifPostForm: View {
         .alert(isPresented: $showTooManyItemsAlert) {
           Alert(title: Text("too.many.gallery.items.title"), message: Text("too.many.gallery.items.body"))
         }
+      if acceptor.permitsGalleryPosts, let imageUrls = model.selectedItems, !imageUrls.isEmpty {
+        GalleryCarousel(urls: imageUrls, onRemoval: { urlToDelete in
+          withAnimation {
+            model.selectedItems?.removeAll(where: { $0 == urlToDelete })
+          }
+        })
+      } else if acceptor.permitsImagePosts, let imageUrl = model.selectedItems?.first {
+        AnimatedImage(url: imageUrl, isAnimating: .constant(true))
+          .resizable()
+          .aspectRatio(contentMode: .fit)
+          .frame(width: 120, height: 120)
+      } else {
+        Spacer()
+        Button(action: { model.presentImageSelector = true }, label: {
+          Text("choose.image")
+        })
+        Spacer()
+      }
     }
   }
+
+  // MARK: Private
 
   @State private var showTooManyItemsAlert: Bool = false
 
@@ -530,6 +551,71 @@ private struct ImageGifPostForm: View {
   }
 }
 
+// MARK: - GalleryCarousel
+
+private struct GalleryCarousel: View {
+  // MARK: Lifecycle
+
+  init(urls imageUrls: [URL], onRemoval: @escaping (URL) -> Void) {
+    self.imageUrls = imageUrls
+    self.onRemoval = onRemoval
+  }
+
+  // MARK: Internal
+
+  let imageUrls: [URL]
+  let onRemoval: (URL) -> Void
+
+  var body: some View {
+    VStack {
+      ScrollView(.horizontal) {
+        LazyHStack {
+          ForEach(imageUrls, id: \.absoluteString) { url in
+            UploadImagePreview(imageUrl: url, onRemoval: {
+              if selected == url { selected = nil }
+              onRemoval($0)
+            })
+              .background(selected == url ? Color(.controlColor) : Color.clear)
+              .onTapGesture {
+                selected = url
+              }
+          }
+        }
+      }
+      .frame(height: 320)
+
+      if let selectedImage = selected {
+        HStack {
+          AnimatedImage(url: selectedImage, isAnimating: .constant(true))
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 640, height: 480)
+
+          Divider()
+
+          VStack {
+            TextField("Caption", text: $caption)
+              .textFieldStyle(RoundedBorderTextFieldStyle())
+            TextField("Outgoing URL", text: $outboundUrl)
+              .textFieldStyle(RoundedBorderTextFieldStyle())
+            Spacer()
+          }
+        }
+      } else {
+        Spacer()
+      }
+    }
+  }
+
+  // MARK: Private
+
+  @State private var selected: URL? = nil
+  @State private var caption: String = ""
+  @State private var outboundUrl: String = ""
+}
+
+// MARK: - UploadImagePreview
+
 private struct UploadImagePreview: View {
   @State private var isHovering: Bool = false
   let imageUrl: URL
@@ -540,18 +626,22 @@ private struct UploadImagePreview: View {
     GroupBox {
       AnimatedImage(url: imageUrl, isAnimating: .constant(false))
         .resizable()
-        .aspectRatio(contentMode: .fill)
+        .aspectRatio(contentMode: .fit)
         .frame(width: 240, height: 240)
         .padding()
-        .onHover { isHovering = $0 }
+        .onHover { hovering in
+          withAnimation {
+            isHovering = hovering
+          }
+        }
         .overlay(
           Button(action: {
             onRemoval(imageUrl)
           }, label: {
             Image(systemName: "xmark.circle.fill")
           })
-          .keyboardShortcut(.deleteForward, modifiers: .none)
-          .opacity(isHovering ? 1 : 0), alignment: .topLeading
+            .keyboardShortcut(.delete, modifiers: .none)
+            .opacity(isHovering ? 1 : 0), alignment: .topLeading
         )
     }
   }
