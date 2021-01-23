@@ -439,7 +439,7 @@ private struct ImageGifPostForm: View {
         .receive(on: RunLoop.main)
         .sink { [weak self] _, _ in
           guard let self = self else { return }
-          self.isValid = !self.title.isEmpty && !(self.selectedItems?.isEmpty ?? true)
+          self.isValid = !self.title.isEmpty && !self.selectedItems.isEmpty
         }
       cancelBag.append(validityToken)
     }
@@ -449,12 +449,12 @@ private struct ImageGifPostForm: View {
     @Published var isValid: Bool = false
     @Published var presentImageSelector: Bool = false
     @Published var title: String = ""
-    @Published var selectedItems: [URL]? = nil
+    @Published var selectedItems: [URL] = []
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
 
     func submitImagePost(to acceptor: PostAcceptor) {
       let illithid: Illithid = .shared
-      guard let url = selectedItems?.first else { return }
+      guard let url = selectedItems.first else { return }
 
       uploadToken = illithid
         .uploadMedia(fileUrl: url)
@@ -482,7 +482,7 @@ private struct ImageGifPostForm: View {
   }
 
   let acceptor: PostAcceptor
-  @ObservedObject var model: ImageGifPostForm.ViewModel
+  @ObservedObject var model: Self.ViewModel
 
   var body: some View {
     VStack {
@@ -506,13 +506,9 @@ private struct ImageGifPostForm: View {
         .alert(isPresented: $showTooManyItemsAlert) {
           Alert(title: Text("too.many.gallery.items.title"), message: Text("too.many.gallery.items.body"))
         }
-      if acceptor.permitsGalleryPosts, let imageUrls = model.selectedItems, !imageUrls.isEmpty {
-        GalleryCarousel(urls: imageUrls, onRemoval: { urlToDelete in
-          withAnimation {
-            model.selectedItems?.removeAll(where: { $0 == urlToDelete })
-          }
-        })
-      } else if acceptor.permitsImagePosts, let imageUrl = model.selectedItems?.first {
+      if acceptor.permitsGalleryPosts, !model.selectedItems.isEmpty {
+        GalleryCarousel(urls: $model.selectedItems)
+      } else if acceptor.permitsImagePosts, let imageUrl = model.selectedItems.first {
         AnimatedImage(url: imageUrl, isAnimating: .constant(true))
           .resizable()
           .aspectRatio(contentMode: .fit)
@@ -556,24 +552,48 @@ private struct ImageGifPostForm: View {
 private struct GalleryCarousel: View {
   // MARK: Lifecycle
 
-  init(urls imageUrls: [URL], onRemoval: @escaping (URL) -> Void) {
-    self.imageUrls = imageUrls
-    self.onRemoval = onRemoval
+  init(urls imageUrls: Binding<[URL]>) {
+    _imageUrls = imageUrls
   }
 
   // MARK: Internal
 
-  let imageUrls: [URL]
-  let onRemoval: (URL) -> Void
+  class ViewModel: ObservableObject {
+    @Published var imageTitles: [URL: String] = [:]
+    @Published var imageOutboundUrls: [URL: String] = [:]
+    @Published var imageIds: [URL: String] = [:]
+
+    func titleBinding(for key: URL) -> Binding<String> {
+      .init(get: {
+        self.imageTitles[key, default: ""]
+      }, set: { newValue in
+        self.imageTitles[key] = newValue
+      })
+    }
+
+    func outboundBinding(for key: URL) -> Binding<String> {
+      .init(get: {
+        self.imageOutboundUrls[key, default: ""]
+      }, set: { newValue in
+        self.imageOutboundUrls[key] = newValue
+      })
+    }
+  }
+
+  @Binding var imageUrls: [URL]
 
   var body: some View {
     VStack {
       ScrollView(.horizontal) {
         LazyHStack {
           ForEach(imageUrls, id: \.absoluteString) { url in
-            UploadImagePreview(imageUrl: url, onRemoval: {
-              if selected == url { selected = nil }
-              onRemoval($0)
+            UploadImagePreview(imageUrl: url, onRemoval: { urlToDelete in
+              withAnimation {
+                if selected == url { selected = nil }
+                imageUrls.removeAll(where: { $0 == urlToDelete })
+              }
+            }, onUpload: { lease in
+              model.imageIds[url] = lease.asset.assetId
             })
               .background(selected == url ? Color(.controlColor) : Color.clear)
               .onTapGesture {
@@ -594,9 +614,9 @@ private struct GalleryCarousel: View {
           Divider()
 
           VStack {
-            TextField("Caption", text: $caption)
+            TextField("gallery.item.caption", text: model.titleBinding(for: selectedImage))
               .textFieldStyle(RoundedBorderTextFieldStyle())
-            TextField("Outgoing URL", text: $outboundUrl)
+            TextField("gallery.item.link", text: model.outboundBinding(for: selectedImage))
               .textFieldStyle(RoundedBorderTextFieldStyle())
             Spacer()
           }
@@ -609,15 +629,54 @@ private struct GalleryCarousel: View {
 
   // MARK: Private
 
+  @StateObject private var model = Self.ViewModel()
+
   @State private var selected: URL? = nil
-  @State private var caption: String = ""
-  @State private var outboundUrl: String = ""
 }
 
 // MARK: - UploadImagePreview
 
 private struct UploadImagePreview: View {
-  @State private var isHovering: Bool = false
+  // MARK: Lifecycle
+
+  init(imageUrl: URL, onRemoval: @escaping (URL) -> Void, onUpload: @escaping (AssetUploadLease) -> Void) {
+    self.imageUrl = imageUrl
+    self.onRemoval = onRemoval
+    _model = .init(wrappedValue: Self.ViewModel(onUpload: onUpload))
+  }
+
+  // MARK: Internal
+
+  class ViewModel: ObservableObject {
+    // MARK: Lifecycle
+
+    init(onUpload: @escaping (AssetUploadLease) -> Void) { self.onUpload = onUpload }
+
+    // MARK: Internal
+
+    @Published var uploadResult: Result<AssetUploadLease, AFError>? = nil
+    var onUpload: (AssetUploadLease) -> Void
+
+    func upload(image: URL) {
+      uploadToken = Illithid.shared.uploadMedia(fileUrl: image)
+        .sink(receiveCompletion: { [weak self] completion in
+          switch completion {
+          case .finished:
+            break
+          case let .failure(error):
+            self?.uploadResult = .failure(error)
+          }
+        }, receiveValue: { [weak self] lease, _ in
+          self?.uploadResult = .success(lease)
+          self?.onUpload(lease)
+        })
+    }
+
+    // MARK: Private
+
+    private var uploadToken: AnyCancellable?
+  }
+
   let imageUrl: URL
   let onRemoval: (URL) -> Void
 
@@ -628,12 +687,15 @@ private struct UploadImagePreview: View {
         .resizable()
         .aspectRatio(contentMode: .fit)
         .frame(width: 240, height: 240)
-        .padding()
         .onHover { hovering in
           withAnimation {
             isHovering = hovering
           }
         }
+        .onAppear {
+          model.upload(image: imageUrl)
+        }
+        .loadingScreen(isLoading: model.uploadResult == nil)
         .overlay(
           Button(action: {
             onRemoval(imageUrl)
@@ -645,4 +707,9 @@ private struct UploadImagePreview: View {
         )
     }
   }
+
+  // MARK: Private
+
+  @State private var isHovering: Bool = false
+  @StateObject private var model: Self.ViewModel
 }
