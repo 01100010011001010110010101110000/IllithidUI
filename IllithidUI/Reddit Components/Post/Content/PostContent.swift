@@ -98,7 +98,7 @@ extension Post {
       return .gallery
     } else if domain == "reddit.com" || domain == "old.reddit.com" {
       return .reddit
-    } else if isSelf || postHint == .self {
+    } else if isSelf || postHint == .`self` {
       return .text
     } else if bestVideoPreview != nil {
       return .video
@@ -170,10 +170,10 @@ struct GalleryPost: View {
   let galleryData: GalleryData
 
   var body: some View {
-    PagedView(data: galleryData.items) { item in
+    PagedView(data: galleryData.items.filter { metadata[$0.mediaId]?.status == .valid }) { item in
       if let metadata = metadata[item.mediaId] {
         Group {
-          switch metadata.type {
+          switch metadata.type! {
           case .image:
             ImagePostPreview(url: metadata.source!.url!,
                              size: NSSize(width: metadata.source!.width, height: metadata.source!.height),
@@ -197,7 +197,7 @@ struct GalleryPost: View {
         PagedView(data: galleryData.items) { item in
           if let metadata = metadata[item.mediaId] {
             Group {
-              switch metadata.type {
+              switch metadata.type! {
               case .image:
                 ImagePost(url: metadata.source!.url!, size: NSSize(width: metadata.source!.width, height: metadata.source!.height))
               case .animatedImage:
@@ -314,7 +314,13 @@ private struct VideoPostPreview: View {
 // MARK: - GifPostPreview
 
 struct GifPostPreview: View {
-  @State private var isAnimating: Bool = true
+  // MARK: Lifecycle
+
+  init(post: Post) {
+    self.post = post
+  }
+
+  // MARK: Internal
 
   let post: Post
 
@@ -335,6 +341,10 @@ struct GifPostPreview: View {
         }
     }
   }
+
+  // MARK: Private
+
+  @State private var isAnimating: Bool = true
 }
 
 // MARK: - TextPostPreview
