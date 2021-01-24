@@ -622,6 +622,12 @@ private struct GalleryCarousel: View {
         GalleryDataItem(mediaId: mediaId, caption: imageTitles[url], outboundUrl: URL(string: imageOutboundUrls[url, default: ""]))
       }
     }
+
+    func removeItem(withUrl url: URL) {
+      imageTitles.removeValue(forKey: url)
+      imageOutboundUrls.removeValue(forKey: url)
+      imageIds.removeValue(forKey: url)
+    }
   }
 
   @ObservedObject var model: Self.ViewModel
@@ -636,6 +642,7 @@ private struct GalleryCarousel: View {
               withAnimation {
                 if selected == url { selected = nil }
                 imageUrls.removeAll(where: { $0 == urlToDelete })
+                model.removeItem(withUrl: urlToDelete)
               }
             }, onUpload: { lease in
               model.imageIds[url] = lease.asset.assetId
@@ -731,14 +738,12 @@ private struct UploadImagePreview: View {
         .aspectRatio(contentMode: .fit)
         .frame(width: 240, height: 240)
         .onHover { hovering in
-          withAnimation {
-            isHovering = hovering
-          }
+          isHovering = hovering
         }
         .onAppear {
           model.upload(image: imageUrl)
         }
-        .loadingScreen(isLoading: model.uploadResult == nil)
+        .loadingScreen(isLoading: model.uploadResult == nil, dimBackground: true)
         .overlay(
           Button(action: {
             onRemoval(imageUrl)
@@ -748,6 +753,7 @@ private struct UploadImagePreview: View {
             .keyboardShortcut(.delete, modifiers: .none)
             .opacity(isHovering ? 1 : 0), alignment: .topLeading
         )
+        .animation(.default)
     }
   }
 
