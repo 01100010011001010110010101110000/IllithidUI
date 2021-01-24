@@ -31,7 +31,7 @@
 --wraparguments preserve
 --wrapcollections preserve
 --xcodeindentation disabled
---disable trailingClosures,wrapMultilineStatementBraces,wrapSwitchCases
+--disable trailingClosures,wrapMultilineStatementBraces,wrapSwitchCases,redundantBackticks
 --enable isEmpty,sortedSwitchCases,organizeDeclarations,markTypes
 --funcattributes prev-line
 --typeattributes prev-line

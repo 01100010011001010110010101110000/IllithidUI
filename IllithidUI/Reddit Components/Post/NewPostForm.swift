@@ -37,7 +37,7 @@ struct NewPostForm: View {
         TabView(selection: $model.postType) {
           if acceptor.permitsSelfPosts {
             SelfPostForm(model: model.selfPostModel)
-              .tag(NewPostType.self)
+              .tag(NewPostType.`self`)
               .tabItem {
                 Label(title: { Text("post.type.text") },
                       icon: { Image(systemName: "text.bubble") })
@@ -78,11 +78,11 @@ struct NewPostForm: View {
     }
     .onReceive(model.$createPostIn, perform: { target in
       if let acceptor = target {
-        if acceptor.permitsSelfPosts { model.postType = .self }
+        if acceptor.permitsSelfPosts { model.postType = .`self` }
         else if acceptor.permitsImagePosts { model.postType = .image }
         else if acceptor.permitsLinkPosts { model.postType = .link }
       } else {
-        model.postType = .self
+        model.postType = .`self`
       }
     })
     .onReceive(model.$result) { result in
@@ -129,7 +129,7 @@ struct NewPostForm: View {
     // MARK: Internal
 
     @Published var createPostIn: PostAcceptor? = nil
-    @Published var postType: NewPostType = .self
+    @Published var postType: NewPostType = .`self`
     @Published var postIsValid: Bool = false
     @Published var posting: Bool = false
     @Published var result: Result<NewPostResponse, AFError>? = nil
@@ -159,7 +159,7 @@ struct NewPostForm: View {
 
     private func calculateSubmissionValidity() {
       switch postType {
-      case .self:
+      case .`self`:
         postIsValid = selfPostModel.isValid
       case .link:
         postIsValid = linkPostModel.isValid
@@ -206,7 +206,7 @@ struct NewPostForm: View {
       Spacer()
       Button(action: {
         switch model.postType {
-        case .self:
+        case .`self`:
           model.submitSelfPost()
         case .link:
           model.submitLinkPost()
