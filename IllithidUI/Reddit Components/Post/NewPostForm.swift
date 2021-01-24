@@ -104,10 +104,10 @@ struct NewPostForm: View {
     // MARK: Lifecycle
 
     init() {
-      let postingToken = Publishers.MergeMany([linkPostModel.$posting, selfPostModel.$posting])
+      let postingToken = Publishers.MergeMany([linkPostModel.$posting, selfPostModel.$posting, imagePostModel.$posting])
         .receive(on: RunLoop.main)
         .assign(to: \.posting, on: self)
-      let resultToken = Publishers.MergeMany([linkPostModel.$postResult, selfPostModel.$postResult])
+      let resultToken = Publishers.MergeMany([linkPostModel.$postResult, selfPostModel.$postResult, imagePostModel.$postResult])
         .receive(on: RunLoop.main)
         .assign(to: \.result, on: self)
 
@@ -150,7 +150,7 @@ struct NewPostForm: View {
 
     func submitImagePost() {
       guard let target = createPostIn else { return }
-      imagePostModel.submitImagePost(to: target)
+      imagePostModel.submit(to: target)
     }
 
     // MARK: Private
@@ -217,7 +217,6 @@ struct NewPostForm: View {
         }
       }, label: {
         HStack {
-          Text("post.submit")
           if model.posting {
             ProgressView()
               .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
@@ -229,6 +228,7 @@ struct NewPostForm: View {
             Image(systemName: "xmark.circle.fill")
               .foregroundColor(.red)
           }
+          Text("post.submit")
         }
       })
         .disabled(!model.postIsValid)
@@ -331,9 +331,9 @@ private struct SelfPostForm: View {
           case let .failure(error):
             self.postResult = .failure(error)
           }
-        } receiveValue: { response in
           self.posting = false
-          self.postResult = .success(response)
+        } receiveValue: { [weak self] response in
+          self?.postResult = .success(response)
         }
       cancelBag.append(cancelToken)
     }
@@ -394,9 +394,9 @@ private struct LinkPostForm: View {
           case let .failure(error):
             self.postResult = .failure(error)
           }
-        } receiveValue: { response in
           self.posting = false
-          self.postResult = .success(response)
+        } receiveValue: { [weak self] response in
+          self?.postResult = .success(response)
         }
       cancelBag.append(cancelToken)
     }
@@ -447,38 +447,75 @@ private struct ImageGifPostForm: View {
     // MARK: Internal
 
     @Published var isValid: Bool = false
+    @Published var posting: Bool = false
     @Published var presentImageSelector: Bool = false
     @Published var title: String = ""
     @Published var selectedItems: [URL] = []
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
+    @Published var galleryModel = GalleryCarousel.ViewModel()
 
-    func submitImagePost(to acceptor: PostAcceptor) {
+    func submit(to acceptor: PostAcceptor) {
+      if selectedItems.count > 1 {
+        submitGalleryPost(to: acceptor)
+      } else {
+        submitImagePost(to: acceptor)
+      }
+    }
+
+    // MARK: Private
+
+    private var cancelBag: [AnyCancellable] = []
+
+    private func submitImagePost(to acceptor: PostAcceptor) {
       let illithid: Illithid = .shared
       guard let url = selectedItems.first else { return }
 
-      uploadToken = illithid
+      posting = true
+      let uploadToken = illithid
         .uploadMedia(fileUrl: url)
         .flatMap { lease, _ in
           Publishers.Zip(illithid.receiveUploadResponse(lease: lease),
                          illithid.submit(kind: .image, subredditDisplayName: acceptor.uploadTarget,
                                          title: self.title, linkTo: lease.lease.retrievalUrl))
         }
-        .sink(receiveCompletion: { completion in
+        .receive(on: RunLoop.main)
+        .sink(receiveCompletion: { [weak self] completion in
           switch completion {
           case .finished:
             break
           case let .failure(error):
+            self?.postResult = .failure(error)
             illithid.logger.errorMessage("Failed to submit image post: \(error)")
           }
-        }) { _, postResponse in
-          illithid.logger.debugMessage("Successfully submitted post: \(postResponse.json.data.url?.absoluteString ?? "NO ASSOCIATED URL")")
+          self?.posting = false
+        }) { [weak self] _, postResponse in
+          self?.postResult = .success(postResponse)
+          illithid.logger.debugMessage("Successfully submitted image post: \(postResponse.json.data.url?.absoluteString ?? "NO ASSOCIATED URL")")
         }
+      cancelBag.append(uploadToken)
     }
 
-    // MARK: Private
+    private func submitGalleryPost(to acceptor: PostAcceptor) {
+      let illithid: Illithid = .shared
 
-    private var cancelBag: [AnyCancellable] = []
-    private var uploadToken: AnyCancellable?
+      posting = true
+      let uploadToken = illithid.submitGalleryPost(subredditDisplayName: acceptor.uploadTarget, title: title, galleryItems: galleryModel.galleryItems())
+        .receive(on: RunLoop.main)
+        .sink(receiveCompletion: { [weak self] completion in
+          switch completion {
+          case .finished:
+            break
+          case let .failure(error):
+            self?.postResult = .failure(error)
+            illithid.logger.errorMessage("Failed to submit gallery post: \(error)")
+          }
+          self?.posting = false
+        }, receiveValue: { [weak self] postResponse in
+          self?.postResult = .success(postResponse)
+          illithid.logger.debugMessage("Successfully submitted gallery post: \(postResponse.json.data.url?.absoluteString ?? "NO ASSOCIATED URL")")
+        })
+      cancelBag.append(uploadToken)
+    }
   }
 
   let acceptor: PostAcceptor
@@ -507,7 +544,7 @@ private struct ImageGifPostForm: View {
           Alert(title: Text("too.many.gallery.items.title"), message: Text("too.many.gallery.items.body"))
         }
       if acceptor.permitsGalleryPosts, !model.selectedItems.isEmpty {
-        GalleryCarousel(urls: $model.selectedItems)
+        GalleryCarousel(model: model.galleryModel, urls: $model.selectedItems)
       } else if acceptor.permitsImagePosts, let imageUrl = model.selectedItems.first {
         AnimatedImage(url: imageUrl, isAnimating: .constant(true))
           .resizable()
@@ -552,7 +589,8 @@ private struct ImageGifPostForm: View {
 private struct GalleryCarousel: View {
   // MARK: Lifecycle
 
-  init(urls imageUrls: Binding<[URL]>) {
+  init(model: Self.ViewModel, urls imageUrls: Binding<[URL]>) {
+    self.model = model
     _imageUrls = imageUrls
   }
 
@@ -578,8 +616,15 @@ private struct GalleryCarousel: View {
         self.imageOutboundUrls[key] = newValue
       })
     }
+
+    func galleryItems() -> [GalleryDataItem] {
+      imageIds.map { url, mediaId in
+        GalleryDataItem(mediaId: mediaId, caption: imageTitles[url], outboundUrl: URL(string: imageOutboundUrls[url, default: ""]))
+      }
+    }
   }
 
+  @ObservedObject var model: Self.ViewModel
   @Binding var imageUrls: [URL]
 
   var body: some View {
@@ -628,8 +673,6 @@ private struct GalleryCarousel: View {
   }
 
   // MARK: Private
-
-  @StateObject private var model = Self.ViewModel()
 
   @State private var selected: URL? = nil
 }

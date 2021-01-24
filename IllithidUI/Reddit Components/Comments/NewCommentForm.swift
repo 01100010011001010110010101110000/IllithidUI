@@ -63,7 +63,6 @@ struct NewCommentForm: View {
           submitter.postComment(to: parentFullname, body: commentBody)
         }, label: {
           HStack {
-            Text("comments.submit")
             if submitter.posting {
               ProgressView()
                 .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
@@ -75,6 +74,7 @@ struct NewCommentForm: View {
               Image(systemName: "xmark.circle.fill")
                 .foregroundColor(.red)
             }
+            Text("comments.submit")
           }
         })
           .keyboardShortcut(.return, modifiers: .command)
