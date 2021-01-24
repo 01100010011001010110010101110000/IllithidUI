@@ -162,6 +162,7 @@ final class GfyData: ObservableObject, Cancellable {
   // MARK: Private
 
   private let ulithari: Ulithari = .shared
+
   private func fetchGfy(retriever: (String, DispatchQueue, @escaping (Result<MediaMetadataProvider, AFError>) -> Void) -> DataRequest) {
     request = retriever(id, .main) { [weak self] result in
       guard let self = self else { return }
@@ -175,19 +176,19 @@ final class GfyData: ObservableObject, Cancellable {
 
 private extension Ulithari {
   func fetchRedGif(id: String, queue: DispatchQueue = .main, completion: @escaping (Result<MediaMetadataProvider, AFError>) -> Void)
-  -> DataRequest {
+    -> DataRequest {
     fetchRedGif(id: id, queue: queue) { (result: Result<RedGfyItem, AFError>) in
       switch result {
       case let .success(item):
         completion(.success(item))
       case let .failure(error):
         completion(.failure(error))
-      } 
+      }
     }
   }
 
   func fetchGfycat(id: String, queue: DispatchQueue = .main, completion: @escaping (Result<MediaMetadataProvider, AFError>) -> Void)
-  -> DataRequest {
+    -> DataRequest {
     fetchGfycat(id: id, queue: queue) { (result: Result<GfyItem, AFError>) in
       switch result {
       case let .success(item):
@@ -221,8 +222,10 @@ extension GfyItem: MediaMetadataProvider {
   var size: CGSize { .init(width: width, height: height) }
 }
 
+// MARK: - RedGfyItem + MediaMetadataProvider
+
 extension RedGfyItem: MediaMetadataProvider {
-  var mediaTitle: String { title }
+  var mediaTitle: String { title ?? "" }
 
   var hostDisplayName: String { "Gfycat" }
 
