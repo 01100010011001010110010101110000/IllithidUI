@@ -13,6 +13,7 @@
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import Combine
+import ImageIO
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -629,6 +630,19 @@ private struct GalleryCarousel: View {
       imageOutboundUrls.removeValue(forKey: url)
       imageIds.removeValue(forKey: url)
     }
+
+    func calculateImageWidth(for url: URL, height: CGFloat) -> CGFloat {
+      guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil),
+            let imageDetails = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [AnyHashable: Any],
+            let cfWidth = imageDetails[kCGImagePropertyPixelWidth as String] as! CFNumber?,
+            let cfHeight = imageDetails[kCGImagePropertyPixelHeight as String] as! CFNumber?
+      else { return 240 }
+      var pixelWidth: CGFloat = 0, pixelHeight: CGFloat = 0
+      CFNumberGetValue(cfWidth, .cgFloatType, &pixelWidth)
+      CFNumberGetValue(cfHeight, .cgFloatType, &pixelHeight)
+
+      return (pixelWidth * height) / pixelHeight
+    }
   }
 
   @ObservedObject var model: Self.ViewModel
@@ -662,13 +676,14 @@ private struct GalleryCarousel: View {
       .frame(height: 260)
 
       if let selectedImage = selected {
-        HStack {
+        HStack(spacing: 0) {
           AnimatedImage(url: selectedImage, isAnimating: .constant(true))
             .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(width: 480, height: 360)
+            .aspectRatio(contentMode: .fill)
+            .frame(width: model.calculateImageWidth(for: selectedImage, height: imageHeight), height: imageHeight)
 
           Divider()
+            .padding(.horizontal)
 
           VStack {
             TextField("gallery.item.caption", text: model.titleBinding(for: selectedImage))
@@ -688,6 +703,7 @@ private struct GalleryCarousel: View {
   // MARK: Private
 
   @State private var selected: URL? = nil
+  private let imageHeight: CGFloat = 360
 }
 
 // MARK: - UploadImagePreview
@@ -728,6 +744,19 @@ private struct UploadImagePreview: View {
         })
     }
 
+    func calculateImageWidth(for url: URL, height: CGFloat) -> CGFloat {
+      guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil),
+            let imageDetails = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [AnyHashable: Any],
+            let cfWidth = imageDetails[kCGImagePropertyPixelWidth as String] as! CFNumber?,
+            let cfHeight = imageDetails[kCGImagePropertyPixelHeight as String] as! CFNumber?
+      else { return 240 }
+      var pixelWidth: CGFloat = 0, pixelHeight: CGFloat = 0
+      CFNumberGetValue(cfWidth, .cgFloatType, &pixelWidth)
+      CFNumberGetValue(cfHeight, .cgFloatType, &pixelHeight)
+
+      return (pixelWidth * height) / pixelHeight
+    }
+
     // MARK: Private
 
     private var uploadToken: AnyCancellable?
@@ -741,8 +770,8 @@ private struct UploadImagePreview: View {
     GroupBox {
       AnimatedImage(url: imageUrl, isAnimating: .constant(false))
         .resizable()
-        .aspectRatio(contentMode: .fit)
-        .frame(width: 240, height: 240)
+        .aspectRatio(contentMode: .fill)
+        .frame(width: model.calculateImageWidth(for: imageUrl, height: imageHeight), height: imageHeight)
         .onHover { hovering in
           isHovering = hovering
         }
@@ -767,4 +796,5 @@ private struct UploadImagePreview: View {
 
   @State private var isHovering: Bool = false
   @StateObject private var model: Self.ViewModel
+  private let imageHeight: CGFloat = 240
 }
