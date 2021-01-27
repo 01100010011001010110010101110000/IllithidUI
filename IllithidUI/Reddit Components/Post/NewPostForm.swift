@@ -77,6 +77,7 @@ struct NewPostForm: View {
 
       formControl
     }
+    .textFieldStyle(RoundedBorderTextFieldStyle())
     .onReceive(model.$createPostIn, perform: { target in
       if let acceptor = target {
         if acceptor.permitsSelfPosts { model.postType = .`self` }
@@ -687,9 +688,7 @@ private struct GalleryCarousel: View {
 
           VStack {
             TextField("gallery.item.caption", text: model.titleBinding(for: selectedImage))
-              .textFieldStyle(RoundedBorderTextFieldStyle())
             TextField("gallery.item.link", text: model.outboundBinding(for: selectedImage))
-              .textFieldStyle(RoundedBorderTextFieldStyle())
             Spacer()
           }
           .frame(minWidth: 200)
