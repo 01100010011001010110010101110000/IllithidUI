@@ -555,6 +555,7 @@ private struct ImageGifPostForm: View {
         Button(action: { model.presentImageSelector = true }, label: {
           Text("choose.image")
         })
+          .keyboardShortcut("o")
         Spacer()
       }
     }
@@ -649,19 +650,23 @@ private struct GalleryCarousel: View {
             })
               .background(selected == url ? Color(.controlColor) : Color.clear)
               .onTapGesture {
-                selected = url
+                if selected == url {
+                  selected = nil
+                } else {
+                  selected = url
+                }
               }
           }
         }
       }
-      .frame(height: 320)
+      .frame(height: 260)
 
       if let selectedImage = selected {
         HStack {
           AnimatedImage(url: selectedImage, isAnimating: .constant(true))
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .frame(width: 640, height: 480)
+            .frame(width: 480, height: 360)
 
           Divider()
 
@@ -672,6 +677,7 @@ private struct GalleryCarousel: View {
               .textFieldStyle(RoundedBorderTextFieldStyle())
             Spacer()
           }
+          .frame(minWidth: 200)
         }
       } else {
         Spacer()
