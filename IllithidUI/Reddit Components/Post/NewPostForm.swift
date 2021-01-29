@@ -12,6 +12,7 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import AVFoundation
 import Combine
 import ImageIO
 import SwiftUI
@@ -69,6 +70,19 @@ struct NewPostForm: View {
             }
             .padding(.horizontal)
           }
+
+          if acceptor.permitsVideoPosts {
+            VStack {
+              VideoPostForm(model: model.videoPostModel)
+              Spacer()
+            }
+            .tag(NewPostType.video)
+            .tabItem {
+              Label(title: { Text("post.type.video") },
+                    icon: { Image(systemName: "video") })
+            }
+            .padding(.horizontal)
+          }
         }
         .padding(.horizontal)
       } else {
@@ -106,17 +120,20 @@ struct NewPostForm: View {
     // MARK: Lifecycle
 
     init() {
-      let postingToken = Publishers.MergeMany([linkPostModel.$posting, selfPostModel.$posting, imagePostModel.$posting])
+      let postingToken = Publishers.MergeMany([linkPostModel.$posting, selfPostModel.$posting,
+                                               imagePostModel.$posting, videoPostModel.$posting])
         .receive(on: RunLoop.main)
         .assign(to: \.posting, on: self)
-      let resultToken = Publishers.MergeMany([linkPostModel.$postResult, selfPostModel.$postResult, imagePostModel.$postResult])
+      let resultToken = Publishers.MergeMany([linkPostModel.$postResult, selfPostModel.$postResult,
+                                              imagePostModel.$postResult, videoPostModel.$postResult])
         .receive(on: RunLoop.main)
         .assign(to: \.result, on: self)
 
       // These two subscribers update the validity of the submission whenever:
       // * A tab's fields are updated
       // * The tab is changed
-      let validityToken = Publishers.MergeMany([linkPostModel.$isValid, selfPostModel.$isValid, imagePostModel.$isValid])
+      let validityToken = Publishers.MergeMany([linkPostModel.$isValid, selfPostModel.$isValid,
+                                                imagePostModel.$isValid, videoPostModel.$isValid])
         .combineLatest($postType)
         .receive(on: RunLoop.main)
         .sink { [weak self] _, _ in
@@ -139,6 +156,7 @@ struct NewPostForm: View {
     @Published var linkPostModel = LinkPostForm.ViewModel()
     @Published var selfPostModel = SelfPostForm.ViewModel()
     @Published var imagePostModel = ImageGifPostForm.ViewModel()
+    @Published var videoPostModel = VideoPostForm.ViewModel()
 
     func submitSelfPost() {
       guard let target = createPostIn else { return }
@@ -350,7 +368,7 @@ private struct SelfPostForm: View {
   var body: some View {
     VStack {
       TextField("post.new.title", text: $model.title)
-        .font(.title)
+        .font(.title2)
       TextEditor(text: $model.body)
         .font(.system(size: 18))
     }
@@ -414,9 +432,9 @@ private struct LinkPostForm: View {
   var body: some View {
     VStack {
       TextField("post.new.title", text: $model.title)
-        .font(.title)
+        .font(.title2)
       TextField("post.new.link-to", text: $model.linkTo)
-        .font(.title)
+        .font(.title2)
     }
   }
 }
@@ -526,25 +544,7 @@ private struct ImageGifPostForm: View {
   var body: some View {
     VStack {
       TextField("post.new.title", text: $model.title)
-        .font(.title)
-        .fileImporter(isPresented: $model.presentImageSelector, allowedContentTypes: allowedContentTypes, allowsMultipleSelection: allowsMultipleItems) { result in
-          switch result {
-          case let .success(urls):
-            // TODO: Append to URL list instead of overwriting, while respecting 20 item max, if user wants to add more gallery items after first selection
-            if urls.count > maxGalleryItems {
-              model.selectedItems = Array(urls[..<maxGalleryItems])
-              showTooManyItemsAlert = true
-            } else {
-              model.selectedItems = urls
-            }
-          case let .failure(error):
-            Illithid.shared.logger.errorMessage("Failed to select image: \(error)")
-          }
-          model.presentImageSelector = false
-        }
-        .alert(isPresented: $showTooManyItemsAlert) {
-          Alert(title: Text("too.many.gallery.items.title"), message: Text("too.many.gallery.items.body"))
-        }
+        .font(.title2)
       if acceptor.permitsGalleryPosts, !model.selectedItems.isEmpty {
         GalleryCarousel(model: model.galleryModel, urls: $model.selectedItems)
       } else if acceptor.permitsImagePosts, let imageUrl = model.selectedItems.first {
@@ -560,6 +560,24 @@ private struct ImageGifPostForm: View {
           .keyboardShortcut("o")
         Spacer()
       }
+    }
+    .fileImporter(isPresented: $model.presentImageSelector, allowedContentTypes: allowedContentTypes, allowsMultipleSelection: allowsMultipleItems) { result in
+      switch result {
+      case let .success(urls):
+        // TODO: Append to URL list instead of overwriting, while respecting 20 item max, if user wants to add more gallery items after first selection
+        if urls.count > maxGalleryItems {
+          model.selectedItems = Array(urls[..<maxGalleryItems])
+          showTooManyItemsAlert = true
+        } else {
+          model.selectedItems = urls
+        }
+      case let .failure(error):
+        Illithid.shared.logger.errorMessage("Failed to select image: \(error)")
+      }
+      model.presentImageSelector = false
+    }
+    .alert(isPresented: $showTooManyItemsAlert) {
+      Alert(title: Text("too.many.gallery.items.title"), message: Text("too.many.gallery.items.body"))
     }
   }
 
@@ -798,4 +816,72 @@ private struct UploadImagePreview: View {
   @State private var isHovering: Bool = false
   @StateObject private var model: Self.ViewModel
   private let imageHeight: CGFloat = 240
+}
+
+// MARK: - VideoPostForm
+
+private struct VideoPostForm: View {
+  class ViewModel: ObservableObject {
+    // MARK: Lifecycle
+
+    init() {
+      let validityToken = Publishers.CombineLatest($title, $selectedItem)
+        .receive(on: RunLoop.main)
+        .sink { [weak self] _, _ in
+          guard let self = self else { return }
+          self.isValid = !self.title.isEmpty && self.selectedItem != nil
+        }
+      cancelBag.append(validityToken)
+    }
+
+    // MARK: Internal
+
+    @Published var isValid: Bool = false
+    @Published var posting: Bool = false
+    @Published var presentVideoSelector: Bool = false
+    @Published var title: String = ""
+    @Published var selectedItem: URL? = nil
+    @Published var postResult: Result<NewPostResponse, AFError>? = nil
+
+    func getVideoDimensions() -> CGSize? {
+      guard let url = selectedItem else { return nil }
+      guard let track = AVURLAsset(url: url).tracks(withMediaType: AVMediaType.video).first else { return nil }
+      return track.naturalSize.applying(track.preferredTransform)
+    }
+
+    // MARK: Private
+
+    private var cancelBag: [AnyCancellable] = []
+  }
+
+  @ObservedObject var model: Self.ViewModel
+
+  var body: some View {
+    VStack {
+      TextField("post.new.title", text: $model.title)
+        .font(.title2)
+      Spacer()
+      if let videoUrl = model.selectedItem {
+        if let size = model.getVideoDimensions() {
+          VideoPlayer(url: videoUrl, fullSize: size)
+        } else {
+          VideoPlayer(url: videoUrl)
+        }
+      } else {
+        Button(action: { model.presentVideoSelector = true }, label: {
+          Text("choose.video")
+        })
+          .keyboardShortcut("o")
+      }
+      Spacer()
+    }
+    .fileImporter(isPresented: $model.presentVideoSelector, allowedContentTypes: [.mpeg4Movie, .quickTimeMovie]) { result in
+      switch result {
+      case let .success(url):
+        model.selectedItem = url
+      case let .failure(error):
+        Illithid.shared.logger.errorMessage("Failed to select video: \(error)")
+      }
+    }
+  }
 }
