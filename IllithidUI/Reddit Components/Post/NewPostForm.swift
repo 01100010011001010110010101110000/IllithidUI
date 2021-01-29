@@ -633,7 +633,8 @@ private struct GalleryCarousel: View {
     }
 
     func calculateImageWidth(for url: URL, height: CGFloat) -> CGFloat {
-      guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil),
+      let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+      guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, imageSourceOptions),
             let imageDetails = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [AnyHashable: Any],
             let cfWidth = imageDetails[kCGImagePropertyPixelWidth as String] as! CFNumber?,
             let cfHeight = imageDetails[kCGImagePropertyPixelHeight as String] as! CFNumber?
@@ -744,7 +745,8 @@ private struct UploadImagePreview: View {
     }
 
     func calculateImageWidth(for url: URL, height: CGFloat) -> CGFloat {
-      guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, nil),
+      let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+      guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, imageSourceOptions),
             let imageDetails = CGImageSourceCopyPropertiesAtIndex(imageSource, 0, nil) as? [AnyHashable: Any],
             let cfWidth = imageDetails[kCGImagePropertyPixelWidth as String] as! CFNumber?,
             let cfHeight = imageDetails[kCGImagePropertyPixelHeight as String] as! CFNumber?
