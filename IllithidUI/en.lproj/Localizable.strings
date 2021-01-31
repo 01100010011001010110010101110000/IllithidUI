@@ -6,6 +6,8 @@
 
 "multireddit.edit" = "Edit multireddit";
 
+"search.prompt" = "Search";
+
 "comments.no.comments" = "Looks like this is a comment graveyard";
 "comments.loading" = "Loading comments";
 
@@ -24,3 +26,27 @@
 
 "post.pinned" = "This post has been pinned by a moderator";
 "post.locked" = "This post has been locked. New comments are disabled";
+"post.new" = "New Post";
+"post.new.subreddit.prompt" = "Post in";
+"post.submit" = "Submit";
+"post.new.title" = "Title";
+"post.type.text" = "Self Post";
+"post.type.link" = "Link";
+"post.type.video" = "Video";
+"post.video.upload.as.gif" = "Upload as GIF";
+"post.video.upload.as.gif.description" = "Upload the video as a GIF";
+"post.type.image.and.gif" = "Image & GIF";
+"post.new.link-to" = "URL";
+
+"choose.image" = "Upload";
+"choose.video" = "Upload";
+"too.many.gallery.items.body" = "Reddit currently only allows a maximum of 20 iages in a gallery post.
+The first twenty items you selected are still selected";
+"too.many.gallery.items.title" = "Too Selected Gallery Images";
+"gallery.item.caption" = "Caption";
+"gallery.item.link" = "Outbound Link";
+
+
+"subreddits.subscribed" = "Subscribed";
+
+"user.profile" = "Your profile";

@@ -16,19 +16,51 @@ import Foundation
 import SwiftUI
 
 extension View {
-  func loadingScreen(isLoading: Bool, title: String, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0)) -> some View {
+  func loadingScreen(isLoading: Bool, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0), dimBackground: Bool = false) -> some View {
     overlay(
-      ProgressView(NSLocalizedString(title, comment: ""))
-        .opacity(isLoading ? 1 : 0)
-        .offset(x: offset.x, y: offset.y)
+      ZStack {
+        if isLoading {
+          if dimBackground {
+            Rectangle()
+              .foregroundColor(.black)
+              .opacity(0.8)
+          }
+          ProgressView()
+            .offset(x: offset.x, y: offset.y)
+        }
+      }
     )
   }
 
-  func loadingScreen<Content: View>(isLoading: Bool, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0), @ViewBuilder _ label: () -> Content) -> some View {
+  func loadingScreen(isLoading: Bool, title: String, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0), dimBackground: Bool = false) -> some View {
     overlay(
-      ProgressView(label: label)
-        .opacity(isLoading ? 1 : 0)
-        .offset(x: offset.x, y: offset.y)
+      ZStack {
+        if isLoading {
+          if dimBackground {
+            Rectangle()
+              .foregroundColor(.black)
+              .opacity(0.8)
+          }
+          ProgressView(NSLocalizedString(title, comment: ""))
+            .offset(x: offset.x, y: offset.y)
+        }
+      }
+    )
+  }
+
+  func loadingScreen<Content: View>(isLoading: Bool, offset: (x: CGFloat, y: CGFloat) = (x: 0, y: 0), dimBackground: Bool = false, @ViewBuilder _ label: () -> Content) -> some View {
+    overlay(
+      ZStack {
+        if isLoading {
+          if dimBackground {
+            Rectangle()
+              .foregroundColor(.black)
+              .opacity(0.8)
+          }
+          ProgressView(label: label)
+            .offset(x: offset.x, y: offset.y)
+        }
+      }
     )
   }
 }

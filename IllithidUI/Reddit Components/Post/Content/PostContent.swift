@@ -40,7 +40,7 @@ struct PostContent: View {
       RedGifView(id: String(post.contentUrl.path.split(separator: "/").last!))
         .conditionalModifier(post.over18, NsfwBlurModifier())
     case .gallery:
-      GalleryPost(metaData: post.mediaMetadata!, galleryData: post.galleryData!)
+      GalleryPost(metadata: post.mediaMetadata!, galleryData: post.galleryData!)
     case .text:
       TextPostPreview(post: post)
     case .gif:
@@ -98,7 +98,7 @@ extension Post {
       return .gallery
     } else if domain == "reddit.com" || domain == "old.reddit.com" {
       return .reddit
-    } else if isSelf || postHint == .self {
+    } else if isSelf || postHint == .`self` {
       return .text
     } else if bestVideoPreview != nil {
       return .video
@@ -166,14 +166,14 @@ struct RemovedPostView: View {
 struct GalleryPost: View {
   // MARK: Internal
 
-  let metaData: [String: MediaMetadata]
+  let metadata: [String: MediaMetadata]
   let galleryData: GalleryData
 
   var body: some View {
-    PagedView(data: galleryData.items) { item in
-      if let metadata = metaData[item.mediaId] {
+    PagedView(data: galleryData.items.filter { metadata[$0.mediaId]?.status == .valid }) { item in
+      if let metadata = metadata[item.mediaId] {
         Group {
-          switch metadata.type {
+          switch metadata.type! {
           case .image:
             ImagePostPreview(url: metadata.source!.url!,
                              size: NSSize(width: metadata.source!.width, height: metadata.source!.height),
@@ -195,9 +195,9 @@ struct GalleryPost: View {
     .onTapGesture {
       WindowManager.shared.showMediaPanel(aspectRatio: maxSize) {
         PagedView(data: galleryData.items) { item in
-          if let metadata = metaData[item.mediaId] {
+          if let metadata = metadata[item.mediaId] {
             Group {
-              switch metadata.type {
+              switch metadata.type! {
               case .image:
                 ImagePost(url: metadata.source!.url!, size: NSSize(width: metadata.source!.width, height: metadata.source!.height))
               case .animatedImage:
@@ -244,7 +244,7 @@ struct GalleryPost: View {
   }
 
   private var maxSize: NSSize {
-    metaData.values.reduce(NSSize.zero) { (result, metadata) -> NSSize in
+    metadata.values.reduce(NSSize.zero) { (result, metadata) -> NSSize in
       NSSize(width: CGFloat(metadata.source!.width) > result.width ? CGFloat(metadata.source!.width) : result.width,
              height: CGFloat(metadata.source!.height) > result.height ? CGFloat(metadata.source!.height) : result.height)
     }
@@ -314,7 +314,13 @@ private struct VideoPostPreview: View {
 // MARK: - GifPostPreview
 
 struct GifPostPreview: View {
-  @State private var isAnimating: Bool = true
+  // MARK: Lifecycle
+
+  init(post: Post) {
+    self.post = post
+  }
+
+  // MARK: Internal
 
   let post: Post
 
@@ -335,6 +341,10 @@ struct GifPostPreview: View {
         }
     }
   }
+
+  // MARK: Private
+
+  @State private var isAnimating: Bool = true
 }
 
 // MARK: - TextPostPreview

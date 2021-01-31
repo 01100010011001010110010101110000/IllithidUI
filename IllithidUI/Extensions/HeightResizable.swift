@@ -59,7 +59,7 @@ private struct FramePreferenceViewSetter: View {
 private struct FramePreferenceKey: PreferenceKey {
   typealias Value = CGRect
 
-  static var defaultValue: CGRect = .zero
+  static let defaultValue: CGRect = .zero
 
   static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
     value = nextValue()

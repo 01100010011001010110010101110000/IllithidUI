@@ -28,8 +28,7 @@ struct RedditLinkView: View {
       LinkBar(iconIsScaled: $hover, icon: icon, link: link)
         .frame(width: 512)
         .background(Color(.controlBackgroundColor))
-        .modifier(RoundedBorder(style: Color(.darkGray),
-                                cornerRadius: 8.0, width: 2.0))
+        .roundedBorder(style: Color(.darkGray), width: 2.0)
         .onHover { entered in
           withAnimation(.easeInOut(duration: 0.7)) {
             hover = entered

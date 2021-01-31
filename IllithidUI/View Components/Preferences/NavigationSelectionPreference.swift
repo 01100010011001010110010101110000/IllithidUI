@@ -14,21 +14,12 @@
 
 import SwiftUI
 
-struct RoundedBorder<Style: ShapeStyle>: ViewModifier {
-  let style: Style
-  let cornerRadius: CGFloat
-  let width: CGFloat
+import Illithid
 
-  func body(content: Content) -> some View {
-    content
-      .overlay(RoundedRectangle(cornerRadius: cornerRadius)
-        .stroke(style, lineWidth: width))
-      .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
-  }
-}
+struct NavigationSelectionPreferenceKey: PreferenceKey {
+  static let defaultValue: String? = nil
 
-extension View {
-  func roundedBorder<Style: ShapeStyle>(style: Style, cornerRadius: CGFloat = 8, width: CGFloat = 1) -> some View {
-    self.modifier(RoundedBorder(style: style, cornerRadius: cornerRadius, width: width))
+  static func reduce(value: inout String?, nextValue: () -> String?) {
+    value = nextValue()
   }
 }
