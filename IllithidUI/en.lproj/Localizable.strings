@@ -31,6 +31,8 @@
 "post.type.text" = "Self Post";
 "post.type.link" = "Link";
 "post.type.video" = "Video";
+"post.video.upload.as.gif" = "Upload as GIF";
+"post.video.upload.as.gif.description" = "Upload the video as a GIF";
 "post.type.image.and.gif" = "Image & GIF";
 "post.new.link-to" = "URL";
 

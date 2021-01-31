@@ -158,19 +158,20 @@ struct NewPostForm: View {
     @Published var imagePostModel = ImageGifPostForm.ViewModel()
     @Published var videoPostModel = VideoPostForm.ViewModel()
 
-    func submitSelfPost() {
+    func submit() {
       guard let target = createPostIn else { return }
-      selfPostModel.submitTextPost(to: target)
-    }
-
-    func submitLinkPost() {
-      guard let target = createPostIn else { return }
-      linkPostModel.submitLinkPost(to: target)
-    }
-
-    func submitImagePost() {
-      guard let target = createPostIn else { return }
-      imagePostModel.submit(to: target)
+      switch postType {
+      case .`self`:
+        selfPostModel.submitTextPost(to: target)
+      case .link:
+        linkPostModel.submitLinkPost(to: target)
+      case .image:
+        imagePostModel.submit(to: target)
+      case .video:
+        videoPostModel.submit(to: target)
+      default:
+        return
+      }
     }
 
     // MARK: Private
@@ -185,6 +186,8 @@ struct NewPostForm: View {
         postIsValid = linkPostModel.isValid
       case .image:
         postIsValid = imagePostModel.isValid
+      case .video:
+        postIsValid = videoPostModel.isValid
       default:
         break
       }
@@ -213,45 +216,52 @@ struct NewPostForm: View {
     .padding()
   }
 
+  private var cancelButton: some View {
+    Button(action: {
+      withAnimation {
+        showNewPostForm = false
+      }
+    }, label: {
+      Text("cancel")
+    })
+      .keyboardShortcut(.cancelAction)
+  }
+
+  private var submitButton: some View {
+    Button(action: {
+      model.submit()
+    }, label: {
+      HStack {
+        if model.posting {
+          ProgressView()
+            .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+            .scaleEffect(0.5, anchor: .center)
+        } else if case .success = model.result {
+          Image(systemName: "checkmark.circle.fill")
+            .foregroundColor(.green)
+        } else if case .failure = model.result {
+          Image(systemName: "xmark.circle.fill")
+            .foregroundColor(.red)
+        }
+        Text("post.submit")
+      }
+    })
+      .disabled(!model.postIsValid)
+  }
+
   private var formControl: some View {
     HStack {
-      Button(action: {
-        withAnimation {
-          showNewPostForm = false
-        }
-      }, label: {
-        Text("cancel")
-      })
-        .keyboardShortcut(.cancelAction)
+      cancelButton
       Spacer()
-      Button(action: {
-        switch model.postType {
-        case .`self`:
-          model.submitSelfPost()
-        case .link:
-          model.submitLinkPost()
-        case .image:
-          model.submitImagePost()
-        default:
-          return
+      HStack {
+        if case .video = model.postType {
+          Toggle(isOn: $model.videoPostModel.postAsGif, label: {
+            Text("post.video.upload.as.gif")
+          })
+            .help("post.video.upload.as.gif.description")
         }
-      }, label: {
-        HStack {
-          if model.posting {
-            ProgressView()
-              .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
-              .scaleEffect(0.5, anchor: .center)
-          } else if case .success = model.result {
-            Image(systemName: "checkmark.circle.fill")
-              .foregroundColor(.green)
-          } else if case .failure = model.result {
-            Image(systemName: "xmark.circle.fill")
-              .foregroundColor(.red)
-          }
-          Text("post.submit")
-        }
-      })
-        .disabled(!model.postIsValid)
+        submitButton
+      }
     }
     .padding()
   }
@@ -493,10 +503,10 @@ private struct ImageGifPostForm: View {
       posting = true
       let uploadToken = illithid
         .uploadMedia(fileUrl: url)
-        .flatMap { lease, _ in
+        .flatMap { [title] lease, _ in
           Publishers.Zip(illithid.receiveUploadResponse(lease: lease),
                          illithid.submit(kind: .image, subredditDisplayName: acceptor.uploadTarget,
-                                         title: self.title, linkTo: lease.lease.retrievalUrl))
+                                         title: title, linkTo: lease.lease.retrievalUrl))
         }
         .receive(on: RunLoop.main)
         .sink(receiveCompletion: { [weak self] completion in
@@ -510,7 +520,7 @@ private struct ImageGifPostForm: View {
           self?.posting = false
         }) { [weak self] _, postResponse in
           self?.postResult = .success(postResponse)
-          illithid.logger.debugMessage("Successfully submitted image post: \(postResponse.json.data.url?.absoluteString ?? "NO ASSOCIATED URL")")
+          illithid.logger.debugMessage("Successfully submitted image post: \(postResponse.json.data?.url?.absoluteString ?? "NO ASSOCIATED URL")")
         }
       cancelBag.append(uploadToken)
     }
@@ -532,7 +542,7 @@ private struct ImageGifPostForm: View {
           self?.posting = false
         }, receiveValue: { [weak self] postResponse in
           self?.postResult = .success(postResponse)
-          illithid.logger.debugMessage("Successfully submitted gallery post: \(postResponse.json.data.url?.absoluteString ?? "NO ASSOCIATED URL")")
+          illithid.logger.debugMessage("Successfully submitted gallery post: \(postResponse.json.data?.url?.absoluteString ?? "NO ASSOCIATED URL")")
         })
       cancelBag.append(uploadToken)
     }
@@ -785,7 +795,6 @@ private struct UploadImagePreview: View {
   let onRemoval: (URL) -> Void
 
   var body: some View {
-    // TODO: Calculate correct widths
     GroupBox {
       AnimatedImage(url: imageUrl, isAnimating: .constant(false))
         .resizable()
@@ -842,6 +851,47 @@ private struct VideoPostForm: View {
     @Published var title: String = ""
     @Published var selectedItem: URL? = nil
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
+    @Published var postAsGif: Bool = false
+
+    func submit(to acceptor: PostAcceptor) {
+      let illithid: Illithid = .shared
+      guard let url = selectedItem else { return }
+
+      posting = true
+      let uploadToken = Publishers.Zip(illithid.uploadMedia(fileUrl: url), illithid.uploadMedia(image: getVideoThumbnail(from: url)!))
+        .flatMap { [postAsGif, title] (videoUpload: (lease: AssetUploadLease, uploadResponse: Data), posterUpload: (lease: AssetUploadLease, uploadResponse: Data)) -> Publishers.Zip<AnyPublisher<MediaUploadResponse?, AFError>, AnyPublisher<NewPostResponse, AFError>> in
+          let videoMetadata = videoUpload.lease
+          let posterMetadata = posterUpload.lease
+          return Publishers.Zip(illithid.receiveUploadResponse(lease: videoMetadata),
+                                illithid.submit(kind: postAsGif ? .videogif : .video,
+                                                subredditDisplayName: acceptor.uploadTarget,
+                                                title: title,
+                                                linkTo: videoMetadata.lease.retrievalUrl,
+                                                videoPosterUrl: posterMetadata.lease.retrievalUrl))
+        }
+        .receive(on: RunLoop.main)
+        .sink(receiveCompletion: { [weak self] completion in
+          switch completion {
+          case .finished:
+            break
+          case let .failure(error):
+            self?.postResult = .failure(error)
+            illithid.logger.errorMessage("Failed to submit video post: \(error)")
+          }
+          self?.posting = false
+        }) { [weak self] _, postResponse in
+          self?.postResult = .success(postResponse)
+          illithid.logger.debugMessage("Successfully submitted video post: \(postResponse.json.data?.url?.absoluteString ?? "NO ASSOCIATED URL")")
+        }
+      cancelBag.append(uploadToken)
+    }
+
+    func getVideoThumbnail(from path: URL) -> CGImage? {
+      let asset = AVURLAsset(url: path, options: nil)
+      let imgGenerator = AVAssetImageGenerator(asset: asset)
+      imgGenerator.appliesPreferredTrackTransform = true
+      return try? imgGenerator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+    }
 
     func getVideoDimensions() -> CGSize? {
       guard let url = selectedItem else { return nil }
