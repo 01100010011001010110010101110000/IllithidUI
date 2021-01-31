@@ -25,6 +25,12 @@ import SDWebImageSwiftUI
 // MARK: - NewPostForm
 
 struct NewPostForm: View {
+  // MARK: Lifecycle
+
+  init(isPresented: Binding<Bool>) {
+    _showNewPostForm = isPresented
+  }
+
   // MARK: Internal
 
   let navigationSelection: String? = nil
@@ -38,7 +44,7 @@ struct NewPostForm: View {
       if let acceptor = model.createPostIn {
         TabView(selection: $model.postType) {
           if acceptor.permitsSelfPosts {
-            SelfPostForm(model: model.selfPostModel)
+            SelfPostForm(title: $model.title, model: model.selfPostModel)
               .tag(NewPostType.`self`)
               .tabItem {
                 Label(title: { Text("post.type.text") },
@@ -49,7 +55,7 @@ struct NewPostForm: View {
 
           // In the current Reddit API implementation, if image posts are allowed, so are GIFs
           if acceptor.permitsImagePosts {
-            ImageGifPostForm(for: acceptor, model: model.imagePostModel)
+            ImageGifPostForm(for: acceptor, title: $model.title, model: model.imagePostModel)
               .tag(NewPostType.image)
               .tabItem {
                 Label(title: { Text("post.type.image.and.gif") },
@@ -60,7 +66,7 @@ struct NewPostForm: View {
 
           if acceptor.permitsLinkPosts {
             VStack {
-              LinkPostForm(model: model.linkPostModel)
+              LinkPostForm(title: $model.title, model: model.linkPostModel)
               Spacer()
             }
             .tag(NewPostType.link)
@@ -73,7 +79,7 @@ struct NewPostForm: View {
 
           if acceptor.permitsVideoPosts {
             VStack {
-              VideoPostForm(model: model.videoPostModel)
+              VideoPostForm(title: $model.title, model: model.videoPostModel)
               Spacer()
             }
             .tag(NewPostType.video)
@@ -147,6 +153,7 @@ struct NewPostForm: View {
 
     // MARK: Internal
 
+    @Published var title: String = ""
     @Published var createPostIn: PostAcceptor? = nil
     @Published var postType: NewPostType = .`self`
     @Published var postIsValid: Bool = false
@@ -162,13 +169,13 @@ struct NewPostForm: View {
       guard let target = createPostIn else { return }
       switch postType {
       case .`self`:
-        selfPostModel.submitTextPost(to: target)
+        selfPostModel.submitTextPost(titled: title, to: target)
       case .link:
-        linkPostModel.submitLinkPost(to: target)
+        linkPostModel.submitLinkPost(titled: title, to: target)
       case .image:
-        imagePostModel.submit(to: target)
+        imagePostModel.submit(titled: title, to: target)
       case .video:
-        videoPostModel.submit(to: target)
+        videoPostModel.submit(titled: title, to: target)
       default:
         return
       }
@@ -246,7 +253,7 @@ struct NewPostForm: View {
         Text("post.submit")
       }
     })
-      .disabled(!model.postIsValid)
+      .disabled(!model.postIsValid && !model.title.isEmpty)
   }
 
   private var formControl: some View {
@@ -332,24 +339,23 @@ private struct SelfPostForm: View {
     // MARK: Lifecycle
 
     init() {
-      let validityToken = Publishers.Merge($title, $body)
+      let validityToken = $body
         .receive(on: RunLoop.main)
         .sink { [weak self] _ in
           guard let self = self else { return }
-          self.isValid = !self.body.isEmpty && !self.title.isEmpty
+          self.isValid = !self.body.isEmpty
         }
       cancelBag.append(validityToken)
     }
 
     // MARK: Internal
 
-    @Published var title: String = ""
     @Published var body: String = ""
     @Published var posting: Bool = false
     @Published var isValid: Bool = false
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
 
-    func submitTextPost(to acceptor: PostAcceptor) {
+    func submitTextPost(titled title: String, to acceptor: PostAcceptor) {
       posting = true
       let cancelToken = acceptor.submitSelfPost(title: title, markdown: body)
         .receive(on: RunLoop.main)
@@ -373,11 +379,12 @@ private struct SelfPostForm: View {
     private var cancelBag: [AnyCancellable] = []
   }
 
+  @Binding var title: String
   @ObservedObject var model: SelfPostForm.ViewModel
 
   var body: some View {
     VStack {
-      TextField("post.new.title", text: $model.title)
+      TextField("post.new.title", text: $title)
         .font(.title2)
       TextEditor(text: $model.body)
         .font(.system(size: 18))
@@ -392,11 +399,11 @@ private struct LinkPostForm: View {
     // MARK: Lifecycle
 
     init() {
-      let validityToken = Publishers.Merge($title, $linkTo)
+      let validityToken = $linkTo
         .receive(on: RunLoop.main)
         .sink { [weak self] _ in
           guard let self = self else { return }
-          self.isValid = !self.title.isEmpty && !self.linkTo.isEmpty
+          self.isValid = !self.linkTo.isEmpty
             && self.detector.firstMatch(in: self.linkTo, range: NSRange(location: 0, length: self.linkTo.utf16.count)) != nil
         }
       cancelBag.append(validityToken)
@@ -404,13 +411,12 @@ private struct LinkPostForm: View {
 
     // MARK: Internal
 
-    @Published var title: String = ""
     @Published var linkTo: String = ""
     @Published var posting: Bool = false
     @Published var isValid: Bool = false
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
 
-    func submitLinkPost(to acceptor: PostAcceptor) {
+    func submitLinkPost(titled title: String, to acceptor: PostAcceptor) {
       // We validate this before enabling the submit button, but just in case
       guard let url = URL(string: linkTo) else { return }
       posting = true
@@ -437,11 +443,12 @@ private struct LinkPostForm: View {
     private let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
   }
 
+  @Binding var title: String
   @ObservedObject var model: LinkPostForm.ViewModel
 
   var body: some View {
     VStack {
-      TextField("post.new.title", text: $model.title)
+      TextField("post.new.title", text: $title)
         .font(.title2)
       TextField("post.new.link-to", text: $model.linkTo)
         .font(.title2)
@@ -454,8 +461,9 @@ private struct LinkPostForm: View {
 private struct ImageGifPostForm: View {
   // MARK: Lifecycle
 
-  init(for acceptor: PostAcceptor, model: ViewModel) {
+  init(for acceptor: PostAcceptor, title: Binding<String>, model: ViewModel) {
     self.acceptor = acceptor
+    _title = title
     self.model = model
   }
 
@@ -465,11 +473,11 @@ private struct ImageGifPostForm: View {
     // MARK: Lifecycle
 
     init() {
-      let validityToken = Publishers.CombineLatest($title, $selectedItems)
+      let validityToken = $selectedItems
         .receive(on: RunLoop.main)
-        .sink { [weak self] _, _ in
+        .sink { [weak self] _ in
           guard let self = self else { return }
-          self.isValid = !self.title.isEmpty && !self.selectedItems.isEmpty
+          self.isValid = !self.selectedItems.isEmpty
         }
       cancelBag.append(validityToken)
     }
@@ -479,16 +487,15 @@ private struct ImageGifPostForm: View {
     @Published var isValid: Bool = false
     @Published var posting: Bool = false
     @Published var presentImageSelector: Bool = false
-    @Published var title: String = ""
     @Published var selectedItems: [URL] = []
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
     @Published var galleryModel = GalleryCarousel.ViewModel()
 
-    func submit(to acceptor: PostAcceptor) {
+    func submit(titled title: String, to acceptor: PostAcceptor) {
       if selectedItems.count > 1 {
-        submitGalleryPost(to: acceptor)
+        submitGalleryPost(titled: title, to: acceptor)
       } else {
-        submitImagePost(to: acceptor)
+        submitImagePost(titled: title, to: acceptor)
       }
     }
 
@@ -496,14 +503,14 @@ private struct ImageGifPostForm: View {
 
     private var cancelBag: [AnyCancellable] = []
 
-    private func submitImagePost(to acceptor: PostAcceptor) {
+    private func submitImagePost(titled title: String, to acceptor: PostAcceptor) {
       let illithid: Illithid = .shared
       guard let url = selectedItems.first else { return }
 
       posting = true
       let uploadToken = illithid
         .uploadMedia(fileUrl: url)
-        .flatMap { [title] lease, _ in
+        .flatMap { lease, _ in
           Publishers.Zip(illithid.receiveUploadResponse(lease: lease),
                          illithid.submit(kind: .image, subredditDisplayName: acceptor.uploadTarget,
                                          title: title, linkTo: lease.lease.retrievalUrl))
@@ -525,7 +532,7 @@ private struct ImageGifPostForm: View {
       cancelBag.append(uploadToken)
     }
 
-    private func submitGalleryPost(to acceptor: PostAcceptor) {
+    private func submitGalleryPost(titled title: String, to acceptor: PostAcceptor) {
       let illithid: Illithid = .shared
 
       posting = true
@@ -549,11 +556,12 @@ private struct ImageGifPostForm: View {
   }
 
   let acceptor: PostAcceptor
+  @Binding var title: String
   @ObservedObject var model: Self.ViewModel
 
   var body: some View {
     VStack {
-      TextField("post.new.title", text: $model.title)
+      TextField("post.new.title", text: $title)
         .font(.title2)
       if acceptor.permitsGalleryPosts, !model.selectedItems.isEmpty {
         GalleryCarousel(model: model.galleryModel, urls: $model.selectedItems)
@@ -834,11 +842,11 @@ private struct VideoPostForm: View {
     // MARK: Lifecycle
 
     init() {
-      let validityToken = Publishers.CombineLatest($title, $selectedItem)
+      let validityToken = $selectedItem
         .receive(on: RunLoop.main)
-        .sink { [weak self] _, _ in
+        .sink { [weak self] _ in
           guard let self = self else { return }
-          self.isValid = !self.title.isEmpty && self.selectedItem != nil
+          self.isValid = self.selectedItem != nil
         }
       cancelBag.append(validityToken)
     }
@@ -848,18 +856,17 @@ private struct VideoPostForm: View {
     @Published var isValid: Bool = false
     @Published var posting: Bool = false
     @Published var presentVideoSelector: Bool = false
-    @Published var title: String = ""
     @Published var selectedItem: URL? = nil
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
     @Published var postAsGif: Bool = false
 
-    func submit(to acceptor: PostAcceptor) {
+    func submit(titled title: String, to acceptor: PostAcceptor) {
       let illithid: Illithid = .shared
       guard let url = selectedItem else { return }
 
       posting = true
       let uploadToken = Publishers.Zip(illithid.uploadMedia(fileUrl: url), illithid.uploadMedia(image: getVideoThumbnail(from: url)!))
-        .flatMap { [postAsGif, title] (videoUpload: (lease: AssetUploadLease, uploadResponse: Data), posterUpload: (lease: AssetUploadLease, uploadResponse: Data)) -> Publishers.Zip<AnyPublisher<MediaUploadResponse?, AFError>, AnyPublisher<NewPostResponse, AFError>> in
+        .flatMap { [postAsGif] (videoUpload: (lease: AssetUploadLease, uploadResponse: Data), posterUpload: (lease: AssetUploadLease, uploadResponse: Data)) -> Publishers.Zip<AnyPublisher<MediaUploadResponse?, AFError>, AnyPublisher<NewPostResponse, AFError>> in
           let videoMetadata = videoUpload.lease
           let posterMetadata = posterUpload.lease
           return Publishers.Zip(illithid.receiveUploadResponse(lease: videoMetadata),
@@ -904,11 +911,12 @@ private struct VideoPostForm: View {
     private var cancelBag: [AnyCancellable] = []
   }
 
+  @Binding var title: String
   @ObservedObject var model: Self.ViewModel
 
   var body: some View {
     VStack {
-      TextField("post.new.title", text: $model.title)
+      TextField("post.new.title", text: $title)
         .font(.title2)
       Spacer()
       if let videoUrl = model.selectedItem {

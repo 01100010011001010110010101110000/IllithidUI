@@ -53,7 +53,7 @@ struct IllithidApp: App {
     WindowGroup {
       RootView()
         .sheet(isPresented: $presentNewPostForm) {
-          NewPostForm(showNewPostForm: $presentNewPostForm)
+          NewPostForm(isPresented: $presentNewPostForm)
         }
         .onChange(of: phase, perform: { phase in
           // TODO: Move pasteboard URL checking down here or also here
