@@ -678,6 +678,12 @@ private struct GalleryCarousel: View {
       imageIds.removeValue(forKey: url)
     }
 
+    func isGif(imagePath: URL) -> Bool {
+      guard let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, imagePath.pathExtension as CFString, nil)?.takeRetainedValue(),
+            let mimeType = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() else { return false }
+      return mimeType as String == "image/gif"
+    }
+
     func calculateImageWidth(for url: URL, height: CGFloat) -> CGFloat {
       let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
       guard let imageSource = CGImageSourceCreateWithURL(url as CFURL, imageSourceOptions),
@@ -725,10 +731,19 @@ private struct GalleryCarousel: View {
 
       if let selectedImage = selected {
         HStack(spacing: 0) {
-          AnimatedImage(url: selectedImage, isAnimating: .constant(true))
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: model.calculateImageWidth(for: selectedImage, height: imageHeight), height: imageHeight)
+          Group {
+            // The split here is to fix a bug when switching from a GIF to an image
+            // Without it, the image resizes, but the first frame of the GIF is displayed
+            if model.isGif(imagePath: selectedImage) {
+              AnimatedImage(url: selectedImage, isAnimating: .constant(true))
+                .resizable()
+            } else {
+              WebImage(url: selectedImage)
+                .resizable()
+            }
+          }
+          .aspectRatio(contentMode: .fill)
+          .frame(width: model.calculateImageWidth(for: selectedImage, height: imageHeight), height: imageHeight)
 
           Divider()
             .padding(.horizontal)
