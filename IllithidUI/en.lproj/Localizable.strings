@@ -6,6 +6,8 @@
 
 "multireddit.edit" = "Edit multireddit";
 
+"search.prompt" = "Search";
+
 "comments.no.comments" = "Looks like this is a comment graveyard";
 "comments.loading" = "Loading comments";
 

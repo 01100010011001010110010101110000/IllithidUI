@@ -286,9 +286,12 @@ private struct SubredditSelectorView: View {
 
   var body: some View {
     VStack {
-      // TODO: Add a search bar
+      TextField("search.prompt", text: $searchText)
+        .font(.title2)
+        .padding([.top, .horizontal], 5)
       List(selection: $subredditId) {
-        if let user = Illithid.shared.accountManager.currentAccount {
+        if let user = Illithid.shared.accountManager.currentAccount,
+           searchText.isEmpty || (user.name.range(of: searchText, options: .caseInsensitive) != nil) {
           Section(header: Text("user.profile")) {
             // TODO: Fetch account avatar if present
             Label(
@@ -300,7 +303,7 @@ private struct SubredditSelectorView: View {
         }
 
         Section(header: Text("subreddits.subscribed")) {
-          ForEach(informationBarData.subscribedSubreddits) { subreddit in
+          ForEach(filteredSubscriptions) { subreddit in
             HStack {
               SubredditIcon(subreddit: subreddit)
                 .frame(width: 24, height: 24)
@@ -310,6 +313,7 @@ private struct SubredditSelectorView: View {
         }
       }
     }
+    .frame(minWidth: 200, minHeight: 400)
     .onChange(of: subredditId) { _ in
       DispatchQueue.main.asyncAfter(deadline: .now() + dismissalDelay) {
         isPresented = false
@@ -321,10 +325,16 @@ private struct SubredditSelectorView: View {
   // MARK: Private
 
   @State private var subredditId: String?
+  @State private var searchText: String = ""
   private let dismissalDelay: Double = 0.3
 
+  private var filteredSubscriptions: [Subreddit] {
+    guard !searchText.isEmpty else { return informationBarData.subscribedSubreddits }
+    return informationBarData.subscribedSubreddits
+      .filter { $0.displayName.range(of: searchText, options: .caseInsensitive) != nil }
+  }
+
   private func findSelection() -> PostAcceptor? {
-    // TODO: Support user subreddit, moderated subreddits, etc
     if subredditId == "__account__" {
       return Illithid.shared.accountManager.currentAccount
     } else if let subreddit = informationBarData.subscribedSubreddits.first(where: { $0.id == subredditId }) {
@@ -591,7 +601,6 @@ private struct ImageGifPostForm: View {
     .fileImporter(isPresented: $model.presentImageSelector, allowedContentTypes: allowedContentTypes, allowsMultipleSelection: allowsMultipleItems) { result in
       switch result {
       case let .success(urls):
-        // TODO: Append to URL list instead of overwriting, while respecting 20 item max, if user wants to add more gallery items after first selection
         if urls.count > maxGalleryItems {
           model.selectedItems = Array(urls[..<maxGalleryItems])
           showTooManyItemsAlert = true
