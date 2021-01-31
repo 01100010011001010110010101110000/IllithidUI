@@ -265,6 +265,7 @@ struct NewPostForm: View {
           Toggle(isOn: $model.videoPostModel.postAsGif, label: {
             Text("post.video.upload.as.gif")
           })
+            .keyboardShortcut("g", modifiers: .option)
             .help("post.video.upload.as.gif.description")
         }
         submitButton
@@ -320,7 +321,7 @@ private struct SubredditSelectorView: View {
   // MARK: Private
 
   @State private var subredditId: String?
-  private let dismissalDelay: Double = 0.5
+  private let dismissalDelay: Double = 0.3
 
   private func findSelection() -> PostAcceptor? {
     // TODO: Support user subreddit, moderated subreddits, etc
@@ -563,21 +564,29 @@ private struct ImageGifPostForm: View {
     VStack {
       TextField("post.new.title", text: $title)
         .font(.title2)
+      Spacer()
       if acceptor.permitsGalleryPosts, !model.selectedItems.isEmpty {
         GalleryCarousel(model: model.galleryModel, urls: $model.selectedItems)
       } else if acceptor.permitsImagePosts, let imageUrl = model.selectedItems.first {
         AnimatedImage(url: imageUrl, isAnimating: .constant(true))
           .resizable()
-          .aspectRatio(contentMode: .fit)
-          .frame(width: 120, height: 120)
+          .aspectRatio(contentMode: .fill)
+          .frame(width: model.galleryModel.calculateImageWidth(for: imageUrl, height: 480), height: 480)
+          .onHover { isHovered in
+            withAnimation {
+              self.isHovered = isHovered
+            }
+          }
+          .deleteButton {
+            model.selectedItems.removeAll()
+          }
       } else {
-        Spacer()
         Button(action: { model.presentImageSelector = true }, label: {
           Text("choose.image")
         })
           .keyboardShortcut("o")
-        Spacer()
       }
+      Spacer()
     }
     .fileImporter(isPresented: $model.presentImageSelector, allowedContentTypes: allowedContentTypes, allowsMultipleSelection: allowsMultipleItems) { result in
       switch result {
@@ -601,6 +610,7 @@ private struct ImageGifPostForm: View {
 
   // MARK: Private
 
+  @State private var isHovered: Bool = false
   @State private var showTooManyItemsAlert: Bool = false
 
   private let maxGalleryItems = Illithid.maximumGalleryItems
@@ -691,11 +701,11 @@ private struct GalleryCarousel: View {
       ScrollView(.horizontal) {
         LazyHStack {
           ForEach(imageUrls, id: \.absoluteString) { url in
-            UploadImagePreview(imageUrl: url, onRemoval: { urlToDelete in
+            UploadImagePreview(imageUrl: url, onRemoval: {
               withAnimation {
                 if selected == url { selected = nil }
-                imageUrls.removeAll(where: { $0 == urlToDelete })
-                model.removeItem(withUrl: urlToDelete)
+                imageUrls.removeAll(where: { $0 == url })
+                model.removeItem(withUrl: url)
               }
             }, onUpload: { lease in
               model.imageIds[url] = lease.asset.assetId
@@ -739,7 +749,7 @@ private struct GalleryCarousel: View {
   // MARK: Private
 
   @State private var selected: URL? = nil
-  private let imageHeight: CGFloat = 360
+  private let imageHeight: CGFloat = 480
 }
 
 // MARK: - UploadImagePreview
@@ -747,7 +757,7 @@ private struct GalleryCarousel: View {
 private struct UploadImagePreview: View {
   // MARK: Lifecycle
 
-  init(imageUrl: URL, onRemoval: @escaping (URL) -> Void, onUpload: @escaping (AssetUploadLease) -> Void) {
+  init(imageUrl: URL, onRemoval: @escaping () -> Void, onUpload: @escaping (AssetUploadLease) -> Void) {
     self.imageUrl = imageUrl
     self.onRemoval = onRemoval
     _model = .init(wrappedValue: Self.ViewModel(onUpload: onUpload))
@@ -800,7 +810,7 @@ private struct UploadImagePreview: View {
   }
 
   let imageUrl: URL
-  let onRemoval: (URL) -> Void
+  let onRemoval: () -> Void
 
   var body: some View {
     GroupBox {
@@ -815,15 +825,9 @@ private struct UploadImagePreview: View {
           model.upload(image: imageUrl)
         }
         .loadingScreen(isLoading: model.uploadResult == nil, dimBackground: true)
-        .overlay(
-          Button(action: {
-            onRemoval(imageUrl)
-          }, label: {
-            Image(systemName: "xmark.circle.fill")
-          })
-            .keyboardShortcut(.delete, modifiers: .none)
-            .opacity(isHovering ? 1 : 0), alignment: .topLeading
-        )
+        .deleteButton {
+          onRemoval()
+        }
         .animation(.default)
     }
   }
@@ -838,6 +842,8 @@ private struct UploadImagePreview: View {
 // MARK: - VideoPostForm
 
 private struct VideoPostForm: View {
+  // MARK: Internal
+
   class ViewModel: ObservableObject {
     // MARK: Lifecycle
 
@@ -920,10 +926,20 @@ private struct VideoPostForm: View {
         .font(.title2)
       Spacer()
       if let videoUrl = model.selectedItem {
-        if let size = model.getVideoDimensions() {
-          VideoPlayer(url: videoUrl, fullSize: size)
-        } else {
-          VideoPlayer(url: videoUrl)
+        Group {
+          if let size = model.getVideoDimensions() {
+            VideoPlayer(url: videoUrl, fullSize: size)
+          } else {
+            VideoPlayer(url: videoUrl)
+          }
+        }
+        .onHover { isHovered in
+          withAnimation {
+            self.isHovered = isHovered
+          }
+        }
+        .deleteButton {
+          model.selectedItem = nil
         }
       } else {
         Button(action: { model.presentVideoSelector = true }, label: {
@@ -942,4 +958,8 @@ private struct VideoPostForm: View {
       }
     }
   }
+
+  // MARK: Private
+
+  @State private var isHovered: Bool = false
 }

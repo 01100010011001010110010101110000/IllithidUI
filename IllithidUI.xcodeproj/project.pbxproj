@@ -17,6 +17,7 @@
 		22F265E2BD3F93E5D3CEFF02 /* NewPostForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2621DBC55C2239EE306E9 /* NewPostForm.swift */; };
 		22F2678DF245D6A0F20537DD /* NewCommentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B803F19109572D1A7D9 /* NewCommentForm.swift */; };
 		22F268562543BDD565D4692F /* NewItemCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F267C48D18E622053FF2B6 /* NewItemCommands.swift */; };
+		22F268F9F8F79CE3710C2C0A /* CancelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F268F37D252AE77C8C0BED /* CancelButton.swift */; };
 		22F269865D654267FB61F813 /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
 		22F26C0ED4D2B60F8DA3AEFF /* NewPostForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2621DBC55C2239EE306E9 /* NewPostForm.swift */; };
 		22F26CE109E74B66983D463D /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
@@ -138,6 +139,7 @@
 		22F2644E6EE7924DF1DFBFFE /* DangerButtonStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DangerButtonStyle.swift; sourceTree = "<group>"; };
 		22F2669DD8A63B3417BC6376 /* MockPostList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPostList.swift; sourceTree = "<group>"; };
 		22F267C48D18E622053FF2B6 /* NewItemCommands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewItemCommands.swift; sourceTree = "<group>"; };
+		22F268F37D252AE77C8C0BED /* CancelButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CancelButton.swift; sourceTree = "<group>"; };
 		22F269812B6D13E1FF3134CA /* DetailedPostView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailedPostView.swift; sourceTree = "<group>"; };
 		22F26B803F19109572D1A7D9 /* NewCommentForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentForm.swift; sourceTree = "<group>"; };
 		22F26EEABF3B3BEF1EA50F15 /* NavigationSelectionPreference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationSelectionPreference.swift; sourceTree = "<group>"; };
@@ -580,6 +582,7 @@
 				6D544EE822FF40C100196C25 /* ConditionalModifier.swift */,
 				6D1DAF682407100C0020A9D6 /* RoundedBorderModifier.swift */,
 				6D1F97B82431905000B3E9FC /* NsfwBlur.swift */,
+				22F268F37D252AE77C8C0BED /* CancelButton.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -856,6 +859,7 @@
 				22F26E16A3958DE94C69BBB2 /* NavigationSelectionPreference.swift in Sources */,
 				22F26E7175C9DD49FD727B51 /* NewItemCommands.swift in Sources */,
 				22F2625FF1F9BDED7C8FEED7 /* NewPostForm.swift in Sources */,
+				22F268F9F8F79CE3710C2C0A /* CancelButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
