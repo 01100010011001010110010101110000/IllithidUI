@@ -107,6 +107,7 @@ private struct NavigationSidebar: View {
   let column: ColumnManager.Column
 
   var body: some View {
+    // FIXME: onDrag seems to break list selection while clicking inside the Label. Clicking on empty space in the row works
     List(selection: $selection) {
       Section(header: Text("Meta")) {
         Label("Account", systemImage: "person.crop.circle")
