@@ -19,12 +19,6 @@ import Illithid
 // MARK: - PreferencesView
 
 struct PreferencesView: View {
-  // MARK: Lifecycle
-
-  init(accountManager: ObservedObject<AccountManager>) {
-    _accountManager = accountManager
-  }
-
   // MARK: Internal
 
   @ObservedObject var accountManager: AccountManager
