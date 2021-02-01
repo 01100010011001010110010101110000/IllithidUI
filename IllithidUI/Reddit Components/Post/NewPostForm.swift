@@ -99,6 +99,7 @@ struct NewPostForm: View {
     }
     .textFieldStyle(RoundedBorderTextFieldStyle())
     .onReceive(model.$createPostIn, perform: { target in
+      model.getPostRequirements()
       if let acceptor = target {
         if acceptor.permitsSelfPosts { model.postType = .`self` }
         else if acceptor.permitsImagePosts { model.postType = .image }
@@ -143,7 +144,7 @@ struct NewPostForm: View {
         .combineLatest($postType)
         .receive(on: RunLoop.main)
         .sink { [weak self] _, _ in
-          self?.calculateSubmissionValidity()
+          self?.validatePost()
         }
 
       cancelBag.append(validityToken)
@@ -156,6 +157,7 @@ struct NewPostForm: View {
     @Published var title: String = ""
     @Published var createPostIn: PostAcceptor? = nil
     @Published var postType: NewPostType = .`self`
+    @Published var postRequirements: PostRequirements? = nil
     @Published var postIsValid: Bool = false
     @Published var posting: Bool = false
     @Published var result: Result<NewPostResponse, AFError>? = nil
@@ -181,11 +183,24 @@ struct NewPostForm: View {
       }
     }
 
+    func getPostRequirements() {
+      if let subreddit = createPostIn as? Subreddit {
+        _ = Illithid.shared.postRequirements(for: subreddit.displayName) { [weak self] result in
+          switch result {
+          case let .success(requirements):
+            self?.postRequirements = requirements
+          case let .failure(error):
+            Illithid.shared.logger.errorMessage("Failed to fetch post rules for \(subreddit.displayName): \(error)")
+          }
+        }
+      }
+    }
+
     // MARK: Private
 
     private var cancelBag: [AnyCancellable] = []
 
-    private func calculateSubmissionValidity() {
+    private func validatePost() {
       switch postType {
       case .`self`:
         postIsValid = selfPostModel.isValid
