@@ -24,6 +24,8 @@ import SDWebImageSwiftUI
 
 // MARK: - NewPostForm
 
+// TODO: All validation logic should probably be moved into the top level view model, it is difficult to keep track of currently
+
 struct NewPostForm: View {
   // MARK: Lifecycle
 
@@ -41,10 +43,10 @@ struct NewPostForm: View {
     VStack(alignment: .center) {
       selectionHeader
 
-      if let acceptor = model.createPostIn {
+      if let acceptor = model.createPostIn, let requirements = model.postRequirements {
         TabView(selection: $model.postType) {
           if acceptor.permitsSelfPosts {
-            SelfPostForm(title: $model.title, model: model.selfPostModel)
+            SelfPostForm(title: $model.title, requirements: requirements, model: model.selfPostModel)
               .tag(NewPostType.`self`)
               .tabItem {
                 Label(title: { Text("post.type.text") },
@@ -55,7 +57,7 @@ struct NewPostForm: View {
 
           // In the current Reddit API implementation, if image posts are allowed, so are GIFs
           if acceptor.permitsImagePosts {
-            ImageGifPostForm(for: acceptor, title: $model.title, model: model.imagePostModel)
+            ImageGifPostForm(acceptor: acceptor, title: $model.title, requirements: requirements, model: model.imagePostModel)
               .tag(NewPostType.image)
               .tabItem {
                 Label(title: { Text("post.type.image.and.gif") },
@@ -66,7 +68,7 @@ struct NewPostForm: View {
 
           if acceptor.permitsLinkPosts {
             VStack {
-              LinkPostForm(title: $model.title, model: model.linkPostModel)
+              LinkPostForm(title: $model.title, requirements: requirements, model: model.linkPostModel)
               Spacer()
             }
             .tag(NewPostType.link)
@@ -79,7 +81,7 @@ struct NewPostForm: View {
 
           if acceptor.permitsVideoPosts {
             VStack {
-              VideoPostForm(title: $model.title, model: model.videoPostModel)
+              VideoPostForm(title: $model.title, requirements: requirements, model: model.videoPostModel)
               Spacer()
             }
             .tag(NewPostType.video)
@@ -99,6 +101,7 @@ struct NewPostForm: View {
     }
     .textFieldStyle(RoundedBorderTextFieldStyle())
     .onReceive(model.$createPostIn, perform: { target in
+      model.resetInputs()
       model.getPostRequirements()
       if let acceptor = target {
         if acceptor.permitsSelfPosts { model.postType = .`self` }
@@ -123,33 +126,11 @@ struct NewPostForm: View {
 
   // MARK: Private
 
-  private class ViewModel: ObservableObject {
+  private class ViewModel: ObservableObject, CancelableViewModel {
     // MARK: Lifecycle
 
     init() {
-      let postingToken = Publishers.MergeMany([linkPostModel.$posting, selfPostModel.$posting,
-                                               imagePostModel.$posting, videoPostModel.$posting])
-        .receive(on: RunLoop.main)
-        .assign(to: \.posting, on: self)
-      let resultToken = Publishers.MergeMany([linkPostModel.$postResult, selfPostModel.$postResult,
-                                              imagePostModel.$postResult, videoPostModel.$postResult])
-        .receive(on: RunLoop.main)
-        .assign(to: \.result, on: self)
-
-      // These two subscribers update the validity of the submission whenever:
-      // * A tab's fields are updated
-      // * The tab is changed
-      let validityToken = Publishers.MergeMany([linkPostModel.$isValid, selfPostModel.$isValid,
-                                                imagePostModel.$isValid, videoPostModel.$isValid])
-        .combineLatest($postType)
-        .receive(on: RunLoop.main)
-        .sink { [weak self] _, _ in
-          self?.validatePost()
-        }
-
-      cancelBag.append(validityToken)
-      cancelBag.append(postingToken)
-      cancelBag.append(resultToken)
+      subscribe()
     }
 
     // MARK: Internal
@@ -157,8 +138,9 @@ struct NewPostForm: View {
     @Published var title: String = ""
     @Published var createPostIn: PostAcceptor? = nil
     @Published var postType: NewPostType = .`self`
-    @Published var postRequirements: PostRequirements? = nil
     @Published var postIsValid: Bool = false
+    @Published var postRequirements: PostRequirements? = nil
+    @Published var validationFailures: [PostRequirements.ValidationFailure] = []
     @Published var posting: Bool = false
     @Published var result: Result<NewPostResponse, AFError>? = nil
 
@@ -167,11 +149,26 @@ struct NewPostForm: View {
     @Published var imagePostModel = ImageGifPostForm.ViewModel()
     @Published var videoPostModel = VideoPostForm.ViewModel()
 
+    var submissionIsDisabled: Bool {
+      !postIsValid || title.isEmpty || posting
+    }
+
+    /// Reset all user form inputs
+    func resetInputs() {
+      cancel()
+      linkPostModel = LinkPostForm.ViewModel()
+      selfPostModel = SelfPostForm.ViewModel()
+      imagePostModel = ImageGifPostForm.ViewModel()
+      videoPostModel = VideoPostForm.ViewModel()
+      title.removeAll()
+      subscribe()
+    }
+
     func submit() {
       guard let target = createPostIn else { return }
       switch postType {
       case .`self`:
-        selfPostModel.submitTextPost(titled: title, to: target)
+        selfPostModel.submit(titled: title, to: target)
       case .link:
         linkPostModel.submitLinkPost(titled: title, to: target)
       case .image:
@@ -196,22 +193,107 @@ struct NewPostForm: View {
       }
     }
 
+    // MARK: Fileprivate
+
+    fileprivate var cancelBag: [AnyCancellable] = []
+
     // MARK: Private
 
-    private var cancelBag: [AnyCancellable] = []
+    private func subscribe() {
+      let postingToken = Publishers
+        .MergeMany([linkPostModel.$posting, selfPostModel.$posting,
+                    imagePostModel.$posting, videoPostModel.$posting])
+        .receive(on: RunLoop.main)
+        .assign(to: \.posting, on: self)
+      let resultToken = Publishers
+        .MergeMany([linkPostModel.$postResult, selfPostModel.$postResult,
+                    imagePostModel.$postResult, videoPostModel.$postResult])
+        .receive(on: RunLoop.main)
+        .assign(to: \.result, on: self)
+
+      // These two subscribers update the validity of the submission whenever:
+      // * A tab's fields are updated
+      // * The tab is changed
+      let validityToken = Publishers
+        .MergeMany([linkPostModel.$isValid, selfPostModel.$isValid,
+                    imagePostModel.$isValid, videoPostModel.$isValid])
+        .combineLatest($postType)
+        .combineLatest($title)
+        .combineLatest($postRequirements)
+        .receive(on: RunLoop.main)
+        .sink { [weak self] _, _ in
+          self?.validatePost()
+        }
+
+      cancelBag.append(validityToken)
+      cancelBag.append(postingToken)
+      cancelBag.append(resultToken)
+    }
 
     private func validatePost() {
       switch postType {
       case .`self`:
-        postIsValid = selfPostModel.isValid
+        validationFailures = postRequirements?.validateSelfPost(title: title, body: selfPostModel.body) ?? []
+        postIsValid = selfPostModel.isValid && validationFailures.isEmpty
       case .link:
-        postIsValid = linkPostModel.isValid
+        guard let url = URL(string: linkPostModel.linkTo) else {
+          postIsValid = false
+          return
+        }
+        validationFailures = postRequirements?.validateLinkPost(title: title, link: url) ?? []
+        postIsValid = linkPostModel.isValid && validationFailures.isEmpty
       case .image:
-        postIsValid = imagePostModel.isValid
+        validationFailures = postRequirements?.validateImagePost(title: title) ?? []
+        postIsValid = imagePostModel.isValid && validationFailures.isEmpty
       case .video:
-        postIsValid = videoPostModel.isValid
+        validationFailures = postRequirements?.validateVideoPost(title: title) ?? []
+        postIsValid = videoPostModel.isValid && validationFailures.isEmpty
       default:
         break
+      }
+    }
+  }
+
+  private struct SubmissionButton: View {
+    @State private var displayValidationFailures: Bool = false
+
+    @ObservedObject var model: NewPostForm.ViewModel
+
+    var body: some View {
+      HStack {
+        if !model.validationFailures.isEmpty {
+          Image(systemName: "exclamationmark.circle.fill")
+            .foregroundColor(.red)
+            .onHover { isHovered in
+              displayValidationFailures = isHovered && !model.validationFailures.isEmpty
+            }
+            .popover(isPresented: $displayValidationFailures) {
+              List {
+                ForEach(model.validationFailures.indices, id: \.self) { idx in
+                  Text(verbatim: "\(model.validationFailures[idx])")
+                }
+              }
+            }
+        }
+        Button(action: {
+          model.submit()
+        }, label: {
+          HStack {
+            if model.posting {
+              ProgressView()
+                .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
+                .scaleEffect(0.5, anchor: .center)
+            } else if case .success = model.result {
+              Image(systemName: "checkmark.circle.fill")
+                .foregroundColor(.green)
+            } else if case .failure = model.result {
+              Image(systemName: "xmark.circle.fill")
+                .foregroundColor(.red)
+            }
+            Text("post.submit")
+          }
+        })
+          .disabled(model.submissionIsDisabled)
       }
     }
   }
@@ -238,42 +320,24 @@ struct NewPostForm: View {
     .padding()
   }
 
-  private var cancelButton: some View {
-    Button(action: {
-      withAnimation {
-        showNewPostForm = false
-      }
-    }, label: {
-      Text("cancel")
-    })
-      .keyboardShortcut(.cancelAction)
-  }
-
-  private var submitButton: some View {
-    Button(action: {
-      model.submit()
-    }, label: {
-      HStack {
-        if model.posting {
-          ProgressView()
-            .progressViewStyle(CircularProgressViewStyle(tint: .accentColor))
-            .scaleEffect(0.5, anchor: .center)
-        } else if case .success = model.result {
-          Image(systemName: "checkmark.circle.fill")
-            .foregroundColor(.green)
-        } else if case .failure = model.result {
-          Image(systemName: "xmark.circle.fill")
-            .foregroundColor(.red)
-        }
-        Text("post.submit")
-      }
-    })
-      .disabled(!model.postIsValid && !model.title.isEmpty)
-  }
-
   private var formControl: some View {
     HStack {
-      cancelButton
+      Button(action: {
+        model.cancel()
+        withAnimation {
+          showNewPostForm = false
+        }
+      }, label: {
+        Text("cancel")
+      })
+        .keyboardShortcut(.cancelAction)
+      Button(action: {
+        model.resetInputs()
+      }, label: {
+        Text("reset")
+      })
+        .disabled(model.posting)
+        .keyboardShortcut("r", modifiers: [.command, .shift])
       Spacer()
       HStack {
         if case .video = model.postType {
@@ -283,7 +347,7 @@ struct NewPostForm: View {
             .keyboardShortcut("g", modifiers: .option)
             .help("post.video.upload.as.gif.description")
         }
-        submitButton
+        SubmissionButton(model: model)
       }
     }
     .padding()
@@ -361,19 +425,9 @@ private struct SubredditSelectorView: View {
 // MARK: - SelfPostForm
 
 private struct SelfPostForm: View {
-  class ViewModel: ObservableObject {
-    // MARK: Lifecycle
+  // MARK: Internal
 
-    init() {
-      let validityToken = $body
-        .receive(on: RunLoop.main)
-        .sink { [weak self] _ in
-          guard let self = self else { return }
-          self.isValid = !self.body.isEmpty
-        }
-      cancelBag.append(validityToken)
-    }
-
+  class ViewModel: ObservableObject, CancelableViewModel {
     // MARK: Internal
 
     @Published var body: String = ""
@@ -381,7 +435,7 @@ private struct SelfPostForm: View {
     @Published var isValid: Bool = false
     @Published var postResult: Result<NewPostResponse, AFError>? = nil
 
-    func submitTextPost(titled title: String, to acceptor: PostAcceptor) {
+    func submit(titled title: String, to acceptor: PostAcceptor) {
       posting = true
       let cancelToken = acceptor.submitSelfPost(title: title, markdown: body)
         .receive(on: RunLoop.main)
@@ -400,20 +454,42 @@ private struct SelfPostForm: View {
       cancelBag.append(cancelToken)
     }
 
-    // MARK: Private
+    // MARK: Fileprivate
 
-    private var cancelBag: [AnyCancellable] = []
+    fileprivate var cancelBag: [AnyCancellable] = []
   }
 
   @Binding var title: String
+  let requirements: PostRequirements
   @ObservedObject var model: SelfPostForm.ViewModel
 
   var body: some View {
     VStack {
       TextField("post.new.title", text: $title)
         .font(.title2)
-      TextEditor(text: $model.body)
-        .font(.system(size: 18))
+      if requirements.bodyRestrictionPolicy != .notAllowed {
+        TextEditor(text: $model.body)
+          .font(.system(size: 18))
+      } else {
+        Spacer()
+      }
+    }
+    .onReceive(model.$body) { _ in
+      validate()
+    }
+    .onAppear {
+      validate()
+    }
+  }
+
+  // MARK: Private
+
+  private func validate() {
+    switch requirements.bodyRestrictionPolicy {
+    case .none, .notAllowed:
+      model.isValid = true
+    case .required:
+      model.isValid = !model.body.isEmpty
     }
   }
 }
@@ -421,7 +497,7 @@ private struct SelfPostForm: View {
 // MARK: - LinkPostForm
 
 private struct LinkPostForm: View {
-  class ViewModel: ObservableObject {
+  class ViewModel: ObservableObject, CancelableViewModel {
     // MARK: Lifecycle
 
     init() {
@@ -463,13 +539,17 @@ private struct LinkPostForm: View {
       cancelBag.append(cancelToken)
     }
 
+    // MARK: Fileprivate
+
+    fileprivate var cancelBag: [AnyCancellable] = []
+
     // MARK: Private
 
-    private var cancelBag: [AnyCancellable] = []
     private let detector = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
   }
 
   @Binding var title: String
+  let requirements: PostRequirements
   @ObservedObject var model: LinkPostForm.ViewModel
 
   var body: some View {
@@ -485,17 +565,9 @@ private struct LinkPostForm: View {
 // MARK: - ImageGifPostForm
 
 private struct ImageGifPostForm: View {
-  // MARK: Lifecycle
-
-  init(for acceptor: PostAcceptor, title: Binding<String>, model: ViewModel) {
-    self.acceptor = acceptor
-    _title = title
-    self.model = model
-  }
-
   // MARK: Internal
 
-  class ViewModel: ObservableObject {
+  class ViewModel: ObservableObject, CancelableViewModel {
     // MARK: Lifecycle
 
     init() {
@@ -525,9 +597,11 @@ private struct ImageGifPostForm: View {
       }
     }
 
-    // MARK: Private
+    // MARK: Fileprivate
 
-    private var cancelBag: [AnyCancellable] = []
+    fileprivate var cancelBag: [AnyCancellable] = []
+
+    // MARK: Private
 
     private func submitImagePost(titled title: String, to acceptor: PostAcceptor) {
       let illithid: Illithid = .shared
@@ -583,6 +657,7 @@ private struct ImageGifPostForm: View {
 
   let acceptor: PostAcceptor
   @Binding var title: String
+  let requirements: PostRequirements
   @ObservedObject var model: Self.ViewModel
 
   var body: some View {
@@ -883,7 +958,7 @@ private struct UploadImagePreview: View {
 private struct VideoPostForm: View {
   // MARK: Internal
 
-  class ViewModel: ObservableObject {
+  class ViewModel: ObservableObject, CancelableViewModel {
     // MARK: Lifecycle
 
     init() {
@@ -951,12 +1026,13 @@ private struct VideoPostForm: View {
       return track.naturalSize.applying(track.preferredTransform)
     }
 
-    // MARK: Private
+    // MARK: Fileprivate
 
-    private var cancelBag: [AnyCancellable] = []
+    fileprivate var cancelBag: [AnyCancellable] = []
   }
 
   @Binding var title: String
+  let requirements: PostRequirements
   @ObservedObject var model: Self.ViewModel
 
   var body: some View {

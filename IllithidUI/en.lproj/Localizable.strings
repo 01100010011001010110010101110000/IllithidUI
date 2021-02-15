@@ -2,6 +2,7 @@
 /* Localization file */
 
 "cancel" = "Cancel";
+"reset" = "Reset";
 "done" = "Done";
 
 "multireddit.edit" = "Edit multireddit";
