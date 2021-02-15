@@ -15,10 +15,12 @@
 		22F2629F7991F10CC55F8646 /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
 		22F2659410C2DF0CE2F524E8 /* NewCommentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B803F19109572D1A7D9 /* NewCommentForm.swift */; };
 		22F265E2BD3F93E5D3CEFF02 /* NewPostForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2621DBC55C2239EE306E9 /* NewPostForm.swift */; };
+		22F26624614608068C45F953 /* CancelableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26E2F376D20C4FED06CC1 /* CancelableViewModel.swift */; };
 		22F2678DF245D6A0F20537DD /* NewCommentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B803F19109572D1A7D9 /* NewCommentForm.swift */; };
 		22F268562543BDD565D4692F /* NewItemCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F267C48D18E622053FF2B6 /* NewItemCommands.swift */; };
 		22F268F9F8F79CE3710C2C0A /* CancelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F268F37D252AE77C8C0BED /* CancelButton.swift */; };
 		22F269865D654267FB61F813 /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
+		22F26BB9D7C55FF427614FDA /* ValidationFailure+StringInterpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B39571F266EC669C129 /* ValidationFailure+StringInterpolation.swift */; };
 		22F26C0ED4D2B60F8DA3AEFF /* NewPostForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2621DBC55C2239EE306E9 /* NewPostForm.swift */; };
 		22F26CE109E74B66983D463D /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
 		22F26E16A3958DE94C69BBB2 /* NavigationSelectionPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26EEABF3B3BEF1EA50F15 /* NavigationSelectionPreference.swift */; };
@@ -141,7 +143,9 @@
 		22F267C48D18E622053FF2B6 /* NewItemCommands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewItemCommands.swift; sourceTree = "<group>"; };
 		22F268F37D252AE77C8C0BED /* CancelButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CancelButton.swift; sourceTree = "<group>"; };
 		22F269812B6D13E1FF3134CA /* DetailedPostView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailedPostView.swift; sourceTree = "<group>"; };
+		22F26B39571F266EC669C129 /* ValidationFailure+StringInterpolation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ValidationFailure+StringInterpolation.swift"; sourceTree = "<group>"; };
 		22F26B803F19109572D1A7D9 /* NewCommentForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentForm.swift; sourceTree = "<group>"; };
+		22F26E2F376D20C4FED06CC1 /* CancelableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CancelableViewModel.swift; sourceTree = "<group>"; };
 		22F26EEABF3B3BEF1EA50F15 /* NavigationSelectionPreference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationSelectionPreference.swift; sourceTree = "<group>"; };
 		6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllithidButton.swift; sourceTree = "<group>"; };
 		6D09353F25760F8C002DDBD8 /* PostGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostGridView.swift; sourceTree = "<group>"; };
@@ -500,6 +504,7 @@
 			isa = PBXGroup;
 			children = (
 				6DBB486525756D5000C0B1E2 /* MediaMetadata.swift */,
+				22F26E2F376D20C4FED06CC1 /* CancelableViewModel.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -604,6 +609,7 @@
 				6DAEDDEE24A1B45D00B0FF06 /* Array+Cancel.swift */,
 				6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */,
 				6D43AC3E252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift */,
+				22F26B39571F266EC669C129 /* ValidationFailure+StringInterpolation.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -860,6 +866,8 @@
 				22F26E7175C9DD49FD727B51 /* NewItemCommands.swift in Sources */,
 				22F2625FF1F9BDED7C8FEED7 /* NewPostForm.swift in Sources */,
 				22F268F9F8F79CE3710C2C0A /* CancelButton.swift in Sources */,
+				22F26BB9D7C55FF427614FDA /* ValidationFailure+StringInterpolation.swift in Sources */,
+				22F26624614608068C45F953 /* CancelableViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
