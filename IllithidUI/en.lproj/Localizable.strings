@@ -23,6 +23,10 @@
 "comments.clearvote" = "Clear vote";
 "comments.save" = "Save";
 "comments.unsave" = "Unsave";
+"comments.reply" = "Reply";
+"comments.collapse" = "Collapse";
+"comments.expand" = "Expand";
+"comments.thread.collapse" = "Collapse thread";
 "comments.report" = "Report";
 
 "post.pinned" = "This post has been pinned by a moderator";

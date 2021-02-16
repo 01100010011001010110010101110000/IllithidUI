@@ -72,6 +72,12 @@ struct CommentRowView: View {
     .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
     .environmentObject(interactions)
     .contextMenu {
+      Button("comments.reply") {
+        withAnimation {
+          presentReplyForm = true
+        }
+      }
+      Divider()
       if interactions.ballot != .up {
         Button("comments.upvote") { interactions.upvote(comment: comment) }
       }
@@ -88,13 +94,11 @@ struct CommentRowView: View {
         Button("comments.unsave") { interactions.unsave(comment: comment) }
       }
       Divider()
-      Button(action: {
-        withAnimation {
-          presentReplyForm = true
-        }
-      }, label: {
-        Text("Reply")
-      })
+      if isCollapsed {
+        Button("comments.collapse") { isCollapsed = true }
+      } else {
+        Button("comments.expand") { isCollapsed = false }
+      }
       if let depth = comment.depth ?? 0, depth != 0 {
         Button(action: {
           withAnimation {
