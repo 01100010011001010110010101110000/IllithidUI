@@ -66,7 +66,8 @@ struct CommentsView: View, Identifiable {
                 .offset(y: 40)
             } else {
               CommentsStack(commentData: commentData, scrollProxy: scrollProxy)
-                .padding([.bottom, .horizontal])
+                .padding([.bottom])
+                .padding(.horizontal, 5)
                 .loadingScreen(isLoading: commentData.comments.isEmpty && commentData.loadingComments,
                                title: "comments.loading",
                                offset: (x: 0, y: 40))
