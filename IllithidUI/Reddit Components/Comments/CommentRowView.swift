@@ -94,11 +94,7 @@ struct CommentRowView: View {
         Button("comments.unsave") { interactions.unsave(comment: comment) }
       }
       Divider()
-      if isCollapsed {
-        Button("comments.collapse") { isCollapsed = true }
-      } else {
-        Button("comments.expand") { isCollapsed = false }
-      }
+      Button(isCollapsed ? "comments.expand" : "comments.collapse") { toggleCollapsed() }
       if let depth = comment.depth ?? 0, depth != 0 {
         Button(action: {
           withAnimation {
@@ -208,6 +204,12 @@ struct CommentRowView: View {
   @State private var presentReplyForm: Bool = false
 
   @StateObject private var interactions: CommentState
+
+  private func toggleCollapsed() {
+    withAnimation {
+      isCollapsed.toggle()
+    }
+  }
 }
 
 // MARK: - RemovedComment
