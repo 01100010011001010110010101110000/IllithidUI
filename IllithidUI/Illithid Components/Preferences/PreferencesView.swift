@@ -15,6 +15,7 @@
 import SwiftUI
 
 import Illithid
+import SDWebImageSwiftUI
 
 // MARK: - PreferencesView
 
@@ -32,6 +33,9 @@ struct PreferencesView: View {
       case .accounts:
         AccountsPreferences(accountManager: accountManager)
           .navigationTitle("Accounts")
+      case .advanced:
+        AdvancedPreferences()
+          .navigationTitle("Advances")
       }
     }
     .padding(.top, 20)
@@ -43,6 +47,10 @@ struct PreferencesView: View {
 
       ToolbarItem(placement: .navigation) {
         PreferencesToolbarItemView(selection: $preferencePage, page: .accounts)
+      }
+
+      ToolbarItem(placement: .navigation) {
+        PreferencesToolbarItemView(selection: $preferencePage, page: .advanced)
       }
     }
   }
@@ -91,6 +99,7 @@ extension PreferencesView {
   enum PreferencePage: String, Identifiable, CaseIterable {
     case general
     case accounts
+    case advanced
 
     // MARK: Internal
 
@@ -104,6 +113,8 @@ extension PreferencesView {
         return "gearshape"
       case .accounts:
         return "person.crop.circle"
+      case .advanced:
+        return "gearshape.2"
       }
     }
   }
@@ -224,6 +235,61 @@ struct AccountsPreferences: View {
       .padding()
     }
   }
+}
+
+// MARK: - AdvancedPreferences
+
+struct AdvancedPreferences: View {
+  // MARK: Internal
+
+  var body: some View {
+    VStack(alignment: .leading) {
+      GroupBox(label: Text("Content").font(.headline)) {
+        VStack(alignment: .leading) {
+          HStack {
+            Text("Cache size on disk: \(model.byteFormatter.string(fromByteCount: Int64(model.diskUsageBytes)))")
+            Spacer()
+            Button(action: {
+              SDWebImageManager.defaultImageCache?.clear(with: .all, completion: nil)
+              model.calculateCacheDiskUsage()
+            }, label: {
+              Text("Clear image cache")
+            })
+          }
+        }
+      }
+      Spacer()
+    }
+  }
+
+  // MARK: Private
+
+  private final class ViewModel: ObservableObject {
+    // MARK: Lifecycle
+
+    init() {
+      byteFormatter = .init()
+      byteFormatter.zeroPadsFractionDigits = true
+      diskUsageBytes = 0
+      calculateCacheDiskUsage()
+    }
+
+    // MARK: Internal
+
+    @Published var diskUsageBytes: UInt
+
+    let byteFormatter: ByteCountFormatter
+
+    func calculateCacheDiskUsage() {
+      guard let cacheManager = SDWebImageManager.defaultImageCache as? SDImageCachesManager else { diskUsageBytes = 0; return }
+      diskUsageBytes = cacheManager.caches?
+        .compactMap { $0 as? SDImageCache }
+        .reduce(0, { $0 + $1.totalDiskSize() }) ?? 0
+    }
+  }
+
+  @ObservedObject private var preferences: PreferencesData = .shared
+  @StateObject private var model = Self.ViewModel()
 }
 
 // MARK: - PreferencesData
