@@ -14,16 +14,14 @@
 
 import SwiftUI
 
-import SDWebImage
+struct RefreshButton: View {
+  let onRefresh: () -> Void
 
-struct DebugCommands: Commands {
-  var body: some Commands {
-    CommandMenu("debug") {
-      Button(action: {
-        SDWebImageManager.defaultImageCache?.clear(with: .all, completion: nil)
-      }, label: {
-        Text("Clear image cache")
-      })
-    }
+  var body: some View {
+    Button(action: {
+      onRefresh()
+    }, label: {
+      Image(systemName: "arrow.clockwise")
+    })
   }
 }

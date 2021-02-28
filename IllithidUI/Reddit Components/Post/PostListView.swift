@@ -44,34 +44,7 @@ struct PostListView: View {
 
   var body: some View {
     VStack(spacing: 0.0) {
-      VStack {
-        SortController(model: sorter)
-          .onReceive(sorter.$sort.dropFirst()) { sort in
-            postsData.reload(sort: sort,
-                             topInterval: sorter.topInterval)
-          }
-          .onReceive(sorter.$topInterval.dropFirst()) { interval in
-            postsData.reload(sort: sorter.sort,
-                             topInterval: interval)
-          }
-        HStack {
-          TextField("Search Posts", text: $searchText)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-          if postContainer is Subreddit {
-            Button(action: {
-              withAnimation {
-                showSidebar.toggle()
-              }
-            }, label: {
-              Image(systemName: "sidebar.right")
-                .font(.body)
-            })
-              .help("Show or hide sidebar")
-          }
-        }
-        .padding([.bottom, .horizontal], 10)
-      }
-      .background(Color(.controlBackgroundColor))
+      postListHeader
 
       ZStack(alignment: .trailing) {
         if postsData.noPosts {
@@ -163,6 +136,49 @@ struct PostListView: View {
       }
       return true
     }
+  }
+}
+
+private extension PostListView {
+  var postListHeader: some View {
+    VStack {
+      HStack {
+        // Drop first to avoid reloading on view appear
+        SortController(model: sorter)
+          .onReceive(sorter.$sort.dropFirst()) { sort in
+            postsData.reload(sort: sort, topInterval: sorter.topInterval)
+          }
+          .onReceive(sorter.$topInterval.dropFirst()) { interval in
+            postsData.reload(sort: sorter.sort, topInterval: interval)
+          }
+
+        RefreshButton {
+          postsData.reload(sort: sorter.sort, topInterval: sorter.topInterval)
+        }
+        .keyboardShortcut("r")
+
+        Spacer()
+      }
+      .padding(.leading, 10)
+
+      HStack {
+        TextField("Search Posts", text: $searchText)
+          .textFieldStyle(RoundedBorderTextFieldStyle())
+        if postContainer is Subreddit {
+          Button(action: {
+            withAnimation {
+              showSidebar.toggle()
+            }
+          }, label: {
+            Image(systemName: "sidebar.right")
+              .font(.body)
+          })
+            .help("Show or hide sidebar")
+        }
+      }
+      .padding([.bottom, .horizontal], 10)
+    }
+    .background(Color(.controlBackgroundColor))
   }
 }
 

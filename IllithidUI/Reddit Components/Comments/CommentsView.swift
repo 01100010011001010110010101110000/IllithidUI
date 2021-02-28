@@ -50,10 +50,14 @@ struct CommentsView: View, Identifiable {
   var body: some View {
     ScrollViewReader { scrollProxy in
       VStack {
-        SortController(model: sorter, hideIntervalPicker: true)
-          .onReceive(sorter.$sort.dropFirst()) { sort in
-            commentData.reload(focusOn: focusedComment, context: commentContext, sort: sort)
-          }
+        HStack {
+          SortController(model: sorter, hideIntervalPicker: true)
+            .onReceive(sorter.$sort.dropFirst()) { sort in
+              commentData.reload(focusOn: focusedComment, context: commentContext, sort: sort)
+            }
+            .padding([.top, .leading], 10)
+          Spacer()
+        }
         ZStack(alignment: .bottomTrailing) {
           ScrollView {
             DetailedPostView(post: post)

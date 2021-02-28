@@ -98,7 +98,11 @@ private struct Content: View {
 
   var body: some View {
     VStack {
-      SortController(model: sorter)
+      HStack {
+        SortController(model: sorter)
+          .padding([.leading, .top, .bottom], 10)
+        Spacer()
+      }
       List {
         ForEach(data.content[content]!) { item in
           switch item {

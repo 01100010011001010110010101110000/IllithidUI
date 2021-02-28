@@ -63,9 +63,7 @@ struct SortController<Sort>: View where Sort: RawRepresentable & CaseIterable & 
         }
         .frame(maxWidth: 100)
       }
-      Spacer()
     }
-    .padding([.top, .leading, .trailing], 10)
   }
 }
 

@@ -57,8 +57,11 @@ struct DetailedPostView: View {
           .font(.title2)
           .foregroundColor(.green)
           .padding(.leading, 10)
+
           Spacer()
+
           TitleView(post: post)
+
           Spacer()
         }
         .padding(.top)
