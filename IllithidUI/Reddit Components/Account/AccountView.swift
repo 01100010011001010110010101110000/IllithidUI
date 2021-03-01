@@ -132,7 +132,7 @@ private struct Content: View {
           }
         }
       }
-      .loadingScreen(isLoading: data.isLoading[content, default: false])
+      .loadingScreen(isLoading: data.isLoading[content, default: false] && data.content[content]!.isEmpty)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .onAppear {
