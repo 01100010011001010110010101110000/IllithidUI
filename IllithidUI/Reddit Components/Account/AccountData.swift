@@ -61,14 +61,14 @@ class AccountData: ObservableObject {
   }
 
   func loadContent(content: AccountContent, sort: AccountContentSort, topInterval: TopInterval = .day) {
-    guard !isExhausted[content, default: false] else { return }
+    guard !isExhausted[content, default: false], !isLoading[content, default: false] else { return }
     isLoading[content] = true
     requests[content] = account?.content(content: content, sort: sort, topInterval: topInterval, parameters: listingAnchors[content]!) { result in
       self.isLoading[content] = false
       switch result {
       case let .success(listing):
         self.content[content]?.append(contentsOf: listing.children)
-        self.listingAnchors[content]?.after = listing.after ?? ""
+        self.listingAnchors[content]!.after = listing.after ?? ""
         self.isExhausted[content] = listing.after == nil
       case let .failure(error):
         Illithid.shared.logger.errorMessage("Failed to load \(content) for \(self.account?.name ?? "No account"): \(error)")
