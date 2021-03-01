@@ -156,7 +156,9 @@ struct RemovedPostView: View {
     case .copyrightTakedown:
       return "This post has been removed due to a copyright notice"
     case .reddit:
-      return "This post has been removed for violating site-wide rules"
+      return "This post has been removed by Reddit's spam filter"
+    case .automod_filtered:
+      return "This post has been removed by the automod"
     }
   }
 }
