@@ -100,9 +100,16 @@ private struct Content: View {
     VStack {
       HStack {
         SortController(model: sorter)
-          .padding([.leading, .top, .bottom], 10)
+
+        RefreshButton {
+          data.reload(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
+        }
+        .keyboardShortcut("r")
+
         Spacer()
       }
+      .padding([.leading, .top, .bottom], 10)
+
       List {
         ForEach(data.content[content]!) { item in
           switch item {
@@ -125,18 +132,17 @@ private struct Content: View {
           }
         }
       }
+      .loadingScreen(isLoading: data.isLoading[content, default: false])
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .onAppear {
       data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
     }
     .onReceive(sorter.$sort.dropFirst()) { sort in
-      data.clearContent(content: content)
-      data.loadContent(content: content, sort: sort, topInterval: sorter.topInterval)
+      data.reload(content: content, sort: sort, topInterval: sorter.topInterval)
     }
     .onReceive(sorter.$topInterval.dropFirst()) { interval in
-      data.clearContent(content: content)
-      data.loadContent(content: content, sort: sorter.sort, topInterval: interval)
+      data.reload(content: content, sort: sorter.sort, topInterval: interval)
     }
   }
 }

@@ -23,5 +23,6 @@ struct RefreshButton: View {
     }, label: {
       Image(systemName: "arrow.clockwise")
     })
+      .help("refresh")
   }
 }

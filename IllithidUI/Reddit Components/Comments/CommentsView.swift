@@ -55,9 +55,16 @@ struct CommentsView: View, Identifiable {
             .onReceive(sorter.$sort.dropFirst()) { sort in
               commentData.reload(focusOn: focusedComment, context: commentContext, sort: sort)
             }
-            .padding([.top, .leading], 10)
+
+          RefreshButton {
+            commentData.reload(focusOn: focusedComment, context: commentContext, sort: sorter.sort)
+          }
+          .keyboardShortcut("r")
+
           Spacer()
         }
+        .padding([.top, .leading], 10)
+
         ZStack(alignment: .bottomTrailing) {
           ScrollView {
             DetailedPostView(post: post)

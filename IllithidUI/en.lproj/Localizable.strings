@@ -5,6 +5,7 @@
 "reset" = "Reset";
 "done" = "Done";
 "debug" = "Debug";
+"refresh" = "Refresh";
 
 "multireddit.edit" = "Edit multireddit";
 

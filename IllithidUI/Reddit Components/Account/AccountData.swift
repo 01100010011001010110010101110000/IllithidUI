@@ -52,10 +52,19 @@ class AccountData: ObservableObject {
   @Published private(set) var account: Account?
 
   @Published private(set) var content: [AccountContent: [Listing.Content]] = [:]
+  @Published private(set) var isLoading: [AccountContent: Bool] = [:]
+
+  func reload(content: AccountContent, sort: AccountContentSort, topInterval: TopInterval = .day) {
+    requests[content]?.cancel()
+    clearContent(content: content)
+    loadContent(content: content, sort: sort, topInterval: topInterval)
+  }
 
   func loadContent(content: AccountContent, sort: AccountContentSort, topInterval: TopInterval = .day) {
     guard !isExhausted[content, default: false] else { return }
-    account?.content(content: content, sort: sort, topInterval: topInterval, parameters: listingAnchors[content]!) { result in
+    isLoading[content] = true
+    requests[content] = account?.content(content: content, sort: sort, topInterval: topInterval, parameters: listingAnchors[content]!) { result in
+      self.isLoading[content] = false
       switch result {
       case let .success(listing):
         self.content[content]?.append(contentsOf: listing.children)
@@ -77,6 +86,7 @@ class AccountData: ObservableObject {
 
   private var listingAnchors: [AccountContent: ListingParameters] = [:]
   private var isExhausted: [AccountContent: Bool] = [:]
+  private var requests: [AccountContent: DataRequest] = [:]
 
   private let log = OSLog(subsystem: "com.flayware.IllithidUI.accounts", category: .pointsOfInterest)
 }
