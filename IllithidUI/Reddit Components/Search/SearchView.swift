@@ -21,6 +21,8 @@ import Illithid
 struct SearchView: View {
   // MARK: Internal
 
+  @ObservedObject var preferences: PreferencesData = .shared
+
   var body: some View {
     ZStack {
       VStack {
@@ -47,7 +49,7 @@ struct SearchView: View {
             }
             .padding(.horizontal)
           }
-          if !searchData.suggestions.isEmpty {
+          if !filteredSubreddits.isEmpty {
             Group {
               HStack {
                 Text("Subreddits")
@@ -56,7 +58,7 @@ struct SearchView: View {
               }
               Divider()
               LazyVGrid(columns: subredditColumns) {
-                ForEach(searchData.suggestions) { suggestion in
+                ForEach(filteredSubreddits) { suggestion in
                   SubredditSuggestionLabel(suggestion: suggestion)
                     .onTapGesture(count: 1, perform: {
                       openModal(for: suggestion)
@@ -66,7 +68,7 @@ struct SearchView: View {
             }
             .padding(.horizontal)
           }
-          if !searchData.posts.isEmpty {
+          if !filteredPosts.isEmpty {
             Group {
               HStack {
                 Text("Posts")
@@ -76,7 +78,7 @@ struct SearchView: View {
               Divider()
               ScrollView {
                 LazyVGrid(columns: postColumns) {
-                  ForEach(searchData.posts) { post in
+                  ForEach(filteredPosts) { post in
                     PostClassicRowView(post: post)
                       .onTapGesture(count: 1, perform: {
                         openModal(for: post)
@@ -137,6 +139,24 @@ struct SearchView: View {
     GridItem(.flexible()),
     GridItem(.flexible()),
   ]
+
+  private var filteredSubreddits: [Subreddit] {
+    searchData.suggestions.filter { subreddit in
+      if preferences.hideNsfw, subreddit.isNsfw {
+        return false
+      }
+      return true
+    }
+  }
+
+  private var filteredPosts: [Post] {
+    searchData.posts.filter { post in
+      if preferences.hideNsfw, post.over18 {
+        return false
+      }
+      return true
+    }
+  }
 
   private var haveSelection: Bool {
     subredditSelection != nil

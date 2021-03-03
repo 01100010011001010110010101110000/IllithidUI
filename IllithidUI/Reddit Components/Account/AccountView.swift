@@ -92,6 +92,7 @@ struct AccountView: View {
 
 private struct Content: View {
   @ObservedObject var data: AccountData
+  @ObservedObject var preferences: PreferencesData = .shared
   @StateObject private var sorter: SortModel<AccountContentSort> = .init(sort: .new, topInterval: .day)
 
   let content: AccountContent
@@ -121,12 +122,14 @@ private struct Content: View {
                 }
               }
           case let .post(post):
-            PostRowView(post: post)
-              .onAppear {
-                if item == data.content[content]!.last {
-                  data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
+            if shouldShowPost(post) {
+              PostRowView(post: post)
+                .onAppear {
+                  if item == data.content[content]!.last {
+                    data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)
+                  }
                 }
-              }
+            }
           default:
             EmptyView()
           }
@@ -144,5 +147,12 @@ private struct Content: View {
     .onReceive(sorter.$topInterval.dropFirst()) { interval in
       data.reload(content: content, sort: sorter.sort, topInterval: interval)
     }
+  }
+
+  func shouldShowPost(_ post: Post) -> Bool {
+    if preferences.hideNsfw, post.over18 {
+      return false
+    }
+    return true
   }
 }
