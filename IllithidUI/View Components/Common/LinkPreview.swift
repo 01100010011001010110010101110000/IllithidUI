@@ -61,12 +61,13 @@ struct LinkPreview: View {
     .onTapGesture {
       openLink(previewData.link)
     }
-    .onLongPressGesture(minimumDuration: 0.3) {
+    .onLongPressGesture(minimumDuration: 0.1) {
       self.showingPreview = true
     }
     .frame(width: 512)
     .background(Color(.controlBackgroundColor))
     .roundedBorder(style: Color(.darkGray), width: 2.0)
+    .padding(.top)
     .onAppear {
       if previewData.previewImageUrl == nil {
         previewData.loadMetadata()

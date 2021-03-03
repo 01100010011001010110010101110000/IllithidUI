@@ -35,6 +35,7 @@ struct RedditLinkView: View {
           }
         }
     }
+    .padding(.top)
   }
 
   private func openRedditLink(link: URL) {

@@ -233,13 +233,15 @@ struct PostActionBar: View {
       }, label: {
         Image(systemName: "arrowshape.turn.up.backward.fill")
       })
+
+      Spacer()
+
       IllithidButton(action: {}, label: {
         Image(systemName: "eye.slash")
       })
       IllithidButton(action: {}, label: {
         Image(systemName: "flag")
       })
-      Spacer()
     }
     .font(.title2)
     .padding(10)
