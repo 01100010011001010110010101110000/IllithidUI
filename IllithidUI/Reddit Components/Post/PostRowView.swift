@@ -26,6 +26,7 @@ struct PostRowView: View {
   init(post: Post, selection: Binding<Post.ID?> = .constant(nil)) {
     self.post = post
     _selection = selection
+    _voteState = .init(initialValue: VoteDirection(from: post))
   }
 
   // MARK: Internal
@@ -39,9 +40,9 @@ struct PostRowView: View {
   var body: some View {
     GroupBox {
       HStack {
-        PostActionBar(post: post, presentReplyForm: $presentReplyForm)
+        PostActionBar(post: post, presentReplyForm: $presentReplyForm, vote: $voteState)
         Divider()
-        DetailedPostView(post: post)
+        DetailedPostView(post: post, vote: $voteState)
 
         Spacer()
 
@@ -121,6 +122,7 @@ struct PostRowView: View {
 
   // MARK: Private
 
+  @State private var voteState: VoteDirection
   @State private var presentReplyForm: Bool = false
 
   private var commentsButton: some View {
@@ -138,16 +140,11 @@ struct PostRowView: View {
 struct PostActionBar: View {
   // MARK: Lifecycle
 
-  init(post: Post, presentReplyForm: Binding<Bool>) {
+  init(post: Post, presentReplyForm: Binding<Bool>, vote: Binding<VoteDirection>) {
     self.post = post
     _presentReplyForm = presentReplyForm
 
-    // Likes is actually ternary, with nil implying no vote
-    if let likeDirection = post.likes {
-      _vote = .init(initialValue: likeDirection ? .up : .down)
-    } else {
-      _vote = .init(initialValue: .clear)
-    }
+    _vote = vote
     _saved = .init(initialValue: post.saved)
   }
 
@@ -156,6 +153,8 @@ struct PostActionBar: View {
   @Binding var presentReplyForm: Bool
 
   let post: Post
+
+  @Binding var vote: VoteDirection
 
   var body: some View {
     VStack {
@@ -252,7 +251,6 @@ struct PostActionBar: View {
 
   // MARK: Private
 
-  @State private var vote: VoteDirection
   @State private var saved: Bool
 }
 

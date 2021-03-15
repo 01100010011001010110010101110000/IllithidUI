@@ -22,19 +22,24 @@ import SDWebImageSwiftUI
 struct DetailedPostView: View {
   // MARK: Lifecycle
 
-  init(post: Post) {
+  init(post: Post, vote: Binding<VoteDirection>? = nil) {
     self.post = post
     if post.crosspostParentList != nil, !post.crosspostParentList!.isEmpty {
       crosspostParent = post.crosspostParentList?.first!
     } else {
       crosspostParent = nil
     }
+
+    if let vote = vote { _vote = vote }
+    else { _vote = .constant(VoteDirection(from: post)) }
   }
 
   // MARK: Internal
 
   let post: Post
   let crosspostParent: Post?
+
+  @Binding var vote: VoteDirection
 
   var body: some View {
     VStack(alignment: .leading) {
@@ -70,7 +75,7 @@ struct DetailedPostView: View {
 
             PostContent(post: crosspostParent)
 
-            PostMetadataBar(post: crosspostParent)
+            PostMetadataBar(post: crosspostParent, vote: $vote)
           }
         }
         .padding([.leading, .trailing], 4.0)
@@ -81,7 +86,7 @@ struct DetailedPostView: View {
         PostContent(post: post)
       }
 
-      PostMetadataBar(post: post)
+      PostMetadataBar(post: post, vote: $vote)
     }
   }
 
@@ -137,17 +142,12 @@ private struct TitleView: View {
 // MARK: - PostMetadataBar
 
 private struct PostMetadataBar: View {
-  // MARK: Lifecycle
-
-  init(post: Post) {
-    self.post = post
-  }
-
   // MARK: Internal
 
-  @EnvironmentObject var informationBarData: InformationBarData
-
   let post: Post
+
+  @Binding var vote: VoteDirection
+  @EnvironmentObject var informationBarData: InformationBarData
 
   var body: some View {
     VStack(alignment: .leading, spacing: 5) {
@@ -186,6 +186,7 @@ private struct PostMetadataBar: View {
             Image(systemName: "arrow.up")
             Text("\(post.ups.postAbbreviation())")
           }
+          .foregroundColor(voteColor)
 
           Group {
             Image(systemName: "text.bubble")
@@ -211,6 +212,17 @@ private struct PostMetadataBar: View {
   @ObservedObject private var moderators: ModeratorData = .shared
 
   private let windowManager: WindowManager = .shared
+
+  private var voteColor: Color? {
+    switch vote {
+    case .clear:
+      return nil
+    case .down:
+      return .purple
+    case .up:
+      return .orange
+    }
+  }
 
   private var authorFlairTextColor: Color {
     post.authorFlairBackgroundSwiftUiColor == nil
