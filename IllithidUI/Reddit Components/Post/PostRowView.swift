@@ -42,6 +42,9 @@ struct PostRowView: View {
         PostActionBar(post: post, presentReplyForm: $presentReplyForm)
         Divider()
         DetailedPostView(post: post)
+
+        Spacer()
+
         Group {
           if selection == post.id {
             commentsButton

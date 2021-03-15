@@ -37,14 +37,14 @@ struct DetailedPostView: View {
   let crosspostParent: Post?
 
   var body: some View {
-    VStack {
-      VStack {
+    VStack(alignment: .leading) {
+      VStack(alignment: .leading) {
         if crosspostParent != nil {
           Text("Crossposted by \(post.author) \(post.relativePostTime) ago")
             .font(.caption)
         }
-        HStack(alignment: .center) {
-          HStack(alignment: .center) {
+        HStack {
+          HStack {
             if post.stickied {
               Image(systemName: "pin.fill")
                 .help("post.pinned")
@@ -58,11 +58,7 @@ struct DetailedPostView: View {
           .foregroundColor(.green)
           .padding(.leading, 10)
 
-          Spacer()
-
           TitleView(post: post)
-
-          Spacer()
         }
         .padding(.top)
       }
@@ -102,28 +98,30 @@ private struct TitleView: View {
   // MARK: Internal
 
   let post: Post
+  let alignment: HorizontalAlignment = .leading
 
   var body: some View {
-    HStack {
-      if let richtext = post.linkFlairRichtext, !richtext.isEmpty {
-        FlairRichtextView(richtext: richtext,
-                          backgroundColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor,
-                          textColor: flairTextColor)
-      } else if let text = post.linkFlairText, !text.isEmpty {
-        Text(text)
-          .foregroundColor(flairTextColor)
-          .flairTag(rectangleColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor)
+    VStack(alignment: alignment) {
+      HStack {
+        if post.over18 {
+          Text("NSFW")
+            .flairTag(rectangleColor: .red)
+        }
+        if let richtext = post.linkFlairRichtext, !richtext.isEmpty {
+          FlairRichtextView(richtext: richtext,
+                            backgroundColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor,
+                            textColor: flairTextColor)
+        } else if let text = post.linkFlairText, !text.isEmpty {
+          Text(text)
+            .foregroundColor(flairTextColor)
+            .flairTag(rectangleColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor)
+        }
       }
 
-      Text(post.title)
+      Text(verbatim: post.title)
         .font(.title)
         .heightResizable()
-        .multilineTextAlignment(.center)
-
-      if post.over18 {
-        Text("NSFW")
-          .flairTag(rectangleColor: .red)
-      }
+        .multilineTextAlignment(.leading)
     }
   }
 
@@ -152,17 +150,7 @@ private struct PostMetadataBar: View {
   let post: Post
 
   var body: some View {
-    HStack {
-      (Text("by ") +
-        Text("\(post.author)")
-        .usernameStyle(color: authorColor))
-        .onTapGesture {
-          windowManager.showMainWindowTab(withId: post.author, title: post.author) {
-            AccountView(name: post.author)
-              .environmentObject(informationBarData)
-          }
-        }
-        .fixedSize()
+    VStack(alignment: .leading, spacing: 5) {
       if let richtext = post.authorFlairRichtext, !richtext.isEmpty {
         FlairRichtextView(richtext: richtext,
                           backgroundColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor,
@@ -172,14 +160,32 @@ private struct PostMetadataBar: View {
           .foregroundColor(authorFlairTextColor)
           .flairTag(rectangleColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor)
       }
-      Spacer()
+
+      HStack {
+        (Text("by ") + Text("\(post.author)").usernameStyle(color: authorColor))
+          .onTapGesture {
+            windowManager.showMainWindowTab(withId: post.author, title: post.author) {
+              AccountView(name: post.author)
+                .environmentObject(informationBarData)
+            }
+          }
+          .fixedSize()
+        (Text("in ") + Text(post.subredditNamePrefixed))
+          .onTapGesture {
+            windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
+              SubredditLoader(fullname: post.subredditId)
+                .environmentObject(informationBarData)
+            }
+          }
+          .fixedSize()
+      }
+
       HStack {
         Group {
           Group {
             Image(systemName: "arrow.up")
             Text("\(post.ups.postAbbreviation())")
           }
-          .foregroundColor(.orange)
 
           Group {
             Image(systemName: "text.bubble")
@@ -195,15 +201,6 @@ private struct PostMetadataBar: View {
         }
         .fixedSize()
       }
-      Spacer()
-      Text(post.subredditNamePrefixed)
-        .onTapGesture {
-          windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
-            SubredditLoader(fullname: post.subredditId)
-              .environmentObject(informationBarData)
-          }
-        }
-        .fixedSize()
     }
     .padding(10)
     .font(.body)

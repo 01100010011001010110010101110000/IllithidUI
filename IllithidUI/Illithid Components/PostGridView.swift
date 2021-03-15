@@ -31,7 +31,7 @@ struct PostGridView: View {
             .frame(minWidth: 150, maxWidth: 270)
           ForEach(columnManager.columns) { column in
             SubredditSelectorView(column: column, onExit: { columnManager.removeColumn(id: $0) })
-              .frame(minWidth: 300)
+              .frame(minWidth: 300, maxWidth: 1400)
           }
         }
         .onDrop(of: [.text],
