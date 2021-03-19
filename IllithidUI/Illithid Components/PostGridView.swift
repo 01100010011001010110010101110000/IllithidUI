@@ -21,6 +21,7 @@ import Illithid
 struct PostGridView: View {
   // MARK: Internal
 
+  @Environment(\.navigationLayout) var layout: NavigationLayout
   @EnvironmentObject var informationBarData: InformationBarData
 
   var body: some View {
@@ -34,12 +35,33 @@ struct PostGridView: View {
               .frame(minWidth: 300, maxWidth: 1400)
           }
         }
-        .onDrop(of: [.text],
-                delegate: GridDropDelegate(columnManager: columnManager))
+        .onDrop(of: [.text], delegate: GridDropDelegate(manager: columnManager))
         .environmentObject(informationBarData)
         .environmentObject(columnManager)
         Spacer()
       }
+      AddColumnButton(manager: columnManager)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .onAppear {
+      informationBarData.loadAccountData()
+    }
+  }
+
+  // MARK: Private
+
+  private struct AddColumnButton: View {
+    // MARK: Lifecycle
+
+    init(manager columnManager: ColumnManager) {
+      self.columnManager = columnManager
+    }
+
+    // MARK: Internal
+
+    let columnManager: ColumnManager
+
+    var body: some View {
       Button(action: {
         columnManager.addColumn()
       }, label: {
@@ -50,15 +72,17 @@ struct PostGridView: View {
         .padding()
         .help("Add a column")
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .onAppear {
-      informationBarData.loadAccountData()
-    }
   }
 
-  // MARK: Private
-
   private struct GridDropDelegate: DropDelegate {
+    // MARK: Lifecycle
+
+    init(manager columnManager: ColumnManager) {
+      self.columnManager = columnManager
+    }
+
+    // MARK: Internal
+
     let columnManager: ColumnManager
 
     func dropExited(info: DropInfo) {
