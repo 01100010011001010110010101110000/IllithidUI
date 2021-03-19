@@ -71,19 +71,20 @@ struct PostRowView: View {
           presentReplyForm = true
         }
       }, label: {
-        Text("Reply")
+        Text("Reply…")
       })
-      Divider()
-      Button(action: {
-        openLink(post.postUrl)
-      }, label: {
-        Text("Open post…")
-      })
-      Button(action: {
-        openLink(post.contentUrl)
-      }, label: {
-        Text("Open post content…")
-      })
+      Menu("Open in Browser…") {
+        Button(action: {
+          openLink(post.postUrl)
+        }, label: {
+          Text("Post…")
+        })
+        Button(action: {
+          openLink(post.contentUrl)
+        }, label: {
+          Text("Post content…")
+        })
+      }
       Divider()
       Button(action: {
         NSPasteboard.general.clearContents()
@@ -102,7 +103,7 @@ struct PostRowView: View {
         Button(action: {
           showDebugWindow(for: post)
         }) {
-          Text("Show debug panel…")
+          Text(verbatim: "Show debug panel…")
         }
       #endif
     }
