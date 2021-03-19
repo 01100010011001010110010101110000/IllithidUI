@@ -131,6 +131,7 @@ struct PostRowView: View {
     }, label: {
       Image(systemName: "chevron.right")
     })
+      .opacity(0.0)
   }
 }
 
