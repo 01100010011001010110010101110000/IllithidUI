@@ -21,26 +21,24 @@ import Illithid
 struct PostGridView: View {
   // MARK: Internal
 
-  @Environment(\.navigationLayout) var layout: NavigationLayout
+  @Environment(\.postStyle) var postStyle: PostStyle
   @EnvironmentObject var informationBarData: InformationBarData
 
   var body: some View {
     ZStack(alignment: .bottomTrailing) {
       HStack {
         HSplitView {
-          NavigationSidebar(column: columnManager.columns.first!)
-            .frame(minWidth: 150, maxWidth: 270)
           ForEach(columnManager.columns) { column in
             SubredditSelectorView(column: column, onExit: { columnManager.removeColumn(id: $0) })
               .frame(minWidth: 300, maxWidth: 1400)
           }
         }
-        .onDrop(of: [.text], delegate: GridDropDelegate(manager: columnManager))
         .environmentObject(informationBarData)
         .environmentObject(columnManager)
         Spacer()
       }
       AddColumnButton(manager: columnManager)
+        .padding()
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .onAppear {
@@ -69,45 +67,7 @@ struct PostGridView: View {
       })
         .keyboardShortcut(.rightArrow)
         .shadow(radius: 20)
-        .padding()
         .help("Add a column")
-    }
-  }
-
-  private struct GridDropDelegate: DropDelegate {
-    // MARK: Lifecycle
-
-    init(manager columnManager: ColumnManager) {
-      self.columnManager = columnManager
-    }
-
-    // MARK: Internal
-
-    let columnManager: ColumnManager
-
-    func dropExited(info: DropInfo) {
-      if info.location.x < 0 || info.location.y < 0 {
-        columnManager.removeLast()
-      }
-    }
-
-    func dropEntered(info: DropInfo) {
-      if let item = info.itemProviders(for: [.utf8PlainText]).first {
-        if item.canLoadObject(ofClass: String.self) {
-          _ = item.loadObject(ofClass: String.self) { string, _ in
-            guard let id = string else { return }
-            columnManager.addColumn(selection: id)
-          }
-        }
-      }
-    }
-
-    func validateDrop(info: DropInfo) -> Bool {
-      info.itemProviders(for: [.utf8PlainText]).first?.canLoadObject(ofClass: String.self) ?? false
-    }
-
-    func performDrop(info _: DropInfo) -> Bool {
-      true
     }
   }
 
@@ -131,11 +91,9 @@ private struct NavigationSidebar: View {
   let column: ColumnManager.Column
 
   var body: some View {
-    // FIXME: onDrag seems to break list selection while clicking inside the Label. Clicking on empty space in the row works
     List(selection: $selection) {
       Section(header: Text("Meta")) {
         Label("Account", systemImage: "person.crop.circle")
-          .onDrag { NSItemProvider(object: "__account__" as NSString) }
           .help("Account view")
           .tag("__account__")
           .openableInNewTab(id: Illithid.shared.accountManager.currentAccount?.id ?? "account",
@@ -143,7 +101,6 @@ private struct NavigationSidebar: View {
             accountView
           }
         Label("Search", systemImage: "magnifyingglass")
-          .onDrag { NSItemProvider(object: "__search__" as NSString) }
           .help("Search Reddit")
           .tag("__search__")
           .openableInNewTab(id: "search", title: "Search") { SearchView() }
@@ -151,7 +108,6 @@ private struct NavigationSidebar: View {
       Section(header: Text("Front Page")) {
         ForEach(FrontPage.allCases) { page in
           Label(page.title, systemImage: page.systemImageIconName)
-            .onDrag { NSItemProvider(object: page.id as NSString) }
             .help(page.displayName)
             .tag(page)
             .openableInNewTab(id: page.id, title: page.title) { PostListView(postContainer: page) }
@@ -180,7 +136,6 @@ private struct NavigationSidebar: View {
               }
             }
           }
-          .onDrag { NSItemProvider(object: multireddit.id as NSString) }
           .help(multireddit.displayName)
           .tag("m/\(multireddit.id)")
           .openableInNewTab(id: multireddit.id, title: multireddit.name) { PostListView(postContainer: multireddit) }
@@ -201,7 +156,6 @@ private struct NavigationSidebar: View {
               .frame(width: 24, height: 24)
             Text(subreddit.displayName)
           }
-          .onDrag { NSItemProvider(object: subreddit.id as NSString) }
           .openableInNewTab(id: subreddit.id, title: subreddit.displayName) { PostListView(postContainer: subreddit) }
           .help(subreddit.displayName)
           .tag(subreddit.id)
@@ -209,9 +163,6 @@ private struct NavigationSidebar: View {
       }
     }
     .listStyle(SidebarListStyle())
-    .onChange(of: selection) { selected in
-      columnManager.setSelection(for: column, selection: selected)
-    }
     .preference(key: NavigationSelectionPreferenceKey.self,
                 value: selection)
     .onReceive(columnManager.$columns) { columns in

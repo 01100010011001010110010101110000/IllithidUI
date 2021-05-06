@@ -16,9 +16,9 @@ import SwiftUI
 
 import Illithid
 
-// MARK: - NavigationLayout
+// MARK: - PostStyle
 
-enum NavigationLayout: String, CaseIterable, Identifiable, Codable {
+enum PostStyle: String, CaseIterable, Identifiable, Codable {
   case compact
   case classic
   case large
@@ -46,19 +46,19 @@ enum NavigationLayout: String, CaseIterable, Identifiable, Codable {
   }
 }
 
-// MARK: - NavigationLayoutKey
+// MARK: - PostStyleKey
 
-struct NavigationLayoutKey: EnvironmentKey {
-  static var defaultValue: NavigationLayout = .large
+struct PostStyleKey: EnvironmentKey {
+  static var defaultValue: PostStyle = .large
 }
 
 extension EnvironmentValues {
-  var navigationLayout: NavigationLayout {
+  var postStyle: PostStyle {
     get {
-      self[NavigationLayoutKey.self]
+      self[PostStyleKey.self]
     }
     set {
-      self[NavigationLayoutKey.self] = newValue
+      self[PostStyleKey.self] = newValue
     }
   }
 }
@@ -66,11 +66,11 @@ extension EnvironmentValues {
 // MARK: - RootView
 
 struct RootView: View {
-  @AppStorage("navigationLayout") var layout: NavigationLayout = NavigationLayoutKey.defaultValue
+  @AppStorage("navigationLayout") var postStyle: PostStyle = PostStyleKey.defaultValue
 
   var body: some View {
     PostGridView()
-      .environment(\.navigationLayout, layout)
+      .environment(\.postStyle, postStyle)
       .toolbar {
         ToolbarItem(placement: .navigation) {
           Button(action: {
@@ -81,8 +81,8 @@ struct RootView: View {
             .help("Hide or show the navigator")
         }
         ToolbarItem(placement: .principal) {
-          Picker(selection: $layout, label: EmptyView()) {
-            ForEach(NavigationLayout.allCases.reversed()) { layoutCase in
+          Picker(selection: $postStyle, label: EmptyView()) {
+            ForEach(PostStyle.allCases.reversed()) { layoutCase in
               layoutCase.toolbarIcon
                 .foregroundColor(.white)
                 .tag(layoutCase).padding(5)

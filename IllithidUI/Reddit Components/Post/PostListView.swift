@@ -36,7 +36,7 @@ struct PostListView: View {
 
   // MARK: Internal
 
-  @Environment(\.navigationLayout) var layout
+  @Environment(\.postStyle) var postStyle
   @EnvironmentObject var informationBarData: InformationBarData
   @ObservedObject var preferences: PreferencesData = .shared
 
@@ -52,7 +52,7 @@ struct PostListView: View {
             .foregroundColor(.clear)
             .overlay(Text("No posts in \(postContainer.displayName) when sorting by \(sortDescription)").font(.title))
         } else {
-          switch layout {
+          switch postStyle {
           case .classic, .compact:
             ClassicListBody(posts: filteredPosts, onLastPost: {
               postsData.loadPosts(sort: sorter.sort,
