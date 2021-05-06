@@ -308,7 +308,7 @@ private struct SubredditSelectorView: View {
             }
           }
           Divider()
-          Section(header: Text("Multiredits")) {
+          Section(header: Text("Multireddits")) {
             ForEach(filteredPostProviders(informationBarData.multireddits)) { multireddit in
               HStack {
                 SubredditIcon(multireddit: multireddit)
