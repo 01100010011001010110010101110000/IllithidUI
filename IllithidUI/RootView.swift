@@ -66,7 +66,7 @@ extension EnvironmentValues {
 // MARK: - RootView
 
 struct RootView: View {
-  @AppStorage("navigationLayout") var postStyle: PostStyle = PostStyleKey.defaultValue
+  @AppStorage("postStyle") var postStyle: PostStyle = PostStyleKey.defaultValue
 
   var body: some View {
     PostGridView()

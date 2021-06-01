@@ -15,7 +15,12 @@
 import Foundation
 import SwiftUI
 
-struct PostTriplePaneView: View {
+import Illithid
+
+struct TriplePaneLayoutView: View {
+  @EnvironmentObject var informationBarData: InformationBarData
+  @ObservedObject var preferences: PreferencesData = .shared
+
   var body: some View {
     EmptyView()
   }
