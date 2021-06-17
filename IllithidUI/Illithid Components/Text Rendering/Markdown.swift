@@ -180,7 +180,7 @@ struct Markdown: View {
     }
 
     @ViewBuilder
-    func visit(table: Table) -> some View {
+    func visit(table: Maaku.Table) -> some View {
       let rows = Array(repeating: GridItem(.flexible()), count: table.rows.count)
 
       ScrollView {
