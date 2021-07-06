@@ -61,44 +61,53 @@ struct Markdown: View {
       SwiftUI.Text(htmlBlock.html)
     }
 
-    func visit(paragraph: Paragraph) -> SwiftUI.Text {
-      renderInline(inline: paragraph.items)
+    func visit(paragraph: Paragraph) -> some View {
+      SwiftUI.Text(renderInline(inline: paragraph.items)) +
+        SwiftUI.Text("\n")
     }
 
-    func visit(heading: Heading) -> some View {
-      var text = renderInline(inline: heading.items).fontWeight(.semibold)
+    func visit(heading: Heading) -> AttributedString {
+      var text = renderInline(inline: heading.items)
       switch heading.level {
       case .h1:
-        text = text.font(.system(size: .init(32)))
+        text.font = .system(size: .init(32))
       case .h2:
-        text = text.font(.system(size: .init(24)))
+        text.font = .system(size: .init(24))
       case .h3:
-        text = text.font(.system(size: .init(18.72)))
+        text.font = .system(size: .init(18.72))
       case .h4:
-        text = text.font(.system(size: .init(16)))
+        text.font = .system(size: .init(16))
       case .h5:
-        text = text.font(.system(size: .init(13.28)))
+        text.font = .system(size: .init(13.28))
       case .h6:
-        text = text.font(.system(size: .init(10.72)))
+        text.font = .system(size: .init(10.72))
       default:
         break
       }
+      text.inlinePresentationIntent = .stronglyEmphasized
       return text
     }
 
-    func visit(emphasis: Emphasis) -> SwiftUI.Text {
-      renderInline(inline: emphasis.items)
-        .italic()
+    func visit(emphasis: Emphasis) -> AttributedString {
+      var result = renderInline(inline: emphasis.items)
+      result = result.transformingAttributes(AttributeScopes.SwiftUIAttributes.FontAttribute.self) { transformer in
+        transformer.value = (transformer.value ?? .body).italic()
+      }
+      return result
     }
 
-    func visit(strong: Strong) -> SwiftUI.Text {
-      renderInline(inline: strong.items)
-        .bold()
+    func visit(strong: Strong) -> AttributedString {
+      var result = renderInline(inline: strong.items)
+      result = result.transformingAttributes(AttributeScopes.SwiftUIAttributes.FontAttribute.self) { transformer in
+        transformer.value = (transformer.value ?? .body).bold()
+      }
+      return result
     }
 
-    func visit(strikethrough: Strikethrough) -> SwiftUI.Text {
-      renderInline(inline: strikethrough.items)
-        .strikethrough()
+    func visit(strikethrough: Strikethrough) -> AttributedString {
+      var result = renderInline(inline: strikethrough.items)
+      result.swiftUI.strikethroughColor = .primary
+      return result
     }
 
     func visit(rule _: HorizontalRule) -> some View {
@@ -106,31 +115,29 @@ struct Markdown: View {
         .padding(.vertical)
     }
 
-    func visit(text: Maaku.Text) -> SwiftUI.Text {
-      SwiftUI.Text(text.text)
+    func visit(text: Maaku.Text) -> AttributedString {
+      AttributedString(text.text)
     }
 
-    func visit(link: Maaku.Link) -> SwiftUI.Text {
-      renderInline(inline: link.text)
-        .foregroundColor(.blue)
+    func visit(link: Maaku.Link) -> AttributedString {
+      var result = renderInline(inline: link.text)
+      result.link = URL(string: link.destination!)
+      return result
     }
 
-    func visit(image: Maaku.Image) -> some View {
-      WebImage(url: image.url)
-        .help(image.title ?? "")
+    func visit(lineBreak _: LineBreak) -> AttributedString {
+      AttributedString("\n")
     }
 
-    func visit(lineBreak _: LineBreak) -> SwiftUI.Text {
-      SwiftUI.Text("\n")
+    func visit(code: InlineCode) -> AttributedString {
+      var result = AttributedString(code.code)
+      result.foregroundColor = .orange
+      result.inlinePresentationIntent = .code
+      return result
     }
 
-    func visit(code: InlineCode) -> SwiftUI.Text {
-      SwiftUI.Text(code.code)
-        .foregroundColor(.orange)
-    }
-
-    func visit(htmlInline: InlineHtml) -> SwiftUI.Text {
-      SwiftUI.Text(htmlInline.html)
+    func visit(htmlInline: InlineHtml) -> AttributedString {
+      AttributedString(htmlInline.html)
     }
 
     @ViewBuilder
@@ -179,24 +186,32 @@ struct Markdown: View {
       .environment(\.downListNestLevel, downListNestLevel + 1)
     }
 
-    @ViewBuilder
-    func visit(table: Maaku.Table) -> some View {
-      let rows = Array(repeating: GridItem(.flexible()), count: table.rows.count)
+//    @ViewBuilder
+//    func visit(table: Maaku.Table) -> some View {
+//      let rows = Array(repeating: GridItem(.flexible()), count: table.rows.count)
+//
+//      ScrollView {
+//        LazyHGrid(rows: rows, content: {
+//          renderTableCells(table.header.cells)
+//          ForEach(table.rows.indices, id: \.self) { idx in
+//            renderTableCells(table.rows[idx].cells)
+//          }
+//        })
+//      }
+//    }
 
-      ScrollView {
-        LazyHGrid(rows: rows, content: {
-          renderTableCells(table.header.cells)
-          ForEach(table.rows.indices, id: \.self) { idx in
-            renderTableCells(table.rows[idx].cells)
-          }
-        })
-      }
-    }
+//    private func renderTableCells(_ items: [TableCell]) -> some View {
+//      ForEach(items.indices, id: \.self) { idx in
+//        renderInline(inline: items[idx].items)
+//      }
+//    }
 
-    private func renderTableCells(_ items: [TableCell]) -> some View {
-      ForEach(items.indices, id: \.self) { idx in
-        renderInline(inline: items[idx].items)
-      }
+    func visit(image: Maaku.Image) -> AttributedString {
+      var result = renderInline(inline: image.description)
+      result.toolTip = image.title
+      result.link = image.url
+//      result.imageURL = image.url
+      return result
     }
 
     private func renderChildren(_ items: [Node]) -> some View {
@@ -205,8 +220,8 @@ struct Markdown: View {
       }
     }
 
-    private func renderInline(inline: [Inline]) -> SwiftUI.Text {
-      var results: [SwiftUI.Text] = []
+    private func renderInline(inline: [Inline]) -> AttributedString {
+      var results: [AttributedString] = []
       for node in inline {
         switch node {
         case let node as Maaku.Link:
@@ -225,17 +240,19 @@ struct Markdown: View {
           results.append(visit(strong: node))
         case let node as Strikethrough:
           results.append(visit(strikethrough: node))
+        case let node as Maaku.Image:
+          return visit(image: node)
         default:
           break
         }
       }
-      return results.reduce(Text(""), { $0 + $1 })
+      return results.reduce(AttributedString(), { $0 + $1 })
     }
 
     private func renderNode(node: Node) -> some View {
       switch node {
       case let node as Inline:
-        return renderInline(inline: [node]).eraseToAnyView()
+        return SwiftUI.Text(renderInline(inline: [node])).eraseToAnyView()
       case let node as BlockQuote:
         return visit(blockQuote: node).eraseToAnyView()
       case let node as OrderedList:
@@ -251,19 +268,17 @@ struct Markdown: View {
       case let node as Paragraph:
         return visit(paragraph: node).eraseToAnyView()
       case let node as Heading:
-        return visit(heading: node).eraseToAnyView()
+        return SwiftUI.Text(visit(heading: node)).eraseToAnyView()
       case let node as HorizontalRule:
         return visit(rule: node).eraseToAnyView()
-      case let node as Maaku.Image:
-        return visit(image: node).eraseToAnyView()
-      case let node as Maaku.Table:
-        return visit(table: node).eraseToAnyView()
+//      case let node as Maaku.Table:
+//        return visit(table: node).eraseToAnyView()
       default:
         return EmptyView().eraseToAnyView()
       }
     }
 
-    @ViewBuilder var body: some View {
+    var body: some View {
       renderNode(node: node)
     }
   }
