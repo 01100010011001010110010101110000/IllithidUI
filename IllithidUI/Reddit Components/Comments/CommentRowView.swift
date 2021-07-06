@@ -49,7 +49,7 @@ struct CommentRowView: View {
               .padding(.leading, 4)
 
             if !isCollapsed {
-              AttributedText(attributed: comment.attributedBody)
+              Markdown(mdString: comment.body)
               CommentActionBar(comment: comment)
                 .padding(.bottom, 5)
             }

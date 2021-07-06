@@ -90,9 +90,9 @@ struct SubredditSidebar: View {
       Divider()
 
       ScrollView {
-        if let description = subreddit.attributedDescription {
+        if let description = subreddit.description {
           VStack(alignment: .leading) {
-            AttributedText(attributed: description)
+            Markdown(mdString: description)
               .padding()
           }
           .padding()

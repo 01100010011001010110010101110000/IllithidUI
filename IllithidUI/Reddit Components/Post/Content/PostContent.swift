@@ -246,7 +246,7 @@ struct GalleryPost: View {
   }
 
   private var maxSize: NSSize {
-    metadata.values.reduce(NSSize.zero) { (result, metadata) -> NSSize in
+    metadata.values.reduce(NSSize.zero) { result, metadata -> NSSize in
       NSSize(width: CGFloat(metadata.source!.width) > result.width ? CGFloat(metadata.source!.width) : result.width,
              height: CGFloat(metadata.source!.height) > result.height ? CGFloat(metadata.source!.height) : result.height)
     }
@@ -358,7 +358,7 @@ struct TextPostPreview: View {
     if !post.selftext.isEmpty {
       GroupBox {
         VStack(alignment: .leading) {
-          AttributedText(attributed: post.attributedSelfText)
+          Markdown(mdString: post.selftext)
             .padding(.horizontal)
         }
       }
