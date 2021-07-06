@@ -204,7 +204,7 @@ private struct NavigationSidebar: View {
           .onDrag { NSItemProvider(object: subreddit.id as NSString) }
           .openableInNewTab(id: subreddit.id, title: subreddit.displayName) { PostListView(postContainer: subreddit) }
           .help(subreddit.displayName)
-          .tag(subreddit.name)
+          .tag(subreddit.id)
         }
       }
     }
@@ -328,7 +328,7 @@ private struct SubredditSelectorView: View {
                 Text(subreddit.displayName)
               }
               .help(subreddit.displayName)
-              .tag(subreddit.name)
+              .tag(subreddit.id)
             }
           }
         }
