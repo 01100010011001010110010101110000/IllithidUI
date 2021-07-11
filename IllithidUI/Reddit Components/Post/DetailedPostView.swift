@@ -65,13 +65,14 @@ struct DetailedPostView: View {
 
           TitleView(post: post)
         }
-        .padding(.top)
+        .padding(.vertical)
       }
 
       if let crosspostParent = crosspostParent {
         GroupBox {
           VStack {
             TitleView(post: crosspostParent)
+              .padding(.vertical)
 
             PostContent(post: crosspostParent)
 
