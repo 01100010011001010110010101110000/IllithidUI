@@ -158,7 +158,6 @@ private struct SubredditSelectorView: View {
                 Text(subreddit.displayName)
               }
               .help(subreddit.displayName)
-              .tag(subreddit.id)
             }
           }
         }

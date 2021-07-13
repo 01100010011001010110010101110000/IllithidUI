@@ -16,7 +16,7 @@ import SwiftUI
 
 import Illithid
 
-private struct AccountFeedsList: View {
+struct AccountFeedsList: View {
   // MARK: Lifecycle
 
   init(selection: Binding<String?>) {
@@ -67,7 +67,6 @@ private struct AccountFeedsList: View {
             Text(subreddit.displayName)
           }
           .help(subreddit.displayName)
-          .tag(subreddit.name)
         }
       }
     }

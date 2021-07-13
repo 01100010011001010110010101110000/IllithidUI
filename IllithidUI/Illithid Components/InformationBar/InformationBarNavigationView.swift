@@ -94,7 +94,6 @@ struct InformationBarNavigationView: View {
               .openableInNewTab(id: subreddit.id, title: subreddit.displayName) { PostListView(postContainer: subreddit) }
             }
             .help(subreddit.displayName)
-            .tag(subreddit.name)
           }
         }
       }
