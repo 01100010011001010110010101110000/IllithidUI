@@ -137,21 +137,6 @@ struct InformationBarNavigationView: View {
   }
 }
 
-extension FrontPage {
-  var systemImageIconName: String {
-    switch self {
-    case .all:
-      return "asterisk.circle"
-    case .home:
-      return "house"
-    case .popular:
-      return "arrow.up.right.square"
-    case .random:
-      return "shuffle"
-    }
-  }
-}
-
 // MARK: - InformationBarListView_Previews
 
 struct InformationBarListView_Previews: PreviewProvider {

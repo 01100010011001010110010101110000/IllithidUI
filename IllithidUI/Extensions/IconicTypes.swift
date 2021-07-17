@@ -12,16 +12,34 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import Foundation
-import SwiftUI
-
 import Illithid
 
-struct TriplePaneLayoutView: View {
-  @EnvironmentObject var informationBarData: InformationBarData
-  @ObservedObject var preferences: PreferencesData = .shared
+// MARK: - FrontPage + Iconic
 
-  var body: some View {
-    EmptyView()
+extension FrontPage: Iconic {
+  var systemImageIconName: String {
+    switch self {
+    case .all:
+      return "asterisk.circle"
+    case .home:
+      return "house"
+    case .popular:
+      return "arrow.up.right.square"
+    case .random:
+      return "shuffle"
+    }
+  }
+}
+
+// MARK: - IllithidPages + Iconic
+
+extension IllithidPages: Iconic {
+  var systemImageIconName: String {
+    switch self {
+    case .account:
+      return "person.crop.circle"
+    case .search:
+      return "magnifyingglass"
+    }
   }
 }

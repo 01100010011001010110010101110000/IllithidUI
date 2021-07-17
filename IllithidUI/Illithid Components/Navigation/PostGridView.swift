@@ -41,9 +41,6 @@ struct PostGridView: View {
         .padding()
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .onAppear {
-      informationBarData.loadAccountData()
-    }
   }
 
   // MARK: Private
@@ -120,47 +117,7 @@ private struct SubredditSelectorView: View {
         presentSelector = true
       }
       .popover(isPresented: $presentSelector) {
-        List(selection: $selection) {
-          Section(header: Text("Meta")) {
-            Label("Account", systemImage: "person.crop.circle")
-              .help("Account view")
-              .tag("__account__")
-            Label("Search", systemImage: "magnifyingglass")
-              .help("Search Reddit")
-              .tag("__search__")
-          }
-          Divider()
-          Section(header: Text("Front Page")) {
-            ForEach(FrontPage.allCases) { page in
-              Label(page.title, systemImage: page.systemImageIconName)
-                .help(page.displayName)
-                .tag(page)
-            }
-          }
-          Divider()
-          Section(header: Text("Multireddits")) {
-            ForEach(filteredPostProviders(informationBarData.multireddits)) { multireddit in
-              HStack {
-                SubredditIcon(multireddit: multireddit)
-                  .frame(width: 24, height: 24)
-                Text(multireddit.displayName)
-              }
-              .help(multireddit.displayName)
-              .tag("m/\(multireddit.id)")
-            }
-          }
-          Divider()
-          Section(header: Text("Subscribed")) {
-            ForEach(filteredPostProviders(informationBarData.subscribedSubreddits)) { subreddit in
-              HStack {
-                SubredditIcon(subreddit: subreddit)
-                  .frame(width: 24, height: 24)
-                Text(subreddit.displayName)
-              }
-              .help(subreddit.displayName)
-            }
-          }
-        }
+        AccountFeedsList(selection: $selection)
       }
       .onChange(of: selection) { selected in
         columnManager.setSelection(for: column, selection: selected)

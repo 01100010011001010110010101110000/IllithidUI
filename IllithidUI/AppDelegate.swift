@@ -69,6 +69,9 @@ struct IllithidApp: App {
           }
         })
         .environmentObject(informationBarData)
+        .onAppear {
+          informationBarData.loadAccountData()
+        }
         .onOpenURL { url in
 
           // MARK: OAuth2 Callback

@@ -30,20 +30,17 @@ struct AccountFeedsList: View {
 
   var body: some View {
     List(selection: $selection) {
-      Section(header: Text("Meta")) {
-        Label("Account", systemImage: "person.crop.circle")
-          .help("Account view")
-          .tag("__account__")
-        Label("Search", systemImage: "magnifyingglass")
-          .help("Search Reddit")
-          .tag("__search__")
+      Section(header: Text("Illithid")) {
+        ForEach(IllithidPages.allCases) { page in
+          Label(page.title, systemImage: page.systemImageIconName)
+            .help(page.title)
+        }
       }
       Divider()
       Section(header: Text("Front Page")) {
         ForEach(FrontPage.allCases) { page in
           Label(page.title, systemImage: page.systemImageIconName)
             .help(page.displayName)
-            .tag(page)
         }
       }
       Divider()
@@ -55,7 +52,6 @@ struct AccountFeedsList: View {
             Text(multireddit.displayName)
           }
           .help(multireddit.displayName)
-          .tag("m/\(multireddit.id)")
         }
       }
       Divider()

@@ -69,7 +69,7 @@ struct RootView: View {
   @AppStorage("postStyle") var postStyle: PostStyle = PostStyleKey.defaultValue
 
   var body: some View {
-    PostGridView()
+    TriplePaneLayoutView()
       .environment(\.postStyle, postStyle)
       .toolbar {
         ToolbarItem(placement: .navigation) {
