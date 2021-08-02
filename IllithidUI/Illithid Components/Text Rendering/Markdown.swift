@@ -106,7 +106,7 @@ struct Markdown: View {
 
     func visit(strikethrough: Strikethrough) -> AttributedString {
       var result = renderInline(inline: strikethrough.items)
-      result.swiftUI.strikethroughColor = .primary
+      result.swiftUI.strikethroughStyle = .single
       return result
     }
 
