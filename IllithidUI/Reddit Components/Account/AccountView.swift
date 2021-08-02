@@ -123,7 +123,7 @@ private struct Content: View {
               }
           case let .post(post):
             if shouldShowPost(post) {
-              PostRowView(post: post)
+              PostRowView(post: post, selection: .constant(nil))
                 .onAppear {
                   if item == data.content[content]!.last {
                     data.loadContent(content: content, sort: sorter.sort, topInterval: sorter.topInterval)

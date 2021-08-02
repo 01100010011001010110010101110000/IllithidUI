@@ -36,6 +36,8 @@ struct PostListView: View {
 
   // MARK: Internal
 
+  @Environment(\.navigationStyle) var navigationStyle
+
   @EnvironmentObject var informationBarData: InformationBarData
   @ObservedObject var preferences: PreferencesData = .shared
 
@@ -51,14 +53,36 @@ struct PostListView: View {
             .foregroundColor(.clear)
             .overlay(Text("No posts in \(postContainer.displayName) when sorting by \(sortDescription)").font(.title))
         } else {
-          List(filteredPosts, selection: $selection) { post in
-            PostRowView(post: post, selection: $selection)
-              .onAppear {
-                if post == filteredPosts.last {
-                  postsData.loadPosts(sort: sorter.sort,
-                                      topInterval: sorter.topInterval)
-                }
+          Group {
+            switch navigationStyle {
+            case .multiColumn:
+              List(filteredPosts, selection: $selection) { post in
+                PostRowView(post: post, selection: $selection)
+                  .onAppear {
+                    if post == filteredPosts.last {
+                      postsData.loadPosts(sort: sorter.sort,
+                                          topInterval: sorter.topInterval)
+                    }
+                  }
               }
+            case .linear:
+              NavigationView {
+                List(filteredPosts, selection: $selection) { post in
+                  NavigationLink {
+                    CommentsView(post: post)
+                  } label: {
+                    PostRowView(post: post, selection: $selection)
+                      .onAppear {
+                        if post == filteredPosts.last {
+                          postsData.loadPosts(sort: sorter.sort,
+                                              topInterval: sorter.topInterval)
+                        }
+                      }
+                  }
+                }
+                .frame(minWidth: 700)
+              }
+            }
           }
           .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
           .onAppear {
