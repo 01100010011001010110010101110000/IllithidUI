@@ -38,7 +38,7 @@ struct PostRowView: View {
 
 // MARK: - DetailedPostRowView
 
-struct DetailedPostRowView: View {
+private struct DetailedPostRowView: View {
   // MARK: Lifecycle
 
   init(post: Post, selection: Binding<Post.ID?> = .constant(nil)) {
@@ -156,7 +156,7 @@ struct DetailedPostRowView: View {
 
 // MARK: - ClassicPostRowView
 
-struct ClassicPostRowView: View {
+private struct ClassicPostRowView: View {
   // MARK: Lifecycle
 
   init(post: Post, selection: Binding<Post.ID?> = .constant(nil)) {

@@ -79,10 +79,11 @@ struct SearchView: View {
               ScrollView {
                 LazyVGrid(columns: postColumns) {
                   ForEach(filteredPosts) { post in
-                    ClassicPostRowView(post: post)
+                    PostRowView(post: post, selection: .constant(nil))
                       .onTapGesture(count: 1, perform: {
                         openModal(for: post)
                       })
+                      .postStyle(.classic)
                   }
                 }
               }
