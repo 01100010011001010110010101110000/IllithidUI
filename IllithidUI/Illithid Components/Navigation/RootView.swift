@@ -20,32 +20,41 @@ import Illithid
 
 struct RootView: View {
   @AppStorage("postStyle") var postStyle: PostStyle = PostStyleKey.defaultValue
+  @AppStorage("navigationStyle") var navigationStyle: NavigationStyle = NavigationStyleKey.defaultValue
 
   var body: some View {
-    TriplePaneLayoutView()
-      .postStyle(postStyle)
-      .toolbar {
-        ToolbarItem(placement: .navigation) {
-          Button(action: {
-            NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
-          }, label: {
-            Image(systemName: "sidebar.left")
-          })
-            .help("Hide or show the navigator")
-        }
-        ToolbarItem(placement: .principal) {
-          Picker(selection: $postStyle, label: EmptyView()) {
-            ForEach(PostStyle.allCases.reversed()) { layoutCase in
-              layoutCase.toolbarIcon
-                .foregroundColor(.white)
-                .tag(layoutCase).padding(5)
-            }
-          }
-          .help("Different layout styles for the main navigation page")
-          .pickerStyle(SegmentedPickerStyle())
-        }
+    Group {
+      switch navigationStyle {
+      case .multiColumn:
+        PostGridView()
+      case .linear:
+        TriplePaneLayoutView()
       }
-      .navigationTitle("Illithid")
+    }
+    .postStyle(postStyle)
+    .navigationStyle(navigationStyle)
+    .toolbar {
+      ToolbarItem(placement: .navigation) {
+        Button(action: {
+          NSApp.keyWindow?.firstResponder?.tryToPerform(#selector(NSSplitViewController.toggleSidebar(_:)), with: nil)
+        }, label: {
+          Image(systemName: "sidebar.left")
+        })
+          .help("Hide or show the navigator")
+      }
+      ToolbarItem(placement: .principal) {
+        Picker(selection: $postStyle, label: EmptyView()) {
+          ForEach(PostStyle.allCases.reversed()) { layoutCase in
+            layoutCase.toolbarIcon
+              .foregroundColor(.white)
+              .tag(layoutCase).padding(5)
+          }
+        }
+        .help("Different layout styles for the main navigation page")
+        .pickerStyle(SegmentedPickerStyle())
+      }
+    }
+    .navigationTitle("Illithid")
   }
 }
 
