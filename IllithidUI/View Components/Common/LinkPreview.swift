@@ -53,21 +53,20 @@ struct LinkPreview: View {
                             link: previewData.link)
         }
     }
-    .onHover { entered in
-      withAnimation(.easeInOut(duration: 0.7)) {
-        self.hover = entered
-      }
-    }
+    .frame(width: 512)
     .onTapGesture {
       openLink(previewData.link)
     }
     .onLongPressGesture(minimumDuration: 0.1) {
       self.showingPreview = true
     }
-    .frame(width: 512)
+    .onHover { entered in
+      withAnimation(.easeInOut(duration: 0.7)) {
+        self.hover = entered
+      }
+    }
     .background(Color(.controlBackgroundColor))
     .roundedBorder(style: Color(.darkGray), width: 2.0)
-    .padding(.top)
     .onAppear {
       if previewData.previewImageUrl == nil {
         previewData.loadMetadata()
