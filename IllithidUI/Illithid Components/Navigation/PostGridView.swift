@@ -21,7 +21,6 @@ import Illithid
 struct PostGridView: View {
   // MARK: Internal
 
-  @Environment(\.postStyle) var postStyle: PostStyle
   @EnvironmentObject var informationBarData: InformationBarData
 
   var body: some View {

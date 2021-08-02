@@ -36,7 +36,6 @@ struct PostListView: View {
 
   // MARK: Internal
 
-  @Environment(\.postStyle) var postStyle
   @EnvironmentObject var informationBarData: InformationBarData
   @ObservedObject var preferences: PreferencesData = .shared
 
@@ -52,42 +51,24 @@ struct PostListView: View {
             .foregroundColor(.clear)
             .overlay(Text("No posts in \(postContainer.displayName) when sorting by \(sortDescription)").font(.title))
         } else {
-          switch postStyle {
-          case .classic, .compact:
-            ClassicListBody(posts: filteredPosts, onLastPost: {
-              postsData.loadPosts(sort: sorter.sort,
-                                  topInterval: sorter.topInterval)
-            })
-              .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
+          List(filteredPosts, selection: $selection) { post in
+            PostRowView(post: post, selection: $selection)
               .onAppear {
-                // Do not load posts on a re-render
-                guard postsData.posts.isEmpty else { return }
-                postsData.loadPosts(sort: sorter.sort,
-                                    topInterval: sorter.topInterval)
-              }
-              .onDisappear {
-                postsData.cancel()
-              }
-          case .large:
-            List(filteredPosts, selection: $selection) { post in
-              PostRowView(post: post, selection: $selection)
-                .onAppear {
-                  if post == filteredPosts.last {
-                    postsData.loadPosts(sort: sorter.sort,
-                                        topInterval: sorter.topInterval)
-                  }
+                if post == filteredPosts.last {
+                  postsData.loadPosts(sort: sorter.sort,
+                                      topInterval: sorter.topInterval)
                 }
-            }
-            .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
-            .onAppear {
-              // Do not load posts on a re-render
-              guard postsData.posts.isEmpty else { return }
-              postsData.loadPosts(sort: sorter.sort,
-                                  topInterval: sorter.topInterval)
-            }
-            .onDisappear {
-              postsData.cancel()
-            }
+              }
+          }
+          .loadingScreen(isLoading: postsData.posts.isEmpty, title: "Loading posts")
+          .onAppear {
+            // Do not load posts on a re-render
+            guard postsData.posts.isEmpty else { return }
+            postsData.loadPosts(sort: sorter.sort,
+                                topInterval: sorter.topInterval)
+          }
+          .onDisappear {
+            postsData.cancel()
           }
         }
 

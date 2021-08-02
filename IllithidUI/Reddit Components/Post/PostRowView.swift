@@ -21,6 +21,24 @@ import SDWebImageSwiftUI
 // MARK: - PostRowView
 
 struct PostRowView: View {
+  @Environment(\.postStyle) var postStyle
+
+  let post: Post
+  @Binding var selection: Post.ID?
+
+  var body: some View {
+    switch postStyle {
+    case .large:
+      DetailedPostRowView(post: post, selection: $selection)
+    case .classic, .compact:
+      ClassicPostRowView(post: post, selection: $selection)
+    }
+  }
+}
+
+// MARK: - DetailedPostRowView
+
+struct DetailedPostRowView: View {
   // MARK: Lifecycle
 
   init(post: Post, selection: Binding<Post.ID?> = .constant(nil)) {
@@ -34,8 +52,6 @@ struct PostRowView: View {
   @Binding var selection: Post.ID?
 
   let post: Post
-
-  let windowManager: WindowManager = .shared
 
   var body: some View {
     GroupBox {
@@ -123,6 +139,8 @@ struct PostRowView: View {
 
   // MARK: Private
 
+  private let windowManager: WindowManager = .shared
+
   @State private var voteState: VoteDirection
   @State private var presentReplyForm: Bool = false
 
@@ -133,6 +151,137 @@ struct PostRowView: View {
       Image(systemName: "chevron.right")
     })
       .opacity(0.0)
+  }
+}
+
+// MARK: - ClassicPostRowView
+
+struct ClassicPostRowView: View {
+  // MARK: Lifecycle
+
+  init(post: Post, selection: Binding<Post.ID?> = .constant(nil)) {
+    self.post = post
+    _selection = selection
+  }
+
+  // MARK: Internal
+
+  @EnvironmentObject var informationBarData: InformationBarData
+  @Binding var selection: Post.ID?
+
+  let post: Post
+
+  var body: some View {
+    GroupBox {
+      HStack {
+        VStack {
+          Image(systemName: "arrow.up")
+          Text(String(post.ups.postAbbreviation()))
+            .foregroundColor(.orange)
+          Image(systemName: "arrow.down")
+        }
+        // Hack to deal with different length upvote count text
+        .frame(minWidth: 36)
+        if let thumbnailUrl = post.thumbnail {
+          WebImage(url: thumbnailUrl)
+            .placeholder {
+              thumbnailPlaceholder
+            }
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: 90, height: 60)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+        } else {
+          thumbnailPlaceholder
+        }
+        VStack(alignment: .leading, spacing: 4) {
+          Text(post.title)
+            .fontWeight(.bold)
+            .font(.headline)
+            .heightResizable()
+          HStack {
+            Text(post.subredditNamePrefixed)
+              .onTapGesture {
+                windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
+                  SubredditLoader(fullname: post.subredditId)
+                    .environmentObject(informationBarData)
+                }
+              }
+            (Text("by ")
+              + Text(post.author).usernameStyle(color: authorColor))
+              .onTapGesture {
+                windowManager.showMainWindowTab(withId: post.author, title: post.author) {
+                  AccountView(name: post.author)
+                    .environmentObject(informationBarData)
+                }
+              }
+          }
+        }
+        Spacer()
+        Group {
+          if selection == post.id {
+            commentsButton
+              .keyboardShortcut(.defaultAction)
+          } else {
+            commentsButton
+          }
+        }
+        .padding(10)
+      }
+      .padding([.top, .bottom], 10)
+      .padding(.trailing, 5)
+    }
+    .frame(maxWidth: .infinity)
+  }
+
+  func showComments(for post: Post) {
+    windowManager.showMainWindowTab(withId: post.name, title: post.title) {
+      CommentsView(post: post)
+    }
+  }
+
+  // MARK: Private
+
+  @ObservedObject private var moderators: ModeratorData = .shared
+  private let windowManager: WindowManager = .shared
+
+  private var previewImage: String {
+    switch post.postHint {
+    case .image:
+      return "photo.fill"
+    case .hostedVideo, .richVideo:
+      return "video.fill"
+    default:
+      return "link"
+    }
+  }
+
+  private var authorColor: Color {
+    if post.isAdminPost {
+      return .red
+    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
+      return .green
+    } else {
+      return .white
+    }
+  }
+
+  private var thumbnailPlaceholder: some View {
+    ZStack(alignment: .center) {
+      RoundedRectangle(cornerRadius: 8, style: .continuous)
+        .foregroundColor(Color(.darkGray))
+      Image(systemName: previewImage)
+        .foregroundColor(.blue)
+    }
+    .frame(width: 90, height: 60)
+  }
+
+  private var commentsButton: some View {
+    Button(action: {
+      showComments(for: post)
+    }, label: {
+      Image(systemName: "chevron.right")
+    })
   }
 }
 
@@ -267,6 +416,6 @@ struct PostRowView_Previews: PreviewProvider {
     let data = try! Data(contentsOf: singlePostURL)
     let post = try! decoder.decode(Post.self, from: data)
 
-    return PostRowView(post: post)
+    return PostRowView(post: post, selection: .constant(nil))
   }
 }
