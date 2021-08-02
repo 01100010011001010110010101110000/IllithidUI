@@ -41,6 +41,8 @@
 		6D1780B5240C975F005D7FD6 /* UserDefault.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1780B4240C975F005D7FD6 /* UserDefault.swift */; };
 		6D1780B7240CD47B005D7FD6 /* NSImageNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1780B6240CD47B005D7FD6 /* NSImageNames.swift */; };
 		6D18CD672419DA1F00E4BAC1 /* LinkConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D18CD662419DA1F00E4BAC1 /* LinkConfiguration.swift */; };
+		6D1BBBD926B7470D00354A45 /* NavigationStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1BBBD826B7470D00354A45 /* NavigationStyle.swift */; };
+		6D1BBBDB26B7802F00354A45 /* PostStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1BBBDA26B7802F00354A45 /* PostStyle.swift */; };
 		6D1DAF692407100C0020A9D6 /* RoundedBorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1DAF682407100C0020A9D6 /* RoundedBorderModifier.swift */; };
 		6D1DAF6B24073BA80020A9D6 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1DAF6A24073BA80020A9D6 /* Browser.swift */; };
 		6D1F97B92431905000B3E9FC /* NsfwBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1F97B82431905000B3E9FC /* NsfwBlur.swift */; };
@@ -175,6 +177,8 @@
 		6D1780B4240C975F005D7FD6 /* UserDefault.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefault.swift; sourceTree = "<group>"; };
 		6D1780B6240CD47B005D7FD6 /* NSImageNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImageNames.swift; sourceTree = "<group>"; };
 		6D18CD662419DA1F00E4BAC1 /* LinkConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkConfiguration.swift; sourceTree = "<group>"; };
+		6D1BBBD826B7470D00354A45 /* NavigationStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationStyle.swift; sourceTree = "<group>"; };
+		6D1BBBDA26B7802F00354A45 /* PostStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostStyle.swift; sourceTree = "<group>"; };
 		6D1DAF682407100C0020A9D6 /* RoundedBorderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedBorderModifier.swift; sourceTree = "<group>"; };
 		6D1DAF6A24073BA80020A9D6 /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
 		6D1F97B82431905000B3E9FC /* NsfwBlur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NsfwBlur.swift; sourceTree = "<group>"; };
@@ -358,6 +362,7 @@
 				22F266EC64C1F7BA6AE16808 /* TriplePaneLayoutView.swift */,
 				22F26AD8A606180083BA1D0F /* AccountFeedsList.swift */,
 				6D2B385E26A259FC0060EC8F /* IllithidPages.swift */,
+				6D1BBBD826B7470D00354A45 /* NavigationStyle.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -613,6 +618,7 @@
 				22F2669DD8A63B3417BC6376 /* MockPostList.swift */,
 				22F269812B6D13E1FF3134CA /* DetailedPostView.swift */,
 				22F2621DBC55C2239EE306E9 /* NewPostForm.swift */,
+				6D1BBBDA26B7802F00354A45 /* PostStyle.swift */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -856,6 +862,7 @@
 				6DBB483C25756A7300C0B1E2 /* YouTubeView.swift in Sources */,
 				6DE756B822AE16E300A1F87B /* PostListData.swift in Sources */,
 				6DBCFBE0247381D600174442 /* WikiData.swift in Sources */,
+				6D1BBBDB26B7802F00354A45 /* PostStyle.swift in Sources */,
 				6D544EE922FF40C100196C25 /* ConditionalModifier.swift in Sources */,
 				6DAEDDF124A1B9AA00B0FF06 /* SubredditSuggestionView.swift in Sources */,
 				6D0EF1EE23B3D89D007B4CCE /* AccountData.swift in Sources */,
@@ -867,6 +874,7 @@
 				6D1780B7240CD47B005D7FD6 /* NSImageNames.swift in Sources */,
 				6DA9A2FC245E6172009444CC /* HostingWindow.swift in Sources */,
 				6DC19CD122B069B0002F027B /* PostRowView.swift in Sources */,
+				6D1BBBD926B7470D00354A45 /* NavigationStyle.swift in Sources */,
 				6DBB483925756A7300C0B1E2 /* Imgur.swift in Sources */,
 				6D43AC3F252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift in Sources */,
 				6DBB481C2575697C00C0B1E2 /* AppDelegate.swift in Sources */,

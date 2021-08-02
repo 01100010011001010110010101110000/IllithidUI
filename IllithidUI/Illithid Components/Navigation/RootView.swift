@@ -16,53 +16,6 @@ import SwiftUI
 
 import Illithid
 
-// MARK: - PostStyle
-
-enum PostStyle: String, CaseIterable, Identifiable, Codable {
-  case compact
-  case classic
-  case large
-
-  // MARK: Internal
-
-  var id: String {
-    rawValue
-  }
-
-  var toolbarIcon: some View {
-    Image(systemName: iconName)
-      .font(.caption)
-  }
-
-  var iconName: String {
-    switch self {
-    case .compact:
-      return "list.dash"
-    case .classic:
-      return "rectangle.split.3x1"
-    case .large:
-      return "squares.below.rectangle"
-    }
-  }
-}
-
-// MARK: - PostStyleKey
-
-struct PostStyleKey: EnvironmentKey {
-  static var defaultValue: PostStyle = .large
-}
-
-extension EnvironmentValues {
-  var postStyle: PostStyle {
-    get {
-      self[PostStyleKey.self]
-    }
-    set {
-      self[PostStyleKey.self] = newValue
-    }
-  }
-}
-
 // MARK: - RootView
 
 struct RootView: View {
@@ -70,7 +23,7 @@ struct RootView: View {
 
   var body: some View {
     TriplePaneLayoutView()
-      .environment(\.postStyle, postStyle)
+      .postStyle(postStyle)
       .toolbar {
         ToolbarItem(placement: .navigation) {
           Button(action: {
