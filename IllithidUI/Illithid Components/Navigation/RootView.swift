@@ -51,7 +51,7 @@ struct RootView: View {
           }
         }
         .help("Different layout styles for the main navigation page")
-        .pickerStyle(SegmentedPickerStyle())
+        .pickerStyle(.segmented)
       }
     }
     .navigationTitle("Illithid")
