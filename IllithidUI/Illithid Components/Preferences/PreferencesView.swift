@@ -35,7 +35,7 @@ struct PreferencesView: View {
           .navigationTitle("Accounts")
       case .advanced:
         AdvancedPreferences()
-          .navigationTitle("Advances")
+          .navigationTitle("Advanced")
       }
     }
     .padding(.top, 20)
