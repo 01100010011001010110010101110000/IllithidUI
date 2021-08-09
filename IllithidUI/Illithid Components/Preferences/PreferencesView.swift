@@ -252,7 +252,6 @@ private struct AccountsPreferences: View {
               }
             }
           }
-          .animation(.spring())
         }
         .onDelete(perform: { accountManager.removeAccounts(indexSet: $0) })
         .padding()

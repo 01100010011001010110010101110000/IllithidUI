@@ -940,7 +940,6 @@ private struct UploadImagePreview: View {
         .deleteButton {
           onRemoval()
         }
-        .animation(.default)
     }
   }
 
