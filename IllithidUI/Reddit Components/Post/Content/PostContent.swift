@@ -295,22 +295,12 @@ private struct VideoPostPreview: View {
   let post: Post
 
   var body: some View {
-    if let url = url {
-      VideoPlayer(url: url, fullSize: .init(width: preview.width, height: preview.height))
-    } else {
-      Rectangle()
-        .opacity(0.0)
-        .onAppear {
-          url = preview.url
-        }
-    }
+    VideoPlayer(url: preview.url, fullSize: .init(width: preview.width, height: preview.height))
   }
 
   // MARK: Private
 
   private let preview: Preview.Source
-
-  @State private var url: URL? = nil
 }
 
 // MARK: - GifPostPreview

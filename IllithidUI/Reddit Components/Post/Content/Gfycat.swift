@@ -225,7 +225,7 @@ extension GfyItem: MediaMetadataProvider {
 // MARK: - RedGfyItem + MediaMetadataProvider
 
 extension RedGfyItem: MediaMetadataProvider {
-  var mediaTitle: String { title ?? "" }
+  var mediaTitle: String { "" }
 
   var hostDisplayName: String { "Gfycat" }
 
@@ -233,13 +233,13 @@ extension RedGfyItem: MediaMetadataProvider {
 
   var upvotes: Int? { likes }
 
-  var downvotes: Int? { dislikes }
+  var downvotes: Int? { nil }
 
   var imageUrl: URL? { nil }
 
-  var mp4Url: URL? { mp4URL }
+  var mp4Url: URL? { contentUrls["mp4"]?.url }
 
-  var gifUrl: URL? { gifURL }
+  var gifUrl: URL? { contentUrls["smallGif"]?.url }
 
   var size: CGSize { .init(width: width, height: height) }
 }
