@@ -778,9 +778,7 @@ private struct GalleryCarousel: View {
     }
 
     func isGif(imagePath: URL) -> Bool {
-      guard let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, imagePath.pathExtension as CFString, nil)?.takeRetainedValue(),
-            let mimeType = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType)?.takeRetainedValue() else { return false }
-      return mimeType as String == "image/gif"
+      UTType(filenameExtension: imagePath.pathExtension) == .gif
     }
 
     func calculateImageWidth(for url: URL, height: CGFloat) -> CGFloat {
