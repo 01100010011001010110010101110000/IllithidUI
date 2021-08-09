@@ -30,6 +30,9 @@ struct PreferencesView: View {
       case .general:
         GeneralPreferences()
           .navigationTitle("General")
+      case .navigation:
+        NavigationPreferences()
+          .navigationTitle("Navigation")
       case .accounts:
         AccountsPreferences(accountManager: accountManager)
           .navigationTitle("Accounts")
@@ -43,6 +46,10 @@ struct PreferencesView: View {
     .toolbar {
       ToolbarItem(placement: .navigation) {
         PreferencesToolbarItemView(selection: $preferencePage, page: .general)
+      }
+
+      ToolbarItem(placement: .navigation) {
+        PreferencesToolbarItemView(selection: $preferencePage, page: .navigation)
       }
 
       ToolbarItem(placement: .navigation) {
@@ -98,6 +105,7 @@ private struct PreferencesToolbarItemView: View {
 extension PreferencesView {
   enum PreferencePage: String, Identifiable, CaseIterable {
     case general
+    case navigation
     case accounts
     case advanced
 
@@ -111,6 +119,8 @@ extension PreferencesView {
       switch self {
       case .general:
         return "gearshape"
+      case .navigation:
+        return "map"
       case .accounts:
         return "person.crop.circle"
       case .advanced:
@@ -122,7 +132,7 @@ extension PreferencesView {
 
 // MARK: - GeneralPreferences
 
-struct GeneralPreferences: View {
+private struct GeneralPreferences: View {
   @ObservedObject var preferences: PreferencesData = .shared
 
   var body: some View {
@@ -137,21 +147,6 @@ struct GeneralPreferences: View {
             Text("Blur NSFW content")
           }
 
-          Picker(selection: $preferences.browser, label: Text("Open links with: ")) {
-            ForEach(Browser.installed.sorted()) { browser in
-              HStack {
-                if let icon = browser.icon() {
-                  Image(nsImage: icon)
-                    .resizable()
-                    .frame(width: 16, height: 16)
-                }
-                Text(browser.displayName!)
-              }
-              .tag(browser)
-            }
-          }
-          .frame(width: 400)
-
           Toggle(isOn: $preferences.openLinksInForeground) {
             Text("Open links in foreground")
           }
@@ -163,6 +158,20 @@ struct GeneralPreferences: View {
             }
           }
           .frame(width: 200)
+
+          Picker(selection: $preferences.browser, label: Text("Open links with: ")) {
+            ForEach(Browser.installed.sorted()) { browser in
+              HStack {
+                if let icon = browser.icon() {
+                  Image(nsImage: icon)
+                }
+                Text(browser.displayName!)
+              }
+              .tag(browser)
+            }
+          }
+          .pickerStyle(.radioGroup)
+          .frame(width: 400, alignment: .leading)
         }
       }
 
@@ -174,6 +183,31 @@ struct GeneralPreferences: View {
           Toggle(isOn: $preferences.autoPlayGifs) {
             Text("Auto play GIFs")
           }
+        }
+      }
+      Spacer()
+    }
+  }
+}
+
+// MARK: - NavigationPreferences
+
+private struct NavigationPreferences: View {
+  @ObservedObject var preferences: PreferencesData = .shared
+
+  var body: some View {
+    VStack(alignment: .leading) {
+      GroupBox(label: Text("Navigation Layout").font(.headline)) {
+        VStack(alignment: .leading) {
+          Picker(selection: $preferences.navigationStyle, label: Text("Layout: ")) {
+            ForEach(NavigationStyle.allCases) { style in
+              HStack {
+                Text(style.rawValue.capitalized)
+              }
+              .tag(style)
+            }
+          }
+          .frame(width: 400)
         }
       }
       Spacer()
@@ -193,7 +227,7 @@ func openLink(_ link: URL) {
 
 // MARK: - AccountsPreferences
 
-struct AccountsPreferences: View {
+private struct AccountsPreferences: View {
   @ObservedObject var accountManager: AccountManager
 
   var body: some View {
@@ -239,7 +273,7 @@ struct AccountsPreferences: View {
 
 // MARK: - AdvancedPreferences
 
-struct AdvancedPreferences: View {
+private struct AdvancedPreferences: View {
   // MARK: Internal
 
   var body: some View {
@@ -305,6 +339,7 @@ final class PreferencesData: ObservableObject, Codable {
     openLinksInForeground = true
     browser = .inApp
     previewSize = .small
+    navigationStyle = NavigationStyleKey.defaultValue
   }
 
   init(from decoder: Decoder) throws {
@@ -317,6 +352,7 @@ final class PreferencesData: ObservableObject, Codable {
     browser = try (container.decodeIfPresent(Browser.self, forKey: .browser) ?? .inApp)
     openLinksInForeground = try (container.decodeIfPresent(Bool.self, forKey: .openLinksInForeground) ?? true)
     previewSize = try (container.decodeIfPresent(PreviewSize.self, forKey: .previewSize) ?? .small)
+    navigationStyle = try (container.decodeIfPresent(NavigationStyle.self, forKey: .navigationStyle) ?? NavigationStyleKey.defaultValue)
   }
 
   // MARK: Internal
@@ -330,6 +366,7 @@ final class PreferencesData: ObservableObject, Codable {
     case browser
     case openLinksInForeground
     case previewSize
+    case navigationStyle
   }
 
   static let shared: PreferencesData = {
@@ -385,6 +422,12 @@ final class PreferencesData: ObservableObject, Codable {
     }
   }
 
+  @Published fileprivate(set) var navigationStyle: NavigationStyle {
+    didSet {
+      updateDefaults()
+    }
+  }
+
   func encode(to encoder: Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
@@ -395,6 +438,7 @@ final class PreferencesData: ObservableObject, Codable {
     try container.encode(browser, forKey: .browser)
     try container.encode(openLinksInForeground, forKey: .openLinksInForeground)
     try container.encode(previewSize, forKey: .previewSize)
+    try container.encode(navigationStyle, forKey: .navigationStyle)
   }
 
   // MARK: Private

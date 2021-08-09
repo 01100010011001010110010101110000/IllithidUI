@@ -19,12 +19,13 @@ import Illithid
 // MARK: - RootView
 
 struct RootView: View {
+  // MARK: Internal
+
   @AppStorage("postStyle") var postStyle: PostStyle = PostStyleKey.defaultValue
-  @AppStorage("navigationStyle") var navigationStyle: NavigationStyle = NavigationStyleKey.defaultValue
 
   var body: some View {
     Group {
-      switch navigationStyle {
+      switch preferences.navigationStyle {
       case .multiColumn:
         PostGridView()
       case .linear:
@@ -32,7 +33,7 @@ struct RootView: View {
       }
     }
     .postStyle(postStyle)
-    .navigationStyle(navigationStyle)
+    .navigationStyle(preferences.navigationStyle)
     .toolbar {
       ToolbarItem(placement: .navigation) {
         Button(action: {
@@ -56,6 +57,10 @@ struct RootView: View {
     }
     .navigationTitle("Illithid")
   }
+
+  // MARK: Private
+
+  private let preferences: PreferencesData = .shared
 }
 
 // #if DEBUG
