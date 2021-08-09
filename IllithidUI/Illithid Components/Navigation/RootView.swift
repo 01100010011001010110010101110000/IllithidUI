@@ -60,7 +60,7 @@ struct RootView: View {
 
   // MARK: Private
 
-  private let preferences: PreferencesData = .shared
+  @ObservedObject private var preferences: PreferencesData = .shared
 }
 
 // #if DEBUG
