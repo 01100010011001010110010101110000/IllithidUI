@@ -41,11 +41,20 @@ struct LinkPreview: View {
 
   var body: some View {
     VStack(spacing: 0.0) {
-      if let url = previewData.previewImageUrl {
-        WebImage(url: url, context: [.imageTransformer:
-            SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
-          .conditionalModifier(isNsfw, NsfwBlurModifier())
-      }
+      Rectangle()
+        .frame(width: 512, height: 336)
+        .foregroundColor(Color(.darkGray))
+        .overlay {
+          if let url = previewData.previewImageUrl {
+            WebImage(url: url, context: [.imageTransformer:
+                SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
+              .conditionalModifier(isNsfw, NsfwBlurModifier())
+          } else {
+            Image(systemName: "link")
+              .font(.system(size: 60))
+              .foregroundColor(.blue)
+          }
+        }
 
       LinkBar(iconIsScaled: $hover, link: previewData.link)
         .popover(isPresented: $showingPreview) {
