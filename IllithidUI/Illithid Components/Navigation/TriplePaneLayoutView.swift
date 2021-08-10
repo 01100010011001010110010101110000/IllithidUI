@@ -20,10 +20,11 @@ import Illithid
 struct TriplePaneLayoutView: View {
   @EnvironmentObject var informationBarData: InformationBarData
   @ObservedObject var preferences: PreferencesData = .shared
+  @SceneStorage("selectedPage") var selection: String?
 
   var body: some View {
     NavigationView {
-      List {
+      List(selection: $selection) {
         Section(header: Text("Illithid")) {
           ForEach(IllithidPages.allCases) { page in
             NavigationLink(destination: page.destinationView) {
