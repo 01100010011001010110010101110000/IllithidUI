@@ -58,6 +58,12 @@ struct PostListView: View {
             case .multiColumn:
               List(filteredPosts, selection: $selection) { post in
                 PostRowView(post: post, selection: $selection)
+                  .onTapGesture(count: 2) {
+                    // Matches the bahavior of double clicking on a NavigationLink
+                    WindowManager.shared.showWindow {
+                      CommentsView(post: post)
+                    }
+                  }
                   .onAppear {
                     if post == filteredPosts.last {
                       postsData.loadPosts(sort: sorter.sort,
