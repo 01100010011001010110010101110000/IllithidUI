@@ -46,6 +46,7 @@ struct PostListView: View {
   var body: some View {
     VStack(spacing: 0.0) {
       postListHeader
+        .padding(5)
 
       ZStack(alignment: .trailing) {
         if postsData.noPosts {
@@ -170,7 +171,6 @@ private extension PostListView {
 
         Spacer()
       }
-      .padding(.leading, 10)
 
       HStack {
         TextField("Search Posts", text: $searchText)
@@ -187,7 +187,6 @@ private extension PostListView {
           .help("Show or hide sidebar")
         }
       }
-      .padding([.bottom, .horizontal], 10)
     }
     .background(Color(.controlBackgroundColor))
   }
