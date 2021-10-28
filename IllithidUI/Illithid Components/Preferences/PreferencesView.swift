@@ -160,9 +160,9 @@ private struct GeneralPreferences: View {
           .frame(width: 200)
 
           Picker(selection: $preferences.browser, label: Text("Open links with: ")) {
-            ForEach(Browser.installed.sorted()) { browser in
+            ForEach(Browser.installed.sorted().filter { $0.displayName != nil }) { browser in
               HStack {
-                if let icon = browser.icon() {
+                if let icon = browser.icon()?.resized(to: NSSize(width: 16, height: 16)) {
                   Image(nsImage: icon)
                 }
                 Text(browser.displayName!)
@@ -170,8 +170,7 @@ private struct GeneralPreferences: View {
               .tag(browser)
             }
           }
-          .pickerStyle(.radioGroup)
-          .frame(width: 400, alignment: .leading)
+          .frame(width: 250, alignment: .leading)
         }
       }
 
