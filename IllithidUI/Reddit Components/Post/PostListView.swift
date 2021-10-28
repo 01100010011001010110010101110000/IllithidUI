@@ -59,7 +59,7 @@ struct PostListView: View {
               List(filteredPosts, selection: $selection) { post in
                 PostRowView(post: post, selection: $selection)
                   .onTapGesture(count: 2) {
-                    // Matches the bahavior of double clicking on a NavigationLink
+                    // Matches the behavior of double clicking on a NavigationLink
                     WindowManager.shared.showWindow {
                       CommentsView(post: post)
                     }
@@ -184,7 +184,7 @@ private extension PostListView {
             Image(systemName: "sidebar.right")
               .font(.body)
           })
-            .help("Show or hide sidebar")
+          .help("Show or hide sidebar")
         }
       }
       .padding([.bottom, .horizontal], 10)
