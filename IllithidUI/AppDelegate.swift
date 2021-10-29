@@ -33,6 +33,7 @@ struct IllithidApp: App {
     illithid.configure(configuration: IllithidConfiguration())
     Ulithari.shared.configure(imgurClientId: "6f8b2f993cdf1f4")
     illithid.logger = delegate.logger
+    OAuthSwift.log = delegate.logger
 
     // MARK: SDWebImage configuration
 
