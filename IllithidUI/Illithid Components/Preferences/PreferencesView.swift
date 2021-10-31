@@ -262,7 +262,10 @@ private struct AccountsPreferences: View {
         Spacer()
         Button(action: {
           accountManager.removeAll()
-        }) { Text("Remove all accounts") }
+        }) {
+          Text("Remove all accounts")
+        }
+        .disabled(accountManager.accounts.isEmpty)
       }
       .padding()
     }
