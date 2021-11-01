@@ -83,7 +83,7 @@ struct PostRowView: View {
     }, label: {
       Image(systemName: "chevron.right")
     })
-      .opacity(0.0)
+    .opacity(0.0)
   }
 
   private func showComments(for post: Post) {
@@ -176,7 +176,9 @@ private struct ClassicPostRowView: View {
           .font(.headline)
           .heightResizable()
         HStack {
-          Text(post.subredditNamePrefixed)
+          Text(verbatim: post.subredditNamePrefixed)
+            .lineLimit(1)
+            .fixedSize()
             .onTapGesture {
               windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
                 SubredditLoader(fullname: post.subredditId)
@@ -184,7 +186,9 @@ private struct ClassicPostRowView: View {
               }
             }
           (Text("by ")
-            + Text(post.author).usernameStyle(color: authorColor))
+            + Text(verbatim: post.author).usernameStyle(color: authorColor))
+            .lineLimit(1)
+            .fixedSize()
             .onTapGesture {
               windowManager.showMainWindowTab(withId: post.author, title: post.author) {
                 AccountView(name: post.author)
