@@ -87,7 +87,7 @@ struct PostListView: View {
                       }
                   }
                 }
-                .frame(minWidth: 700)
+                .frame(minWidth: 400)
               }
             }
           }

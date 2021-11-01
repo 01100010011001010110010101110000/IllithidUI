@@ -11,6 +11,7 @@
 		22F26087A50C957DC4402988 /* TriplePaneLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F266EC64C1F7BA6AE16808 /* TriplePaneLayoutView.swift */; };
 		22F260D137F4CD83C3670DFE /* NewCommentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B803F19109572D1A7D9 /* NewCommentForm.swift */; };
 		22F261767DF5E5743C0FF008 /* MockPostList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2669DD8A63B3417BC6376 /* MockPostList.swift */; };
+		22F261A5584C1B6126A51076 /* PostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F265C3062A763839B52E3E /* PostRowView.swift */; };
 		22F261BD7DAF35FFFF69A32A /* AccountFeedsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26AD8A606180083BA1D0F /* AccountFeedsList.swift */; };
 		22F262273352EB2F20171DD1 /* NewItemCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F267C48D18E622053FF2B6 /* NewItemCommands.swift */; };
 		22F262305E4B4890A14EBF32 /* Logger+OAuthLogProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26BFE836405602FDB6EF1 /* Logger+OAuthLogProtocol.swift */; };
@@ -118,7 +119,6 @@
 		6DBCFBDE2473737800174442 /* WikiPagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBCFBDD2473737800174442 /* WikiPagesView.swift */; };
 		6DBCFBE0247381D600174442 /* WikiData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBCFBDF247381D600174442 /* WikiData.swift */; };
 		6DBE9E4E240F73DE004E7375 /* FireLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBE9E4D240F73DE004E7375 /* FireLogger.swift */; };
-		6DC19CD122B069B0002F027B /* PostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC19CD022B069B0002F027B /* PostRowView.swift */; };
 		6DC19CD322B06AA7002F027B /* SubredditRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DC19CD222B06AA7002F027B /* SubredditRowView.swift */; };
 		6DC67CF522CFE043001B85C7 /* comments.json in Resources */ = {isa = PBXBuildFile; fileRef = 6DC67CF422CFE043001B85C7 /* comments.json */; };
 		6DD5534E22A8901700A00033 /* SubredditListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD5534D22A8901700A00033 /* SubredditListView.swift */; };
@@ -161,6 +161,7 @@
 		22F2621DBC55C2239EE306E9 /* NewPostForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewPostForm.swift; sourceTree = "<group>"; };
 		22F262A2F4F215322B6061D8 /* NSImage+Resized.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSImage+Resized.swift"; sourceTree = "<group>"; };
 		22F2644E6EE7924DF1DFBFFE /* DangerButtonStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DangerButtonStyle.swift; sourceTree = "<group>"; };
+		22F265C3062A763839B52E3E /* PostRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostRowView.swift; sourceTree = "<group>"; };
 		22F2669DD8A63B3417BC6376 /* MockPostList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockPostList.swift; sourceTree = "<group>"; };
 		22F266EC64C1F7BA6AE16808 /* TriplePaneLayoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriplePaneLayoutView.swift; sourceTree = "<group>"; };
 		22F267C48D18E622053FF2B6 /* NewItemCommands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewItemCommands.swift; sourceTree = "<group>"; };
@@ -259,7 +260,6 @@
 		6DBCFBDD2473737800174442 /* WikiPagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiPagesView.swift; sourceTree = "<group>"; };
 		6DBCFBDF247381D600174442 /* WikiData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiData.swift; sourceTree = "<group>"; };
 		6DBE9E4D240F73DE004E7375 /* FireLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLogger.swift; sourceTree = "<group>"; };
-		6DC19CD022B069B0002F027B /* PostRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostRowView.swift; sourceTree = "<group>"; };
 		6DC19CD222B06AA7002F027B /* SubredditRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditRowView.swift; sourceTree = "<group>"; };
 		6DC67CF422CFE043001B85C7 /* comments.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = comments.json; sourceTree = "<group>"; };
 		6DD5534D22A8901700A00033 /* SubredditListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditListView.swift; sourceTree = "<group>"; };
@@ -619,7 +619,6 @@
 				6DBB483425756A7300C0B1E2 /* Content */,
 				6DE756BB22AE176E00A1F87B /* PostListView.swift */,
 				6DE756B722AE16E300A1F87B /* PostListData.swift */,
-				6DC19CD022B069B0002F027B /* PostRowView.swift */,
 				6DAA94EA24BBE663001A07E5 /* PostModalView.swift */,
 				6D85952C23AD502700FC90E0 /* PostDebugView.swift */,
 				6D3062372418943700D9E47B /* RedditLinkView.swift */,
@@ -628,6 +627,7 @@
 				22F2621DBC55C2239EE306E9 /* NewPostForm.swift */,
 				6D1BBBDA26B7802F00354A45 /* PostStyle.swift */,
 				6D64892526C0EB8000ACE8F0 /* PostContextMenu.swift */,
+				22F265C3062A763839B52E3E /* PostRowView.swift */,
 			);
 			path = Post;
 			sourceTree = "<group>";
@@ -883,7 +883,6 @@
 				6D558A0C22FF79080092AA88 /* CommentRowView.swift in Sources */,
 				6D1780B7240CD47B005D7FD6 /* NSImageNames.swift in Sources */,
 				6DA9A2FC245E6172009444CC /* HostingWindow.swift in Sources */,
-				6DC19CD122B069B0002F027B /* PostRowView.swift in Sources */,
 				6D1BBBD926B7470D00354A45 /* NavigationStyle.swift in Sources */,
 				6DBB483925756A7300C0B1E2 /* Imgur.swift in Sources */,
 				6D43AC3F252C2F73000787A3 /* AboutPanelOptionKey+Copyright.swift in Sources */,
@@ -933,6 +932,7 @@
 				22F26E78FDFFC86D51316229 /* AccountFeedsList.swift in Sources */,
 				22F26C2F871E5CF8F6A119CA /* NSImage+Resized.swift in Sources */,
 				22F265EA68A5D4C7B37FFC9F /* Logger+OAuthLogProtocol.swift in Sources */,
+				22F261A5584C1B6126A51076 /* PostRowView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
