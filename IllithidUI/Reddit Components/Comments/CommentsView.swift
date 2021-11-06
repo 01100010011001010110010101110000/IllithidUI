@@ -69,6 +69,7 @@ struct CommentsView: View, Identifiable {
           ScrollView {
             DetailedPostView(post: post)
               .id(Self.rootViewId)
+              .padding(.leading)
 
             Divider()
 
@@ -99,9 +100,9 @@ struct CommentsView: View, Identifiable {
               }
               .offset(y: -3)
             })
-              .keyboardShortcut(.downArrow)
-              .shadow(radius: 20)
-              .help("comments.scroll.bottom")
+            .keyboardShortcut(.downArrow)
+            .shadow(radius: 20)
+            .help("comments.scroll.bottom")
 
             Button(action: {
               withAnimation {
@@ -115,9 +116,9 @@ struct CommentsView: View, Identifiable {
               }
               .offset(y: -3)
             })
-              .keyboardShortcut(.upArrow)
-              .shadow(radius: 20)
-              .help("comments.scroll.top")
+            .keyboardShortcut(.upArrow)
+            .shadow(radius: 20)
+            .help("comments.scroll.top")
           }
           .padding()
         }
