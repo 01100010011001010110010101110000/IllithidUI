@@ -177,7 +177,7 @@ final class GfyData: ObservableObject, Cancellable {
 private extension Ulithari {
   func fetchRedGif(id: String, queue: DispatchQueue = .main, completion: @escaping (Result<MediaMetadataProvider, AFError>) -> Void)
     -> DataRequest {
-    fetchRedGif(id: id, queue: queue) { (result: Result<RedGfyItem, AFError>) in
+    fetchRedGifV2(id: id, queue: queue) { (result: Result<RedGif, AFError>) in
       switch result {
       case let .success(item):
         completion(.success(item))
@@ -242,6 +242,28 @@ extension RedGfyItem: MediaMetadataProvider {
   var gifUrl: URL? { contentUrls["smallGif"]?.url }
 
   var size: CGSize { .init(width: width, height: height) }
+}
+
+extension RedGif: MediaMetadataProvider {
+  var mediaTitle: String { "" }
+
+  var hostDisplayName: String { "Gfycat" }
+
+  var mediaDescription: String? { nil }
+
+  var upvotes: Int? { gif.likes }
+
+  var downvotes: Int? { nil }
+
+  var views: Int { gif.views }
+
+  var imageUrl: URL? { gif.urls.poster }
+
+  var mp4Url: URL? { gif.urls.hd }
+
+  var gifUrl: URL? { gif.urls.gif }
+
+  var size: CGSize { .init(width: gif.width, height: gif.height) }
 }
 
 // MARK: - GfyNotFound
