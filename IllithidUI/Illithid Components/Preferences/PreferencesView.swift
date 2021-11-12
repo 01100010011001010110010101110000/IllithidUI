@@ -246,7 +246,7 @@ private struct AccountsPreferences: View {
               Text(account.name)
                 .foregroundColor(.red)
               Spacer()
-              Button(action: { accountManager.reauthenticate(account: account, anchor: NSApp.keyWindow!) }) {
+              Button(action: { accountManager.reauthenticate(account: account, anchor: (NSApp.keyWindow ?? NSApp.mainWindow)!) }) {
                 Text("Renew Credentials")
               }
             }

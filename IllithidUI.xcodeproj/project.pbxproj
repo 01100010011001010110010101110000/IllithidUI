@@ -781,9 +781,9 @@
 			packageReferences = (
 				6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */,
-				6D1DF04F272A2AD0002A7AE5 /* XCRemoteSwiftPackageReference "Illithid.git" */,
-				6D1DF052272A2B18002A7AE5 /* XCRemoteSwiftPackageReference "Maaku.git" */,
-				6D1DF055272A2BEA002A7AE5 /* XCRemoteSwiftPackageReference "XCDYouTubeKit.git" */,
+				6D1DF04F272A2AD0002A7AE5 /* XCRemoteSwiftPackageReference "Illithid" */,
+				6D1DF052272A2B18002A7AE5 /* XCRemoteSwiftPackageReference "Maaku" */,
+				6D1DF055272A2BEA002A7AE5 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */,
 			);
 			productRefGroup = 6D2EA59122A7FEE20059B6EA /* Products */;
 			projectDirPath = "";
@@ -1128,7 +1128,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "IllithidUI/Preview\\ Content";
-				DEVELOPMENT_TEAM = 5799SHLZ3R;
+				DEVELOPMENT_TEAM = 3JBD9EVSBM;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = IllithidUI/Info.plist;
@@ -1153,7 +1153,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_ASSET_PATHS = "IllithidUI/Preview\\ Content";
-				DEVELOPMENT_TEAM = 5799SHLZ3R;
+				DEVELOPMENT_TEAM = 3JBD9EVSBM;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = IllithidUI/Info.plist;
@@ -1294,7 +1294,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6D1DF04F272A2AD0002A7AE5 /* XCRemoteSwiftPackageReference "Illithid.git" */ = {
+		6D1DF04F272A2AD0002A7AE5 /* XCRemoteSwiftPackageReference "Illithid" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/01100010011001010110010101110000/Illithid.git";
 			requirement = {
@@ -1302,7 +1302,7 @@
 				kind = branch;
 			};
 		};
-		6D1DF052272A2B18002A7AE5 /* XCRemoteSwiftPackageReference "Maaku.git" */ = {
+		6D1DF052272A2B18002A7AE5 /* XCRemoteSwiftPackageReference "Maaku" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/KristopherGBaker/Maaku.git";
 			requirement = {
@@ -1310,7 +1310,7 @@
 				kind = branch;
 			};
 		};
-		6D1DF055272A2BEA002A7AE5 /* XCRemoteSwiftPackageReference "XCDYouTubeKit.git" */ = {
+		6D1DF055272A2BEA002A7AE5 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/0xced/XCDYouTubeKit.git";
 			requirement = {
@@ -1339,17 +1339,17 @@
 /* Begin XCSwiftPackageProductDependency section */
 		6D1DF050272A2AD0002A7AE5 /* Illithid */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D1DF04F272A2AD0002A7AE5 /* XCRemoteSwiftPackageReference "Illithid.git" */;
+			package = 6D1DF04F272A2AD0002A7AE5 /* XCRemoteSwiftPackageReference "Illithid" */;
 			productName = Illithid;
 		};
 		6D1DF053272A2B18002A7AE5 /* Maaku */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D1DF052272A2B18002A7AE5 /* XCRemoteSwiftPackageReference "Maaku.git" */;
+			package = 6D1DF052272A2B18002A7AE5 /* XCRemoteSwiftPackageReference "Maaku" */;
 			productName = Maaku;
 		};
 		6D1DF056272A2BEA002A7AE5 /* XCDYouTubeKit */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D1DF055272A2BEA002A7AE5 /* XCRemoteSwiftPackageReference "XCDYouTubeKit.git" */;
+			package = 6D1DF055272A2BEA002A7AE5 /* XCRemoteSwiftPackageReference "XCDYouTubeKit" */;
 			productName = XCDYouTubeKit;
 		};
 		6D6D420F2437C14E002D4413 /* Kanna */ = {
