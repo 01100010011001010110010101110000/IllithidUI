@@ -44,6 +44,7 @@
 "post.video.upload.as.gif.description" = "Upload the video as a GIF";
 "post.type.image.and.gif" = "Image & GIF";
 "post.new.link-to" = "URL";
+"post.attribution" = "Posted by";
 
 "choose.image" = "Upload";
 "choose.video" = "Upload";
