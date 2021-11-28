@@ -149,7 +149,7 @@ private struct ClassicPostRowView: View {
   let post: Post
 
   var body: some View {
-    HStack {
+    HStack(alignment: .top) {
       VStack {
         Image(systemName: "arrow.up")
         Text(String(post.ups.postAbbreviation()))
@@ -158,6 +158,7 @@ private struct ClassicPostRowView: View {
       }
       // Hack to deal with different length upvote count text
       .frame(minWidth: 36)
+
       if let thumbnailUrl = post.thumbnail {
         WebImage(url: thumbnailUrl)
           .placeholder {
@@ -165,36 +166,43 @@ private struct ClassicPostRowView: View {
           }
           .resizable()
           .aspectRatio(contentMode: .fill)
-          .frame(width: 90, height: 60)
+          .frame(width: 96, height: 72)
           .clipShape(RoundedRectangle(cornerRadius: 8))
       } else {
         thumbnailPlaceholder
       }
-      VStack(alignment: .leading, spacing: 4) {
+
+      VStack(alignment: .leading) {
         Text(post.title)
           .fontWeight(.bold)
           .font(.headline)
-          .heightResizable()
-        HStack {
+        HStack(spacing: 8) {
           Text(verbatim: post.subredditNamePrefixed)
             .lineLimit(1)
-            .fixedSize()
             .onTapGesture {
               windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
                 SubredditLoader(fullname: post.subredditId)
                   .environmentObject(informationBarData)
               }
             }
-          (Text("by ")
-            + Text(verbatim: post.author).usernameStyle(color: authorColor))
+          Text(Image(systemName: "circle.fill"))
+            .font(.system(size: 4.0))
+            .fontWeight(.light)
+          (Text("post.attribution")
+            + Text(verbatim: " ")
+            + Text(verbatim: post.authorPrefixed).usernameStyle(color: authorColor))
             .lineLimit(1)
-            .fixedSize()
             .onTapGesture {
               windowManager.showMainWindowTab(withId: post.author, title: post.author) {
                 AccountView(name: post.author)
                   .environmentObject(informationBarData)
               }
             }
+        }
+        HStack {
+          if !post.isSelf {
+            Text(verbatim: "(\(post.domain))")
+          }
         }
       }
     }
@@ -208,10 +216,14 @@ private struct ClassicPostRowView: View {
   private let windowManager: WindowManager = .shared
 
   private var previewImage: String {
-    switch post.postHint {
+    switch post.previewGuess {
+    case .text:
+      return "text.bubble.fill"
+    case .gallery:
+      return "photo.fill.on.rectangle.fill"
     case .image:
       return "photo.fill"
-    case .hostedVideo, .richVideo:
+    case .gfycat, .gif, .redgifs, .video, .youtube:
       return "video.fill"
     default:
       return "link"
