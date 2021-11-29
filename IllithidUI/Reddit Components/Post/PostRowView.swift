@@ -175,29 +175,7 @@ private struct ClassicPostRowView: View {
 
       VStack(alignment: .leading) {
         PostRowView.TitleView(post: post)
-        HStack(spacing: 8) {
-          Text(verbatim: post.subredditNamePrefixed)
-            .lineLimit(1)
-            .onTapGesture {
-              windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
-                SubredditLoader(fullname: post.subredditId)
-                  .environmentObject(informationBarData)
-              }
-            }
-          Text(Image(systemName: "circle.fill"))
-            .font(.system(size: 4.0))
-            .fontWeight(.light)
-          (Text("post.attribution")
-            + Text(verbatim: " ")
-            + Text(verbatim: post.authorPrefixed).usernameStyle(color: authorColor))
-            .lineLimit(1)
-            .onTapGesture {
-              windowManager.showMainWindowTab(withId: post.author, title: post.author) {
-                AccountView(name: post.author)
-                  .environmentObject(informationBarData)
-              }
-            }
-        }
+        PostAttribution(post: post)
         HStack {
           if !post.isSelf {
             Text(verbatim: "(\(post.domain))")

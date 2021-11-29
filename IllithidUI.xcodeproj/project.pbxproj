@@ -19,10 +19,13 @@
 		22F2629F7991F10CC55F8646 /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
 		22F262E9F459B9282DE815CB /* Logger+OAuthLogProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26BFE836405602FDB6EF1 /* Logger+OAuthLogProtocol.swift */; };
 		22F263861FF90296F0604872 /* RefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26CD1853E0A4512FE7A14 /* RefreshButton.swift */; };
+		22F26502CA4B0BD02334911B /* PostAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26A47EEEFADC45B566820 /* PostAttribution.swift */; };
+		22F2651F4167ED83278A2139 /* PostAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26A47EEEFADC45B566820 /* PostAttribution.swift */; };
 		22F2659410C2DF0CE2F524E8 /* NewCommentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B803F19109572D1A7D9 /* NewCommentForm.swift */; };
 		22F265E2BD3F93E5D3CEFF02 /* NewPostForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2621DBC55C2239EE306E9 /* NewPostForm.swift */; };
 		22F265EA68A5D4C7B37FFC9F /* Logger+OAuthLogProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26BFE836405602FDB6EF1 /* Logger+OAuthLogProtocol.swift */; };
 		22F26624614608068C45F953 /* CancelableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26E2F376D20C4FED06CC1 /* CancelableViewModel.swift */; };
+		22F266BFE00DCACDB5B52F8A /* PostAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26A47EEEFADC45B566820 /* PostAttribution.swift */; };
 		22F2678DF245D6A0F20537DD /* NewCommentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B803F19109572D1A7D9 /* NewCommentForm.swift */; };
 		22F268562543BDD565D4692F /* NewItemCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F267C48D18E622053FF2B6 /* NewItemCommands.swift */; };
 		22F268F9F8F79CE3710C2C0A /* CancelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F268F37D252AE77C8C0BED /* CancelButton.swift */; };
@@ -171,6 +174,7 @@
 		22F267C48D18E622053FF2B6 /* NewItemCommands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewItemCommands.swift; sourceTree = "<group>"; };
 		22F268F37D252AE77C8C0BED /* CancelButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CancelButton.swift; sourceTree = "<group>"; };
 		22F269812B6D13E1FF3134CA /* DetailedPostView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailedPostView.swift; sourceTree = "<group>"; };
+		22F26A47EEEFADC45B566820 /* PostAttribution.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostAttribution.swift; sourceTree = "<group>"; };
 		22F26AD8A606180083BA1D0F /* AccountFeedsList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountFeedsList.swift; sourceTree = "<group>"; };
 		22F26B39571F266EC669C129 /* ValidationFailure+StringInterpolation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ValidationFailure+StringInterpolation.swift"; sourceTree = "<group>"; };
 		22F26B803F19109572D1A7D9 /* NewCommentForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewCommentForm.swift; sourceTree = "<group>"; };
@@ -334,6 +338,7 @@
 			isa = PBXGroup;
 			children = (
 				22F2616B39643FC7A66E141E /* TitleView.swift */,
+				22F26A47EEEFADC45B566820 /* PostAttribution.swift */,
 			);
 			path = "Row View";
 			sourceTree = "<group>";
@@ -947,6 +952,7 @@
 				22F265EA68A5D4C7B37FFC9F /* Logger+OAuthLogProtocol.swift in Sources */,
 				22F26C3D19BE2498783C8067 /* PostRowView.swift in Sources */,
 				22F26FD65B6F29700B4311EE /* TitleView.swift in Sources */,
+				22F266BFE00DCACDB5B52F8A /* PostAttribution.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -963,6 +969,7 @@
 				22F269875AEF821E307E65DA /* NSImage+Resized.swift in Sources */,
 				22F262E9F459B9282DE815CB /* Logger+OAuthLogProtocol.swift in Sources */,
 				22F26123C6FDF3A230AFB154 /* TitleView.swift in Sources */,
+				22F2651F4167ED83278A2139 /* PostAttribution.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -979,6 +986,7 @@
 				22F26B35ECD9A649A208545C /* NSImage+Resized.swift in Sources */,
 				22F262305E4B4890A14EBF32 /* Logger+OAuthLogProtocol.swift in Sources */,
 				22F26C643A170E504BF45F20 /* TitleView.swift in Sources */,
+				22F26502CA4B0BD02334911B /* PostAttribution.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

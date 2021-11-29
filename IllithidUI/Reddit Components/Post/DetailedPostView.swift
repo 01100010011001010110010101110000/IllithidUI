@@ -117,22 +117,7 @@ private struct PostMetadataBar: View {
           .flairTag(rectangleColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor)
       }
 
-      HStack {
-        (Text("by ") + Text("\(post.author)").usernameStyle(color: authorColor))
-          .onTapGesture {
-            windowManager.showMainWindowTab(withId: post.author, title: post.author) {
-              AccountView(name: post.author)
-                .environmentObject(informationBarData)
-            }
-          }
-        (Text("in ") + Text(post.subredditNamePrefixed))
-          .onTapGesture {
-            windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
-              SubredditLoader(fullname: post.subredditId)
-                .environmentObject(informationBarData)
-            }
-          }
-      }
+      PostAttribution(post: post)
 
       HStack {
         Group {
@@ -163,8 +148,6 @@ private struct PostMetadataBar: View {
 
   // MARK: Private
 
-  @ObservedObject private var moderators: ModeratorData = .shared
-
   private let windowManager: WindowManager = .shared
 
   private var voteColor: Color? {
@@ -182,16 +165,6 @@ private struct PostMetadataBar: View {
     post.authorFlairBackgroundSwiftUiColor == nil
       ? Color(.textColor)
       : post.authorFlairTextSwiftUiColor
-  }
-
-  private var authorColor: Color {
-    if post.isAdminPost {
-      return .red
-    } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
-      return .green
-    } else {
-      return .white
-    }
   }
 }
 
