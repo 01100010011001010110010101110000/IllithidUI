@@ -173,7 +173,7 @@ private struct ClassicPostRowView: View {
         thumbnailPlaceholder
       }
 
-      VStack(alignment: .leading) {
+      VStack(alignment: .leading, spacing: 10) {
         PostRowView.TitleView(post: post)
         PostAttribution(post: post)
         HStack {
