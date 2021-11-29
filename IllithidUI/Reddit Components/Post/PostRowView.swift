@@ -173,9 +173,7 @@ private struct ClassicPostRowView: View {
       }
 
       VStack(alignment: .leading) {
-        Text(post.title)
-          .fontWeight(.bold)
-          .font(.headline)
+        TitleView(post: post)
         HStack(spacing: 8) {
           Text(verbatim: post.subredditNamePrefixed)
             .lineLimit(1)
