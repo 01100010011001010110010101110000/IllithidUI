@@ -42,7 +42,7 @@ struct DetailedPostView: View {
   @Binding var vote: VoteDirection
 
   var body: some View {
-    VStack(alignment: .leading) {
+    VStack(alignment: .leading, spacing: 10) {
       VStack(alignment: .leading) {
         if crosspostParent != nil {
           Text("Crossposted by \(post.author) \(post.relativePostTime) ago")
@@ -61,25 +61,22 @@ struct DetailedPostView: View {
           }
           .font(.title2)
           .foregroundColor(.green)
-          .padding(.leading, 10)
 
           PostRowView.TitleView(post: post)
         }
-        .padding(.bottom)
       }
 
       if let crosspostParent = crosspostParent {
         GroupBox {
-          VStack {
+          VStack(alignment: .leading, spacing: 10) {
             PostRowView.TitleView(post: crosspostParent)
-              .padding(.vertical)
 
             PostContent(post: crosspostParent)
 
             PostMetadataBar(post: crosspostParent, vote: $vote)
           }
         }
-        .padding(.horizontal, 4.0)
+        .padding(.horizontal, 4)
         .onTapGesture(count: 2) {
           showComments(for: crosspostParent)
         }
@@ -128,7 +125,6 @@ private struct PostMetadataBar: View {
                 .environmentObject(informationBarData)
             }
           }
-          .fixedSize()
         (Text("in ") + Text(post.subredditNamePrefixed))
           .onTapGesture {
             windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
@@ -136,7 +132,6 @@ private struct PostMetadataBar: View {
                 .environmentObject(informationBarData)
             }
           }
-          .fixedSize()
       }
 
       HStack {

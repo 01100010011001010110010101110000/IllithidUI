@@ -117,15 +117,12 @@ private struct DetailedPostRowView: View {
   let post: Post
 
   var body: some View {
-    HStack {
+    HStack(spacing: 10) {
       PostActionBar(post: post, presentReplyForm: $presentReplyForm, vote: $voteState)
-        .padding(.vertical, 10)
-        .padding(.leading, 10)
       Divider()
-        .padding(.horizontal, 10)
-        .padding(.vertical, 10)
       DetailedPostView(post: post, vote: $voteState)
     }
+    .padding(.vertical, 10)
   }
 
   // MARK: Private

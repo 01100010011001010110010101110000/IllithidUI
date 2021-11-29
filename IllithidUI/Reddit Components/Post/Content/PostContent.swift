@@ -347,10 +347,8 @@ struct TextPostPreview: View {
   var body: some View {
     if !post.selftext.isEmpty {
       GroupBox {
-        VStack(alignment: .leading) {
-          Markdown(mdString: post.selftext)
-            .padding(.horizontal)
-        }
+        Markdown(mdString: post.selftext)
+          .padding(.horizontal)
       }
       .frame(width: 512)
     }
