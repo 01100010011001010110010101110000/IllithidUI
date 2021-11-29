@@ -206,8 +206,9 @@ private struct ClassicPostRowView: View {
           }
         }
       }
+      .padding(.leading, 10)
     }
-    .padding([.top, .bottom], 10)
+    .padding(.vertical, 10)
     .padding(.trailing, 5)
   }
 
@@ -248,7 +249,7 @@ private struct ClassicPostRowView: View {
       Image(systemName: previewImage)
         .foregroundColor(.blue)
     }
-    .frame(width: 90, height: 60)
+    .frame(width: 96, height: 72)
   }
 }
 
