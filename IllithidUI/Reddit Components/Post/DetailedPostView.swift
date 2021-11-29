@@ -65,7 +65,7 @@ struct DetailedPostView: View {
 
           PostRowView.TitleView(post: post)
         }
-        .padding(.vertical)
+        .padding(.bottom)
       }
 
       if let crosspostParent = crosspostParent {
@@ -79,7 +79,7 @@ struct DetailedPostView: View {
             PostMetadataBar(post: crosspostParent, vote: $vote)
           }
         }
-        .padding([.horizontal], 4.0)
+        .padding(.horizontal, 4.0)
         .onTapGesture(count: 2) {
           showComments(for: crosspostParent)
         }
@@ -110,8 +110,8 @@ private struct PostMetadataBar: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 5) {
-      if let richtext = post.authorFlairRichtext, !richtext.isEmpty {
-        FlairRichTextView(richText: richtext,
+      if let richText = post.authorFlairRichtext, !richText.isEmpty {
+        FlairRichTextView(richText: richText,
                           backgroundColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor,
                           textColor: authorFlairTextColor)
       } else if let text = post.authorFlairText, !text.isEmpty {
@@ -212,7 +212,7 @@ struct FlairRichTextView: View {
   var body: some View {
     HStack {
       ForEach(richText.indices, id: \.self) { idx in
-        Self.renderRichtext(richText[idx])
+        Self.renderRichText(richText[idx])
       }
     }
     .flairTag(rectangleColor: .accentColor)
@@ -221,7 +221,7 @@ struct FlairRichTextView: View {
   // MARK: Private
 
   @ViewBuilder
-  private static func renderRichtext(_ text: FlairRichtext) -> some View {
+  private static func renderRichText(_ text: FlairRichtext) -> some View {
     switch text.type {
     case .emoji:
       WebImage(url: text.emojiUrl)

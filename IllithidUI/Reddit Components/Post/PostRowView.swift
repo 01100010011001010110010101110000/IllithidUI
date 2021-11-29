@@ -120,8 +120,9 @@ private struct DetailedPostRowView: View {
     HStack {
       PostActionBar(post: post, presentReplyForm: $presentReplyForm, vote: $voteState)
         .padding(.vertical, 10)
+        .padding(.leading, 10)
       Divider()
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 10)
         .padding(.vertical, 10)
       DetailedPostView(post: post, vote: $voteState)
     }
