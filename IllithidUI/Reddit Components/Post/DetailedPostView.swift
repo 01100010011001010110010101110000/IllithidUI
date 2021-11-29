@@ -49,7 +49,7 @@ struct DetailedPostView: View {
             .font(.caption)
         }
         HStack {
-          HStack {
+          Group {
             if post.stickied {
               Image(systemName: "pin.fill")
                 .help("post.pinned")
@@ -79,7 +79,7 @@ struct DetailedPostView: View {
             PostMetadataBar(post: crosspostParent, vote: $vote)
           }
         }
-        .padding([.leading, .trailing], 4.0)
+        .padding([.horizontal], 4.0)
         .onTapGesture(count: 2) {
           showComments(for: crosspostParent)
         }
@@ -100,7 +100,7 @@ struct DetailedPostView: View {
 
 // MARK: - TitleView
 
-private struct TitleView: View {
+struct TitleView: View {
   // MARK: Internal
 
   let post: Post
@@ -110,15 +110,15 @@ private struct TitleView: View {
     VStack(alignment: alignment) {
       HStack {
         if post.over18 {
-          Text("NSFW")
+          Text(verbatim: "NSFW")
             .flairTag(rectangleColor: .red)
         }
-        if let richtext = post.linkFlairRichtext, !richtext.isEmpty {
-          FlairRichtextView(richtext: richtext,
+        if let richText = post.linkFlairRichtext, !richText.isEmpty {
+          FlairRichTextView(richText: richText,
                             backgroundColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor,
                             textColor: flairTextColor)
         } else if let text = post.linkFlairText, !text.isEmpty {
-          Text(text)
+          Text(verbatim: text)
             .foregroundColor(flairTextColor)
             .flairTag(rectangleColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor)
         }
@@ -126,7 +126,6 @@ private struct TitleView: View {
 
       Text(verbatim: post.title)
         .font(.title)
-        .heightResizable()
         .multilineTextAlignment(.leading)
     }
   }
@@ -153,7 +152,7 @@ private struct PostMetadataBar: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 5) {
       if let richtext = post.authorFlairRichtext, !richtext.isEmpty {
-        FlairRichtextView(richtext: richtext,
+        FlairRichTextView(richText: richtext,
                           backgroundColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor,
                           textColor: authorFlairTextColor)
       } else if let text = post.authorFlairText, !text.isEmpty {
@@ -242,19 +241,19 @@ private struct PostMetadataBar: View {
   }
 }
 
-// MARK: - FlairRichtextView
+// MARK: - FlairRichTextView
 
-private struct FlairRichtextView: View {
+struct FlairRichTextView: View {
   // MARK: Internal
 
-  let richtext: [FlairRichtext]
+  let richText: [FlairRichtext]
   let backgroundColor: Color
   let textColor: Color
 
   var body: some View {
     HStack {
-      ForEach(richtext.indices, id: \.self) { idx in
-        Self.renderRichtext(richtext[idx])
+      ForEach(richText.indices, id: \.self) { idx in
+        Self.renderRichtext(richText[idx])
       }
     }
     .flairTag(rectangleColor: .accentColor)
@@ -283,9 +282,11 @@ private struct FlairRichtextView: View {
 
 extension View {
   func flairTag(rectangleColor: Color = .accentColor) -> some View {
-    padding(4.0)
-      .background(rectangleColor)
-      .clipShape(RoundedRectangle(cornerRadius: 4.0))
+    padding(.horizontal, 8)
+      .background(
+        RoundedRectangle(cornerRadius: 4, style: .continuous)
+          .fill(rectangleColor)
+      )
   }
 }
 
