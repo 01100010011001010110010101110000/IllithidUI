@@ -119,7 +119,10 @@ private struct DetailedPostRowView: View {
   var body: some View {
     HStack {
       PostActionBar(post: post, presentReplyForm: $presentReplyForm, vote: $voteState)
+        .padding(.vertical, 10)
       Divider()
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
       DetailedPostView(post: post, vote: $voteState)
     }
   }
@@ -173,7 +176,7 @@ private struct ClassicPostRowView: View {
       }
 
       VStack(alignment: .leading) {
-        TitleView(post: post)
+        PostRowView.TitleView(post: post)
         HStack(spacing: 8) {
           Text(verbatim: post.subredditNamePrefixed)
             .lineLimit(1)
@@ -361,7 +364,6 @@ struct PostActionBar: View {
       })
     }
     .font(.title2)
-    .padding(10)
   }
 
   // MARK: Private

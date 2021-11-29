@@ -63,7 +63,7 @@ struct DetailedPostView: View {
           .foregroundColor(.green)
           .padding(.leading, 10)
 
-          TitleView(post: post)
+          PostRowView.TitleView(post: post)
         }
         .padding(.vertical)
       }
@@ -71,7 +71,7 @@ struct DetailedPostView: View {
       if let crosspostParent = crosspostParent {
         GroupBox {
           VStack {
-            TitleView(post: crosspostParent)
+            PostRowView.TitleView(post: crosspostParent)
               .padding(.vertical)
 
             PostContent(post: crosspostParent)
@@ -95,47 +95,6 @@ struct DetailedPostView: View {
     WindowManager.shared.showMainWindowTab(withId: post.name, title: post.title) {
       CommentsView(post: post)
     }
-  }
-}
-
-// MARK: - TitleView
-
-struct TitleView: View {
-  // MARK: Internal
-
-  let post: Post
-  let alignment: HorizontalAlignment = .leading
-
-  var body: some View {
-    VStack(alignment: alignment) {
-      HStack {
-        if post.over18 {
-          Text(verbatim: "NSFW")
-            .flairTag(rectangleColor: .red)
-        }
-        if let richText = post.linkFlairRichtext, !richText.isEmpty {
-          FlairRichTextView(richText: richText,
-                            backgroundColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor,
-                            textColor: flairTextColor)
-        } else if let text = post.linkFlairText, !text.isEmpty {
-          Text(verbatim: text)
-            .foregroundColor(flairTextColor)
-            .flairTag(rectangleColor: post.linkFlairBackgroundSwiftUiColor ?? .accentColor)
-        }
-      }
-
-      Text(verbatim: post.title)
-        .font(.title)
-        .multilineTextAlignment(.leading)
-    }
-  }
-
-  // MARK: Private
-
-  private var flairTextColor: Color {
-    post.linkFlairBackgroundSwiftUiColor == nil
-      ? Color(.textColor)
-      : post.authorFlairTextSwiftUiColor
   }
 }
 
