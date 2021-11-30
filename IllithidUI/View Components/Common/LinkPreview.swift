@@ -42,7 +42,7 @@ struct LinkPreview: View {
   var body: some View {
     VStack(spacing: 0.0) {
       Rectangle()
-        .frame(width: 512, height: 336)
+        .frame(height: 336)
         .foregroundColor(Color(.darkGray))
         .overlay {
           if let url = previewData.previewImageUrl {

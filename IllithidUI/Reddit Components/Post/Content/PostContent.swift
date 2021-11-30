@@ -186,8 +186,6 @@ struct GalleryPost: View {
             VideoPlayer(url: metadata.hls!)
           }
         }
-        // Alleviate row collapsing by enforcing the frame size
-        .frame(minWidth: 100, minHeight: 100)
         .overlay(
           captionView(item: item),
           alignment: .bottomLeading
@@ -405,7 +403,7 @@ struct ImagePostPreview: View {
   var body: some View {
     Group {
       if enableMediaPanel {
-        WebImage(url: url, context: context)
+        webImage
           .onTapGesture {
             WindowManager.shared.showMediaPanel(aspectRatio: size) {
               WebImage(url: url)
@@ -414,7 +412,7 @@ struct ImagePostPreview: View {
             }
           }
       } else {
-        WebImage(url: url, context: context)
+        webImage
       }
     }
     .dragAndZoom()
@@ -423,6 +421,16 @@ struct ImagePostPreview: View {
   // MARK: Private
 
   @ObservedObject private var preferences: PreferencesData = .shared
+
+  private var webImage: some View {
+    // TODO: Setup placeholder images
+    WebImage(url: url, context: context)
+//      .placeholder {
+//        Image(systemName: "photo.fill")
+//          .frame(width: preferences.previewSize.targetSize.width,
+//                 height: preferences.previewSize.targetSize.height)
+//      }
+  }
 
   private var context: [SDWebImageContextOption: Any] {
     [
