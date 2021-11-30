@@ -38,7 +38,7 @@ struct PostRowView: View {
   @Binding var selection: Post.ID?
 
   var body: some View {
-    GroupBox {
+    VStack {
       HStack {
         Group {
           switch postStyle {
@@ -64,6 +64,7 @@ struct PostRowView: View {
         }
         .padding(10)
       }
+      Divider()
     }
     .sheet(isPresented: $presentReplyForm) {
       NewCommentForm(isPresented: $presentReplyForm, post: post)
