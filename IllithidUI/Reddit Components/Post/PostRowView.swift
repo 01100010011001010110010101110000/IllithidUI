@@ -53,16 +53,6 @@ struct PostRowView: View {
         }
 
         Spacer()
-
-        Group {
-          if selection == post.id {
-            commentsButton
-              .keyboardShortcut(.defaultAction)
-          } else {
-            commentsButton
-          }
-        }
-        .padding(10)
       }
       Divider()
     }
@@ -77,15 +67,6 @@ struct PostRowView: View {
   @State private var presentReplyForm: Bool
 
   private let windowManager: WindowManager = .shared
-
-  private var commentsButton: some View {
-    Button(action: {
-      showComments(for: post)
-    }, label: {
-      Image(systemName: "chevron.right")
-    })
-    .opacity(0.0)
-  }
 
   private func showComments(for post: Post) {
     windowManager.showMainWindowTab(withId: post.name, title: post.title) {
