@@ -54,6 +54,7 @@ struct PostAttribution: View {
         Link(destination: post.contentUrl) {
           Text(verbatim: "(\(post.domain))")
             .lineLimit(1)
+            .layoutPriority(-1)
         }
         .help(post.contentUrl.absoluteString)
       }
