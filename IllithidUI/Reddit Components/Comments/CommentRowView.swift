@@ -282,7 +282,7 @@ private struct AuthorBar: View {
   @ObservedObject private var moderators: ModeratorData = .shared
   @EnvironmentObject private var interactions: CommentRowView.CommentState
 
-  private var authorColor: Color {
+  private var authorColor: Color? {
     if comment.isAdminComment {
       return .red
     } else if moderators.isModerator(username: comment.author, ofSubreddit: comment.subreddit) {
@@ -290,7 +290,7 @@ private struct AuthorBar: View {
     } else if comment.isSubmitter {
       return .blue
     } else {
-      return .white
+      return nil
     }
   }
 }
@@ -338,7 +338,7 @@ private struct CommentActionBar: View {
       }, label: {
         Image(systemName: "arrow.up")
       })
-        .foregroundColor(interactionState.ballot == .up ? .orange : .white)
+      .foregroundColor(interactionState.ballot == .up ? .orange : .white)
 
       IllithidButton(action: {
         if interactionState.ballot == .down { interactionState.clearVote(comment: comment) }
@@ -346,7 +346,7 @@ private struct CommentActionBar: View {
       }, label: {
         Image(systemName: "arrow.down")
       })
-        .foregroundColor(interactionState.ballot == .down ? .purple : .white)
+      .foregroundColor(interactionState.ballot == .down ? .purple : .white)
 
       IllithidButton(action: {
         if interactionState.saved { interactionState.unsave(comment: comment) }
@@ -354,14 +354,14 @@ private struct CommentActionBar: View {
       }, label: {
         Image(systemName: "bookmark.fill")
       })
-        .foregroundColor(interactionState.saved ? .green : .white)
+      .foregroundColor(interactionState.saved ? .green : .white)
 
       // TODO: Support button styling via environment in IllithidButton
       IllithidButton(action: {}, label: {
         Image(systemName: "flag.fill")
       })
-        .buttonStyle(DangerButtonStyle())
-        .help("comments.report")
+      .buttonStyle(DangerButtonStyle())
+      .help("comments.report")
 
       Spacer()
     }
@@ -426,9 +426,8 @@ private struct CommentColorBar: View {
 }
 
 extension Text {
-  func usernameStyle(color: Color) -> Text {
-    fontWeight(.bold)
-      .foregroundColor(color)
+  func usernameStyle(color: Color?) -> Text {
+    foregroundColor(color)
   }
 }
 

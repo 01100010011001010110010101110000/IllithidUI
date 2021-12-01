@@ -177,11 +177,6 @@ private struct ClassicPostRowView: View {
       VStack(alignment: .leading, spacing: 10) {
         PostRowView.TitleView(post: post)
         PostAttribution(post: post)
-        HStack {
-          if !post.isSelf {
-            Text(verbatim: "(\(post.domain))")
-          }
-        }
       }
       .padding(.leading, 10)
     }

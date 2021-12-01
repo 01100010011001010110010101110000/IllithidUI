@@ -29,8 +29,10 @@ struct PostAttribution: View {
   let post: Post
 
   var body: some View {
-    HStack(spacing: 8) {
+    HStack {
       Text(verbatim: post.subredditNamePrefixed)
+        .fontWeight(.semibold)
+        .help(Text(verbatim: post.subredditNamePrefixed))
         .lineLimit(1)
         .onTapGesture {
           windowManager.showMainWindowTab(withId: post.subredditId, title: post.subredditNamePrefixed) {
@@ -38,12 +40,9 @@ struct PostAttribution: View {
               .environmentObject(informationBarData)
           }
         }
-      Text(Image(systemName: "circle.fill"))
-        .font(.system(size: 4.0))
-        .fontWeight(.light)
-      (Text("post.attribution")
-        + Text(verbatim: " ")
+      (Text(Image(systemName: "person"))
         + Text(verbatim: post.authorPrefixed).usernameStyle(color: authorColor))
+        .help(Text(verbatim: post.authorPrefixed))
         .lineLimit(1)
         .onTapGesture {
           windowManager.showMainWindowTab(withId: post.author, title: post.author) {
@@ -51,6 +50,13 @@ struct PostAttribution: View {
               .environmentObject(informationBarData)
           }
         }
+      if !post.isSelf {
+        Link(destination: post.contentUrl) {
+          Text(verbatim: "(\(post.domain))")
+            .lineLimit(1)
+        }
+        .help(post.contentUrl.absoluteString)
+      }
     }
   }
 
@@ -60,13 +66,13 @@ struct PostAttribution: View {
   @ObservedObject private var moderators: ModeratorData
   @EnvironmentObject private var informationBarData: InformationBarData
 
-  private var authorColor: Color {
+  private var authorColor: Color? {
     if post.isAdminPost {
       return .red
     } else if moderators.isModerator(username: post.author, ofSubreddit: post.subreddit) {
       return .green
     } else {
-      return .white
+      return nil
     }
   }
 }
