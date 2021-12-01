@@ -137,12 +137,8 @@ private struct ClassicPostRowView: View {
     HStack(alignment: .top) {
       VStack {
         Image(systemName: "arrow.up")
-        Text(String(post.ups.postAbbreviation()))
-          .foregroundColor(.orange)
         Image(systemName: "arrow.down")
       }
-      // Hack to deal with different length upvote count text
-      .frame(minWidth: 36)
 
       if let thumbnailUrl = post.thumbnail {
         WebImage(url: thumbnailUrl)
