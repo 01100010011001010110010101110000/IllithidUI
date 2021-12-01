@@ -73,7 +73,7 @@ struct DetailedPostView: View {
 
             PostContent(post: crosspostParent)
 
-            PostMetadataBar(post: crosspostParent, vote: $vote)
+            PostRowView.PostMetadataBar(post: crosspostParent, vote: $vote)
           }
         }
         .padding(.horizontal, 4)
@@ -84,7 +84,7 @@ struct DetailedPostView: View {
         PostContent(post: post)
       }
 
-      PostMetadataBar(post: post, vote: $vote)
+      PostRowView.PostMetadataBar(post: post, vote: $vote)
     }
   }
 
@@ -92,79 +92,6 @@ struct DetailedPostView: View {
     WindowManager.shared.showMainWindowTab(withId: post.name, title: post.title) {
       CommentsView(post: post)
     }
-  }
-}
-
-// MARK: - PostMetadataBar
-
-private struct PostMetadataBar: View {
-  // MARK: Internal
-
-  let post: Post
-
-  @Binding var vote: VoteDirection
-  @EnvironmentObject var informationBarData: InformationBarData
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 5) {
-      if let richText = post.authorFlairRichtext, !richText.isEmpty {
-        FlairRichTextView(richText: richText,
-                          backgroundColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor,
-                          textColor: authorFlairTextColor)
-      } else if let text = post.authorFlairText, !text.isEmpty {
-        Text(text)
-          .foregroundColor(authorFlairTextColor)
-          .flairTag(rectangleColor: post.authorFlairBackgroundSwiftUiColor ?? .accentColor)
-      }
-
-      PostAttribution(post: post)
-
-      HStack {
-        Group {
-          Group {
-            Image(systemName: "arrow.up")
-            Text("\(post.ups.postAbbreviation())")
-          }
-          .foregroundColor(voteColor)
-
-          Group {
-            Image(systemName: "text.bubble")
-            Text("\(post.numComments.postAbbreviation())")
-          }
-          .foregroundColor(.blue)
-
-          Group {
-            Image(systemName: "clock")
-            Text("\(post.relativePostTime) ago")
-              .help(post.absolutePostTime)
-          }
-        }
-        .fixedSize()
-      }
-    }
-    .padding(10)
-    .font(.body)
-  }
-
-  // MARK: Private
-
-  private let windowManager: WindowManager = .shared
-
-  private var voteColor: Color? {
-    switch vote {
-    case .clear:
-      return nil
-    case .down:
-      return .purple
-    case .up:
-      return .orange
-    }
-  }
-
-  private var authorFlairTextColor: Color {
-    post.authorFlairBackgroundSwiftUiColor == nil
-      ? Color(.textColor)
-      : post.authorFlairTextSwiftUiColor
   }
 }
 

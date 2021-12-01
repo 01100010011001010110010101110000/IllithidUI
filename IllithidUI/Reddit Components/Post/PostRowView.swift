@@ -45,7 +45,7 @@ struct PostRowView: View {
           case .large:
             DetailedPostRowView(post: post, voteState: $vote, presentReplyForm: $presentReplyForm, selection: $selection)
           case .classic, .compact:
-            ClassicPostRowView(post: post, selection: $selection)
+            ClassicPostRowView(post: post, voteState: $vote, selection: $selection)
           }
         }
         .contextMenu {
@@ -119,14 +119,16 @@ private struct DetailedPostRowView: View {
 private struct ClassicPostRowView: View {
   // MARK: Lifecycle
 
-  init(post: Post, selection: Binding<Post.ID?> = .constant(nil)) {
+  init(post: Post, voteState: Binding<VoteDirection>, selection: Binding<Post.ID?> = .constant(nil)) {
     self.post = post
+    _voteState = voteState
     _selection = selection
   }
 
   // MARK: Internal
 
   @EnvironmentObject var informationBarData: InformationBarData
+  @Binding var voteState: VoteDirection
   @Binding var selection: Post.ID?
 
   let post: Post
@@ -157,7 +159,7 @@ private struct ClassicPostRowView: View {
 
       VStack(alignment: .leading, spacing: 10) {
         PostRowView.TitleView(post: post)
-        PostAttribution(post: post)
+        PostRowView.PostMetadataBar(post: post, vote: $voteState)
       }
       .padding(.leading, 10)
     }
