@@ -55,7 +55,7 @@ struct PostContent: View {
     case .reddit:
       RedditLinkView(link: post.contentUrl)
     case .link:
-      LinkPreview(link: post.contentUrl, isNsfw: post.over18)
+      LinkPreview(link: post.contentUrl, isNsfw: post.over18, thumbnailUrl: post.thumbnail)
     }
   }
 }

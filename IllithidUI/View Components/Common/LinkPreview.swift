@@ -27,9 +27,10 @@ import SDWebImageSwiftUI
 struct LinkPreview: View {
   // MARK: Lifecycle
 
-  init(link: URL, isNsfw: Bool = false) {
+  init(link: URL, isNsfw: Bool = false, thumbnailUrl: URL? = nil) {
     previewData = .init(link: link)
     self.isNsfw = isNsfw
+    self.thumbnailUrl = thumbnailUrl
     _showingPreview = .init(initialValue: false)
     _hover = .init(initialValue: false)
   }
@@ -38,6 +39,7 @@ struct LinkPreview: View {
 
   @ObservedObject var previewData: LinkPreviewData
   let isNsfw: Bool
+  let thumbnailUrl: URL?
 
   var body: some View {
     VStack(spacing: 0.0) {
@@ -45,7 +47,7 @@ struct LinkPreview: View {
         .frame(height: 336)
         .foregroundColor(Color(.darkGray))
         .overlay {
-          if let url = previewData.previewImageUrl {
+          if let url = thumbnailUrl ?? previewData.previewImageUrl {
             WebImage(url: url, context: [.imageTransformer:
                 SDImageResizingTransformer(size: CGSize(width: 512, height: 336), scaleMode: .aspectFill)])
               .conditionalModifier(isNsfw, NsfwBlurModifier())
@@ -77,7 +79,7 @@ struct LinkPreview: View {
     .background(Color(.controlBackgroundColor))
     .roundedBorder(style: Color(.darkGray), width: 2.0)
     .onAppear {
-      if previewData.previewImageUrl == nil {
+      if thumbnailUrl == nil && previewData.previewImageUrl == nil {
         previewData.loadMetadata()
       }
     }
