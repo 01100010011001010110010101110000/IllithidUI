@@ -28,7 +28,7 @@ struct LinkPreview: View {
   // MARK: Lifecycle
 
   init(link: URL, isNsfw: Bool = false) {
-    previewData = .init(link: link)
+    _previewData = .init(wrappedValue: LinkPreviewData(link: link))
     self.isNsfw = isNsfw
     _showingPreview = .init(initialValue: false)
     _hover = .init(initialValue: false)
@@ -36,7 +36,6 @@ struct LinkPreview: View {
 
   // MARK: Internal
 
-  @ObservedObject var previewData: LinkPreviewData
   let isNsfw: Bool
 
   var body: some View {
@@ -88,13 +87,14 @@ struct LinkPreview: View {
 
   // MARK: Private
 
+  @StateObject private var previewData: LinkPreviewData
   @State private var showingPreview: Bool
   @State private var hover: Bool
 }
 
 // MARK: - LinkPreviewData
 
-final class LinkPreviewData: ObservableObject {
+private final class LinkPreviewData: ObservableObject {
   // MARK: Lifecycle
 
   init(link: URL) {
