@@ -48,9 +48,6 @@ struct PostRowView: View {
             ClassicPostRowView(post: post, voteState: $vote, selection: $selection)
           }
         }
-        .contextMenu {
-          PostContextMenu(post: post, presentReplyForm: $presentReplyForm)
-        }
 
         Spacer()
       }

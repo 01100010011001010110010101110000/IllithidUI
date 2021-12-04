@@ -86,6 +86,9 @@ struct PostListView: View {
                         }
                       }
                   }
+                  .contextMenu {
+                    PostContextMenu(post: post, presentReplyForm: .constant(false))
+                  }
                 }
                 .frame(minWidth: 400)
               }
