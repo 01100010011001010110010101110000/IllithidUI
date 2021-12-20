@@ -31,6 +31,8 @@
 "comments.thread.collapse" = "Collapse thread";
 "comments.report" = "Report";
 
+"upvote" = "Upvote";
+"downvote" = "Downvote";
 "post.pinned" = "This post has been pinned by a moderator";
 "post.locked" = "This post has been locked. New comments are disabled";
 "post.new" = "New Post";

@@ -59,12 +59,6 @@ struct PostListView: View {
             case .multiColumn:
               List(filteredPosts, selection: $selection) { post in
                 PostRowView(post: post, selection: $selection)
-                  .onTapGesture(count: 2) {
-                    // Matches the behavior of double clicking on a NavigationLink
-                    WindowManager.shared.showWindow {
-                      CommentsView(post: post)
-                    }
-                  }
                   .onAppear {
                     if post == filteredPosts.last {
                       postsData.loadPosts(sort: sorter.sort,
@@ -75,20 +69,13 @@ struct PostListView: View {
             case .linear:
               NavigationView {
                 List(filteredPosts, selection: $selection) { post in
-                  NavigationLink {
-                    CommentsView(post: post)
-                  } label: {
-                    PostRowView(post: post, selection: $selection)
-                      .onAppear {
-                        if post == filteredPosts.last {
-                          postsData.loadPosts(sort: sorter.sort,
-                                              topInterval: sorter.topInterval)
-                        }
+                  PostRowView(post: post, selection: $selection)
+                    .onAppear {
+                      if post == filteredPosts.last {
+                        postsData.loadPosts(sort: sorter.sort,
+                                            topInterval: sorter.topInterval)
                       }
-                  }
-                  .contextMenu {
-                    PostContextMenu(post: post, presentReplyForm: .constant(false))
-                  }
+                    }
                 }
                 .frame(minWidth: 400)
               }

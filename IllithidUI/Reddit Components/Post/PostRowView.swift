@@ -26,13 +26,13 @@ struct PostRowView: View {
   init(post: Post, selection: Binding<Post.ID?>) {
     self.post = post
     _vote = .init(initialValue: VoteDirection(from: post))
-    _presentReplyForm = .init(initialValue: false)
     _selection = selection
   }
 
   // MARK: Internal
 
   @Environment(\.postStyle) var postStyle
+  @Environment(\.navigationStyle) var navigationStyle
 
   let post: Post
   @Binding var selection: Post.ID?
@@ -40,18 +40,28 @@ struct PostRowView: View {
   var body: some View {
     VStack {
       HStack {
-        Group {
-          switch postStyle {
-          case .large:
-            DetailedPostRowView(post: post, voteState: $vote, presentReplyForm: $presentReplyForm, selection: $selection)
-          case .classic, .compact:
-            ClassicPostRowView(post: post, voteState: $vote, selection: $selection)
+        switch navigationStyle {
+        case .linear:
+          NavigationLink {
+            CommentsView(post: post)
+          } label: {
+            rowView
           }
+        case .multiColumn:
+          rowView
+            .onTapGesture(count: 2) {
+              // Matches the behavior of double clicking on a NavigationLink
+              WindowManager.shared.showWindow {
+                CommentsView(post: post)
+              }
+            }
         }
-
         Spacer()
       }
       Divider()
+    }
+    .contextMenu {
+      PostContextMenu(post: post, presentReplyForm: $presentReplyForm, vote: $vote)
     }
     .sheet(isPresented: $presentReplyForm) {
       NewCommentForm(isPresented: $presentReplyForm, post: post)
@@ -61,19 +71,16 @@ struct PostRowView: View {
   // MARK: Private
 
   @State private var vote: VoteDirection
-  @State private var presentReplyForm: Bool
+  @State private var presentReplyForm = false
 
   private let windowManager: WindowManager = .shared
 
-  private func showComments(for post: Post) {
-    windowManager.showMainWindowTab(withId: post.name, title: post.title) {
-      CommentsView(post: post)
-    }
-  }
-
-  private func showDebugWindow(for post: Post) {
-    windowManager.showMainWindowTab(withId: "\(post.name)_debug", title: "\(post.title) - Debug View") {
-      PostDebugView(post: post)
+  @ViewBuilder private var rowView: some View {
+    switch postStyle {
+    case .large:
+      DetailedPostRowView(post: post, voteState: $vote, presentReplyForm: $presentReplyForm, selection: $selection)
+    case .classic, .compact:
+      ClassicPostRowView(post: post, voteState: $vote, selection: $selection)
     }
   }
 }
@@ -298,7 +305,9 @@ struct PostActionBar: View {
           .foregroundColor(saved ? .green : .white)
       })
       IllithidButton(action: {
-        presentReplyForm = true
+        withAnimation {
+          presentReplyForm = true
+        }
       }, label: {
         Image(systemName: "arrowshape.turn.up.backward.fill")
       })

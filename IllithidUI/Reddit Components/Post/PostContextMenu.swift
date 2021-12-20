@@ -21,8 +21,80 @@ struct PostContextMenu: View {
 
   let post: Post
   @Binding var presentReplyForm: Bool
+  @Binding var vote: VoteDirection
 
   var body: some View {
+    votingButtons
+
+    Divider()
+
+    navigationButtons
+
+    Divider()
+
+    utilityButtons
+
+    Divider()
+
+    #if DEBUG
+    debugButtons
+    #endif
+  }
+
+  // MARK: Private
+
+  private let windowManager: WindowManager = .shared
+
+  @ViewBuilder private var votingButtons: some View {
+    Button(action: {
+      if vote == .up {
+        post.clearVote { result in
+          switch result {
+          case .success:
+            vote = .clear
+          case let .failure(error):
+            Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
+          }
+        }
+      } else {
+        post.upvote { result in
+          switch result {
+          case .success:
+            vote = .up
+          case let .failure(error):
+            Illithid.shared.logger.errorMessage("Error upvoting \(post.title) - \(post.name): \(error)")
+          }
+        }
+      }
+    }, label: {
+      Text("upvote")
+    })
+    Button(action: {
+      if vote == .down {
+        post.clearVote { result in
+          switch result {
+          case .success:
+            vote = .clear
+          case let .failure(error):
+            Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
+          }
+        }
+      } else {
+        post.downvote { result in
+          switch result {
+          case .success:
+            vote = .down
+          case let .failure(error):
+            Illithid.shared.logger.errorMessage("Error downvoting \(post.title) - \(post.name): \(error)")
+          }
+        }
+      }
+    }, label: {
+      Text("downvote")
+    })
+  }
+
+  @ViewBuilder private var navigationButtons: some View {
     Button(action: {
       showComments(for: post)
     }, label: {
@@ -47,7 +119,9 @@ struct PostContextMenu: View {
         Text("Post content…")
       })
     }
-    Divider()
+  }
+
+  @ViewBuilder private var utilityButtons: some View {
     Button(action: {
       NSPasteboard.general.clearContents()
       NSPasteboard.general.setString(post.postUrl.absoluteString, forType: .string)
@@ -60,19 +134,15 @@ struct PostContextMenu: View {
     }, label: {
       Text("Copy content URL")
     })
-    Divider()
-    #if DEBUG
-      Button(action: {
-        showDebugWindow(for: post)
-      }) {
-        Text(verbatim: "Show debug panel…")
-      }
-    #endif
   }
 
-  // MARK: Private
-
-  private let windowManager: WindowManager = .shared
+  @ViewBuilder private var debugButtons: some View {
+    Button(action: {
+      showDebugWindow(for: post)
+    }, label: {
+      Text(verbatim: "Show debug panel…")
+    })
+  }
 
   private func showComments(for post: Post) {
     windowManager.showMainWindowTab(withId: post.name, title: post.title) {
