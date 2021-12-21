@@ -19,6 +19,7 @@ import os.log
 import SwiftUI
 
 import Alamofire
+import Illithid
 import Kanna
 import SDWebImageSwiftUI
 
@@ -28,7 +29,7 @@ struct LinkPreview: View {
   // MARK: Lifecycle
 
   init(link: URL, isNsfw: Bool = false) {
-    _previewData = .init(wrappedValue: LinkPreviewData(link: link))
+    _previewData = .init(wrappedValue: Model(link: link))
     self.isNsfw = isNsfw
     _showingPreview = .init(initialValue: false)
     _hover = .init(initialValue: false)
@@ -75,82 +76,69 @@ struct LinkPreview: View {
     }
     .background(Color(.controlBackgroundColor))
     .roundedBorder(style: Color(.darkGray), width: 2.0)
-    .onAppear {
-      if previewData.previewImageUrl == nil {
-        previewData.loadMetadata()
-      }
-    }
-    .onDisappear {
-      previewData.cancel()
+    .task {
+      await previewData.loadMetadata()
     }
   }
 
   // MARK: Private
 
-  @StateObject private var previewData: LinkPreviewData
+  @StateObject private var previewData: Model
   @State private var showingPreview: Bool
   @State private var hover: Bool
 }
 
 // MARK: - LinkPreviewData
 
-private final class LinkPreviewData: ObservableObject {
-  // MARK: Lifecycle
+private extension LinkPreview {
+  @MainActor
+  final class Model: ObservableObject {
+    // MARK: Lifecycle
 
-  init(link: URL) {
-    self.link = link
-  }
+    init(link: URL) {
+      self.link = link
+    }
 
-  // MARK: Internal
+    // MARK: Internal
 
-  // TODO: Replace this with injection from higher in the view hierarchy
-  static let session = Session()
+    // TODO: Replace this with injection from higher in the view hierarchy
+    static let session = Session()
 
-  @Published var previewImageUrl: URL?
+    @Published var previewImageUrl: URL?
 
-  let link: URL
+    let link: URL
 
-  func loadMetadata() {
-    request = Self.session.request(link)
-      .validate()
-      .cacheResponse(using: ResponseCacher.cache)
-      .responseString(queue: Self.queue, encoding: .utf8) { [weak self] response in
-        guard let self = self else { return }
-
-        switch response.result {
-        case let .success(html):
-          // Fetch link's HTML document
+    func loadMetadata() async {
+      guard fetchTask == nil, previewImageUrl == nil else { return }
+      fetchTask = Task {
+        let decodeTask = Task.detached(priority: .medium) { [link] () -> URL? in
           do {
+            let html = try await Self.session.request(link)
+              .validate()
+              .cacheResponse(using: ResponseCacher.cache)
+              .serializingString(automaticallyCancelling: true, encoding: .utf8)
+              .value
             let document = try HTML(html: html, encoding: .utf8)
-
-            // Fetch page's preview image link from meta tags
-            let url = document.css("meta")
+            return document.css("meta")
               .first { $0["property"] == "og:image" }
               .flatMap { $0["content"] }
               .flatMap { URL(string: $0) }
-            DispatchQueue.main.async {
-              self.previewImageUrl = url
-            }
           } catch {
-            print("Error parsing HTML from \(self.link): \(error)")
+            Illithid.shared.logger.errorMessage("Error parsing HTML from \(link): \(error)")
+            return nil
           }
-        case let .failure(error):
-          print("Error fetching HTML from \(self.link): \(error)")
         }
+        previewImageUrl = await decodeTask.value
+        fetchTask = nil
       }
+    }
+
+    // MARK: Private
+
+    private var fetchTask: Task<Void, Never>?
+
+    private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
   }
-
-  func cancel() {
-    request?.cancel()
-  }
-
-  // MARK: Private
-
-  private static let queue = DispatchQueue(label: "com.flayware.IllithidUI.LinkPreview")
-
-  private var request: DataRequest?
-
-  private let log = OSLog(subsystem: "com.flayware.IllithidUI.LinkPreview", category: .pointsOfInterest)
 }
 
 // MARK: - LinkPreview_Previews
