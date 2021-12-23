@@ -46,52 +46,34 @@ struct PostContextMenu: View {
   private let windowManager: WindowManager = .shared
 
   @ViewBuilder private var votingButtons: some View {
-    Button(action: {
-      if vote == .up {
-        post.clearVote { result in
-          switch result {
-          case .success:
-            vote = .clear
-          case let .failure(error):
-            Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
-          }
+    AsyncButton("upvote") {
+      do {
+        switch vote {
+        case .up:
+          try await post.clearVote()
+          vote = .clear
+        default:
+          try await post.upvote()
+          vote = .up
         }
-      } else {
-        post.upvote { result in
-          switch result {
-          case .success:
-            vote = .up
-          case let .failure(error):
-            Illithid.shared.logger.errorMessage("Error upvoting \(post.title) - \(post.name): \(error)")
-          }
-        }
+      } catch {
+        Illithid.shared.logger.errorMessage("Error voting on \(post.title) - \(post.name): \(error)")
       }
-    }, label: {
-      Text("upvote")
-    })
-    Button(action: {
-      if vote == .down {
-        post.clearVote { result in
-          switch result {
-          case .success:
-            vote = .clear
-          case let .failure(error):
-            Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
-          }
+    }
+    AsyncButton("downvote") {
+      do {
+        switch vote {
+        case .down:
+          try await post.clearVote()
+          vote = .clear
+        default:
+          try await post.downvote()
+          vote = .down
         }
-      } else {
-        post.downvote { result in
-          switch result {
-          case .success:
-            vote = .down
-          case let .failure(error):
-            Illithid.shared.logger.errorMessage("Error downvoting \(post.title) - \(post.name): \(error)")
-          }
-        }
+      } catch {
+        Illithid.shared.logger.errorMessage("Error voting on \(post.title) - \(post.name): \(error)")
       }
-    }, label: {
-      Text("downvote")
-    })
+    }
   }
 
   @ViewBuilder private var navigationButtons: some View {
