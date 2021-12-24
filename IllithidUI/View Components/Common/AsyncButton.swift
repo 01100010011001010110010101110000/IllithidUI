@@ -50,7 +50,7 @@ struct AsyncButton<Label: View>: View {
 
 extension AsyncButton where Label == Text {
   init(_ label: String, role: ButtonRole? = nil, action: @escaping () async -> Void) {
-    self.init(role: role, action: action) { Text(label) }
+    self.init(role: role, action: action) { Text(NSLocalizedString(label, comment: "")) }
   }
 }
 
