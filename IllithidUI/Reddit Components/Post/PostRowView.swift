@@ -66,21 +66,22 @@ struct PostRowView: View {
     .sheet(isPresented: $presentReplyForm) {
       NewCommentForm(isPresented: $presentReplyForm, post: post)
     }
+    .environmentObject(model)
   }
 
   // MARK: Private
 
-  @StateObject private var model: CommonActionModel<Post>
   @State private var presentReplyForm = false
+  @StateObject private var model: CommonActionModel<Post>
 
   private let windowManager: WindowManager = .shared
 
   @ViewBuilder private var rowView: some View {
     switch postStyle {
     case .large:
-      DetailedPostRowView(post: post, voteState: $model.vote, presentReplyForm: $presentReplyForm, selection: $selection)
+      DetailedPostRowView(post: post, presentReplyForm: $presentReplyForm, selection: $selection)
     case .classic, .compact:
-      ClassicPostRowView(post: post, voteState: $model.vote, selection: $selection)
+      ClassicPostRowView(post: post, selection: $selection)
     }
   }
 }
@@ -88,58 +89,41 @@ struct PostRowView: View {
 // MARK: - DetailedPostRowView
 
 private struct DetailedPostRowView: View {
-  // MARK: Lifecycle
-
-  init(post: Post, voteState: Binding<VoteDirection>, presentReplyForm: Binding<Bool>,
-       selection: Binding<Post.ID?> = .constant(nil)) {
-    self.post = post
-    _selection = selection
-    _presentReplyForm = presentReplyForm
-    _voteState = voteState
-  }
-
   // MARK: Internal
 
   let post: Post
 
+  @Binding var presentReplyForm: Bool
+  @Binding var selection: Post.ID?
+
   var body: some View {
     HStack(spacing: 10) {
-      PostActionBar(post: post, presentReplyForm: $presentReplyForm, vote: $voteState)
+      PostActionBar(post: post, presentReplyForm: $presentReplyForm)
       Divider()
-      DetailedPostView(post: post, vote: $voteState)
+      DetailedPostView(post: post)
     }
     .padding(.vertical, 10)
   }
 
   // MARK: Private
 
-  @Binding private var selection: Post.ID?
-  @Binding private var voteState: VoteDirection
-  @Binding private var presentReplyForm: Bool
+  @EnvironmentObject private var model: CommonActionModel<Post>
 }
 
 // MARK: - ClassicPostRowView
 
 private struct ClassicPostRowView: View {
-  // MARK: Lifecycle
-
-  init(post: Post, voteState: Binding<VoteDirection>, selection: Binding<Post.ID?> = .constant(nil)) {
-    self.post = post
-    _voteState = voteState
-    _selection = selection
-  }
-
   // MARK: Internal
 
-  @EnvironmentObject var informationBarData: InformationBarData
-  @Binding var voteState: VoteDirection
-  @Binding var selection: Post.ID?
-
   let post: Post
+
+  @Binding var selection: Post.ID?
+  @EnvironmentObject var model: CommonActionModel<Post>
 
   var body: some View {
     HStack(alignment: .top) {
       VStack {
+        // TODO: Implement voting logic
         Image(systemName: "arrow.up")
         Image(systemName: "arrow.down")
       }
@@ -159,7 +143,7 @@ private struct ClassicPostRowView: View {
 
       VStack(alignment: .leading, spacing: 10) {
         PostRowView.TitleView(post: post)
-        PostRowView.PostMetadataBar(post: post, vote: $voteState)
+        PostRowView.PostMetadataBar(post: post)
       }
       .padding(.leading, 10)
     }
@@ -212,97 +196,37 @@ private struct ClassicPostRowView: View {
 
 // TODO: Sync saved and voted state with model
 struct PostActionBar: View {
-  // MARK: Lifecycle
-
-  init(post: Post, presentReplyForm: Binding<Bool>, vote: Binding<VoteDirection>) {
-    self.post = post
-    _presentReplyForm = presentReplyForm
-
-    _vote = vote
-    _saved = .init(initialValue: post.saved)
-  }
-
   // MARK: Internal
-
-  @Binding var presentReplyForm: Bool
 
   let post: Post
 
-  @Binding var vote: VoteDirection
+  @Binding var presentReplyForm: Bool
 
   var body: some View {
     VStack {
       IllithidButton(action: {
-        if vote == .up {
-          post.clearVote { result in
-            switch result {
-            case .success:
-              vote = .clear
-            case let .failure(error):
-              Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
-            }
-          }
-        } else {
-          post.upvote { result in
-            switch result {
-            case .success:
-              vote = .up
-            case let .failure(error):
-              Illithid.shared.logger.errorMessage("Error upvoting \(post.title) - \(post.name): \(error)")
-            }
-          }
+        Task {
+          try? await model.upvote()
         }
       }, label: {
         Image(systemName: "arrow.up")
-          .foregroundColor(vote == .up ? .orange : .white)
+          .foregroundColor(model.vote == .up ? .orange : .white)
       })
       IllithidButton(action: {
-        if vote == .down {
-          post.clearVote { result in
-            switch result {
-            case .success:
-              vote = .clear
-            case let .failure(error):
-              Illithid.shared.logger.errorMessage("Error clearing vote on \(post.title) - \(post.name): \(error)")
-            }
-          }
-        } else {
-          post.downvote { result in
-            switch result {
-            case .success:
-              vote = .down
-            case let .failure(error):
-              Illithid.shared.logger.errorMessage("Error downvoting \(post.title) - \(post.name): \(error)")
-            }
-          }
+        Task {
+          try? await model.downvote()
         }
       }, label: {
         Image(systemName: "arrow.down")
-          .foregroundColor(vote == .down ? .purple : .white)
+          .foregroundColor(model.vote == .down ? .purple : .white)
       })
       IllithidButton(action: {
-        if saved {
-          post.unsave { result in
-            switch result {
-            case .success:
-              saved = false
-            case let .failure(error):
-              Illithid.shared.logger.errorMessage("Error unsaving \(post.title) - \(post.name): \(error)")
-            }
-          }
-        } else {
-          post.save { result in
-            switch result {
-            case .success:
-              saved = true
-            case let .failure(error):
-              Illithid.shared.logger.errorMessage("Error saving \(post.title) - \(post.name): \(error)")
-            }
-          }
+        Task {
+          try? await model.toggleSaved()
         }
       }, label: {
         Image(systemName: "bookmark.fill")
-          .foregroundColor(saved ? .green : .white)
+          .foregroundColor(model.saved ? .green : .white)
       })
       IllithidButton(action: {
         withAnimation {
@@ -326,7 +250,7 @@ struct PostActionBar: View {
 
   // MARK: Private
 
-  @State private var saved: Bool
+  @EnvironmentObject private var model: CommonActionModel<Post>
 }
 
 // MARK: - PostRowView_Previews

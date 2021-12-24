@@ -22,9 +22,6 @@ extension PostRowView {
 
     let post: Post
 
-    @Binding var vote: VoteDirection
-    @EnvironmentObject var informationBarData: InformationBarData
-
     var body: some View {
       VStack(alignment: .leading, spacing: 5) {
         if let richText = post.authorFlairRichtext, !richText.isEmpty {
@@ -40,7 +37,7 @@ extension PostRowView {
         PostAttribution(post: post)
 
         HStack {
-          (Text(voteSymbol)
+          (Text(Image(systemName: model.vote == .down ? "arrow.down" : "arrow.up"))
             + Text("\(post.ups.postAbbreviation())"))
             .foregroundColor(voteColor)
 
@@ -52,31 +49,25 @@ extension PostRowView {
             + Text("\(post.relativePostTime) ago"))
             .help(post.absolutePostTime)
         }
+        .animation(.default, value: model.vote)
       }
       .font(.body)
     }
 
     // MARK: Private
 
+    @EnvironmentObject private var model: CommonActionModel<Post>
+
     private let windowManager: WindowManager = .shared
 
     private var voteColor: Color? {
-      switch vote {
+      switch model.vote {
       case .clear:
         return nil
       case .down:
         return .purple
       case .up:
         return .orange
-      }
-    }
-
-    private var voteSymbol: Image {
-      switch vote {
-      case .clear, .up:
-        return Image(systemName: "arrow.up")
-      case .down:
-        return Image(systemName: "arrow.down")
       }
     }
 
