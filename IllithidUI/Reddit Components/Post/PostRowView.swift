@@ -44,6 +44,7 @@ struct PostRowView: View {
         case .linear:
           NavigationLink {
             CommentsView(post: post)
+              .environmentObject(model)
           } label: {
             rowView
           }
@@ -53,6 +54,7 @@ struct PostRowView: View {
               // Matches the behavior of double clicking on a NavigationLink
               WindowManager.shared.showWindow {
                 CommentsView(post: post)
+                  .environmentObject(model)
               }
             }
         }
