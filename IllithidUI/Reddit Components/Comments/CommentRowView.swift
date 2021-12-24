@@ -23,7 +23,7 @@ struct CommentRowView: View {
   // MARK: Lifecycle
 
   init(isCollapsed: Binding<Bool>, comment: Comment, scrollProxy: ScrollViewProxy? = nil) {
-    _interactions = .init(wrappedValue: CommentState(comment: comment))
+    _model = .init(wrappedValue: .init(comment))
     _isCollapsed = isCollapsed
     self.comment = comment
     self.scrollProxy = scrollProxy
@@ -70,7 +70,7 @@ struct CommentRowView: View {
       NewCommentForm(isPresented: $presentReplyForm, comment: comment)
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
-    .environmentObject(interactions)
+    .environmentObject(model)
     .contextMenu {
       Button("comments.reply") {
         withAnimation {
@@ -78,23 +78,20 @@ struct CommentRowView: View {
         }
       }
       Divider()
-      if interactions.ballot != .up {
-        Button("comments.upvote") { interactions.upvote(comment: comment) }
-      }
-      if interactions.ballot != .down {
-        Button("comments.downvote") { interactions.downvote(comment: comment) }
-      }
-      if interactions.ballot != .clear {
-        Button("comments.clearvote") { interactions.clearVote(comment: comment) }
-      }
+
+      AsyncButton("comments.upvote") { try? await model.upvote() }
+      AsyncButton("comments.downvote") { try? await model.downvote() }
+
       Divider()
-      if !interactions.saved {
-        Button("comments.save") { interactions.save(comment: comment) }
-      } else {
-        Button("comments.unsave") { interactions.unsave(comment: comment) }
+
+      AsyncButton(model.saved ? "comments.unsave" : "comments.save") {
+        try? await model.toggleSaved()
       }
+
       Divider()
+
       Button(isCollapsed ? "comments.expand" : "comments.collapse") { toggleCollapsed() }
+
       if let depth = comment.depth ?? 0, depth != 0 {
         Button(action: {
           withAnimation {
@@ -102,108 +99,18 @@ struct CommentRowView: View {
               scrollProxy?.scrollTo(parentId36, anchor: .top)
             }
           }
-        }, label: { Label("comments.scroll.parent.comment", systemImage: "ellipsis.bubble") })
+        }, label: {
+          Label("comments.scroll.parent.comment", systemImage: "ellipsis.bubble")
+        })
       }
     }
-  }
-
-  // MARK: Fileprivate
-
-  fileprivate class CommentState: ObservableObject {
-    // MARK: Lifecycle
-
-    init(comment: Comment) {
-      ballot = VoteDirection(from: comment)
-      saved = comment.saved
-    }
-
-    // MARK: Internal
-
-    @Published private(set) var ballot: VoteDirection
-    @Published private(set) var voting: Bool = false
-    @Published private(set) var saved: Bool
-    @Published private(set) var saving: Bool = false
-
-    func upvote(comment: Comment) {
-      voting = true
-      comment.upvote { [weak self] result in
-        guard let self = self else { return }
-        self.voting = false
-        switch result {
-        case .success:
-          self.ballot = .up
-        case let .failure(error):
-          Illithid.shared.logger.errorMessage("Error upvoting \(comment.author) - \(comment.fullname): \(error)")
-        }
-      }
-    }
-
-    func downvote(comment: Comment) {
-      voting = true
-      comment.downvote { [weak self] result in
-        guard let self = self else { return }
-        self.voting = false
-        switch result {
-        case .success:
-          self.ballot = .down
-        case let .failure(error):
-          Illithid.shared.logger.errorMessage("Error downvoting \(comment.author) - \(comment.fullname): \(error)")
-        }
-      }
-    }
-
-    func clearVote(comment: Comment) {
-      voting = true
-      comment.clearVote { [weak self] result in
-        guard let self = self else { return }
-        self.voting = false
-        switch result {
-        case .success:
-          self.ballot = .clear
-        case let .failure(error):
-          Illithid.shared.logger.errorMessage("Error clearing vote \(comment.author) - \(comment.fullname): \(error)")
-        }
-      }
-    }
-
-    func save(comment: Comment) {
-      saving = true
-      comment.save { [weak self] result in
-        guard let self = self else { return }
-        self.saving = false
-        switch result {
-        case .success:
-          self.saved = true
-        case let .failure(error):
-          Illithid.shared.logger.errorMessage("Error saving comment \(comment.author) - \(comment.fullname): \(error)")
-        }
-      }
-    }
-
-    func unsave(comment: Comment) {
-      saving = true
-      comment.unsave { [weak self] result in
-        guard let self = self else { return }
-        self.saving = false
-        switch result {
-        case .success:
-          self.saved = false
-        case let .failure(error):
-          Illithid.shared.logger.errorMessage("Error unsaving comment \(comment.author) - \(comment.fullname): \(error)")
-        }
-      }
-    }
-
-    // MARK: Private
-
-    private let illithid: Illithid = .shared
   }
 
   // MARK: Private
 
   @State private var presentReplyForm: Bool = false
 
-  @StateObject private var interactions: CommentState
+  @StateObject private var model: CommonActionModel<Comment>
 
   private func toggleCollapsed() {
     withAnimation {
@@ -270,7 +177,7 @@ private struct AuthorBar: View {
     HStack {
       Text(comment.author)
         .usernameStyle(color: authorColor)
-      Text(comment.scoreHidden ? "-" : (comment.ups + interactions.ballot.rawValue).postAbbreviation(1))
+      Text(comment.scoreHidden ? "-" : (comment.ups + model.vote.rawValue).postAbbreviation(1))
         .foregroundColor(.orange)
       Spacer()
       Text("\(comment.relativeCommentTime) ago")
@@ -280,7 +187,7 @@ private struct AuthorBar: View {
   // MARK: Private
 
   @ObservedObject private var moderators: ModeratorData = .shared
-  @EnvironmentObject private var interactions: CommentRowView.CommentState
+  @EnvironmentObject private var model: CommonActionModel<Comment>
 
   private var authorColor: Color? {
     if comment.isAdminComment {
@@ -333,28 +240,31 @@ private struct CommentActionBar: View {
   var body: some View {
     HStack {
       IllithidButton(action: {
-        if interactionState.ballot == .up { interactionState.clearVote(comment: comment) }
-        else { interactionState.upvote(comment: comment) }
+        Task {
+          try? await model.upvote()
+        }
       }, label: {
         Image(systemName: "arrow.up")
       })
-      .foregroundColor(interactionState.ballot == .up ? .orange : .white)
+      .foregroundColor(model.vote == .up ? .orange : .white)
 
       IllithidButton(action: {
-        if interactionState.ballot == .down { interactionState.clearVote(comment: comment) }
-        else { interactionState.downvote(comment: comment) }
+        Task {
+          try? await model.downvote()
+        }
       }, label: {
         Image(systemName: "arrow.down")
       })
-      .foregroundColor(interactionState.ballot == .down ? .purple : .white)
+      .foregroundColor(model.vote == .down ? .purple : .white)
 
       IllithidButton(action: {
-        if interactionState.saved { interactionState.unsave(comment: comment) }
-        else { interactionState.save(comment: comment) }
+        Task {
+          try? await model.toggleSaved()
+        }
       }, label: {
         Image(systemName: "bookmark.fill")
       })
-      .foregroundColor(interactionState.saved ? .green : .white)
+      .foregroundColor(model.saved ? .green : .white)
 
       // TODO: Support button styling via environment in IllithidButton
       IllithidButton(action: {}, label: {
@@ -370,7 +280,7 @@ private struct CommentActionBar: View {
 
   // MARK: Private
 
-  @EnvironmentObject private var interactionState: CommentRowView.CommentState
+  @EnvironmentObject private var model: CommonActionModel<Comment>
 }
 
 // MARK: - CommentColorBar
