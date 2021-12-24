@@ -22,24 +22,19 @@ import SDWebImageSwiftUI
 struct DetailedPostView: View {
   // MARK: Lifecycle
 
-  init(post: Post, vote: Binding<VoteDirection>? = nil) {
+  init(post: Post, vote _: Binding<VoteDirection>? = nil) {
     self.post = post
     if post.crosspostParentList != nil, !post.crosspostParentList!.isEmpty {
       crosspostParent = post.crosspostParentList?.first!
     } else {
       crosspostParent = nil
     }
-
-    if let vote = vote { _vote = vote }
-    else { _vote = .constant(VoteDirection(from: post)) }
   }
 
   // MARK: Internal
 
   let post: Post
   let crosspostParent: Post?
-
-  @Binding var vote: VoteDirection
 
   var body: some View {
     VStack(alignment: .leading, spacing: 10) {
@@ -73,7 +68,7 @@ struct DetailedPostView: View {
 
             PostContent(post: crosspostParent)
 
-            PostRowView.PostMetadataBar(post: crosspostParent, vote: $vote)
+            PostRowView.PostMetadataBar(post: crosspostParent)
           }
         }
         .padding(.horizontal, 4)
@@ -84,7 +79,7 @@ struct DetailedPostView: View {
         PostContent(post: post)
       }
 
-      PostRowView.PostMetadataBar(post: post, vote: $vote)
+      PostRowView.PostMetadataBar(post: post)
     }
   }
 
@@ -93,6 +88,10 @@ struct DetailedPostView: View {
       CommentsView(post: post)
     }
   }
+
+  // MARK: Private
+
+  @EnvironmentObject private var model: CommonActionModel<Post>
 }
 
 // MARK: - FlairRichTextView
