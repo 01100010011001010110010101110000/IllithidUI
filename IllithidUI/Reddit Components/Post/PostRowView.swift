@@ -25,8 +25,8 @@ struct PostRowView: View {
 
   init(post: Post, selection: Binding<Post.ID?>) {
     self.post = post
-    _vote = .init(initialValue: VoteDirection(from: post))
     _selection = selection
+    _model = .init(wrappedValue: .init(post))
   }
 
   // MARK: Internal
@@ -61,7 +61,7 @@ struct PostRowView: View {
       Divider()
     }
     .contextMenu {
-      PostContextMenu(post: post, presentReplyForm: $presentReplyForm, vote: $vote)
+      PostContextMenu(post: post, presentReplyForm: $presentReplyForm, model: model)
     }
     .sheet(isPresented: $presentReplyForm) {
       NewCommentForm(isPresented: $presentReplyForm, post: post)
@@ -70,7 +70,7 @@ struct PostRowView: View {
 
   // MARK: Private
 
-  @State private var vote: VoteDirection
+  @StateObject private var model: CommonActionModel<Post>
   @State private var presentReplyForm = false
 
   private let windowManager: WindowManager = .shared
@@ -78,9 +78,9 @@ struct PostRowView: View {
   @ViewBuilder private var rowView: some View {
     switch postStyle {
     case .large:
-      DetailedPostRowView(post: post, voteState: $vote, presentReplyForm: $presentReplyForm, selection: $selection)
+      DetailedPostRowView(post: post, voteState: $model.vote, presentReplyForm: $presentReplyForm, selection: $selection)
     case .classic, .compact:
-      ClassicPostRowView(post: post, voteState: $vote, selection: $selection)
+      ClassicPostRowView(post: post, voteState: $model.vote, selection: $selection)
     }
   }
 }

@@ -21,7 +21,7 @@ struct PostContextMenu: View {
 
   let post: Post
   @Binding var presentReplyForm: Bool
-  @Binding var vote: VoteDirection
+  @ObservedObject var model: CommonActionModel<Post>
 
   var body: some View {
     votingButtons
@@ -47,32 +47,14 @@ struct PostContextMenu: View {
 
   @ViewBuilder private var votingButtons: some View {
     AsyncButton("upvote") {
-      do {
-        switch vote {
-        case .up:
-          try await post.clearVote()
-          vote = .clear
-        default:
-          try await post.upvote()
-          vote = .up
-        }
-      } catch {
-        Illithid.shared.logger.errorMessage("Error voting on \(post.title) - \(post.name): \(error)")
-      }
+      try? await model.upvote()
     }
     AsyncButton("downvote") {
-      do {
-        switch vote {
-        case .down:
-          try await post.clearVote()
-          vote = .clear
-        default:
-          try await post.downvote()
-          vote = .down
-        }
-      } catch {
-        Illithid.shared.logger.errorMessage("Error voting on \(post.title) - \(post.name): \(error)")
-      }
+      try? await model.downvote()
+    }
+
+    AsyncButton(model.saved ? "post.unsave" : "post.save") {
+      try? await model.toggleSaved()
     }
   }
 
