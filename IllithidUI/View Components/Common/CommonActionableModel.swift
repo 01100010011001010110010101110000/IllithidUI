@@ -30,6 +30,7 @@ extension Comment: CommonActionable {}
 
 // MARK: - CommonActionModel
 
+@MainActor
 class CommonActionModel<T: CommonActionable>: ObservableObject {
   // MARK: Lifecycle
 
