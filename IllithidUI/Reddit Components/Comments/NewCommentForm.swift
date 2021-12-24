@@ -57,7 +57,7 @@ struct NewCommentForm: View {
         }, label: {
           Text("cancel")
         })
-          .keyboardShortcut(.cancelAction)
+        .keyboardShortcut(.cancelAction)
         Spacer()
         Button(action: {
           submitter.postComment(to: parentFullname, body: commentBody)
@@ -77,7 +77,7 @@ struct NewCommentForm: View {
             Text("comments.submit")
           }
         })
-          .keyboardShortcut(.return, modifiers: .command)
+        .keyboardShortcut(.return, modifiers: .command)
       }
       .padding()
       .onReceive(submitter.$result) { result in
@@ -111,7 +111,7 @@ private class CommentSubmitter: ObservableObject {
 
   func postComment(to parent: Fullname, body: String) {
     posting = true
-    cancelToken = illithid.postComment(replyingTo: parent, body: body)
+    cancelToken = illithid.postComment(replyingTo: parent, markdown: body)
       .receive(on: RunLoop.main)
       .sink(receiveCompletion: { [weak self] completion in
         guard let self = self else { return }
