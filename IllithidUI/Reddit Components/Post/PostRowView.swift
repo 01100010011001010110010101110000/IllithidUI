@@ -66,7 +66,7 @@ struct PostRowView: View {
       PostContextMenu(post: post, presentReplyForm: $presentReplyForm, model: model)
     }
     .sheet(isPresented: $presentReplyForm) {
-      NewCommentForm(isPresented: $presentReplyForm, post: post)
+      NewCommentForm(replyTo: post)
     }
     .environmentObject(model)
   }
