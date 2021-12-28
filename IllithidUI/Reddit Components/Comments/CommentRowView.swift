@@ -67,7 +67,7 @@ struct CommentRowView: View {
       Divider()
     }
     .sheet(isPresented: $presentReplyForm) {
-      NewCommentForm(isPresented: $presentReplyForm, comment: comment)
+      NewCommentForm(replyTo: comment)
     }
     .padding(.leading, 12 * CGFloat(integerLiteral: comment.depth ?? 0))
     .environmentObject(model)

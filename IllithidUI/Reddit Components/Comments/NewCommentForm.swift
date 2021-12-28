@@ -16,26 +16,21 @@ import Combine
 import Foundation
 import SwiftUI
 
+import Alamofire
 import Illithid
 
 // MARK: - NewCommentForm
 
-struct NewCommentForm: View {
+struct NewCommentForm<T: Replyable>: View {
   // MARK: Lifecycle
 
-  init(isPresented: Binding<Bool>, comment: Comment) {
-    _isPresented = isPresented
-    parentFullname = comment.name
-  }
-
-  init(isPresented: Binding<Bool>, post: Post) {
-    _isPresented = isPresented
-    parentFullname = post.name
+  init(replyTo: T) {
+    parentFullname = replyTo.name
   }
 
   // MARK: Internal
 
-  @Binding var isPresented: Bool
+  @Environment(\.presentationMode) var presentationMode
 
   var body: some View {
     VStack {
@@ -50,17 +45,17 @@ struct NewCommentForm: View {
         .font(.system(size: 18))
 
       HStack {
-        Button(action: {
+        Button(role: .cancel, action: {
           withAnimation {
-            isPresented = false
+            presentationMode.wrappedValue.dismiss()
           }
         }, label: {
           Text("cancel")
         })
         .keyboardShortcut(.cancelAction)
         Spacer()
-        Button(action: {
-          submitter.postComment(to: parentFullname, body: commentBody)
+        AsyncButton(action: {
+          await submitter.postComment(to: parentFullname, markdown: commentBody)
         }, label: {
           HStack {
             if submitter.posting {
@@ -81,13 +76,11 @@ struct NewCommentForm: View {
       }
       .padding()
       .onReceive(submitter.$result) { result in
-        switch result {
-        case .success:
-          DispatchQueue.main.asyncAfter(deadline: .now() + dismissalDelay) {
-            isPresented = false
+        if case .success = result {
+          Task {
+            try await Task.sleep(nanoseconds: UInt64(dismissalDelay * pow(10, 9)))
+            presentationMode.wrappedValue.dismiss()
           }
-        default:
-          break
         }
       }
     }
@@ -103,36 +96,33 @@ struct NewCommentForm: View {
 
 // MARK: - CommentSubmitter
 
+@MainActor
 private class CommentSubmitter: ObservableObject {
   // MARK: Internal
 
   @Published var posting: Bool = false
-  @Published var result: Result<Comment, Error>? = nil
+  @Published var result: Result<Comment, AFError>? = nil
 
-  func postComment(to parent: Fullname, body: String) {
+  func postComment<T: Replyable>(to replyable: T, markdown: String) async {
+    guard !posting else { return }
+
     posting = true
-    cancelToken = illithid.postComment(replyingTo: parent, markdown: body)
-      .receive(on: RunLoop.main)
-      .sink(receiveCompletion: { [weak self] completion in
-        guard let self = self else { return }
-        switch completion {
-        case let .failure(error):
-          self.illithid.logger.errorMessage("Error posting new comment: \(error)")
-          self.posting = false
-          self.result = .failure(error)
-        case .finished:
-          self.illithid.logger.debugMessage("Finished posting new comment")
-          self.posting = false
-        }
-      }, receiveValue: { createdComment in
-        self.illithid.logger.debugMessage("Received new comment back")
-        self.posting = false
-        self.result = .success(createdComment)
-      })
+    submissionTask = replyable.reply(markdown: markdown, automaticallyCancelling: true)
+    result = await submissionTask?.result
+    posting = false
+  }
+
+  func postComment(to parent: Fullname, markdown: String) async {
+    guard !posting else { return }
+
+    posting = true
+    submissionTask = illithid.postComment(replyingTo: parent, markdown: markdown, automaticallyCanceling: true)
+    result = await submissionTask?.result
+    posting = false
   }
 
   // MARK: Private
 
   private let illithid: Illithid = .shared
-  private var cancelToken: AnyCancellable?
+  private var submissionTask: DataTask<Comment>?
 }
