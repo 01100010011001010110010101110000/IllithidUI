@@ -38,7 +38,7 @@ extension PostRowView {
 
         HStack {
           (Text(Image(systemName: model.vote == .down ? "arrow.down" : "arrow.up"))
-            + Text("\(post.ups.postAbbreviation())"))
+            + Text("\(post.score(given: model.vote).postAbbreviation())"))
             .foregroundColor(voteColor)
 
           (Text(Image(systemName: "text.bubble"))

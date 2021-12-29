@@ -18,6 +18,8 @@
 		22F2625FF1F9BDED7C8FEED7 /* NewPostForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2621DBC55C2239EE306E9 /* NewPostForm.swift */; };
 		22F2629F7991F10CC55F8646 /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
 		22F262E9F459B9282DE815CB /* Logger+OAuthLogProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26BFE836405602FDB6EF1 /* Logger+OAuthLogProtocol.swift */; };
+		22F262FAFBDFF4C841B7A432 /* Votable+Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26F374D0C7A5B29C61060 /* Votable+Score.swift */; };
+		22F2633FE13183A75429AFBD /* Votable+Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26F374D0C7A5B29C61060 /* Votable+Score.swift */; };
 		22F263703A27A350AC180A7D /* MetadataBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F266952D166C17F198B6E4 /* MetadataBar.swift */; };
 		22F263861FF90296F0604872 /* RefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26CD1853E0A4512FE7A14 /* RefreshButton.swift */; };
 		22F2641108620A79861A811C /* CommonActionableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F260727E8524D699B087DC /* CommonActionableModel.swift */; };
@@ -34,6 +36,7 @@
 		22F268F9F8F79CE3710C2C0A /* CancelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F268F37D252AE77C8C0BED /* CancelButton.swift */; };
 		22F269865D654267FB61F813 /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
 		22F269875AEF821E307E65DA /* NSImage+Resized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F262A2F4F215322B6061D8 /* NSImage+Resized.swift */; };
+		22F26A6D64CE122CB7D40995 /* Votable+Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26F374D0C7A5B29C61060 /* Votable+Score.swift */; };
 		22F26A92FEC3912C5EE2D094 /* AsyncButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26757A674E9BD09B29F39 /* AsyncButton.swift */; };
 		22F26B35ECD9A649A208545C /* NSImage+Resized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F262A2F4F215322B6061D8 /* NSImage+Resized.swift */; };
 		22F26BB9D7C55FF427614FDA /* ValidationFailure+StringInterpolation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B39571F266EC669C129 /* ValidationFailure+StringInterpolation.swift */; };
@@ -194,6 +197,7 @@
 		22F26CD1853E0A4512FE7A14 /* RefreshButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RefreshButton.swift; sourceTree = "<group>"; };
 		22F26E2F376D20C4FED06CC1 /* CancelableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CancelableViewModel.swift; sourceTree = "<group>"; };
 		22F26EEABF3B3BEF1EA50F15 /* NavigationSelectionPreference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationSelectionPreference.swift; sourceTree = "<group>"; };
+		22F26F374D0C7A5B29C61060 /* Votable+Score.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Votable+Score.swift"; sourceTree = "<group>"; };
 		6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllithidButton.swift; sourceTree = "<group>"; };
 		6D09353F25760F8C002DDBD8 /* PostGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostGridView.swift; sourceTree = "<group>"; };
 		6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarDelegate.swift; sourceTree = "<group>"; };
@@ -699,6 +703,7 @@
 				6D2B386326A25C7A0060EC8F /* IconicTypes.swift */,
 				22F262A2F4F215322B6061D8 /* NSImage+Resized.swift */,
 				22F26BFE836405602FDB6EF1 /* Logger+OAuthLogProtocol.swift */,
+				22F26F374D0C7A5B29C61060 /* Votable+Score.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -971,6 +976,7 @@
 				22F26EA6D3B5653091A1C9FD /* MetadataBar.swift in Sources */,
 				22F26D7CF83BA72A274E5A6F /* AsyncButton.swift in Sources */,
 				22F266E18B59042B72B45C5B /* CommonActionableModel.swift in Sources */,
+				22F262FAFBDFF4C841B7A432 /* Votable+Score.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -991,6 +997,7 @@
 				22F263703A27A350AC180A7D /* MetadataBar.swift in Sources */,
 				22F26A92FEC3912C5EE2D094 /* AsyncButton.swift in Sources */,
 				22F2641108620A79861A811C /* CommonActionableModel.swift in Sources */,
+				22F26A6D64CE122CB7D40995 /* Votable+Score.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1011,6 +1018,7 @@
 				22F26E846FB5D444B9EA2D04 /* MetadataBar.swift in Sources */,
 				22F26E85F5077B2089B8C8DA /* AsyncButton.swift in Sources */,
 				22F26DC685794E2EB024693E /* CommonActionableModel.swift in Sources */,
+				22F2633FE13183A75429AFBD /* Votable+Score.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

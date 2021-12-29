@@ -177,7 +177,7 @@ private struct AuthorBar: View {
     HStack {
       Text(comment.author)
         .usernameStyle(color: authorColor)
-      Text(comment.scoreHidden ? "-" : (comment.ups + model.vote.rawValue).postAbbreviation(1))
+      Text(comment.scoreHidden ? "-" : comment.score(given: model.vote).postAbbreviation())
         .foregroundColor(.orange)
       Spacer()
       Text("\(comment.relativeCommentTime) ago")
