@@ -125,6 +125,9 @@ struct CommentsView: View, Identifiable {
         .onAppear {
           commentData.loadComments(focusOn: focusedComment, context: commentContext, sort: sorter.sort)
         }
+        .task(priority: .background) {
+          await visitModel.visit()
+        }
       }
     }
   }
@@ -136,6 +139,7 @@ struct CommentsView: View, Identifiable {
   @StateObject private var commentData: CommentData
   // TODO: Setup a user preference to choose a specific static sort, or to respect the Subreddit sort
   @StateObject private var sorter = SortModel(sort: CommentsSort.best, topInterval: .day)
+  @EnvironmentObject private var visitModel: PostVisitModel
   @ObservedObject private var moderators: ModeratorData = .shared
 
   private var commentContext: Int? {

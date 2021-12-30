@@ -55,10 +55,10 @@ class CommonActionModel<T: CommonActionable>: ObservableObject {
     do {
       switch vote {
       case .up:
-        try await actionable.clearVote().value
+        _ = try await actionable.clearVote().value
         vote = .clear
       default:
-        try await actionable.upvote().value
+        _ = try await actionable.upvote().value
         vote = .up
       }
     } catch {
@@ -72,10 +72,10 @@ class CommonActionModel<T: CommonActionable>: ObservableObject {
     do {
       switch vote {
       case .down:
-        try await actionable.clearVote().value
+        _ = try await actionable.clearVote().value
         vote = .clear
       default:
-        try await actionable.downvote().value
+        _ = try await actionable.downvote().value
         vote = .down
       }
     } catch {
@@ -86,10 +86,10 @@ class CommonActionModel<T: CommonActionable>: ObservableObject {
   func toggleSaved() async throws {
     do {
       if saved {
-        try await actionable.unsave().value
+        _ = try await actionable.unsave().value
         saved = false
       } else {
-        try await actionable.save().value
+        _ = try await actionable.save().value
         saved = true
       }
     } catch {

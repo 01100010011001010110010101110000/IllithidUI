@@ -38,14 +38,17 @@ extension PostRowView {
 
         HStack {
           (Text(Image(systemName: model.vote == .down ? "arrow.down" : "arrow.up"))
-            + Text("\(post.score(given: model.vote).postAbbreviation())"))
+            + Text(verbatim: " ")
+            + Text(verbatim: "\(post.score(given: model.vote).postAbbreviation())"))
             .foregroundColor(voteColor)
 
           (Text(Image(systemName: "text.bubble"))
-            + Text("\(post.numComments.postAbbreviation())"))
+            + Text(verbatim: " ")
+            + Text(verbatim: "\(post.numComments.postAbbreviation())"))
             .foregroundColor(.blue)
 
           (Text(Image(systemName: "clock"))
+            + Text(verbatim: " ")
             + Text("\(post.relativePostTime) ago"))
             .help(post.absolutePostTime)
         }

@@ -28,11 +28,13 @@ final class ModeratorData: ObservableObject {
   @Published private(set) var moderators: [String: [Moderator]] = [:]
 
   func isModerator(username: String, ofSubreddit subredditName: String) -> Bool {
+    // Reddit usernames are case insensitive
+    if username.caseInsensitiveCompare("AutoModerator") == .orderedSame { return true }
     guard let mods = moderators[subredditName] else {
       loadModerators(for: subredditName)
       return false
     }
-    return mods.contains { $0.name == username }
+    return mods.contains { username.caseInsensitiveCompare($0.name) == .orderedSame }
   }
 
   // MARK: Private
