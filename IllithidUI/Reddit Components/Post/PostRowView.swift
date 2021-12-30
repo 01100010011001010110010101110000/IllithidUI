@@ -26,7 +26,8 @@ struct PostRowView: View {
   init(post: Post, selection: Binding<Post.ID?>) {
     self.post = post
     _selection = selection
-    _model = .init(wrappedValue: .init(post))
+    _actionModel = .init(wrappedValue: .init(post))
+    _visitModel = .init(wrappedValue: .init(post: post))
   }
 
   // MARK: Internal
@@ -44,7 +45,8 @@ struct PostRowView: View {
         case .linear:
           NavigationLink {
             CommentsView(post: post)
-              .environmentObject(model)
+              .environmentObject(actionModel)
+              .environmentObject(visitModel)
           } label: {
             rowView
           }
@@ -54,27 +56,30 @@ struct PostRowView: View {
               // Matches the behavior of double clicking on a NavigationLink
               WindowManager.shared.showWindow {
                 CommentsView(post: post)
-                  .environmentObject(model)
+                  .environmentObject(actionModel)
+                  .environmentObject(visitModel)
               }
             }
         }
         Spacer()
       }
+      .brightness(visitModel.visited ? -0.2 : 0.0)
       Divider()
     }
     .contextMenu {
-      PostContextMenu(post: post, presentReplyForm: $presentReplyForm, model: model)
+      PostContextMenu(post: post, presentReplyForm: $presentReplyForm, model: actionModel)
     }
     .sheet(isPresented: $presentReplyForm) {
       NewCommentForm(replyTo: post)
     }
-    .environmentObject(model)
+    .environmentObject(actionModel)
   }
 
   // MARK: Private
 
   @State private var presentReplyForm = false
-  @StateObject private var model: CommonActionModel<Post>
+  @StateObject private var actionModel: CommonActionModel<Post>
+  @StateObject private var visitModel: PostVisitModel
 
   private let windowManager: WindowManager = .shared
 
@@ -86,6 +91,37 @@ struct PostRowView: View {
       ClassicPostRowView(post: post, selection: $selection)
     }
   }
+}
+
+// MARK: - PostVisitModel
+
+@MainActor
+final class PostVisitModel: ObservableObject {
+  // MARK: Lifecycle
+
+  init(post: Post) {
+    visited = post.visited
+    self.post = post
+  }
+
+  // MARK: Internal
+
+  @Published var visited: Bool
+
+  func visit() async {
+    guard !visited,
+          visitingTask == nil,
+          Illithid.shared.accountManager.currentAccount?.hasSubscribedToPremium ?? false else { return }
+
+    visitingTask = post.visit(automaticallyCancelling: true)
+    visited = (try? await visitingTask?.value) != nil
+    visitingTask = nil
+  }
+
+  // MARK: Private
+
+  private let post: Post
+  private var visitingTask: DataTask<Data>?
 }
 
 // MARK: - DetailedPostRowView
@@ -196,7 +232,6 @@ private struct ClassicPostRowView: View {
 
 // MARK: - PostActionBar
 
-// TODO: Sync saved and voted state with model
 struct PostActionBar: View {
   // MARK: Internal
 
