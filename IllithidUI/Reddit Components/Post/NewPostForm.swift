@@ -293,7 +293,7 @@ struct NewPostForm: View {
             Text("post.submit")
           }
         })
-          .disabled(model.submissionIsDisabled)
+        .disabled(model.submissionIsDisabled)
       }
     }
   }
@@ -330,22 +330,22 @@ struct NewPostForm: View {
       }, label: {
         Text("cancel")
       })
-        .keyboardShortcut(.cancelAction)
+      .keyboardShortcut(.cancelAction)
       Button(action: {
         model.resetInputs()
       }, label: {
         Text("reset")
       })
-        .disabled(model.posting)
-        .keyboardShortcut("r", modifiers: [.command, .shift])
+      .disabled(model.posting)
+      .keyboardShortcut("r", modifiers: [.command, .shift])
       Spacer()
       HStack {
         if case .video = model.postType {
           Toggle(isOn: $model.videoPostModel.postAsGif, label: {
             Text("post.video.upload.as.gif")
           })
-            .keyboardShortcut("g", modifiers: .option)
-            .help("post.video.upload.as.gif.description")
+          .keyboardShortcut("g", modifiers: .option)
+          .help("post.video.upload.as.gif.description")
         }
         SubmissionButton(model: model)
       }
@@ -437,7 +437,7 @@ private struct SelfPostForm: View {
 
     func submit(titled title: String, to acceptor: PostAcceptor) {
       posting = true
-      let cancelToken = acceptor.submitSelfPost(title: title, markdown: body)
+      let cancelToken = Illithid.shared.submitSelfPost(parameters: .init(targetSubredditDisplayName: acceptor.uploadTarget, title: title, markdownBody: body))
         .receive(on: RunLoop.main)
         .sink { [weak self] completion in
           guard let self = self else { return }
@@ -522,7 +522,7 @@ private struct LinkPostForm: View {
       // We validate this before enabling the submit button, but just in case
       guard let url = URL(string: linkTo) else { return }
       posting = true
-      let cancelToken = acceptor.submitLinkPost(title: title, linkTo: url)
+      let cancelToken = Illithid.shared.submitLinkPost(parameters: .init(targetSubredditDisplayName: acceptor.uploadTarget, title: title, linkingTo: url))
         .receive(on: RunLoop.main)
         .sink { [weak self] completion in
           guard let self = self else { return }
@@ -612,8 +612,8 @@ private struct ImageGifPostForm: View {
         .uploadMedia(fileUrl: url)
         .flatMap { lease, _ in
           Publishers.Zip(illithid.receiveUploadResponse(lease: lease),
-                         illithid.submit(kind: .image, subredditDisplayName: acceptor.uploadTarget,
-                                         title: title, linkTo: lease.lease.retrievalUrl))
+                         illithid.submitLinkPost(parameters: .init(targetSubredditDisplayName: acceptor.uploadTarget,
+                                                                   title: title, linkingTo: lease.lease.retrievalUrl!)))
         }
         .receive(on: RunLoop.main)
         .sink(receiveCompletion: { [weak self] completion in
@@ -636,7 +636,7 @@ private struct ImageGifPostForm: View {
       let illithid: Illithid = .shared
 
       posting = true
-      let uploadToken = illithid.submitGalleryPost(subredditDisplayName: acceptor.uploadTarget, title: title, galleryItems: galleryModel.galleryItems())
+      let uploadToken = illithid.submitGalleryPost(parameters: .init(targetSubredditDisplayName: acceptor.uploadTarget, title: title, galleryItems: galleryModel.galleryItems()))
         .receive(on: RunLoop.main)
         .sink(receiveCompletion: { [weak self] completion in
           switch completion {
@@ -684,7 +684,7 @@ private struct ImageGifPostForm: View {
         Button(action: { model.presentImageSelector = true }, label: {
           Text("choose.image")
         })
-          .keyboardShortcut("o")
+        .keyboardShortcut("o")
       }
       Spacer()
     }
@@ -813,14 +813,14 @@ private struct GalleryCarousel: View {
             }, onUpload: { lease in
               model.imageIds[url] = lease.asset.assetId
             })
-              .background(selected == url ? Color(.controlColor) : Color.clear)
-              .onTapGesture {
-                if selected == url {
-                  selected = nil
-                } else {
-                  selected = url
-                }
+            .background(selected == url ? Color(.controlColor) : Color.clear)
+            .onTapGesture {
+              if selected == url {
+                selected = nil
+              } else {
+                selected = url
               }
+            }
           }
         }
       }
@@ -986,12 +986,15 @@ private struct VideoPostForm: View {
         .flatMap { [postAsGif] (videoUpload: (lease: AssetUploadLease, uploadResponse: Data), posterUpload: (lease: AssetUploadLease, uploadResponse: Data)) -> Publishers.Zip<AnyPublisher<MediaUploadResponse?, AFError>, AnyPublisher<NewPostResponse, AFError>> in
           let videoMetadata = videoUpload.lease
           let posterMetadata = posterUpload.lease
+          let parameters: BaseNewPostParameters = postAsGif
+            ? VideoPostParameters(targetSubredditDisplayName: acceptor.uploadTarget, title: title,
+                                  videoAssetUrl: videoMetadata.lease.retrievalUrl!,
+                                  videoPosterAssetUrl: posterMetadata.lease.retrievalUrl!)
+            : VideoGifPostParameters(targetSubredditDisplayName: acceptor.uploadTarget,
+                                     title: title, videoAssetUrl: videoMetadata.lease.retrievalUrl!,
+                                     videoPosterAssetUrl: posterMetadata.lease.retrievalUrl!)
           return Publishers.Zip(illithid.receiveUploadResponse(lease: videoMetadata),
-                                illithid.submit(kind: postAsGif ? .videogif : .video,
-                                                subredditDisplayName: acceptor.uploadTarget,
-                                                title: title,
-                                                linkTo: videoMetadata.lease.retrievalUrl,
-                                                videoPosterUrl: posterMetadata.lease.retrievalUrl))
+                                illithid.submit(parameters: parameters))
         }
         .receive(on: RunLoop.main)
         .sink(receiveCompletion: { [weak self] completion in
@@ -1057,7 +1060,7 @@ private struct VideoPostForm: View {
         Button(action: { model.presentVideoSelector = true }, label: {
           Text("choose.video")
         })
-          .keyboardShortcut("o")
+        .keyboardShortcut("o")
       }
       Spacer()
     }
