@@ -58,6 +58,12 @@ The first twenty items you selected are still selected";
 "gallery.item.caption" = "Caption";
 "gallery.item.link" = "Outbound Link";
 
+"accounts.add" = "Add account";
+"accounts.remove.all" = "Remove all accounts";
+"accounts.reauthenticate" = "Reauthenticate";
+
+"advanced.cache.disk.usage" = "Cache disk usage";
+"advanced.cache.clear" = "Clear cache";
 
 "subreddits.subscribed" = "Subscribed";
 
