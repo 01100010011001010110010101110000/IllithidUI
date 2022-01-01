@@ -41,7 +41,7 @@ struct PreferencesView: View {
           .navigationTitle("Advanced")
       }
     }
-    .padding(.top, 20)
+    .padding()
     .frame(minWidth: 550, maxWidth: 550, maxHeight: 800)
     .toolbar {
       ToolbarItem(placement: .navigation) {
@@ -98,7 +98,11 @@ private struct PreferencesToolbarItemView: View {
     .onTapGesture {
       selection = page
     }
-    .overlay(RoundedRectangle(cornerRadius: 8).foregroundColor(page == selection ? .white : .clear).opacity(0.2))
+    .overlay(
+      RoundedRectangle(cornerRadius: 8)
+        .foregroundColor(page == selection ? .white : .clear)
+        .opacity(0.2)
+    )
   }
 }
 
@@ -137,53 +141,50 @@ private struct GeneralPreferences: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      GroupBox(label: Text("Content").font(.headline)) {
-        VStack(alignment: .leading) {
-          Toggle(isOn: $preferences.hideNsfw) {
-            Text("Hide NSFW content")
-          }
-
-          Toggle(isOn: $preferences.blurNsfw) {
-            Text("Blur NSFW content")
-          }
-
-          Toggle(isOn: $preferences.openLinksInForeground) {
-            Text("Open links in foreground")
-          }
-
-          Picker(selection: $preferences.previewSize, label: Text("Preview Size: ")) {
-            ForEach(PreferencesData.PreviewSize.allCases) { size in
-              Text(size.rawValue.capitalized)
-                .tag(size)
-            }
-          }
-          .frame(width: 200)
-
-          Picker(selection: $preferences.browser, label: Text("Open links with: ")) {
-            ForEach(Browser.installed.sorted().filter { $0.displayName != nil }) { browser in
-              HStack {
-                if let icon = browser.icon()?.resized(to: NSSize(width: 16, height: 16)) {
-                  Image(nsImage: icon)
-                }
-                Text(browser.displayName!)
-              }
-              .tag(browser)
-            }
-          }
-          .frame(width: 250, alignment: .leading)
+      Picker(selection: $preferences.previewSize, label: Text("Preview Size: ")) {
+        ForEach(PreferencesData.PreviewSize.allCases) { size in
+          Text(size.rawValue.capitalized)
+            .tag(size)
         }
       }
+      .frame(width: 200)
 
-      GroupBox(label: Text("Playback").font(.headline)) {
-        VStack(alignment: .leading) {
-          Toggle(isOn: $preferences.muteAudio) {
-            Text("Mute audio content")
+      Toggle(isOn: $preferences.hideNsfw) {
+        Text("Hide NSFW content")
+      }
+
+      Toggle(isOn: $preferences.blurNsfw) {
+        Text("Blur NSFW content")
+      }
+
+      Divider()
+
+      Toggle(isOn: $preferences.openLinksInForeground) {
+        Text("Open links in foreground")
+      }
+
+      Picker(selection: $preferences.browser, label: Text("Open links with: ")) {
+        ForEach(Browser.installed.sorted().filter { $0.displayName != nil }) { browser in
+          HStack {
+            if let icon = browser.icon()?.resized(to: NSSize(width: 16, height: 16)) {
+              Image(nsImage: icon)
+            }
+            Text(browser.displayName!)
           }
-          Toggle(isOn: $preferences.autoPlayGifs) {
-            Text("Auto play GIFs")
-          }
+          .tag(browser)
         }
       }
+      .frame(width: 250, alignment: .leading)
+
+      Divider()
+
+      Toggle(isOn: $preferences.muteAudio) {
+        Text("Mute audio content")
+      }
+      Toggle(isOn: $preferences.autoPlayGifs) {
+        Text("Auto play GIFs")
+      }
+
       Spacer()
     }
   }
@@ -196,19 +197,15 @@ private struct NavigationPreferences: View {
 
   var body: some View {
     VStack(alignment: .leading) {
-      GroupBox(label: Text("Navigation Layout").font(.headline)) {
-        VStack(alignment: .leading) {
-          Picker(selection: $preferences.navigationStyle, label: Text("Layout: ")) {
-            ForEach(NavigationStyle.allCases) { style in
-              HStack {
-                Text(style.rawValue.capitalized)
-              }
-              .tag(style)
-            }
+      Picker(selection: $preferences.navigationStyle, label: Text("Layout: ")) {
+        ForEach(NavigationStyle.allCases) { style in
+          HStack {
+            Text(style.rawValue.capitalized)
           }
-          .frame(width: 400)
+          .tag(style)
         }
       }
+      .frame(width: 400)
       Spacer()
     }
   }
@@ -240,30 +237,36 @@ private struct AccountsPreferences: View {
                 .foregroundColor(.green)
             }
             if accountManager.isAuthenticated(account) {
-              Text(account.name)
-                .onTapGesture { accountManager.setAccount(account) }
+              Text(verbatim: account.name)
+                .onTapGesture {
+                  accountManager.setAccount(account)
+                }
             } else {
-              Text(account.name)
+              Text(verbatim: account.name)
                 .foregroundColor(.red)
               Spacer()
-              Button(action: { accountManager.reauthenticate(account: account, anchor: (NSApp.keyWindow ?? NSApp.mainWindow)!) }) {
-                Text("Renew Credentials")
+              Button(action: {
+                accountManager.reauthenticate(account: account, anchor: (NSApp.keyWindow ?? NSApp.mainWindow)!)
+              }) {
+                Text("accounts.reauthenticate")
               }
             }
           }
         }
-        .onDelete(perform: { accountManager.removeAccounts(indexSet: $0) })
+        .onDelete {
+          accountManager.removeAccounts(indexSet: $0)
+        }
         .padding()
       }
       HStack {
         Button(action: {
           accountManager.addAccount(anchor: NSApp.keyWindow!)
-        }) { Text("Add account") }
+        }) { Text("accounts.add") }
         Spacer()
         Button(action: {
           accountManager.removeAll()
         }) {
-          Text("Remove all accounts")
+          Text("accounts.remove.all")
         }
         .disabled(accountManager.accounts.isEmpty)
       }
@@ -280,11 +283,12 @@ private struct AdvancedPreferences: View {
   var body: some View {
     VStack(alignment: .center) {
       HStack {
-        Text("Cache size on disk: \(model.diskUsage)")
+        Text("advanced.cache.disk.usage")
+          + Text(verbatim: ": \(model.diskUsage)")
         Button(action: {
           model.clearImageCache()
         }, label: {
-          Text("Clear image cache")
+          Text("advanced.cache.clear")
         })
       }
       Spacer()
