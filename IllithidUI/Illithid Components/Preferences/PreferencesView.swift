@@ -278,50 +278,58 @@ private struct AdvancedPreferences: View {
   // MARK: Internal
 
   var body: some View {
-    VStack(alignment: .leading) {
-      GroupBox(label: Text("Content").font(.headline)) {
-        VStack(alignment: .leading) {
-          HStack {
-            Text("Cache size on disk: \(model.byteFormatter.string(fromByteCount: Int64(model.diskUsageBytes)))")
-            Spacer()
-            Button(action: {
-              SDWebImageManager.defaultImageCache?.clear(with: .all, completion: nil)
-              model.calculateCacheDiskUsage()
-            }, label: {
-              Text("Clear image cache")
-            })
-          }
-        }
+    VStack(alignment: .center) {
+      HStack {
+        Text("Cache size on disk: \(model.diskUsage)")
+        Button(action: {
+          model.clearImageCache()
+        }, label: {
+          Text("Clear image cache")
+        })
       }
       Spacer()
+    }
+    .onAppear {
+      model.calculateCacheDiskUsage()
     }
   }
 
   // MARK: Private
 
+  @MainActor
   private final class ViewModel: ObservableObject {
-    // MARK: Lifecycle
+    @Published var diskUsageBytes: UInt = 0
 
-    init() {
-      byteFormatter = .init()
-      byteFormatter.zeroPadsFractionDigits = true
-      diskUsageBytes = 0
+    var diskUsage: String {
+      byteFormatter.string(fromByteCount: Int64(diskUsageBytes))
+    }
+
+    func clearImageCache() {
+      SDWebImageManager.defaultImageCache?.clear(with: .all, completion: nil)
       calculateCacheDiskUsage()
     }
 
-    // MARK: Internal
-
-    @Published var diskUsageBytes: UInt
-
-    let byteFormatter: ByteCountFormatter
-
     func calculateCacheDiskUsage() {
-      guard let cacheManager = SDWebImageManager.defaultImageCache as? SDImageCachesManager else { diskUsageBytes = 0; return }
-      diskUsageBytes = cacheManager.caches?
-        .compactMap { $0 as? SDImageCache }
-        .reduce(0, { $0 + $1.totalDiskSize() }) ?? 0
+      guard let cacheManager = SDWebImageManager.defaultImageCache as? SDImageCachesManager else {
+        diskUsageBytes = 0
+        return
+      }
+      Task {
+        let calcTask = Task.detached {
+          cacheManager.caches?
+            .compactMap { $0 as? SDImageCache }
+            .reduce(0, { $0 + $1.totalDiskSize() }) ?? 0
+        }
+        self.diskUsageBytes = await calcTask.value
+      }
     }
   }
+
+  private static let byteFormatter: ByteCountFormatter = {
+    var formatter = ByteCountFormatter()
+    formatter.zeroPadsFractionDigits = true
+    return formatter
+  }()
 
   @ObservedObject private var preferences: PreferencesData = .shared
   @StateObject private var model = Self.ViewModel()

@@ -38,7 +38,7 @@ struct IllithidApp: App {
     // MARK: SDWebImage configuration
 
     let cache = SDImageCache()
-    cache.config.diskCacheExpireType = .modificationDate
+    cache.config.diskCacheExpireType = .accessDate
     cache.config.maxDiskSize = 1024 * 1024 * 1024 * 2
     cache.config.maxMemoryCost = 1024 * 1024 * 200
     SDImageCachesManager.shared.caches = [cache]
@@ -110,14 +110,14 @@ struct IllithidApp: App {
       ToolbarCommands()
       NewItemCommands(presentNewPostForm: $presentNewPostForm)
       #if DEBUG
-        DebugCommands()
+      DebugCommands()
       #endif
     }
 
     #if os(macOS)
-      Settings {
-        PreferencesView(accountManager: illithid.accountManager)
-      }
+    Settings {
+      PreferencesView(accountManager: illithid.accountManager)
+    }
     #endif
   }
 
@@ -136,9 +136,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
   override init() {
     #if DEBUG
-      let logger: Logger = .debugLogger()
+    let logger: Logger = .debugLogger()
     #else
-      let logger: Logger = .releaseLogger(subsystem: "com.flayware.IllithidUI")
+    let logger: Logger = .releaseLogger(subsystem: "com.flayware.IllithidUI")
     #endif
     self.logger = logger
 
