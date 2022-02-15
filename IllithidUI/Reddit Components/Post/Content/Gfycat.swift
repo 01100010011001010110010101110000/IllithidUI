@@ -244,6 +244,8 @@ extension RedGfyItem: MediaMetadataProvider {
   var size: CGSize { .init(width: width, height: height) }
 }
 
+// MARK: - RedGif + MediaMetadataProvider
+
 extension RedGif: MediaMetadataProvider {
   var mediaTitle: String { "" }
 
@@ -261,7 +263,7 @@ extension RedGif: MediaMetadataProvider {
 
   var mp4Url: URL? { gif.urls.hd }
 
-  var gifUrl: URL? { gif.urls.gif }
+  var gifUrl: URL? { nil }
 
   var size: CGSize { .init(width: gif.width, height: gif.height) }
 }

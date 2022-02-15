@@ -38,11 +38,18 @@ struct NewCommentForm<T: Replyable>: View {
         .font(.title)
         .padding()
 
-      TextEditor(text: $commentBody)
-        .border(Color.gray)
-        .padding(.horizontal)
-        .frame(idealWidth: 1600, idealHeight: 900)
-        .font(.system(size: 18))
+      HStack(alignment: .top) {
+        TextEditor(text: $commentBody)
+          .border(Color(.darkGray))
+          .frame(idealWidth: 800, idealHeight: 900)
+          .font(.system(size: 18))
+        Divider()
+        VStack(alignment: .leading) {
+          Markdown(mdString: commentBody)
+        }
+        .frame(minWidth: 200, idealWidth: 800, idealHeight: 900)
+      }
+      .padding(.horizontal)
 
       HStack {
         Button(role: .cancel, action: {

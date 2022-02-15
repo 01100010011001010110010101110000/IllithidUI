@@ -74,7 +74,6 @@
 		6D1DAF692407100C0020A9D6 /* RoundedBorderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1DAF682407100C0020A9D6 /* RoundedBorderModifier.swift */; };
 		6D1DAF6B24073BA80020A9D6 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1DAF6A24073BA80020A9D6 /* Browser.swift */; };
 		6D1DF051272A2AD0002A7AE5 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D1DF050272A2AD0002A7AE5 /* Illithid */; };
-		6D1DF054272A2B18002A7AE5 /* Maaku in Frameworks */ = {isa = PBXBuildFile; productRef = 6D1DF053272A2B18002A7AE5 /* Maaku */; };
 		6D1DF057272A2BEA002A7AE5 /* XCDYouTubeKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6D1DF056272A2BEA002A7AE5 /* XCDYouTubeKit */; };
 		6D1F97B92431905000B3E9FC /* NsfwBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1F97B82431905000B3E9FC /* NsfwBlur.swift */; };
 		6D28395322D3EBA400DD08F9 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D28395222D3EBA400DD08F9 /* SearchView.swift */; };
@@ -134,9 +133,7 @@
 		6DBB485F25756CEA00C0B1E2 /* EventModifiers+none.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBB485D25756CEA00C0B1E2 /* EventModifiers+none.swift */; };
 		6DBB486025756CEA00C0B1E2 /* URL+QueryDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBB485E25756CEA00C0B1E2 /* URL+QueryDictionary.swift */; };
 		6DBB486625756D5000C0B1E2 /* MediaMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBB486525756D5000C0B1E2 /* MediaMetadata.swift */; };
-		6DBB487025756D7400C0B1E2 /* AttributedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBB486E25756D7400C0B1E2 /* AttributedText.swift */; };
 		6DBB487125756D7400C0B1E2 /* Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBB486F25756D7400C0B1E2 /* Markdown.swift */; };
-		6DBB487C25756EC100C0B1E2 /* ListType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBB487B25756EC100C0B1E2 /* ListType.swift */; };
 		6DBCFBDE2473737800174442 /* WikiPagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBCFBDD2473737800174442 /* WikiPagesView.swift */; };
 		6DBCFBE0247381D600174442 /* WikiData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBCFBDF247381D600174442 /* WikiData.swift */; };
 		6DBE9E4E240F73DE004E7375 /* FireLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DBE9E4D240F73DE004E7375 /* FireLogger.swift */; };
@@ -145,6 +142,7 @@
 		6DD5534E22A8901700A00033 /* SubredditListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DD5534D22A8901700A00033 /* SubredditListView.swift */; };
 		6DDE004222BA8006008E6AF0 /* WindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE004122BA8006008E6AF0 /* WindowManager.swift */; };
 		6DDE004422BA80EA008E6AF0 /* CommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDE004322BA80EA008E6AF0 /* CommentsView.swift */; };
+		6DDE9A402797D2AB00D5A3C0 /* SwiftPress in Frameworks */ = {isa = PBXBuildFile; productRef = 6DDE9A3F2797D2AB00D5A3C0 /* SwiftPress */; };
 		6DE05C4D25EF4A2B001C62C0 /* Illithid in Frameworks */ = {isa = PBXBuildFile; productRef = 6D731BFE22A826CD0065183B /* Illithid */; };
 		6DE05C4E25EF4A2B001C62C0 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */; };
 		6DE05C4F25EF4A2B001C62C0 /* Kanna in Frameworks */ = {isa = PBXBuildFile; productRef = 6D6D420F2437C14E002D4413 /* Kanna */; };
@@ -282,9 +280,7 @@
 		6DBB485D25756CEA00C0B1E2 /* EventModifiers+none.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EventModifiers+none.swift"; sourceTree = "<group>"; };
 		6DBB485E25756CEA00C0B1E2 /* URL+QueryDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URL+QueryDictionary.swift"; sourceTree = "<group>"; };
 		6DBB486525756D5000C0B1E2 /* MediaMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaMetadata.swift; sourceTree = "<group>"; };
-		6DBB486E25756D7400C0B1E2 /* AttributedText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributedText.swift; sourceTree = "<group>"; };
 		6DBB486F25756D7400C0B1E2 /* Markdown.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Markdown.swift; sourceTree = "<group>"; };
-		6DBB487B25756EC100C0B1E2 /* ListType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListType.swift; sourceTree = "<group>"; };
 		6DBCFBDD2473737800174442 /* WikiPagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiPagesView.swift; sourceTree = "<group>"; };
 		6DBCFBDF247381D600174442 /* WikiData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiData.swift; sourceTree = "<group>"; };
 		6DBE9E4D240F73DE004E7375 /* FireLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireLogger.swift; sourceTree = "<group>"; };
@@ -313,8 +309,8 @@
 			files = (
 				6D6D153A272A4D240067E0A6 /* AVKit.framework in Frameworks */,
 				6D1DF051272A2AD0002A7AE5 /* Illithid in Frameworks */,
-				6D1DF054272A2B18002A7AE5 /* Maaku in Frameworks */,
 				6DE05C4F25EF4A2B001C62C0 /* Kanna in Frameworks */,
+				6DDE9A402797D2AB00D5A3C0 /* SwiftPress in Frameworks */,
 				6DE05C4E25EF4A2B001C62C0 /* SDWebImageSwiftUI in Frameworks */,
 				6DE05C4D25EF4A2B001C62C0 /* Illithid in Frameworks */,
 				6D1DF057272A2BEA002A7AE5 /* XCDYouTubeKit in Frameworks */,
@@ -575,7 +571,6 @@
 		6DA9A2FA245E6150009444CC /* Environment Values */ = {
 			isa = PBXGroup;
 			children = (
-				6DBB487B25756EC100C0B1E2 /* ListType.swift */,
 				6DA9A2FB245E6172009444CC /* HostingWindow.swift */,
 			);
 			path = "Environment Values";
@@ -605,7 +600,6 @@
 		6DBB486D25756D7400C0B1E2 /* Text Rendering */ = {
 			isa = PBXGroup;
 			children = (
-				6DBB486E25756D7400C0B1E2 /* AttributedText.swift */,
 				6DBB486F25756D7400C0B1E2 /* Markdown.swift */,
 			);
 			path = "Text Rendering";
@@ -745,8 +739,8 @@
 				6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */,
 				6D6D420F2437C14E002D4413 /* Kanna */,
 				6D1DF050272A2AD0002A7AE5 /* Illithid */,
-				6D1DF053272A2B18002A7AE5 /* Maaku */,
 				6D1DF056272A2BEA002A7AE5 /* XCDYouTubeKit */,
+				6DDE9A3F2797D2AB00D5A3C0 /* SwiftPress */,
 			);
 			productName = IllithidUI;
 			productReference = 6D2EA59022A7FEE20059B6EA /* IllithidUI.app */;
@@ -825,8 +819,8 @@
 				6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				6D6D420E2437C14E002D4413 /* XCRemoteSwiftPackageReference "Kanna" */,
 				6D1DF04F272A2AD0002A7AE5 /* XCRemoteSwiftPackageReference "Illithid.git" */,
-				6D1DF052272A2B18002A7AE5 /* XCRemoteSwiftPackageReference "Maaku.git" */,
 				6D1DF055272A2BEA002A7AE5 /* XCRemoteSwiftPackageReference "XCDYouTubeKit.git" */,
+				6DDE9A3E2797D2AB00D5A3C0 /* XCRemoteSwiftPackageReference "SwiftPress.git" */,
 			);
 			productRefGroup = 6D2EA59122A7FEE20059B6EA /* Products */;
 			projectDirPath = "";
@@ -897,9 +891,7 @@
 				6D1DAF6B24073BA80020A9D6 /* Browser.swift in Sources */,
 				6D72F29A24B810FC00B686D8 /* NavigationPrompt.swift in Sources */,
 				6D43AC45252C3018000787A3 /* AboutCommands.swift in Sources */,
-				6DBB487025756D7400C0B1E2 /* AttributedText.swift in Sources */,
 				6DBB483A25756A7300C0B1E2 /* Gfycat.swift in Sources */,
-				6DBB487C25756EC100C0B1E2 /* ListType.swift in Sources */,
 				6D639D7F22B2EE4600A24E72 /* IllithidConfiguration.swift in Sources */,
 				6D340DCC243A330900058F4D /* SortController.swift in Sources */,
 				6DB1549D246F932400D19100 /* SharingButton.swift in Sources */,
@@ -1366,14 +1358,6 @@
 				kind = branch;
 			};
 		};
-		6D1DF052272A2B18002A7AE5 /* XCRemoteSwiftPackageReference "Maaku.git" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/KristopherGBaker/Maaku.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		6D1DF055272A2BEA002A7AE5 /* XCRemoteSwiftPackageReference "XCDYouTubeKit.git" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/0xced/XCDYouTubeKit.git";
@@ -1398,6 +1382,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		6DDE9A3E2797D2AB00D5A3C0 /* XCRemoteSwiftPackageReference "SwiftPress.git" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/01100010011001010110010101110000/SwiftPress.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1405,11 +1397,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6D1DF04F272A2AD0002A7AE5 /* XCRemoteSwiftPackageReference "Illithid.git" */;
 			productName = Illithid;
-		};
-		6D1DF053272A2B18002A7AE5 /* Maaku */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6D1DF052272A2B18002A7AE5 /* XCRemoteSwiftPackageReference "Maaku.git" */;
-			productName = Maaku;
 		};
 		6D1DF056272A2BEA002A7AE5 /* XCDYouTubeKit */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1429,6 +1416,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
+		};
+		6DDE9A3F2797D2AB00D5A3C0 /* SwiftPress */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6DDE9A3E2797D2AB00D5A3C0 /* XCRemoteSwiftPackageReference "SwiftPress.git" */;
+			productName = SwiftPress;
 		};
 /* End XCSwiftPackageProductDependency section */
 
