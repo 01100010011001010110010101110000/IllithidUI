@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22F26043D2493EF9B02903EC /* IllithidDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26805055506DDF26E0C8E /* IllithidDatabase.swift */; };
 		22F2606C5E792313E05C9DFA /* DangerButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2644E6EE7924DF1DFBFFE /* DangerButtonStyle.swift */; };
+		22F2606FCF766BD83DF1DBF4 /* IllithidDatabase+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26F48CC724CFBB7A281BF /* IllithidDatabase+SwiftUI.swift */; };
 		22F26087A50C957DC4402988 /* TriplePaneLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F266EC64C1F7BA6AE16808 /* TriplePaneLayoutView.swift */; };
 		22F260D137F4CD83C3670DFE /* NewCommentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B803F19109572D1A7D9 /* NewCommentForm.swift */; };
 		22F26123C6FDF3A230AFB154 /* TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2616B39643FC7A66E141E /* TitleView.swift */; };
@@ -19,10 +21,12 @@
 		22F2625FF1F9BDED7C8FEED7 /* NewPostForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2621DBC55C2239EE306E9 /* NewPostForm.swift */; };
 		22F2629584E8D8D79B75316D /* Color+HexCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F264CDBB6ADD93BEFFBB10 /* Color+HexCode.swift */; };
 		22F2629F7991F10CC55F8646 /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
+		22F262A555B9DA70173788E9 /* IllithidDatabase+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26F48CC724CFBB7A281BF /* IllithidDatabase+SwiftUI.swift */; };
 		22F262E9F459B9282DE815CB /* Logger+OAuthLogProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26BFE836405602FDB6EF1 /* Logger+OAuthLogProtocol.swift */; };
 		22F262FAFBDFF4C841B7A432 /* Votable+Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26F374D0C7A5B29C61060 /* Votable+Score.swift */; };
 		22F2633FE13183A75429AFBD /* Votable+Score.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26F374D0C7A5B29C61060 /* Votable+Score.swift */; };
 		22F263703A27A350AC180A7D /* MetadataBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F266952D166C17F198B6E4 /* MetadataBar.swift */; };
+		22F263734DD3489730CE99DE /* IllithidDatabase+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26F48CC724CFBB7A281BF /* IllithidDatabase+SwiftUI.swift */; };
 		22F263861FF90296F0604872 /* RefreshButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26CD1853E0A4512FE7A14 /* RefreshButton.swift */; };
 		22F2641108620A79861A811C /* CommonActionableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F260727E8524D699B087DC /* CommonActionableModel.swift */; };
 		22F26502CA4B0BD02334911B /* PostAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26A47EEEFADC45B566820 /* PostAttribution.swift */; };
@@ -33,6 +37,7 @@
 		22F26624614608068C45F953 /* CancelableViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26E2F376D20C4FED06CC1 /* CancelableViewModel.swift */; };
 		22F266BFE00DCACDB5B52F8A /* PostAttribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26A47EEEFADC45B566820 /* PostAttribution.swift */; };
 		22F266E18B59042B72B45C5B /* CommonActionableModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F260727E8524D699B087DC /* CommonActionableModel.swift */; };
+		22F26742ECB6FC9B6C0A66F6 /* IllithidDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26805055506DDF26E0C8E /* IllithidDatabase.swift */; };
 		22F2678DF245D6A0F20537DD /* NewCommentForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26B803F19109572D1A7D9 /* NewCommentForm.swift */; };
 		22F268562543BDD565D4692F /* NewItemCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F267C48D18E622053FF2B6 /* NewItemCommands.swift */; };
 		22F268F9F8F79CE3710C2C0A /* CancelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F268F37D252AE77C8C0BED /* CancelButton.swift */; };
@@ -45,6 +50,7 @@
 		22F26C0ED4D2B60F8DA3AEFF /* NewPostForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2621DBC55C2239EE306E9 /* NewPostForm.swift */; };
 		22F26C2F871E5CF8F6A119CA /* NSImage+Resized.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F262A2F4F215322B6061D8 /* NSImage+Resized.swift */; };
 		22F26C3D19BE2498783C8067 /* PostRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F263B21F6B123E3C4E1AB1 /* PostRowView.swift */; };
+		22F26C547657BE2C31A904B1 /* IllithidDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F26805055506DDF26E0C8E /* IllithidDatabase.swift */; };
 		22F26C643A170E504BF45F20 /* TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F2616B39643FC7A66E141E /* TitleView.swift */; };
 		22F26CE109E74B66983D463D /* DetailedPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F269812B6D13E1FF3134CA /* DetailedPostView.swift */; };
 		22F26D1593E00E2EB8E41F56 /* Color+HexCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F264CDBB6ADD93BEFFBB10 /* Color+HexCode.swift */; };
@@ -113,6 +119,7 @@
 		6D848770259515AE00B2109A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6D848772259515AE00B2109A /* Localizable.strings */; };
 		6D85952D23AD502700FC90E0 /* PostDebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D85952C23AD502700FC90E0 /* PostDebugView.swift */; };
 		6D90CAA524E8995B00A6892A /* RecursiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D90CAA424E8995B00A6892A /* RecursiveView.swift */; };
+		6D97E4DF27E572510084D11A /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 6D97E4DE27E572510084D11A /* GRDB */; };
 		6D9AC83024AD506B0076686B /* View+LoadingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9AC82F24AD506B0076686B /* View+LoadingScreen.swift */; };
 		6DA7C41E24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA7C41D24BD5E5A00C3DFB6 /* Int+postAbbreviation.swift */; };
 		6DA9A2FC245E6172009444CC /* HostingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DA9A2FB245E6172009444CC /* HostingWindow.swift */; };
@@ -189,6 +196,7 @@
 		22F266EC64C1F7BA6AE16808 /* TriplePaneLayoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TriplePaneLayoutView.swift; sourceTree = "<group>"; };
 		22F26757A674E9BD09B29F39 /* AsyncButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AsyncButton.swift; sourceTree = "<group>"; };
 		22F267C48D18E622053FF2B6 /* NewItemCommands.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewItemCommands.swift; sourceTree = "<group>"; };
+		22F26805055506DDF26E0C8E /* IllithidDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IllithidDatabase.swift; sourceTree = "<group>"; };
 		22F268F37D252AE77C8C0BED /* CancelButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CancelButton.swift; sourceTree = "<group>"; };
 		22F269812B6D13E1FF3134CA /* DetailedPostView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailedPostView.swift; sourceTree = "<group>"; };
 		22F26A47EEEFADC45B566820 /* PostAttribution.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostAttribution.swift; sourceTree = "<group>"; };
@@ -200,6 +208,7 @@
 		22F26E2F376D20C4FED06CC1 /* CancelableViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CancelableViewModel.swift; sourceTree = "<group>"; };
 		22F26EEABF3B3BEF1EA50F15 /* NavigationSelectionPreference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NavigationSelectionPreference.swift; sourceTree = "<group>"; };
 		22F26F374D0C7A5B29C61060 /* Votable+Score.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Votable+Score.swift"; sourceTree = "<group>"; };
+		22F26F48CC724CFBB7A281BF /* IllithidDatabase+SwiftUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "IllithidDatabase+SwiftUI.swift"; sourceTree = "<group>"; };
 		6D062E4E2402F6C500A3BDD0 /* IllithidButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IllithidButton.swift; sourceTree = "<group>"; };
 		6D09353F25760F8C002DDBD8 /* PostGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostGridView.swift; sourceTree = "<group>"; };
 		6D0A1E44238399B9006CDB86 /* ToolbarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarDelegate.swift; sourceTree = "<group>"; };
@@ -310,6 +319,7 @@
 				6D6D153A272A4D240067E0A6 /* AVKit.framework in Frameworks */,
 				6D1DF051272A2AD0002A7AE5 /* Illithid in Frameworks */,
 				6DE05C4F25EF4A2B001C62C0 /* Kanna in Frameworks */,
+				6D97E4DF27E572510084D11A /* GRDB in Frameworks */,
 				6DDE9A402797D2AB00D5A3C0 /* SwiftPress in Frameworks */,
 				6DE05C4E25EF4A2B001C62C0 /* SDWebImageSwiftUI in Frameworks */,
 				6DE05C4D25EF4A2B001C62C0 /* Illithid in Frameworks */,
@@ -340,6 +350,15 @@
 				22F26EEABF3B3BEF1EA50F15 /* NavigationSelectionPreference.swift */,
 			);
 			path = Preferences;
+			sourceTree = "<group>";
+		};
+		22F262BAA18369D931D0FBB5 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				22F26805055506DDF26E0C8E /* IllithidDatabase.swift */,
+				22F26F48CC724CFBB7A281BF /* IllithidDatabase+SwiftUI.swift */,
+			);
+			path = Persistence;
 			sourceTree = "<group>";
 		};
 		22F2698EA9AB66A0097A3B07 /* Styles */ = {
@@ -451,6 +470,7 @@
 				6D2EA59722A7FEE20059B6EA /* IllithidUI.xcdatamodeld */,
 				6D2EA59C22A7FEE40059B6EA /* Preview Content */,
 				6D848772259515AE00B2109A /* Localizable.strings */,
+				22F262BAA18369D931D0FBB5 /* Persistence */,
 			);
 			path = IllithidUI;
 			sourceTree = "<group>";
@@ -741,6 +761,7 @@
 				6D1DF050272A2AD0002A7AE5 /* Illithid */,
 				6D1DF056272A2BEA002A7AE5 /* XCDYouTubeKit */,
 				6DDE9A3F2797D2AB00D5A3C0 /* SwiftPress */,
+				6D97E4DE27E572510084D11A /* GRDB */,
 			);
 			productName = IllithidUI;
 			productReference = 6D2EA59022A7FEE20059B6EA /* IllithidUI.app */;
@@ -821,6 +842,7 @@
 				6D1DF04F272A2AD0002A7AE5 /* XCRemoteSwiftPackageReference "Illithid.git" */,
 				6D1DF055272A2BEA002A7AE5 /* XCRemoteSwiftPackageReference "XCDYouTubeKit.git" */,
 				6DDE9A3E2797D2AB00D5A3C0 /* XCRemoteSwiftPackageReference "SwiftPress.git" */,
+				6D97E4DD27E572510084D11A /* XCRemoteSwiftPackageReference "GRDB.swift.git" */,
 			);
 			productRefGroup = 6D2EA59122A7FEE20059B6EA /* Products */;
 			projectDirPath = "";
@@ -975,6 +997,8 @@
 				22F266E18B59042B72B45C5B /* CommonActionableModel.swift in Sources */,
 				22F262FAFBDFF4C841B7A432 /* Votable+Score.swift in Sources */,
 				22F26D1593E00E2EB8E41F56 /* Color+HexCode.swift in Sources */,
+				22F26043D2493EF9B02903EC /* IllithidDatabase.swift in Sources */,
+				22F2606FCF766BD83DF1DBF4 /* IllithidDatabase+SwiftUI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -997,6 +1021,8 @@
 				22F2641108620A79861A811C /* CommonActionableModel.swift in Sources */,
 				22F26A6D64CE122CB7D40995 /* Votable+Score.swift in Sources */,
 				22F261BFBC6150AC37298CB0 /* Color+HexCode.swift in Sources */,
+				22F26C547657BE2C31A904B1 /* IllithidDatabase.swift in Sources */,
+				22F263734DD3489730CE99DE /* IllithidDatabase+SwiftUI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1019,6 +1045,8 @@
 				22F26DC685794E2EB024693E /* CommonActionableModel.swift in Sources */,
 				22F2633FE13183A75429AFBD /* Votable+Score.swift in Sources */,
 				22F2629584E8D8D79B75316D /* Color+HexCode.swift in Sources */,
+				22F26742ECB6FC9B6C0A66F6 /* IllithidDatabase.swift in Sources */,
+				22F262A555B9DA70173788E9 /* IllithidDatabase+SwiftUI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1374,6 +1402,14 @@
 				minimumVersion = 5.2.2;
 			};
 		};
+		6D97E4DD27E572510084D11A /* XCRemoteSwiftPackageReference "GRDB.swift.git" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.21.0;
+			};
+		};
 		6D99083B23E3D8D500E8686A /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
@@ -1411,6 +1447,11 @@
 		6D731BFE22A826CD0065183B /* Illithid */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Illithid;
+		};
+		6D97E4DE27E572510084D11A /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D97E4DD27E572510084D11A /* XCRemoteSwiftPackageReference "GRDB.swift.git" */;
+			productName = GRDB;
 		};
 		6D99083C23E3D8D500E8686A /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
