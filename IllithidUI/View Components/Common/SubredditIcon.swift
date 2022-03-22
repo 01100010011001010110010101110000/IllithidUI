@@ -28,6 +28,12 @@ struct SubredditIcon: View {
     displayLetter = String(subreddit.displayName.first!.uppercased())
   }
 
+  init(subreddit: SubscribedSubreddit) {
+    imageUrl = subreddit.iconImage
+    displayName = subreddit.displayName
+    displayLetter = String(subreddit.displayName.first!.uppercased())
+  }
+
   init(multireddit: Multireddit) {
     imageUrl = multireddit.iconUrl
     displayName = multireddit.displayName
