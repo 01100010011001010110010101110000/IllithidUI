@@ -38,8 +38,23 @@ class IllithidDatabase {
     migrator.eraseDatabaseOnSchemaChange = true
     #endif
 
-    // --- BEGIN REGISTER MIGRATIONS
-    // --- END REGISTER MIGRATIONS
+    migrator.registerMigration("1647918548_AddSubscribedSubreddits") { db in
+      try db.create(table: "subscribedSubreddits") { table in
+        table.column("id", .text)
+          .primaryKey()
+        table.column("displayName", .text)
+          .indexed()
+          .notNull()
+        table.column("url", .text)
+          .notNull()
+          .unique()
+        table.column("headerImage", .text)
+        table.column("bannerImage", .text)
+        table.column("iconImage", .text)
+        table.column("over18", .boolean)
+          .notNull()
+      }
+    }
     return migrator
   }
 }
@@ -72,5 +87,51 @@ extension IllithidDatabase {
 
   static func ephemeral() -> IllithidDatabase {
     try! IllithidDatabase(DatabaseQueue())
+  }
+}
+
+// MARK: - Accessors
+
+extension IllithidDatabase {
+  public var dbReader: DatabaseReader {
+    dbWriter
+  }
+}
+
+extension IllithidDatabase {
+  func updateSubredditSubscriptions(_ subscribedSubreddits: [SubscribedSubreddit]) async throws {
+    let questionMarks = databaseQuestionMarks(count: subscribedSubreddits.count)
+    let ids = subscribedSubreddits.map(\.id)
+    try await dbWriter.write { db in
+      try SubscribedSubreddit
+        .filter(sql: "id not in (\(questionMarks))", arguments: .init(ids))
+        .deleteAll(db)
+      try subscribedSubreddits.forEach { subreddit in
+        if let oldRecord = try SubscribedSubreddit.fetchOne(db) {
+          try oldRecord.updateChanges(db, from: subreddit)
+        } else {
+          try subreddit.insert(db)
+        }
+      }
+    }
+  }
+
+  func updateSubredditSubscriptions(_ subscribedSubreddits: [SubscribedSubreddit], completion: @escaping (Result<Void, Error>) -> Void) {
+    let questionMarks = databaseQuestionMarks(count: subscribedSubreddits.count)
+    let ids = subscribedSubreddits.map(\.id)
+    dbWriter.asyncWrite({ db in
+      try SubscribedSubreddit
+        .filter(sql: "id not in (\(questionMarks))", arguments: .init(ids))
+        .deleteAll(db)
+      try subscribedSubreddits.forEach { subreddit in
+        if let oldRecord = try SubscribedSubreddit.fetchOne(db, key: subreddit.id) {
+          try oldRecord.updateChanges(db, from: subreddit)
+        } else {
+          try subreddit.insert(db)
+        }
+      }
+    }, completion: { (_: Database, result: Result<Void, Error>) in
+      completion(result)
+    })
   }
 }
