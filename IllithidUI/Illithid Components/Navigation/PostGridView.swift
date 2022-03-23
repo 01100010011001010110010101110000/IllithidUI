@@ -61,9 +61,9 @@ struct PostGridView: View {
       }, label: {
         Image(systemName: "plus")
       })
-        .keyboardShortcut(.rightArrow)
-        .shadow(radius: 20)
-        .help("Add a column")
+      .keyboardShortcut(.rightArrow)
+      .shadow(radius: 20)
+      .help("Add a column")
     }
   }
 
@@ -97,7 +97,7 @@ private struct SubredditSelectorView: View {
           }, label: {
             Image(systemName: "xmark.circle.fill")
           })
-            .keyboardShortcut(.cancelAction)
+          .keyboardShortcut(.cancelAction)
         }
         Spacer()
         Group {
@@ -164,7 +164,7 @@ private struct SubredditSelectorView: View {
   @State private var presentSelector: Bool = false
   @ObservedObject private var preferences: PreferencesData = .shared
 
-  private var selectedSubreddit: Subreddit? {
+  private var selectedSubreddit: SubscribedSubreddit? {
     guard let selection = column.selection else { return nil }
     return informationBarData.subscribedSubreddits.first { $0.id == selection }
   }

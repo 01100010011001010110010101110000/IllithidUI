@@ -31,6 +31,14 @@ struct SubscribedSubreddit: Identifiable, Codable {
     bannerImage = subreddit.bannerImg
     iconImage = subreddit.iconImg
     over18 = subreddit.over18 ?? false
+
+    permitsSelfPosts = subreddit.permitsSelfPosts
+    permitsImagePosts = subreddit.permitsImagePosts
+    permitsGalleryPosts = subreddit.permitsGalleryPosts
+    permitsVideoPosts = subreddit.permitsVideoPosts
+    permitsGifPosts = subreddit.permitsGifPosts
+    permitsLinkPosts = subreddit.permitsLinkPosts
+    permitsPollPosts = subreddit.permitsPollPosts
   }
 
   // MARK: Internal
@@ -42,6 +50,14 @@ struct SubscribedSubreddit: Identifiable, Codable {
   let bannerImage: URL?
   let iconImage: URL?
   let over18: Bool
+
+  let permitsSelfPosts: Bool
+  let permitsImagePosts: Bool
+  let permitsGalleryPosts: Bool
+  let permitsVideoPosts: Bool
+  let permitsGifPosts: Bool
+  let permitsLinkPosts: Bool
+  let permitsPollPosts: Bool
 }
 
 // MARK: FetchableRecord, TableRecord, PersistableRecord
@@ -50,14 +66,18 @@ extension SubscribedSubreddit: FetchableRecord, TableRecord, PersistableRecord {
   public private(set) static var databaseTableName: String = "subscribedSubreddits"
 }
 
-// MARK: PostProvider
+// MARK: PostProvider, PostAcceptor
 
-extension SubscribedSubreddit: PostProvider {
+extension SubscribedSubreddit: PostProvider, PostAcceptor {
+  var uploadTarget: String {
+    displayName
+  }
+
   var isNsfw: Bool {
     over18
   }
 
-  func posts(sortBy _: PostSort, location _: Location?, topInterval _: TopInterval?, parameters _: ListingParameters, queue _: DispatchQueue, completion _: @escaping (Result<Listing, AFError>) -> Void) -> DataRequest {
-    fatalError()
+  public var postsPath: String {
+    "/r/\(displayName)"
   }
 }

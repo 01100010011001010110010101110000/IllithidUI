@@ -407,7 +407,7 @@ private struct SubredditSelectorView: View {
   @State private var searchText: String = ""
   private let dismissalDelay: Double = 0.3
 
-  private var filteredSubscriptions: [Subreddit] {
+  private var filteredSubscriptions: [SubscribedSubreddit] {
     guard !searchText.isEmpty else { return informationBarData.subscribedSubreddits }
     return informationBarData.subscribedSubreddits
       .filter { $0.displayName.range(of: searchText, options: .caseInsensitive) != nil }

@@ -55,6 +55,32 @@ class IllithidDatabase {
           .notNull()
       }
     }
+
+    migrator.registerMigration("1648008465_AddPostAcceptorPropsToSubreddits") { db in
+      try db.alter(table: "subscribedSubreddits") { table in
+        table.add(column: "permitsSelfPosts", .boolean)
+          .notNull()
+          .defaults(to: false)
+        table.add(column: "permitsImagePosts", .boolean)
+          .notNull()
+          .defaults(to: false)
+        table.add(column: "permitsGalleryPosts", .boolean)
+          .notNull()
+          .defaults(to: false)
+        table.add(column: "permitsVideoPosts", .boolean)
+          .notNull()
+          .defaults(to: false)
+        table.add(column: "permitsGifPosts", .boolean)
+          .notNull()
+          .defaults(to: false)
+        table.add(column: "permitsLinkPosts", .boolean)
+          .notNull()
+          .defaults(to: false)
+        table.add(column: "permitsPollPosts", .boolean)
+          .notNull()
+          .defaults(to: false)
+      }
+    }
     return migrator
   }
 }
