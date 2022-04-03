@@ -69,6 +69,7 @@ struct IllithidApp: App {
             fatalError("A new application phase has been added: \(phase)")
           }
         })
+        .environment(\.illithidDatabase, .shared)
         .environmentObject(informationBarData)
         .onAppear {
           informationBarData.loadAccountData()

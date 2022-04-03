@@ -17,6 +17,7 @@ import Foundation
 import os.log
 import SwiftUI
 
+import GRDB
 import Illithid
 
 final class InformationBarData: ObservableObject {
@@ -25,12 +26,19 @@ final class InformationBarData: ObservableObject {
   init() {
     decoder.dateDecodingStrategy = .secondsSince1970
     encoder.dateEncodingStrategy = .secondsSince1970
+    subscribedSubreddits = []
+    multireddits = []
 
-    if let subscribedData = defaults.data(forKey: "subscribedSubreddits"),
-       let subreddits = try? decoder.decode([Subreddit].self, from: subscribedData) {
-      subscribedSubreddits = subreddits
-    } else {
+    // TODO: Replace with async loading and an "initialize" method
+    do {
+      try IllithidDatabase.shared.dbReader.read { db in
+        subscribedSubreddits = try SubscribedSubreddit
+          .order(GRDB.Column("displayName").asc)
+          .fetchAll(db)
+      }
+    } catch {
       subscribedSubreddits = []
+      Illithid.shared.logger.errorMessage("Error reading subscribed subreddits from database: \(error)")
     }
 
     if let multiData = defaults.data(forKey: "multireddits"),
@@ -49,12 +57,7 @@ final class InformationBarData: ObservableObject {
 
   // MARK: Internal
 
-  @Published var subscribedSubreddits: [Subreddit] {
-    didSet {
-      guard let data = try? encoder.encode(subscribedSubreddits) else { return }
-      defaults.set(data, forKey: "subscribedSubreddits")
-    }
-  }
+  @Published var subscribedSubreddits: [SubscribedSubreddit]
 
   @Published var multireddits: [Multireddit] {
     didSet {
@@ -98,10 +101,13 @@ final class InformationBarData: ObservableObject {
       }
       switch result {
       case let .success(subreddits):
-        let sortedSubreddits = subreddits.sorted(by: { $0.displayName.caseInsensitiveCompare($1.displayName) == .orderedAscending })
-        if sortedSubreddits != self.subscribedSubreddits {
-          DispatchQueue.main.async {
-            self.subscribedSubreddits = sortedSubreddits
+        let subscribedSubreddits = subreddits.map { SubscribedSubreddit(from: $0) }
+        IllithidDatabase.shared.updateSubredditSubscriptions(subscribedSubreddits) { result in
+          switch result {
+          case .success:
+            break
+          case let .failure(error):
+            Illithid.shared.logger.errorMessage("Error updating subscribed subreddits: \(error)")
           }
         }
       case let .failure(error):

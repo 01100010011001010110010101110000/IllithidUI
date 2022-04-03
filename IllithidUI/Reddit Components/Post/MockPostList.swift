@@ -45,6 +45,10 @@ struct FakePostProvider: PostProvider {
 
   let displayName: String = "Fake Post Provider"
 
+  var postsPath: String {
+    "/r/\(displayName)"
+  }
+
   func posts(sortBy _: PostSort, location _: Location?, topInterval _: TopInterval?, parameters _: ListingParameters, queue _: DispatchQueue, completion _: @escaping (Result<Listing, AFError>) -> Void) -> DataRequest {
     Session.default.request(URL(string: "https://google.com")!)
   }
